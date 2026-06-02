@@ -1,0 +1,206 @@
+{
+  "seo": {
+    "title": "Eye Care Services | Aakash Eye Hospital",
+    "description": "Explore cataract, LASIK, medical retina, glaucoma, OPD and bladeless robotic laser surgery services at Aakash Eye Hospital."
+  },
+  "items": [
+    {
+      "id": "bladeless-robotic-laser-surgery",
+      "slug": "bladeless-robotic-laser-surgery",
+      "title": "Bladeless Robotic Laser Surgery",
+      "shortDescription": "Bladeless LASIK and bladeless cataract care designed for precision, safety and faster recovery.",
+      "longDescription": [
+        "Aakash Eye Hospital highlights bladeless robotic laser surgery for perfect vision, highest safety, faster recovery and 100% precision.",
+        "The service includes bladeless LASIK and bladeless cataract pathways supported by modern diagnostic planning."
+      ],
+      "icon": "ScanEye",
+      "image": "/assets/media/gallery/bladeless-facility.jpg",
+      "imageAlt": "Bladeless laser surgery facility visual",
+      "featureBullets": [
+        "Bladeless LASIK and bladeless cataract options",
+        "Precision-focused treatment planning",
+        "Faster recovery and patient safety emphasis",
+        "Advanced technology-led workflow"
+      ],
+      "faq": [
+        {
+          "question": "Is bladeless laser surgery available for every patient?",
+          "answer": "Suitability depends on eye health, corneal measurements and the doctor's examination. The team confirms eligibility after diagnostics."
+        },
+        {
+          "question": "Which branch should I contact for laser surgery?",
+          "answer": "LASIK numbers are listed for Visnagar and Ahmedabad. Bharuch patients can contact the local branch for guidance."
+        }
+      ],
+      "seo": {
+        "title": "Bladeless Robotic Laser Surgery | Aakash Eye Hospital",
+        "description": "Bladeless LASIK and cataract laser surgery options at Aakash Eye Hospital."
+      }
+    },
+    {
+      "id": "phaco-cataract-surgery",
+      "slug": "phaco-cataract-surgery",
+      "title": "Phaco Cataract Surgery",
+      "shortDescription": "Modern cataract removal with phacoemulsification and intraocular lens implantation.",
+      "longDescription": [
+        "Cataract is the clouding of the natural crystalline lens, commonly associated with ageing. Surgery is the only known effective treatment for cataract removal.",
+        "At Aakash Eye Hospital, cataract surgery is focused on removing the cloudy natural lens and replacing it with an intraocular lens. Phacoemulsification with IOL implantation is the core technique used at the center."
+      ],
+      "icon": "Eye",
+      "image": "/assets/media/gallery/facility-1.jpg",
+      "imageAlt": "Aakash Eye Hospital facility for cataract care",
+      "featureBullets": [
+        "Phaco cataract surgery available since 1995",
+        "Outpatient day-care approach for suitable cases",
+        "IOL power calculation support with advanced diagnostics",
+        "Options may include monofocal, toric and multifocal IOLs after consultation"
+      ],
+      "faq": [
+        {
+          "question": "Does cataract surgery require admission?",
+          "answer": "Legacy content describes cataract surgery as an outpatient day-care procedure for suitable cases, usually with a short hospital stay."
+        },
+        {
+          "question": "Can normal activity resume after surgery?",
+          "answer": "Post-operative activity depends on the doctor's advice. The legacy content states that many patients resume normal work quickly while continuing eye drops."
+        }
+      ],
+      "seo": {
+        "title": "Phaco Cataract Surgery | Aakash Eye Hospital",
+        "description": "Cataract treatment with phacoemulsification and IOL implantation at Aakash Eye Hospital."
+      }
+    },
+    {
+      "id": "lasik-excimer",
+      "slug": "lasik-excimer",
+      "title": "LASIK / Excimer",
+      "shortDescription": "Laser vision correction for reducing dependence on glasses or contact lenses.",
+      "longDescription": [
+        "LASIK is a surgical procedure for permanent removal or reduction of dependence on glasses and contact lenses.",
+        "The legacy site describes the I Look Laser Vision Center at Aakash Eye Hospital as equipped with VISX STAR S4 IR technology, Wavescan aberrometer, pachymeter and topography support."
+      ],
+      "icon": "Sparkles",
+      "image": "/assets/media/heroes/better-vision.jpg",
+      "imageAlt": "Laser vision correction banner",
+      "featureBullets": [
+        "Excimer laser added in 2009",
+        "Wavefront-guided diagnostic planning described by the legacy site",
+        "Outpatient workflow for suitable laser cases",
+        "ICL and refractive lens exchange may be discussed for higher refractive errors"
+      ],
+      "faq": [
+        {
+          "question": "Can both eyes be treated together?",
+          "answer": "The legacy LASIK content states that both eyes are commonly treated at the same time for suitable candidates."
+        },
+        {
+          "question": "What if LASIK is not suitable?",
+          "answer": "The doctor may discuss alternatives such as ICL or refractive lens exchange depending on eye measurements and refractive error."
+        }
+      ],
+      "seo": {
+        "title": "LASIK and Excimer Laser | Aakash Eye Hospital",
+        "description": "Laser vision correction and LASIK services at Aakash Eye Hospital."
+      }
+    },
+    {
+      "id": "medical-retina",
+      "slug": "medical-retina",
+      "title": "Medical Retina",
+      "shortDescription": "Retina diagnostics and care supported by OCT, Green Laser and FFA.",
+      "longDescription": [
+        "Aakash Eye Hospital expanded medical retina capabilities in 2011 with OCT, Green Laser and FFA.",
+        "The service supports diagnosis and care planning for retina conditions requiring imaging and laser-based treatment pathways."
+      ],
+      "icon": "Activity",
+      "image": "/assets/media/gallery/facility-3.jpg",
+      "imageAlt": "Retina care facility at Aakash Eye Hospital",
+      "featureBullets": [
+        "OCT imaging support",
+        "Green Laser availability",
+        "FFA support for medical retina evaluation",
+        "Structured follow-up guidance from the care team"
+      ],
+      "faq": [
+        {
+          "question": "What tests are used for retina care?",
+          "answer": "The legacy history lists OCT, Green Laser and FFA as part of Aakash Eye Hospital's retina capabilities."
+        },
+        {
+          "question": "Do all retina visits require imaging?",
+          "answer": "Imaging depends on the eye examination and the doctor's treatment plan."
+        }
+      ],
+      "seo": {
+        "title": "Medical Retina Care | Aakash Eye Hospital",
+        "description": "OCT, Green Laser and FFA-supported medical retina care at Aakash Eye Hospital."
+      }
+    },
+    {
+      "id": "glaucoma-care",
+      "slug": "glaucoma-care",
+      "title": "Glaucoma Care",
+      "shortDescription": "Evaluation and treatment planning for glaucoma, with a mission to prevent avoidable blindness.",
+      "longDescription": [
+        "Glaucoma is a disease where pressure inside the eye can damage the nerve fibers forming the optic nerve.",
+        "Aakash Eye Hospital's legacy glaucoma content describes detailed investigation with applanation tonometry, perimetry, GCC and RNFL analysis with OCT, optic disc photography and fundus camera support."
+      ],
+      "icon": "Gauge",
+      "image": "/assets/media/gallery/facility-4.jpg",
+      "imageAlt": "Diagnostic care area for glaucoma evaluation",
+      "featureBullets": [
+        "Pressure and optic nerve evaluation",
+        "Perimetry and OCT-supported analysis",
+        "Family history and high-risk screening guidance",
+        "Surgical care pathways when advised by the specialist"
+      ],
+      "faq": [
+        {
+          "question": "Who is at higher risk of glaucoma?",
+          "answer": "The legacy content lists family history, high myopia, high blood pressure, diabetes, long-term steroid use and past eye injuries as risk factors."
+        },
+        {
+          "question": "Can glaucoma be silent?",
+          "answer": "Yes. The legacy content calls glaucoma a silent blinding disease, so routine evaluation matters for high-risk patients."
+        }
+      ],
+      "seo": {
+        "title": "Glaucoma Care | Aakash Eye Hospital",
+        "description": "Glaucoma diagnosis and treatment planning at Aakash Eye Hospital."
+      }
+    },
+    {
+      "id": "general-ophthalmology-opd",
+      "slug": "general-ophthalmology-opd",
+      "title": "General Ophthalmology / OPD",
+      "shortDescription": "Everyday eye care, refraction, follow-ups and specialist referral pathways.",
+      "longDescription": [
+        "The OPD pathway helps patients start with a complete eye evaluation and move into the right service when more specialized care is needed.",
+        "Aakash Eye Hospital also supports pediatric eye problems including pediatric cataract, pediatric squint, amblyopia management, allergic conjunctivitis and refraction in young children."
+      ],
+      "icon": "Stethoscope",
+      "image": "/assets/media/gallery/facility-2.jpg",
+      "imageAlt": "Aakash Eye Hospital OPD facility",
+      "featureBullets": [
+        "Routine eye examination and refraction",
+        "Follow-up care for old cases",
+        "Pediatric ophthalmology support",
+        "Referral into cataract, retina, glaucoma and laser services"
+      ],
+      "faq": [
+        {
+          "question": "Should old patients bring their previous file?",
+          "answer": "Yes. The hospital promise asks old-case patients to bring the previous case file because old case files have no due date."
+        },
+        {
+          "question": "Can I choose a branch before booking?",
+          "answer": "Yes. The appointment form lets you select Visnagar, Ahmedabad or Bharuch."
+        }
+      ],
+      "seo": {
+        "title": "General Ophthalmology and OPD | Aakash Eye Hospital",
+        "description": "Routine eye checkups, OPD care and referral pathways at Aakash Eye Hospital."
+      }
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "brand": {
+    "name": "Aakash Eye Hospital",
+    "tagline": "Advanced eye care since 1993",
+    "establishedDate": "1993-08-08",
+    "logo": "/assets/logo.png",
+    "logoAlt": "Aakash Eye Hospital logo"
+  },
+  "defaultSeo": {
+    "title": "Aakash Eye Hospital | Eye Care in Visnagar, Ahmedabad and Bharuch",
+    "description": "Aakash Eye Hospital is a multi-branch eye care hospital in Gujarat offering cataract, LASIK, retina, glaucoma and general ophthalmology services.",
+    "image": "/assets/media/heroes/bladeless-robotic-laser-surgery.jpg",
+    "url": "https://aakasheyehospital.com/"
+  },
+  "pageSeo": {
+    "about": {
+      "title": "About Aakash Eye Hospital | Since 1993",
+      "description": "Learn about Aakash Eye Hospital's history, promise, mission, technology milestones and patient safety focus."
+    },
+    "appointment": {
+      "title": "Book an Appointment | Aakash Eye Hospital",
+      "description": "Request an appointment at Aakash Eye Hospital or start a WhatsApp booking with your selected branch."
+    },
+    "contact": {
+      "title": "Contact Aakash Eye Hospital | Visnagar, Ahmedabad, Bharuch",
+      "description": "Find branch addresses, phone lines, email and appointment contacts for Aakash Eye Hospital."
+    },
+    "notFound": {
+      "title": "Page Not Found | Aakash Eye Hospital",
+      "description": "The page you are looking for could not be found."
+    }
+  },
+  "businessHours": [
+    {
+      "label": "Monday to Saturday",
+      "value": "9:00 AM - 6:00 PM"
+    },
+    {
+      "label": "Sunday",
+      "value": "Emergency and prior appointments only"
+    }
+  ],
+  "globalCtas": {
+    "primary": {
+      "label": "Book Appointment",
+      "href": "/appointment"
+    },
+    "secondary": {
+      "label": "Call Visnagar OPD",
+      "href": "tel:+917600082710"
+    }
+  },
+  "socialLinks": [
+    {
+      "label": "Facebook",
+      "href": "https://www.facebook.com/aakasheyehospital"
+    }
+  ],
+  "footer": {
+    "summary": "Aakash Eye Hospital provides advanced ophthalmic services across Visnagar, Ahmedabad and Bharuch with a focus on technology, patient safety and affordable care.",
+    "copyright": "Aakash Eye Hospital. All rights reserved.",
+    "sourceNote": "Seed content references the legacy website at https://aakasheyehospital.com/ and the project brief."
+  },
+  "notes": [
+    "Business hours are placeholder values and should be verified with the hospital.",
+    "The years-of-service stat is modernized from the 1993 founding date; the legacy site also contains older 20+ and 24+ wording."
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "seo": {
+    "title": "Branches | Aakash Eye Hospital",
+    "description": "Addresses, appointment numbers and contact details for Aakash Eye Hospital branches in Visnagar, Ahmedabad and Bharuch."
+  },
+  "items": [
+    {
+      "name": "Visnagar",
+      "slug": "visnagar",
+      "isHeadquarters": true,
+      "address": "Near New Court, M.N. College Road, Near GEB, Visnagar - 384315, North Gujarat",
+      "email": "info@aakasheyehospital.com",
+      "phoneGroups": [
+        {
+          "label": "OPD",
+          "numbers": ["+91-760-008-2710"]
+        },
+        {
+          "label": "Operation",
+          "numbers": ["(02765)222075", "+91-942-687-7080"]
+        },
+        {
+          "label": "LASIK",
+          "numbers": ["+91-942-922-6318"]
+        }
+      ],
+      "whatsappNumber": "917600082710",
+      "coords": {
+        "lat": 23.698,
+        "lng": 72.552
+      },
+      "mapEmbed": "https://www.google.com/maps?q=Aakash%20Eye%20Hospital%20Visnagar&output=embed",
+      "hoursLabel": "Call branch for today's OPD schedule"
+    },
+    {
+      "name": "Ahmedabad",
+      "slug": "ahmedabad",
+      "isHeadquarters": false,
+      "address": "Siddhi Vinayak Arcade, 2nd Wing, 1st Floor, 200' S.P. Ring Road, Odhav Circle, Near Gujarat Vepari Maha Mandal, Odhav, Ahmedabad - 382410",
+      "email": "info@aakasheyehospital.com",
+      "phoneGroups": [
+        {
+          "label": "OPD",
+          "numbers": ["(079)-22901515", "+91-937-415-1616"]
+        },
+        {
+          "label": "Operation / LASIK",
+          "numbers": ["+91-999-880-7891"]
+        }
+      ],
+      "whatsappNumber": "919998807891",
+      "coords": {
+        "lat": 23.032,
+        "lng": 72.674
+      },
+      "mapEmbed": "https://www.google.com/maps?q=Aakash%20Eye%20Hospital%20Odhav%20Ahmedabad&output=embed",
+      "hoursLabel": "Call branch for today's OPD schedule"
+    },
+    {
+      "name": "Bharuch",
+      "slug": "bharuch",
+      "isHeadquarters": false,
+      "address": "F-101-106, 201-204, R K Casta, Near Healing Touch Hospital, Opp. Navi Vasahat, Bharuch",
+      "email": "info@aakasheyehospital.com",
+      "phoneGroups": [
+        {
+          "label": "OPD",
+          "numbers": ["(026)-42242359", "+91-749-000-4903", "+91-749-000-4904"]
+        },
+        {
+          "label": "Operation",
+          "numbers": ["(026)-42242359", "+91-749-000-4903", "+91-749-000-4904"]
+        }
+      ],
+      "whatsappNumber": "917490004903",
+      "coords": {
+        "lat": 21.705,
+        "lng": 72.995
+      },
+      "mapEmbed": "https://www.google.com/maps?q=Aakash%20Eye%20Hospital%20Bharuch&output=embed",
+      "hoursLabel": "Call branch for today's OPD schedule"
+    }
+  ],
+  "notes": [
+    "Ahmedabad OPD mobile differs between the brief (+91-937-415-1616) and legacy site (+91-937-413-1616). The brief value is used here; verify before launch.",
+    "Map coordinates are approximate and should be verified before production release.",
+    "Business hours should be confirmed by the hospital team."
+  ]
+}

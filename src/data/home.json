@@ -1,0 +1,142 @@
+{
+  "seo": {
+    "title": "Aakash Eye Hospital | Advanced Eye Care Since 1993",
+    "description": "Premium eye care across Visnagar, Ahmedabad and Bharuch with advanced cataract, LASIK, retina and glaucoma services."
+  },
+  "hero": {
+    "eyebrow": "Multi-branch eye care in Gujarat",
+    "title": "Aakash Eye Hospital",
+    "subtitle": "Advanced technology, experienced specialists and patient-first ophthalmic care across Visnagar, Ahmedabad and Bharuch.",
+    "slides": [
+      {
+        "title": "Bladeless Robotic Laser Surgery",
+        "description": "For perfect vision, highest safety, faster recovery and 100% precision.",
+        "image": "/assets/media/heroes/bladeless-robotic-laser-surgery.jpg",
+        "alt": "Bladeless robotic laser surgery visual from Aakash Eye Hospital"
+      },
+      {
+        "title": "Best Eye Care",
+        "description": "Comprehensive diagnosis and treatment for patients across North Gujarat and South Rajasthan.",
+        "image": "/assets/media/heroes/best-eye-care.jpg",
+        "alt": "Aakash Eye Hospital best eye care banner"
+      },
+      {
+        "title": "Better Vision. Better Tomorrow.",
+        "description": "Modern ophthalmology with clear communication, safety protocols and affordable care.",
+        "image": "/assets/media/heroes/better-vision.jpg",
+        "alt": "Better vision banner from Aakash Eye Hospital"
+      }
+    ],
+    "ctas": [
+      {
+        "label": "Book Appointment",
+        "href": "/appointment"
+      },
+      {
+        "label": "Explore Services",
+        "href": "/services"
+      }
+    ]
+  },
+  "stats": [
+    {
+      "label": "Years of care",
+      "value": 30,
+      "suffix": "+",
+      "description": "Established 8 August 1993"
+    },
+    {
+      "label": "Branches",
+      "value": 3,
+      "suffix": "",
+      "description": "Visnagar, Ahmedabad and Bharuch"
+    },
+    {
+      "label": "Cataract procedures",
+      "value": 100000,
+      "suffix": "+",
+      "description": "Legacy source states more than 1 lakh procedures"
+    },
+    {
+      "label": "Core specialties",
+      "value": 6,
+      "suffix": "",
+      "description": "Cataract, LASIK, retina, glaucoma, OPD and robotic laser care"
+    }
+  ],
+  "featuredServiceIds": [
+    "bladeless-robotic-laser-surgery",
+    "phaco-cataract-surgery",
+    "lasik-excimer",
+    "medical-retina"
+  ],
+  "timeline": {
+    "eyebrow": "A legacy of progress",
+    "title": "Milestones in advanced eye care",
+    "items": [
+      {
+        "year": "1993",
+        "title": "Founded at Visnagar",
+        "description": "Aakash Eye Hospital started on 8 August 1993 in a town of nearly 100,000 people, with an initial 1,500 sq ft setup."
+      },
+      {
+        "year": "1995",
+        "title": "Phaco cataract surgery begins",
+        "description": "The hospital became one of the pioneers in phaco cataract surgery in the region."
+      },
+      {
+        "year": "2009",
+        "title": "Excimer laser added",
+        "description": "Excimer laser technology was introduced for glass removal and refractive procedures."
+      },
+      {
+        "year": "2011",
+        "title": "Retina diagnostics expanded",
+        "description": "OCT, Green Laser and FFA capabilities were added for medical retina care."
+      },
+      {
+        "year": "2014",
+        "title": "Ahmedabad branch opens",
+        "description": "The Odhav, Ahmedabad branch opened in a facility of approximately 5,500 sq ft."
+      }
+    ]
+  },
+  "missionVision": {
+    "eyebrow": "Our promise",
+    "title": "Technology-led care with a lifelong patient relationship",
+    "items": [
+      {
+        "title": "Mission",
+        "icon": "Goal",
+        "description": "To excel in cutting-edge eye care technology, education and ophthalmology research while keeping care affordable."
+      },
+      {
+        "title": "Vision",
+        "icon": "Eye",
+        "description": "To provide comprehensive ophthalmic services of international standards to all sections of society."
+      },
+      {
+        "title": "Quality Promise",
+        "icon": "ShieldCheck",
+        "description": "To exceed patient expectations through careful protocols that reduce errors and enhance patient safety."
+      },
+      {
+        "title": "Old Case File Promise",
+        "icon": "FolderHeart",
+        "description": "Old-case patient files have no due date; patients are encouraged to bring the previous case file on future visits."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Ready to plan your visit?",
+    "description": "Choose a branch, tell us the service you need and our team will help you with the next step.",
+    "primary": {
+      "label": "Book Appointment",
+      "href": "/appointment"
+    },
+    "secondary": {
+      "label": "View Branches",
+      "href": "/branches"
+    }
+  }
+}

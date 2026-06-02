@@ -1,0 +1,86 @@
+{
+  "seo": {
+    "title": "Gallery | Aakash Eye Hospital",
+    "description": "Facilities and social activity images from Aakash Eye Hospital."
+  },
+  "categories": [
+    {
+      "id": "all",
+      "label": "All"
+    },
+    {
+      "id": "facilities",
+      "label": "Facilities"
+    },
+    {
+      "id": "social-activity",
+      "label": "Social Activity"
+    }
+  ],
+  "items": [
+    {
+      "id": "facility-1",
+      "category": "facilities",
+      "title": "Facility View",
+      "caption": "Aakash Eye Hospital facility image from the legacy website.",
+      "image": "/assets/media/gallery/facility-1.jpg",
+      "alt": "Aakash Eye Hospital facility view"
+    },
+    {
+      "id": "facility-2",
+      "category": "facilities",
+      "title": "Clinical Area",
+      "caption": "A clinical care area supporting ophthalmic services.",
+      "image": "/assets/media/gallery/facility-2.jpg",
+      "alt": "Clinical care area at Aakash Eye Hospital"
+    },
+    {
+      "id": "facility-3",
+      "category": "facilities",
+      "title": "Diagnostics",
+      "caption": "Modern eye care diagnostics and treatment support.",
+      "image": "/assets/media/gallery/facility-3.jpg",
+      "alt": "Diagnostics area at Aakash Eye Hospital"
+    },
+    {
+      "id": "facility-4",
+      "category": "facilities",
+      "title": "Care Environment",
+      "caption": "Patient-focused eye care environment.",
+      "image": "/assets/media/gallery/facility-4.jpg",
+      "alt": "Patient care environment at Aakash Eye Hospital"
+    },
+    {
+      "id": "facility-5",
+      "category": "facilities",
+      "title": "Advanced Facilities",
+      "caption": "Advanced ophthalmic care facility visual.",
+      "image": "/assets/media/gallery/facility-5.jpg",
+      "alt": "Advanced facility at Aakash Eye Hospital"
+    },
+    {
+      "id": "bladeless-facility",
+      "category": "facilities",
+      "title": "Bladeless Robotic Laser Surgery",
+      "caption": "Bladeless laser surgery service visual from the advanced facilities page.",
+      "image": "/assets/media/gallery/bladeless-facility.jpg",
+      "alt": "Bladeless robotic laser surgery facility visual"
+    },
+    {
+      "id": "blood-donation",
+      "category": "social-activity",
+      "title": "Blood Donation Camp",
+      "caption": "A blood donation camp organized at Aakash Eye Hospital on 08/08/2016.",
+      "image": "/assets/media/gallery/blood-donation.jpg",
+      "alt": "Blood donation camp organized by Aakash Eye Hospital"
+    },
+    {
+      "id": "tree-plantation",
+      "category": "social-activity",
+      "title": "Tree Plantation",
+      "caption": "A tree plantation activity at Visnagar where more than 100 trees were planted.",
+      "image": "/assets/media/gallery/tree-plantation.jpg",
+      "alt": "Tree plantation activity by Aakash Eye Hospital"
+    }
+  ]
+}

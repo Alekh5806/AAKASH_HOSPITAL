@@ -1,0 +1,92 @@
+{
+  "seo": {
+    "title": "Eye Specialists | Aakash Eye Hospital",
+    "description": "Meet the doctors and optometry team at Aakash Eye Hospital across Visnagar, Ahmedabad and Bharuch."
+  },
+  "items": [
+    {
+      "name": "Dr. Vishnu S. Patel",
+      "qualifications": "MBBS, MS",
+      "specialty": "Ophthalmic Surgeon",
+      "photo": "/assets/media/doctors/vishnu-patel.jpg",
+      "photoAlt": "Dr. Vishnu S. Patel",
+      "bio": "Senior ophthalmologist associated with Aakash Eye Hospital's long-standing surgical care.",
+      "branches": ["Visnagar"]
+    },
+    {
+      "name": "Dr. Sanjay B. Patel",
+      "qualifications": "MBBS, MS",
+      "specialty": "Ophthalmic Surgeon",
+      "photo": "/assets/media/doctors/sanjay-patel.jpg",
+      "photoAlt": "Dr. Sanjay B. Patel",
+      "bio": "Ophthalmic surgeon supporting surgical and clinical care pathways.",
+      "branches": ["Visnagar", "Ahmedabad"]
+    },
+    {
+      "name": "Dr. Saurabh Kapoor",
+      "qualifications": "MBBS, MS, DNB",
+      "specialty": "Ophthalmic Surgeon",
+      "photo": "/assets/media/doctors/saurabh-kapoor.jpg",
+      "photoAlt": "Dr. Saurabh Kapoor",
+      "bio": "Specialist ophthalmologist with clinical and surgical credentials.",
+      "branches": ["Ahmedabad"]
+    },
+    {
+      "name": "Dr. Asesh B. Patel",
+      "qualifications": "MBBS RPFU, DOMS",
+      "specialty": "Ophthalmology",
+      "photo": "/assets/media/doctors/asesh-patel.jpg",
+      "photoAlt": "Dr. Asesh B. Patel",
+      "bio": "Ophthalmology clinician supporting diagnosis, treatment planning and patient care.",
+      "branches": ["Visnagar"]
+    },
+    {
+      "name": "Dr. Dhaivat Vasavada",
+      "qualifications": "MS, FAECS, FAICO-VR",
+      "specialty": "Vitreoretina",
+      "photo": "/assets/media/doctors/dhaivat-vasavada.jpg",
+      "photoAlt": "Dr. Dhaivat Vasavada",
+      "bio": "Vitreoretina-focused ophthalmologist supporting advanced retina care.",
+      "branches": ["Ahmedabad"]
+    },
+    {
+      "name": "Kashyap M. Patel",
+      "qualifications": "B.Optom, DOT",
+      "specialty": "Optometry",
+      "photo": "/assets/media/doctors/kashyap-patel.jpg",
+      "photoAlt": "Kashyap M. Patel",
+      "bio": "Optometry team member supporting refraction and patient evaluation.",
+      "branches": ["Visnagar"]
+    },
+    {
+      "name": "Bhavika R. Patel",
+      "qualifications": "Diploma Optometrist",
+      "specialty": "Optometry",
+      "photo": "/assets/media/doctors/bhavika-patel.jpg",
+      "photoAlt": "Bhavika R. Patel",
+      "bio": "Optometrist supporting everyday eye examinations and refraction care.",
+      "branches": ["Visnagar"]
+    },
+    {
+      "name": "A. K. Patel",
+      "qualifications": "DOT, Sr. Optometrist",
+      "specialty": "Senior Optometry",
+      "photo": "/assets/media/doctors/ak-patel.jpg",
+      "photoAlt": "A. K. Patel",
+      "bio": "Senior optometrist supporting clinical diagnostics and patient evaluation.",
+      "branches": ["Visnagar"]
+    },
+    {
+      "name": "Dr. Mahendra M. Patel",
+      "qualifications": "Medical Officer",
+      "specialty": "Medical Officer",
+      "photo": "/assets/media/doctors/mahendra-patel.jpg",
+      "photoAlt": "Dr. Mahendra M. Patel",
+      "bio": "Medical officer supporting patient care and clinical workflows.",
+      "branches": ["Bharuch"]
+    }
+  ],
+  "notes": [
+    "Doctor bios are editorial placeholders based on public role and qualification data. Replace with approved biographies when available."
+  ]
+}

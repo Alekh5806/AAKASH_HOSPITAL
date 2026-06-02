@@ -1,0 +1,85 @@
+{
+  "header": [
+    {
+      "label": "Home",
+      "href": "/"
+    },
+    {
+      "label": "About",
+      "href": "/about"
+    },
+    {
+      "label": "Services",
+      "href": "/services"
+    },
+    {
+      "label": "Doctors",
+      "href": "/doctors"
+    },
+    {
+      "label": "Branches",
+      "href": "/branches"
+    },
+    {
+      "label": "Gallery",
+      "href": "/gallery"
+    },
+    {
+      "label": "Contact",
+      "href": "/contact"
+    }
+  ],
+  "footer": [
+    {
+      "title": "Hospital",
+      "items": [
+        {
+          "label": "About",
+          "href": "/about"
+        },
+        {
+          "label": "Doctors",
+          "href": "/doctors"
+        },
+        {
+          "label": "Gallery",
+          "href": "/gallery"
+        }
+      ]
+    },
+    {
+      "title": "Care",
+      "items": [
+        {
+          "label": "Services",
+          "href": "/services"
+        },
+        {
+          "label": "Book Appointment",
+          "href": "/appointment"
+        },
+        {
+          "label": "Branches",
+          "href": "/branches"
+        }
+      ]
+    },
+    {
+      "title": "Key Services",
+      "items": [
+        {
+          "label": "Cataract Surgery",
+          "href": "/services/phaco-cataract-surgery"
+        },
+        {
+          "label": "LASIK / Excimer",
+          "href": "/services/lasik-excimer"
+        },
+        {
+          "label": "Glaucoma Care",
+          "href": "/services/glaucoma-care"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "seo": {
+    "title": "Patient Testimonials | Aakash Eye Hospital",
+    "description": "Patient words about Aakash Eye Hospital's eye care and facilities."
+  },
+  "items": [
+    {
+      "quote": "This hospital is top most eye hospital in India. I am very satisfied and glad with eye care of my father. I give lot of thanks to Dr. Vishnu S. Patel Sir for his expertise and sweet behaviour.",
+      "name": "Bhagaram Mali",
+      "location": "Patient family",
+      "rating": 5
+    },
+    {
+      "quote": "Superb facility provided by Aakash Hospital Visnagar. We feel like international hospital services.",
+      "name": "Nivedita Sancheti",
+      "location": "Visnagar",
+      "rating": 5
+    }
+  ],
+  "notes": [
+    "Legacy testimonial spam was intentionally excluded.",
+    "Quotes were lightly edited for spelling and readability while preserving meaning."
+  ]
+}

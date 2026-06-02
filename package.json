@@ -1,0 +1,51 @@
+{
+  "name": "aakash-eye-hospital",
+  "version": "1.0.0",
+  "description": "JSON-driven premium React website for Aakash Eye Hospital.",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alekh5806/AAKASH_HOSPITAL.git"
+  },
+  "keywords": [
+    "aakash-eye-hospital",
+    "react",
+    "vite",
+    "medical"
+  ],
+  "author": "",
+  "license": "UNLICENSED",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Alekh5806/AAKASH_HOSPITAL/issues"
+  },
+  "homepage": "https://github.com/Alekh5806/AAKASH_HOSPITAL#readme",
+  "dependencies": {
+    "@hookform/resolvers": "^5.4.0",
+    "framer-motion": "^12.40.0",
+    "lucide-react": "^1.17.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-hook-form": "^7.77.0",
+    "react-router-dom": "^7.16.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@vitejs/plugin-react": "^6.0.2",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.6.0",
+    "prettier": "^3.8.3",
+    "vite": "^8.0.16"
+  }
+}
