@@ -1,10 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
+import HydrateFallback from "./components/HydrateFallback";
 import RootLayout from "./components/RootLayout";
 
 function lazyPage(loader) {
   return async () => {
     const module = await loader();
-    return { Component: module.default };
+    return { Component: module.default, HydrateFallback };
   };
 }
 

@@ -1,4 +1,6 @@
 import { motion, useReducedMotion } from "framer-motion";
+import { ArrowUpRight, CalendarDays, Stethoscope } from "lucide-react";
+import { Link } from "react-router-dom";
 import SmartImage from "../components/SmartImage";
 import { revealVariants, staggerContainer } from "../lib/motion";
 
@@ -8,10 +10,15 @@ export default function DoctorGrid({ doctors, eyebrow, title, description }) {
   return (
     <section className="section doctor-section">
       <div className="container">
-        <div className="section-heading">
-          {eyebrow ? <span className="eyebrow">{eyebrow}</span> : null}
-          <h2>{title}</h2>
-          {description ? <p>{description}</p> : null}
+        <div className="doctor-section__head">
+          <div className="section-heading">
+            {eyebrow ? <span className="eyebrow">{eyebrow}</span> : null}
+            <h2>{title}</h2>
+            {description ? <p>{description}</p> : null}
+          </div>
+          <Link className="doctor-section__all" to="/doctors">
+            View full team <ArrowUpRight size={16} aria-hidden="true" />
+          </Link>
         </div>
         <motion.div
           className="doctor-grid"
@@ -23,13 +30,23 @@ export default function DoctorGrid({ doctors, eyebrow, title, description }) {
           {doctors.map((doctor) => (
             <motion.article
               key={doctor.name}
-              className="doctor-card card-hover"
-              variants={revealVariants(shouldReduceMotion)}
-              whileHover={shouldReduceMotion ? undefined : { y: -8 }}
-            >
-              <SmartImage src={doctor.photo} alt={doctor.photoAlt} className="doctor-card__photo" />
+                className="doctor-card card-hover"
+                variants={revealVariants(shouldReduceMotion)}
+                whileHover={shouldReduceMotion ? undefined : { y: -8 }}
+              >
+              <div className="doctor-card__media">
+                <SmartImage
+                  src={doctor.photo}
+                  alt={doctor.photoAlt}
+                  className="doctor-card__photo"
+                  loading="eager"
+                />
+                <span>
+                  <Stethoscope size={15} aria-hidden="true" />
+                  {doctor.specialty}
+                </span>
+              </div>
               <div className="doctor-card__body">
-                <span>{doctor.specialty}</span>
                 <h3>{doctor.name}</h3>
                 <p className="doctor-card__qualification">{doctor.qualifications}</p>
                 <p>{doctor.bio}</p>
@@ -38,6 +55,10 @@ export default function DoctorGrid({ doctors, eyebrow, title, description }) {
                     <span key={branch}>{branch}</span>
                   ))}
                 </div>
+                <Link className="doctor-card__cta" to="/appointment">
+                  <CalendarDays size={16} aria-hidden="true" />
+                  Book visit
+                </Link>
               </div>
             </motion.article>
           ))}

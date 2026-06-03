@@ -1,13 +1,13 @@
 export function revealVariants(reducedMotion = false, distance = 24) {
   if (reducedMotion) {
     return {
-      hidden: { opacity: 0 },
+      hidden: { opacity: 1 },
       visible: { opacity: 1 },
     };
   }
 
   return {
-    hidden: { opacity: 0, y: distance },
+    hidden: { opacity: 0.96, y: Math.min(distance, 10) },
     visible: {
       opacity: 1,
       y: 0,

@@ -21,8 +21,8 @@ function NavItems({ onNavigate }) {
 export default function Header() {
   const [open, setOpen] = useState(false);
   const panelRef = useRef(null);
-  const previousPathRef = useRef(location.pathname);
   const location = useLocation();
+  const previousPathRef = useRef(location.pathname);
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {

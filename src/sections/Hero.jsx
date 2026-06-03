@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { CalendarDays, Stethoscope } from "lucide-react";
-import AnimatedCounter from "../components/AnimatedCounter";
+import { CalendarDays, ChevronRight, Sparkles, Stethoscope } from "lucide-react";
 import ButtonLink from "../components/ButtonLink";
 
-export default function Hero({ hero, stats }) {
+export default function Hero({ hero }) {
   const [active, setActive] = useState(0);
   const ref = useRef(null);
   const shouldReduceMotion = useReducedMotion();
@@ -43,6 +42,7 @@ export default function Hero({ hero, stats }) {
       </motion.div>
       <div className="hero__overlay" />
       <motion.div className="hero__gradient" style={{ y: layerY }} />
+      <div className="hero__scan" aria-hidden="true" />
       <div className="container hero__inner">
         <motion.div
           className="hero__copy"
@@ -61,41 +61,58 @@ export default function Hero({ hero, stats }) {
               {hero.ctas[1].label}
             </ButtonLink>
           </div>
+          <div className="hero__trust">
+            <span>Since 1993</span>
+            <span>3 Gujarat branches</span>
+            <span>1,00,000+ cataract procedures</span>
+          </div>
         </motion.div>
 
         <motion.aside
-          className="hero__panel"
-          initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, x: 26 }}
-          animate={{ opacity: 1, x: 0 }}
+          className="hero__showcase"
+          initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, x: 28, scale: 0.98 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
           transition={{ duration: shouldReduceMotion ? 0 : 0.75, delay: 0.12 }}
-          aria-label="Featured service"
+          aria-label="Featured care"
         >
-          <span>Featured Care</span>
-          <h2>{currentSlide.title}</h2>
-          <p>{currentSlide.description}</p>
-          <div className="hero__dots" aria-label="Hero slides">
-            {hero.slides.map((slide, index) => (
-              <button
-                key={slide.title}
-                type="button"
-                aria-label={`Show ${slide.title}`}
-                aria-pressed={active === index}
-                onClick={() => setActive(index)}
-              />
-            ))}
+          <div className="hero__showcase-media">
+            <motion.img
+              key={currentSlide.image}
+              src={currentSlide.image}
+              alt={currentSlide.alt}
+              loading="eager"
+              decoding="async"
+              initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, scale: 1.05 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.5 }}
+            />
+            <span>
+              <Sparkles size={16} aria-hidden="true" />
+              Featured Care
+            </span>
+          </div>
+          <div className="hero__showcase-copy">
+            <h2>{currentSlide.title}</h2>
+            <p>{currentSlide.description}</p>
+            <div className="hero__showcase-bottom">
+              <div className="hero__dots" aria-label="Hero slides">
+                {hero.slides.map((slide, index) => (
+                  <button
+                    key={slide.title}
+                    type="button"
+                    aria-label={`Show ${slide.title}`}
+                    aria-pressed={active === index}
+                    onClick={() => setActive(index)}
+                  />
+                ))}
+              </div>
+              <ButtonLink to="/services" variant="secondary" icon={ChevronRight}>
+                View Care
+              </ButtonLink>
+            </div>
           </div>
         </motion.aside>
 
-        <div className="hero__stats" aria-label="Hospital highlights">
-          {stats.map((stat) => (
-            <div className="hero-stat" key={stat.label}>
-              <strong>
-                <AnimatedCounter value={stat.value} suffix={stat.suffix} />
-              </strong>
-              <span>{stat.label}</span>
-            </div>
-          ))}
-        </div>
       </div>
     </section>
   );

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight, Quote, Star } from "lucide-react";
 
 export default function TestimonialCarousel({ testimonials }) {
   const [active, setActive] = useState(0);
@@ -25,9 +25,16 @@ export default function TestimonialCarousel({ testimonials }) {
   return (
     <section className="section section-band testimonial-section">
       <div className="container testimonial-section__inner">
-        <div className="section-heading">
-          <span className="eyebrow">Patient words</span>
-          <h2>What people say about us</h2>
+        <div className="testimonial-section__copy">
+          <div className="section-heading">
+            <span className="eyebrow">Patient words</span>
+            <h2>Trusted by families who choose clearer vision</h2>
+            <p>Real patient words retained from the verified legacy website content.</p>
+          </div>
+          <div className="testimonial-metrics" aria-label="Testimonial summary">
+            <span>5 star words</span>
+            <span>{testimonials.length} verified stories</span>
+          </div>
         </div>
         <div
           className="testimonial-carousel"
@@ -47,6 +54,9 @@ export default function TestimonialCarousel({ testimonials }) {
             exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, x: -28 }}
             transition={{ duration: shouldReduceMotion ? 0 : 0.35 }}
           >
+            <div className="testimonial-card__quote-icon">
+              <Quote size={24} aria-hidden="true" />
+            </div>
             <div className="testimonial-card__stars" aria-label={`${current.rating} out of 5 stars`}>
               {stars.map((star) => (
                 <Star key={star} size={18} fill="currentColor" aria-hidden="true" />

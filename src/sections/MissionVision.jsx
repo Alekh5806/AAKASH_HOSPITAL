@@ -19,7 +19,7 @@ export default function MissionVision({ data }) {
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
         >
-          {data.items.map((item) => {
+          {data.items.map((item, index) => {
             const Icon = getIcon(item.icon);
 
             return (
@@ -29,7 +29,10 @@ export default function MissionVision({ data }) {
                 variants={revealVariants(shouldReduceMotion)}
                 whileHover={shouldReduceMotion ? undefined : { y: -7 }}
               >
-                <Icon size={26} aria-hidden="true" />
+                <div className="mission-card__top">
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <Icon size={24} aria-hidden="true" />
+                </div>
                 <h3>{item.title}</h3>
                 <p>{item.description}</p>
               </motion.article>

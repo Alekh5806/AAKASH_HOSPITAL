@@ -9,22 +9,22 @@
     "subtitle": "Advanced technology, experienced specialists and patient-first ophthalmic care across Visnagar, Ahmedabad and Bharuch.",
     "slides": [
       {
-        "title": "Bladeless Robotic Laser Surgery",
-        "description": "For perfect vision, highest safety, faster recovery and 100% precision.",
-        "image": "/assets/media/heroes/bladeless-robotic-laser-surgery.jpg",
-        "alt": "Bladeless robotic laser surgery visual from Aakash Eye Hospital"
+        "title": "Complete Eye Examination",
+        "description": "A branch-aware route into OPD, cataract, retina, glaucoma and laser care.",
+        "image": "/assets/media/stock/eye-exam-pexels-ai25studio-6749757.jpg",
+        "alt": "Ophthalmology eye examination in a clinical setting"
       },
       {
-        "title": "Best Eye Care",
-        "description": "Comprehensive diagnosis and treatment for patients across North Gujarat and South Rajasthan.",
-        "image": "/assets/media/heroes/best-eye-care.jpg",
-        "alt": "Aakash Eye Hospital best eye care banner"
+        "title": "Bladeless Robotic Laser Surgery",
+        "description": "For perfect vision, highest safety, faster recovery and 100% precision.",
+        "image": "/assets/media/gallery/bladeless-facility.jpg",
+        "alt": "Bladeless robotic laser surgery facility visual from Aakash Eye Hospital"
       },
       {
         "title": "Better Vision. Better Tomorrow.",
         "description": "Modern ophthalmology with clear communication, safety protocols and affordable care.",
-        "image": "/assets/media/heroes/better-vision.jpg",
-        "alt": "Better vision banner from Aakash Eye Hospital"
+        "image": "/assets/media/stock/closeup-eye-pexels-andrea-bova-2953811.jpg",
+        "alt": "Close-up eye visual representing clear vision"
       }
     ],
     "ctas": [
@@ -41,7 +41,7 @@
   "stats": [
     {
       "label": "Years of care",
-      "value": 30,
+      "value": 32,
       "suffix": "+",
       "description": "Established 8 August 1993"
     },

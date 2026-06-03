@@ -11,7 +11,8 @@ export default function SmartImage({
       src={src}
       alt={alt}
       loading={loading}
-      decoding="async"
+      decoding={loading === "eager" ? "sync" : "async"}
+      fetchPriority={loading === "eager" ? "high" : "auto"}
       sizes={sizes}
     />
   );
