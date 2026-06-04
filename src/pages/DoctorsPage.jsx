@@ -10,8 +10,15 @@ export default function DoctorsPage() {
       <SEO meta={doctors.seo} />
       <PageHeader
         eyebrow="Doctors"
-        title="Eye specialists and optometry team"
+        title={
+          <>
+            <span className="page-header__title-line">Eye specialists and</span>
+            <span className="page-header__title-line">optometry team</span>
+          </>
+        }
         description="A multidisciplinary care team supporting diagnosis, surgery, retina care, refraction and follow-up."
+        image="/assets/media/page-headers/ophthalmology-exam.jpg"
+        variant="doctors"
       />
       <DoctorGrid doctors={doctors.items} title="Clinical team" />
       <CTASection cta={home.cta} />

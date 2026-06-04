@@ -10,13 +10,25 @@ export default function ServicesPage() {
       <SEO meta={services.seo} />
       <PageHeader
         eyebrow="Services"
-        title="Ophthalmic services designed around clarity"
-        description="From first OPD visit to advanced surgery, each service is structured to help patients understand the next step."
+        title={
+          <>
+            <span className="page-header__title-line">Ophthalmic services</span>
+            <span className="page-header__title-line">designed around clarity</span>
+          </>
+        }
+        description="Clear OPD and surgery guidance."
+        image="/assets/media/page-headers/eye-exam-room.jpg"
+        variant="services"
       />
       <ServiceGrid
         services={services.items}
         eyebrow="All services"
-        title="Care for every stage of eye health"
+        title={
+          <>
+            <span className="section-heading__title-line">Care for every stage of</span>
+            <span className="section-heading__title-line">eye health</span>
+          </>
+        }
       />
       <CTASection cta={home.cta} />
     </>

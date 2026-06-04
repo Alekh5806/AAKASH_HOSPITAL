@@ -14,6 +14,8 @@ export default function AboutPage() {
         eyebrow="About us"
         title="Built on technology, trust and continuity of care"
         description="Aakash Eye Hospital started in Visnagar in 1993 and has grown into a multi-branch ophthalmic care network across Gujarat."
+        image="/assets/media/page-headers/clinic-reception.jpg"
+        variant="about"
       />
       <Timeline timeline={home.timeline} />
       <MissionVision data={home.missionVision} />

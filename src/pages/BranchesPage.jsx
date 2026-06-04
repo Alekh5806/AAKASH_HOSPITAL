@@ -14,6 +14,8 @@ export default function BranchesPage() {
         eyebrow="Branches"
         title="Visit Aakash Eye Hospital"
         description="Find branch contacts for OPD, operation and LASIK appointments."
+        image="/assets/media/page-headers/hospital-corridor.jpg"
+        variant="branches"
       />
       <BranchCards branches={branches.items} showMaps />
       <CTASection cta={home.cta} />
