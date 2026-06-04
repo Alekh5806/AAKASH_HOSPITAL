@@ -1,18 +1,18 @@
 {
   "colors": {
-    "brandBlue": "#1B3A8B",
-    "brandBlueStrong": "#112A6A",
-    "brandBlueSoft": "#E7EEF9",
-    "accentMagenta": "#E5007D",
-    "accentMagentaSoft": "#FFE5F2",
-    "ink": "#172026",
-    "slate": "#5F6F73",
-    "muted": "#D8E1E5",
+    "brandBlue": "#1556A6",
+    "brandBlueStrong": "#073B78",
+    "brandBlueSoft": "#EAF3FF",
+    "accentMagenta": "#D91C7A",
+    "accentMagentaSoft": "#FDEAF4",
+    "ink": "#142033",
+    "slate": "#5C6878",
+    "muted": "#DDE7F0",
     "surface": "#FFFFFF",
-    "surfaceAlt": "#F4F8FB",
-    "clinical": "#EEF7FA",
-    "teal": "#0A8F95",
-    "gold": "#F4B740",
+    "surfaceAlt": "#F7FAFC",
+    "clinical": "#F1F7FB",
+    "teal": "#168A9A",
+    "gold": "#C99A2E",
     "success": "#157F5B",
     "danger": "#B42318"
   },
@@ -24,12 +24,12 @@
     "xs": "6px",
     "sm": "8px",
     "md": "12px",
-    "lg": "18px",
+    "lg": "16px",
     "pill": "999px"
   },
   "shadows": {
-    "sm": "0 8px 24px rgba(17, 42, 106, 0.08)",
-    "md": "0 18px 48px rgba(17, 42, 106, 0.12)",
-    "lg": "0 32px 80px rgba(17, 42, 106, 0.18)"
+    "sm": "0 8px 22px rgba(7, 59, 120, 0.08)",
+    "md": "0 18px 42px rgba(7, 59, 120, 0.12)",
+    "lg": "0 28px 68px rgba(7, 59, 120, 0.16)"
   }
 }

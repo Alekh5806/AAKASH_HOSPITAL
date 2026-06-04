@@ -1723,6 +1723,11 @@ p {
   color: white;
 }
 
+.icon-button svg,
+.icon-button svg * {
+  pointer-events: none;
+}
+
 .branch-map-pin[aria-pressed="true"]::before {
   background: white;
 }
@@ -2905,6 +2910,7 @@ p {
   font-size: 0.9rem;
   font-style: normal;
   -webkit-box-orient: vertical;
+  line-clamp: 3;
   -webkit-line-clamp: 3;
 }
 
@@ -3654,5 +3660,493 @@ p {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+  }
+}
+
+/* Professional hospital theme and responsive polish */
+:root {
+  --color-brand-blue: #1556a6;
+  --color-brand-blue-strong: #073b78;
+  --color-brand-blue-soft: #eaf3ff;
+  --color-accent-magenta: #d91c7a;
+  --color-accent-magenta-soft: #fdeaf4;
+  --color-ink: #142033;
+  --color-slate: #5c6878;
+  --color-muted: #dde7f0;
+  --color-surface-alt: #f7fafc;
+  --color-clinical: #f1f7fb;
+  --color-teal: #168a9a;
+  --color-gold: #c99a2e;
+  --radius-lg: 16px;
+  --shadow-sm: 0 8px 22px rgba(7, 59, 120, 0.08);
+  --shadow-md: 0 18px 42px rgba(7, 59, 120, 0.12);
+  --shadow-lg: 0 28px 68px rgba(7, 59, 120, 0.16);
+}
+
+body {
+  background:
+    linear-gradient(180deg, rgba(247, 250, 252, 0.96), rgba(255, 255, 255, 0.98) 340px),
+    var(--color-surface);
+  color: var(--color-ink);
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--color-brand-blue-strong);
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+p {
+  color: var(--color-slate);
+}
+
+.container {
+  width: min(1180px, calc(100% - 32px));
+}
+
+.section {
+  padding: clamp(56px, 7vw, 84px) 0;
+}
+
+.section-band,
+.service-grid-section--featured,
+.doctor-section,
+.branch-section,
+.testimonial-section,
+.mission-section,
+.timeline-section {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 250, 252, 0.94)),
+    var(--color-surface-alt);
+}
+
+.eyebrow {
+  color: var(--color-accent-magenta);
+  letter-spacing: 0.07em;
+}
+
+.button-link {
+  border-radius: 10px;
+  white-space: normal;
+}
+
+.button-link--primary,
+.quick-actions a:first-child,
+.branch-showcase__actions a:first-child {
+  background: linear-gradient(135deg, var(--color-brand-blue-strong), var(--color-brand-blue));
+  box-shadow: 0 14px 30px rgba(7, 59, 120, 0.18);
+}
+
+.button-link--secondary {
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--color-brand-blue-strong);
+}
+
+.site-header {
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom: 1px solid rgba(7, 59, 120, 0.08);
+  box-shadow: 0 8px 26px rgba(7, 59, 120, 0.06);
+  backdrop-filter: none;
+}
+
+.site-header__top {
+  background: var(--color-brand-blue-strong);
+}
+
+.site-header__inner {
+  min-height: 74px;
+}
+
+.brand-mark img {
+  width: clamp(146px, 15vw, 176px);
+}
+
+.nav-link {
+  color: var(--color-ink);
+}
+
+.nav-link:hover,
+.nav-link--active {
+  background: var(--color-brand-blue-soft);
+  color: var(--color-brand-blue-strong);
+}
+
+.menu-button {
+  position: relative;
+  z-index: 2;
+  touch-action: manipulation;
+}
+
+.hero {
+  min-height: min(780px, calc(100svh - 74px));
+  background: var(--color-brand-blue-strong);
+}
+
+.hero::after,
+.hero__scan,
+.hero__showcase::before,
+.cta-panel::after {
+  display: none;
+}
+
+.hero__media img {
+  height: 100%;
+  filter: saturate(0.96) contrast(1.02);
+  object-position: 62% center;
+}
+
+.hero__overlay {
+  background:
+    linear-gradient(90deg, rgba(5, 29, 64, 0.94), rgba(5, 29, 64, 0.78) 48%, rgba(5, 29, 64, 0.36)),
+    linear-gradient(0deg, rgba(5, 29, 64, 0.36), rgba(5, 29, 64, 0.08));
+}
+
+.hero__gradient {
+  opacity: 0.34;
+  background: linear-gradient(120deg, rgba(21, 86, 166, 0.48), rgba(217, 28, 122, 0.2));
+  animation: none;
+}
+
+.hero__inner {
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 430px);
+  gap: clamp(28px, 5vw, 56px);
+  padding: clamp(64px, 8vw, 96px) 0 clamp(54px, 6vw, 72px);
+}
+
+.hero__copy {
+  max-width: 720px;
+}
+
+.hero h1 {
+  max-width: 720px;
+  font-size: clamp(3.05rem, 5.3vw, 4.9rem);
+  line-height: 0.98;
+}
+
+.hero__copy p {
+  max-width: 660px;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: clamp(1rem, 1.25vw, 1.14rem);
+}
+
+.hero__trust span {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.hero__showcase {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 24px 62px rgba(0, 0, 0, 0.2);
+}
+
+.hero__showcase-media {
+  height: clamp(230px, 28vw, 310px);
+}
+
+.hero__showcase-media::after {
+  background: linear-gradient(180deg, transparent 38%, rgba(5, 29, 64, 0.78));
+}
+
+.hero__showcase-media > span,
+.testimonial-metrics span,
+.service-grid-section__all,
+.doctor-section__all,
+.branch-card__details,
+.doctor-card__qualification,
+.doctor-card__branches span {
+  border-radius: 10px;
+}
+
+.hero__showcase-copy h2 {
+  color: white;
+  font-size: clamp(1.35rem, 2vw, 1.75rem);
+}
+
+.hero__showcase-copy p {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.stats-band__panel,
+.cta-panel {
+  background: linear-gradient(135deg, var(--color-brand-blue-strong), var(--color-brand-blue));
+}
+
+.stats-band__panel {
+  border-radius: 16px;
+}
+
+.stat-card,
+.service-card,
+.doctor-card,
+.mission-card,
+.branch-card,
+.gallery-card,
+.testimonial-card,
+.appointment-form,
+.appointment-aside,
+.faq-item,
+.page-intro-card,
+.service-detail__panel {
+  border-color: rgba(7, 59, 120, 0.1);
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: var(--shadow-sm);
+}
+
+.stats-band .stat-card strong {
+  color: var(--color-brand-blue-strong);
+}
+
+.stats-band .stat-card h3 {
+  color: var(--color-ink);
+}
+
+.stats-band .stat-card p {
+  color: var(--color-slate);
+}
+
+.service-card,
+.doctor-card,
+.branch-card {
+  background: #ffffff;
+}
+
+.service-card:hover,
+.doctor-card:hover,
+.mission-card:hover,
+.branch-card:hover,
+.gallery-card:hover {
+  border-color: rgba(21, 86, 166, 0.22);
+  box-shadow: var(--shadow-md);
+}
+
+.service-card__icon,
+.page-intro-card__icon,
+.care-results__icon,
+.stat-card__icon {
+  background: var(--color-brand-blue-soft);
+  color: var(--color-brand-blue-strong);
+}
+
+.service-grid,
+.doctor-grid,
+.gallery-grid,
+.branch-grid {
+  gap: clamp(14px, 2vw, 20px);
+}
+
+.service-grid--featured {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+}
+
+.doctor-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.testimonial-card::before,
+.mission-card::before,
+.mission-section::after {
+  opacity: 0.35;
+}
+
+.quick-actions {
+  display: none;
+}
+
+.care-results em {
+  line-clamp: 3;
+}
+
+@media (max-width: 1180px) {
+  .doctor-grid,
+  .branch-grid--maps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .service-grid--featured {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1040px) {
+  .hero {
+    min-height: auto;
+  }
+
+  .hero__inner {
+    grid-template-columns: 1fr;
+    padding: 64px 0;
+  }
+
+  .hero__showcase {
+    max-width: 680px;
+  }
+
+  .service-grid,
+  .doctor-grid,
+  .gallery-grid,
+  .branch-grid,
+  .stats-band__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .service-grid--featured .service-card:first-child,
+  .service-grid--featured .service-card:first-child a,
+  .service-grid--featured .service-card:not(:first-child) a {
+    grid-row: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .service-grid--featured .service-card:first-child .service-card__image,
+  .service-grid--featured .service-card:not(:first-child) .service-card__image {
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 16 / 10;
+  }
+}
+
+@media (max-width: 720px) {
+  .container {
+    width: min(100% - 24px, 1180px);
+  }
+
+  .section {
+    padding: 54px 0;
+  }
+
+  main {
+    padding-bottom: 86px;
+  }
+
+  .site-header__inner {
+    min-height: 68px;
+  }
+
+  .site-header__top-inner {
+    min-height: 34px;
+  }
+
+  .brand-mark img {
+    width: 148px;
+  }
+
+  .hero__media img {
+    object-position: 68% center;
+  }
+
+  .hero__overlay {
+    background: linear-gradient(90deg, rgba(5, 29, 64, 0.94), rgba(5, 29, 64, 0.76));
+  }
+
+  .hero__inner {
+    padding: 46px 0 42px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.4rem, 12vw, 3.15rem);
+  }
+
+  .hero__ctas,
+  .hero__trust,
+  .appointment-form__actions,
+  .cta-panel__actions,
+  .care-finder__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .hero__ctas .button-link,
+  .appointment-form__actions .button-link,
+  .cta-panel__actions .button-link,
+  .care-finder__actions .button-link {
+    width: 100%;
+  }
+
+  .service-grid,
+  .service-grid--featured,
+  .doctor-grid,
+  .gallery-grid,
+  .branch-grid,
+  .stats-band__grid,
+  .mission-grid,
+  .field-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-band__panel,
+  .cta-panel,
+  .testimonial-card,
+  .appointment-form,
+  .appointment-aside {
+    padding: 22px;
+  }
+
+  .quick-actions {
+    position: fixed;
+    right: 50%;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    z-index: 60;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+    width: min(420px, calc(100% - 24px));
+    border: 1px solid rgba(7, 59, 120, 0.12);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 16px 40px rgba(7, 59, 120, 0.18);
+    padding: 6px;
+    transform: translateX(50%);
+    backdrop-filter: blur(18px);
+  }
+
+  .quick-actions a {
+    min-width: 0;
+    min-height: 46px;
+    border-radius: 10px;
+    color: var(--color-brand-blue-strong);
+    font-size: 0.72rem;
+    line-height: 1.1;
+  }
+
+  .quick-actions a:first-child {
+    color: white;
+  }
+}
+
+@media (max-width: 420px) {
+  .container {
+    width: min(100% - 20px, 1180px);
+  }
+
+  .site-header__top {
+    font-size: 0.78rem;
+  }
+
+  .brand-mark img {
+    width: 138px;
+  }
+
+  .hero h1 {
+    font-size: 2.32rem;
+  }
+
+  .hero__copy p,
+  p {
+    font-size: 0.96rem;
+  }
+
+  .button-link {
+    min-height: 46px;
+    padding: 10px 14px;
+  }
+
+  .quick-actions {
+    width: calc(100% - 18px);
   }
 }
