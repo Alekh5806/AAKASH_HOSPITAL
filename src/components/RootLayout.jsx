@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
+import AppPreloader from "./AppPreloader";
 import CookieConsent from "./CookieConsent";
 import Footer from "./Footer";
 import Header from "./Header";
@@ -33,6 +34,7 @@ export default function RootLayout() {
   return (
     <>
       <ThemeTokens />
+      <AppPreloader />
       <RouteScrollManager />
       <a className="skip-link" href="#main-content">
         Skip to content
