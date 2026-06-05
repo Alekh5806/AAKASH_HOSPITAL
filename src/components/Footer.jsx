@@ -1,6 +1,8 @@
-import { ArrowUpRight, CalendarDays, Mail, MapPin, MessageCircle, Navigation, Phone } from "lucide-react";
+import { useState } from "react";
+import { CalendarDays, Clock, Mail, MapPin, MessageCircle, Navigation, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
-import { branches, navigation, site } from "../lib/data";
+import LazyMapFrame from "./LazyMapFrame";
+import { branches, navigation, site } from "../lib/coreData";
 
 function cleanTel(number) {
   return number.startsWith("+") ? number.replace(/[^\d+]/g, "") : number.replace(/\D/g, "");
@@ -29,108 +31,143 @@ function buildWhatsAppLink(branch) {
 export default function Footer() {
   const primaryBranch = branches.items.find((branch) => branch.isHeadquarters) ?? branches.items[0];
   const primaryPhone = getPrimaryPhone(primaryBranch);
+  const [selectedMapBranch, setSelectedMapBranch] = useState(primaryBranch);
+  const footerLinks = [
+    { label: "Home", href: "/" },
+    ...navigation.header.filter((item) => item.href !== "/"),
+    { label: "Book Appointment", href: "/appointment" },
+  ];
+
+  function openCookiePreferences() {
+    window.dispatchEvent(new Event("aakash:open-cookie-preferences"));
+  }
 
   return (
     <footer className="site-footer" id="site-footer">
-      <div className="container site-footer__visit">
-        <div>
-          <span>Visit Aakash Eye Hospital</span>
-          <h2>Three Gujarat branches, one clear route to care.</h2>
-          <p>Choose the nearest branch for OPD, cataract, retina, glaucoma and laser care guidance.</p>
-        </div>
-        <div className="site-footer__visit-actions">
-          <Link to="/appointment">
-            <CalendarDays size={18} aria-hidden="true" />
-            Book appointment
-          </Link>
-          <Link to="/branches">
-            View branches
-            <ArrowUpRight size={17} aria-hidden="true" />
-          </Link>
-        </div>
-      </div>
-
-      <div className="container site-footer__branches" aria-label="Branch contact details">
-        {branches.items.map((branch) => {
-          const phone = getPrimaryPhone(branch);
-
-          return (
-            <article className="footer-branch" key={branch.slug}>
-              <div className="footer-branch__head">
-                <span>{branch.isHeadquarters ? "Headquarters" : "Branch"}</span>
-                <h3>{branch.name}</h3>
-              </div>
-              <p>
-                <MapPin size={18} aria-hidden="true" />
-                <span>{branch.address}</span>
-              </p>
-              <div className="footer-branch__actions">
-                <a href={`tel:${cleanTel(phone)}`}>
-                  <Phone size={16} aria-hidden="true" />
-                  {phone}
-                </a>
-                <a href={buildMapLink(branch)} target="_blank" rel="noreferrer">
-                  <Navigation size={16} aria-hidden="true" />
-                  Directions
-                </a>
-                <a href={buildWhatsAppLink(branch)} target="_blank" rel="noreferrer">
-                  <MessageCircle size={16} aria-hidden="true" />
-                  WhatsApp
-                </a>
-              </div>
-            </article>
-          );
-        })}
-      </div>
-
       <div className="container site-footer__grid">
-        <div className="site-footer__brand">
-          <img src={site.brand.logo} alt={site.brand.logoAlt} />
-          <p>{site.footer.summary}</p>
-          <a href={`mailto:${primaryBranch.email}`}>
-            <Mail size={17} aria-hidden="true" />
-            {primaryBranch.email}
-          </a>
-        </div>
-        {navigation.footer.map((group) => (
-          <div className="site-footer__group" key={group.title}>
-            <h2>{group.title}</h2>
-            <ul>
-              {group.items.map((item) => (
-                <li key={item.href}>
-                  <Link to={item.href}>{item.label}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-        <div className="site-footer__group site-footer__group--contact">
-          <h2>Quick Contact</h2>
+        <section
+          className="site-footer__group site-footer__group--contact"
+          aria-labelledby="footer-contact"
+        >
+          <img className="site-footer__logo" src={site.brand.logo} alt={site.brand.logoAlt} />
+          <h2 id="footer-contact">Contact Us</h2>
           <ul className="footer-contacts">
             <li>
               <Phone size={17} aria-hidden="true" />
               <a href={`tel:${cleanTel(primaryPhone)}`}>{primaryPhone}</a>
             </li>
             <li>
-              <MessageCircle size={17} aria-hidden="true" />
-              <a href={buildWhatsAppLink(primaryBranch)} target="_blank" rel="noreferrer">
-                WhatsApp Visnagar
-              </a>
+              <Mail size={17} aria-hidden="true" />
+              <a href={`mailto:${primaryBranch.email}`}>{primaryBranch.email}</a>
             </li>
             <li>
-              <Navigation size={17} aria-hidden="true" />
-              <a href={buildMapLink(primaryBranch)} target="_blank" rel="noreferrer">
-                Open headquarters map
-              </a>
+              <Clock size={17} aria-hidden="true" />
+              <span>{site.businessHours[0]?.value ?? "Call branch for OPD schedule"}</span>
             </li>
           </ul>
-        </div>
+          <div className="site-footer__actions">
+            <Link to="/appointment">
+              <CalendarDays size={17} aria-hidden="true" />
+              Book Appointment
+            </Link>
+            <a href={buildWhatsAppLink(primaryBranch)} target="_blank" rel="noreferrer">
+              <MessageCircle size={17} aria-hidden="true" />
+              WhatsApp
+            </a>
+          </div>
+        </section>
+
+        <section
+          className="site-footer__group site-footer__group--addresses"
+          aria-labelledby="footer-address"
+        >
+          <h2 id="footer-address">Branch Addresses</h2>
+          <div className="footer-branch-list" aria-label="Aakash Eye Hospital branch addresses">
+            {branches.items.map((branch) => {
+              const phone = getPrimaryPhone(branch);
+              const isSelected = selectedMapBranch.slug === branch.slug;
+
+              return (
+                <article
+                  className={`footer-address-card ${isSelected ? "footer-address-card--active" : ""}`}
+                  key={branch.slug}
+                >
+                  <div className="footer-address-card__head">
+                    <strong>{branch.name}</strong>
+                    <span>{branch.isHeadquarters ? "Head Office" : "Branch"}</span>
+                  </div>
+                  <p>
+                    <MapPin size={17} aria-hidden="true" />
+                    <span>{branch.address}</span>
+                  </p>
+                  <div className="footer-address-card__actions">
+                    <a href={`tel:${cleanTel(phone)}`}>
+                      <Phone size={15} aria-hidden="true" />
+                      Call
+                    </a>
+                    <a href={buildMapLink(branch)} target="_blank" rel="noreferrer">
+                      <Navigation size={15} aria-hidden="true" />
+                      Directions
+                    </a>
+                    <button
+                      type="button"
+                      aria-pressed={isSelected}
+                      onClick={() => setSelectedMapBranch(branch)}
+                    >
+                      Show Map
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="site-footer__group" aria-labelledby="footer-links">
+          <h2 id="footer-links">Links</h2>
+          <nav aria-label="Footer navigation">
+            <ul>
+              {footerLinks.map((item) => (
+                <li key={item.href}>
+                  <Link to={item.href}>{item.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </section>
+
+        <section
+          className="site-footer__group site-footer__group--map"
+          aria-labelledby="footer-map"
+        >
+          <h2 id="footer-map">Map Location</h2>
+          <p className="site-footer__map-branch">{selectedMapBranch.name} Branch</p>
+          <LazyMapFrame
+            title={`Map to Aakash Eye Hospital ${selectedMapBranch.name}`}
+            src={selectedMapBranch.mapEmbed}
+          />
+          <a
+            className="site-footer__map-link"
+            href={buildMapLink(selectedMapBranch)}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Navigation size={16} aria-hidden="true" />
+            Open in Maps
+          </a>
+        </section>
       </div>
+
       <div className="container site-footer__bottom">
         <p>
           &copy; {new Date().getFullYear()} {site.footer.copyright}
         </p>
-        <p>Established 1993 · Visnagar, Ahmedabad and Bharuch</p>
+        <a href="#main-content" aria-label="Back to top">
+          Back to top
+        </a>
+        <button type="button" onClick={openCookiePreferences}>
+          Privacy & Cookie Preferences
+        </button>
       </div>
     </footer>
   );

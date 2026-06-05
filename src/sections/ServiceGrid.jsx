@@ -5,7 +5,13 @@ import SmartImage from "../components/SmartImage";
 import { getIcon } from "../lib/icons";
 import { revealVariants, staggerContainer } from "../lib/motion";
 
-export default function ServiceGrid({ services, eyebrow, title, description, variant = "default" }) {
+export default function ServiceGrid({
+  services,
+  eyebrow,
+  title,
+  description,
+  variant = "default",
+}) {
   const shouldReduceMotion = useReducedMotion();
   const isFeatured = variant === "featured";
 
@@ -31,30 +37,49 @@ export default function ServiceGrid({ services, eyebrow, title, description, var
           whileInView="visible"
           viewport={{ once: true, amount: 0.16 }}
         >
-          {services.map((service) => {
+          {services.map((service, index) => {
             const Icon = getIcon(service.icon);
+            const serviceSignals = service.featureBullets?.slice(0, 2) ?? [];
 
             return (
               <motion.article
                 key={service.id}
-                className={`service-card card-hover ${isFeatured ? "service-card--pathway" : ""}`}
+                className={`service-card card-hover ${isFeatured ? "service-card--pathway" : ""} ${
+                  isFeatured && index === 0 ? "service-card--hero" : ""
+                }`}
                 variants={revealVariants(shouldReduceMotion)}
-                whileHover={shouldReduceMotion ? undefined : { y: -8, scale: 1.01 }}
+                whileHover={shouldReduceMotion ? undefined : { y: -4 }}
               >
                 <Link to={`/services/${service.slug}`} aria-label={`Read about ${service.title}`}>
-                  <SmartImage
-                    src={service.image}
-                    alt={service.imageAlt}
-                    className="service-card__image"
-                    loading="eager"
-                  />
+                  <div className="service-card__media">
+                    <SmartImage
+                      src={service.image}
+                      alt={service.imageAlt}
+                      className="service-card__image"
+                      loading="eager"
+                    />
+                    {isFeatured ? <span className="service-card__badge">Priority care</span> : null}
+                  </div>
                   <div className="service-card__body">
-                    <div className="service-card__icon">
-                      <Icon size={24} aria-hidden="true" />
+                    <div className="service-card__top">
+                      <div className="service-card__icon">
+                        <Icon size={24} aria-hidden="true" />
+                      </div>
+                      {isFeatured ? <span className="service-card__type">Service</span> : null}
                     </div>
                     <h3>{service.title}</h3>
                     <p>{service.shortDescription}</p>
-                    <span className="text-link">
+                    {isFeatured && serviceSignals.length ? (
+                      <ul
+                        className="service-card__signals"
+                        aria-label={`${service.title} highlights`}
+                      >
+                        {serviceSignals.map((signal) => (
+                          <li key={signal}>{signal}</li>
+                        ))}
+                      </ul>
+                    ) : null}
+                    <span className="service-card__cta">
                       View service <ArrowUpRight size={16} aria-hidden="true" />
                     </span>
                   </div>

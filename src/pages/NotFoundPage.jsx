@@ -2,7 +2,7 @@ import { Home } from "lucide-react";
 import ButtonLink from "../components/ButtonLink";
 import PageHeader from "../components/PageHeader";
 import SEO from "../components/SEO";
-import { site } from "../lib/data";
+import { site } from "../lib/coreData";
 
 export default function NotFoundPage() {
   return (

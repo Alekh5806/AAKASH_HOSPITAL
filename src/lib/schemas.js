@@ -195,6 +195,8 @@ export const testimonialsSchema = z
         name: z.string(),
         location: z.string(),
         rating: z.number().min(1).max(5),
+        theme: z.string().optional(),
+        sourceLabel: z.string().optional(),
       }),
     ),
   })
@@ -226,11 +228,7 @@ export const appointmentSchema = z.object({
     .string()
     .min(7, "Please enter a phone number.")
     .regex(/^[0-9+\-()\s]+$/, "Use a valid phone number."),
-  email: z
-    .string()
-    .email("Use a valid email address.")
-    .or(z.literal(""))
-    .optional(),
+  email: z.string().email("Use a valid email address.").or(z.literal("")).optional(),
   branch: z.string().min(1, "Choose a branch."),
   service: z.string().min(1, "Choose a service or department."),
   preferredDate: z.string().min(1, "Choose a preferred date."),

@@ -2,9 +2,11 @@ import { useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarDays, MessageCircle, Send } from "lucide-react";
 import { useForm, useWatch } from "react-hook-form";
+import { BreadcrumbJsonLd } from "../components/JsonLd";
 import PageHeader from "../components/PageHeader";
 import SEO from "../components/SEO";
-import { branches, services, site } from "../lib/data";
+import { branches, site } from "../lib/coreData";
+import { services } from "../lib/servicesData";
 import { appointmentSchema } from "../lib/schemas";
 import { buildWhatsAppLink, submitAppointment } from "../lib/submitAppointment";
 
@@ -25,7 +27,7 @@ export default function AppointmentPage() {
       phone: "",
       email: "",
       branch: defaultBranch.slug,
-      service: services.items[0]?.title ?? "",
+      service: "",
       preferredDate: "",
       message: "",
       botcheck: "",
@@ -58,7 +60,7 @@ export default function AppointmentPage() {
         phone: "",
         email: "",
         branch: selectedBranch.slug,
-        service: services.items[0]?.title ?? "",
+        service: "",
         preferredDate: "",
         message: "",
         botcheck: "",
@@ -74,33 +76,68 @@ export default function AppointmentPage() {
   return (
     <>
       <SEO meta={site.pageSeo.appointment} />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", href: "/" },
+          { name: "Appointment", href: "/appointment" },
+        ]}
+      />
       <PageHeader
-        eyebrow="Appointment"
-        title="Book your eye care visit"
-        description="Send a request to the team or start a WhatsApp booking with your selected branch."
+        eyebrow="Appointments"
+        title="Request an appointment"
+        description="Choose your preferred branch and care department. Our team will call you back to confirm the visit."
+        image="/assets/media/page-headers/clinic-reception.jpg"
+        variant="appointment"
       />
       <section className="section appointment-section">
         <div className="container appointment-section__grid">
           <form className="appointment-form" onSubmit={handleSubmit(onSubmit)} noValidate>
-            <input type="text" tabIndex="-1" autoComplete="off" className="honeypot" {...register("botcheck")} />
+            <div className="appointment-form__head">
+              <strong>Patient details</strong>
+              <span>
+                Share the essentials so the branch team can arrange the right appointment slot.
+              </span>
+            </div>
+            <input
+              type="text"
+              tabIndex="-1"
+              autoComplete="off"
+              className="honeypot"
+              {...register("botcheck")}
+            />
             <div className="field-grid">
               <label>
-                <span>Name</span>
-                <input type="text" autoComplete="name" {...register("name")} />
+                <span>Patient Name</span>
+                <input
+                  type="text"
+                  autoComplete="name"
+                  placeholder="Enter full name"
+                  {...register("name")}
+                />
                 {errors.name ? <small>{errors.name.message}</small> : null}
               </label>
               <label>
-                <span>Phone</span>
-                <input type="tel" autoComplete="tel" {...register("phone")} />
+                <span>Mobile Number</span>
+                <input
+                  type="tel"
+                  autoComplete="tel"
+                  placeholder="Enter phone number"
+                  {...register("phone")}
+                />
                 {errors.phone ? <small>{errors.phone.message}</small> : null}
               </label>
               <label>
-                <span>Email</span>
-                <input type="email" autoComplete="email" {...register("email")} />
+                <span>Email Address</span>
+                <input
+                  type="email"
+                  autoComplete="email"
+                  placeholder="Optional"
+                  {...register("email")}
+                />
                 {errors.email ? <small>{errors.email.message}</small> : null}
               </label>
               <label>
-                <span>Branch</span>
+                <span>Preferred Branch</span>
                 <select {...register("branch")}>
                   {branches.items.map((branch) => (
                     <option value={branch.slug} key={branch.slug}>
@@ -111,8 +148,11 @@ export default function AppointmentPage() {
                 {errors.branch ? <small>{errors.branch.message}</small> : null}
               </label>
               <label>
-                <span>Service / Department</span>
+                <span>Department</span>
                 <select {...register("service")}>
+                  <option value="" disabled>
+                    Select department
+                  </option>
                   {services.items.map((service) => (
                     <option value={service.title} key={service.id}>
                       {service.title}
@@ -123,21 +163,34 @@ export default function AppointmentPage() {
               </label>
               <label>
                 <span>Preferred Date</span>
-                <input type="date" {...register("preferredDate")} />
+                <input type="date" autoComplete="off" {...register("preferredDate")} />
                 {errors.preferredDate ? <small>{errors.preferredDate.message}</small> : null}
               </label>
             </div>
             <label>
               <span>Message</span>
-              <textarea rows="5" {...register("message")} />
+              <textarea
+                rows="5"
+                placeholder="Tell us briefly about your concern or preferred time."
+                {...register("message")}
+              />
               {errors.message ? <small>{errors.message.message}</small> : null}
             </label>
             <div className="appointment-form__actions">
-              <button className="button-link button-link--primary" type="submit" disabled={isSubmitting}>
-                <span>{isSubmitting ? "Sending" : "Submit Request"}</span>
+              <button
+                className="button-link button-link--primary"
+                type="submit"
+                disabled={isSubmitting}
+              >
+                <span>{isSubmitting ? "Sending" : "Send Appointment Request"}</span>
                 <Send size={18} aria-hidden="true" />
               </button>
-              <a className="button-link button-link--secondary" href={whatsappLink} target="_blank" rel="noreferrer">
+              <a
+                className="button-link button-link--secondary"
+                href={whatsappLink}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <span>Book on WhatsApp</span>
                 <MessageCircle size={18} aria-hidden="true" />
               </a>

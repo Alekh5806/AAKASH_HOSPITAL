@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { theme } from "../lib/data";
+import { theme } from "../lib/coreData";
 
 function toCssVar(group, key) {
   return `--${group}-${key.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`)}`;

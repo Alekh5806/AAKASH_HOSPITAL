@@ -1,30 +1,49 @@
-import { motion, useReducedMotion } from "framer-motion";
-import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { Outlet, useLocation } from "react-router-dom";
+import CookieConsent from "./CookieConsent";
 import Footer from "./Footer";
 import Header from "./Header";
 import QuickActions from "./QuickActions";
 import ThemeTokens from "./ThemeTokens";
 
-export default function RootLayout() {
-  const shouldReduceMotion = useReducedMotion();
+function RouteScrollManager() {
+  const { hash, pathname, search } = useLocation();
 
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      if (hash) {
+        const target = document.getElementById(decodeURIComponent(hash.slice(1)));
+
+        if (target) {
+          target.scrollIntoView();
+          return;
+        }
+      }
+
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [hash, pathname, search]);
+
+  return null;
+}
+
+export default function RootLayout() {
   return (
     <>
       <ThemeTokens />
+      <RouteScrollManager />
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
       <Header />
-      <motion.main
-        id="main-content"
-        initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: shouldReduceMotion ? 0 : 0.22 }}
-      >
+      <main id="main-content">
         <Outlet />
-      </motion.main>
+      </main>
       <QuickActions />
       <Footer />
+      <CookieConsent />
     </>
   );
 }

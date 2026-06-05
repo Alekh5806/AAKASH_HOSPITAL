@@ -1,6 +1,6 @@
 import { CalendarDays, MapPinned, MessageCircle, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
-import { branches } from "../lib/data";
+import { branches } from "../lib/coreData";
 
 function cleanTel(number) {
   return number.startsWith("+") ? number.replace(/[^\d+]/g, "") : number.replace(/\D/g, "");
@@ -9,7 +9,8 @@ function cleanTel(number) {
 export default function QuickActions() {
   const primaryBranch = branches.items.find((branch) => branch.isHeadquarters) ?? branches.items[0];
   const primaryPhone =
-    primaryBranch.phoneGroups.find((group) => group.label.toLowerCase().includes("opd"))?.numbers[0] ??
+    primaryBranch.phoneGroups.find((group) => group.label.toLowerCase().includes("opd"))
+      ?.numbers[0] ??
     primaryBranch.phoneGroups[0]?.numbers[0] ??
     "";
 

@@ -1,6 +1,10 @@
 import SEO from "../components/SEO";
 import { BranchJsonLd, MedicalClinicJsonLd } from "../components/JsonLd";
-import { branches, doctors, getServicesByIds, home, testimonials } from "../lib/data";
+import { branches } from "../lib/coreData";
+import { doctors } from "../lib/doctorsData";
+import { home } from "../lib/homeData";
+import { getServicesByIds, services } from "../lib/servicesData";
+import { testimonials } from "../lib/testimonialsData";
 import BranchCards from "../sections/BranchCards";
 import CareFinder from "../sections/CareFinder";
 import CTASection from "../sections/CTASection";
@@ -18,7 +22,7 @@ export default function HomePage() {
   return (
     <>
       <SEO meta={home.seo} />
-      <MedicalClinicJsonLd />
+      <MedicalClinicJsonLd services={services.items} />
       <BranchJsonLd />
       <Hero hero={home.hero} stats={home.stats} />
       <CareFinder />
@@ -34,9 +38,9 @@ export default function HomePage() {
       <MissionVision data={home.missionVision} />
       <DoctorGrid
         doctors={doctors.items.slice(0, 4)}
-        eyebrow="Specialists"
-        title="Experienced eye care team"
-        description="Meet a few members of the clinical and optometry team."
+        eyebrow="Specialist team"
+        title="Care led by focused eye specialists"
+        description="A multi-branch clinical team for cataract, LASIK, retina, OPD and ongoing eye-care guidance."
       />
       <TestimonialCarousel testimonials={testimonials.items} />
       <BranchCards branches={branches.items} />

@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CalendarDays, Menu, Phone, X } from "lucide-react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { navigation, site } from "../lib/data";
+import { navigation, site } from "../lib/coreData";
 import ButtonLink from "./ButtonLink";
 
 function NavItems({ onNavigate }) {
@@ -23,7 +22,6 @@ export default function Header() {
   const panelRef = useRef(null);
   const location = useLocation();
   const previousPathRef = useRef(location.pathname);
-  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     if (previousPathRef.current === location.pathname) return undefined;
@@ -105,47 +103,29 @@ export default function Header() {
         </div>
       </div>
 
-      <AnimatePresence>
-        {open ? (
-          <motion.div
-            className="mobile-menu"
-            role="dialog"
-            aria-modal="true"
-            id="mobile-menu"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: shouldReduceMotion ? 0 : 0.18 }}
-          >
-            <motion.div
-              ref={panelRef}
-              className="mobile-menu__panel"
-              initial={{ x: shouldReduceMotion ? 0 : "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: shouldReduceMotion ? 0 : "100%" }}
-              transition={{ duration: shouldReduceMotion ? 0 : 0.28, ease: "easeOut" }}
-            >
-              <div className="mobile-menu__head">
-                <img src={site.brand.logo} alt={site.brand.logoAlt} />
-                <button
-                  className="icon-button"
-                  type="button"
-                  aria-label="Close menu"
-                  onClick={() => setOpen(false)}
-                >
-                  <X size={22} aria-hidden="true" />
-                </button>
-              </div>
-              <nav className="mobile-menu__nav" aria-label="Mobile navigation">
-                <NavItems onNavigate={() => setOpen(false)} />
-              </nav>
-              <ButtonLink to="/appointment" icon={CalendarDays} onClick={() => setOpen(false)}>
-                Book Appointment
-              </ButtonLink>
-            </motion.div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+      {open ? (
+        <div className="mobile-menu" role="dialog" aria-modal="true" id="mobile-menu">
+          <div ref={panelRef} className="mobile-menu__panel">
+            <div className="mobile-menu__head">
+              <img src={site.brand.logo} alt={site.brand.logoAlt} />
+              <button
+                className="icon-button"
+                type="button"
+                aria-label="Close menu"
+                onClick={() => setOpen(false)}
+              >
+                <X size={22} aria-hidden="true" />
+              </button>
+            </div>
+            <nav className="mobile-menu__nav" aria-label="Mobile navigation">
+              <NavItems onNavigate={() => setOpen(false)} />
+            </nav>
+            <ButtonLink to="/appointment" icon={CalendarDays} onClick={() => setOpen(false)}>
+              Book Appointment
+            </ButtonLink>
+          </div>
+        </div>
+      ) : null}
     </header>
   );
 }

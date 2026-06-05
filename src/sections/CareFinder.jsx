@@ -1,9 +1,21 @@
 import { useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Activity, ArrowUpRight, Building2, CalendarDays, MapPinned, Search, Sparkles, UserRound } from "lucide-react";
+import {
+  Activity,
+  ArrowUpRight,
+  Building2,
+  CalendarDays,
+  MapPinned,
+  Search,
+  Sparkles,
+  UserRound,
+  X,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import ButtonLink from "../components/ButtonLink";
-import { branches, doctors, services } from "../lib/data";
+import { branches } from "../lib/coreData";
+import { doctors } from "../lib/doctorsData";
+import { services } from "../lib/servicesData";
 import { revealVariants, staggerContainer } from "../lib/motion";
 
 const quickSearches = ["Cataract", "LASIK", "Retina", "Glaucoma"];
@@ -57,7 +69,11 @@ export default function CareFinder() {
     }
 
     return items
-      .filter((item) => `${item.title} ${item.description} ${item.keywords}`.toLowerCase().includes(normalizedQuery))
+      .filter((item) =>
+        `${item.title} ${item.description} ${item.keywords}`
+          .toLowerCase()
+          .includes(normalizedQuery),
+      )
       .slice(0, 4);
   }, [normalizedQuery]);
 
@@ -74,7 +90,8 @@ export default function CareFinder() {
           <span className="eyebrow">Find care faster</span>
           <h2>Find the right eye care in seconds</h2>
           <p>
-            Search by concern, treatment, doctor or city and jump straight to the right care pathway.
+            Search by concern, treatment, doctor or city and jump straight to the right care
+            pathway.
           </p>
           <div className="care-finder__visual" aria-hidden="true">
             <span />
@@ -106,21 +123,31 @@ export default function CareFinder() {
           <div className="care-finder__panel-head">
             <span>
               <Sparkles size={16} aria-hidden="true" />
-              Smart search
+              Smart Search
             </span>
             <strong>{results.length ? `${results.length} matches` : "No match"}</strong>
           </div>
 
-          <label className="care-search">
-            <Search size={19} aria-hidden="true" />
-            <span className="sr-only">Search care</span>
-            <input
-              type="search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search cataract, LASIK, glaucoma, doctor, branch..."
-            />
-          </label>
+          <div>
+            <label className="care-search">
+              <Search size={19} aria-hidden="true" />
+              <span className="sr-only">Search care</span>
+              <input
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search cataract, LASIK, glaucoma, doctor, branch..."
+              />
+              {query ? (
+                <button type="button" aria-label="Clear search" onClick={() => setQuery("")}>
+                  <X size={16} aria-hidden="true" />
+                </button>
+              ) : null}
+            </label>
+            <p className="care-search__hint">
+              Search services, doctors, branches, symptoms, or common treatments.
+            </p>
+          </div>
 
           <motion.div
             className="care-results"
@@ -128,33 +155,39 @@ export default function CareFinder() {
             initial="hidden"
             animate="visible"
           >
-            {results.length ? results.map((result) => {
-              const Icon = result.icon;
-              const typeClass = result.type.toLowerCase();
+            {results.length ? (
+              results.map((result) => {
+                const Icon = result.icon;
+                const typeClass = result.type.toLowerCase();
 
-              return (
-                <motion.article
-                  key={`${result.type}-${result.title}`}
-                  className={`care-result-card care-result-card--${typeClass}`}
-                  variants={revealVariants(shouldReduceMotion, 12)}
-                >
-                  <Link to={result.href}>
-                    <span className="care-result-card__top">
-                      <span className="care-results__icon">
-                        <Icon size={18} aria-hidden="true" />
+                return (
+                  <motion.article
+                    key={`${result.type}-${result.title}`}
+                    className={`care-result-card care-result-card--${typeClass}`}
+                    variants={revealVariants(shouldReduceMotion, 12)}
+                  >
+                    <Link to={result.href}>
+                      <span className="care-result-card__top">
+                        <span className="care-results__icon">
+                          <Icon size={18} aria-hidden="true" />
+                        </span>
+                        <small>{result.type}</small>
                       </span>
-                      <small>{result.type}</small>
-                    </span>
-                    <strong>{result.title}</strong>
-                    <em>{result.description}</em>
-                    <span className="care-result-card__arrow">
-                      <ArrowUpRight size={17} aria-hidden="true" />
-                    </span>
-                  </Link>
-                </motion.article>
-              );
-            }) : (
-              <motion.article className="care-empty" variants={revealVariants(shouldReduceMotion, 12)}>
+                      <strong>{result.title}</strong>
+                      <em>{result.description}</em>
+                      <span className="care-result-card__arrow">
+                        <ArrowUpRight size={17} aria-hidden="true" />
+                        <span>Open page</span>
+                      </span>
+                    </Link>
+                  </motion.article>
+                );
+              })
+            ) : (
+              <motion.article
+                className="care-empty"
+                variants={revealVariants(shouldReduceMotion, 12)}
+              >
                 <strong>No direct match found</strong>
                 <span>Try cataract, LASIK, retina, glaucoma or branch name.</span>
               </motion.article>

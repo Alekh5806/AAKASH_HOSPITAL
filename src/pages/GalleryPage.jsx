@@ -1,12 +1,19 @@
+import { BreadcrumbJsonLd } from "../components/JsonLd";
 import PageHeader from "../components/PageHeader";
 import SEO from "../components/SEO";
-import { gallery } from "../lib/data";
+import { gallery } from "../lib/galleryData";
 import Gallery from "../sections/Gallery";
 
 export default function GalleryPage() {
   return (
     <>
       <SEO meta={gallery.seo} />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", href: "/" },
+          { name: "Gallery", href: "/gallery" },
+        ]}
+      />
       <PageHeader
         eyebrow="Gallery"
         title={

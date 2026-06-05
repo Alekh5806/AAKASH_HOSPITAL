@@ -1,7 +1,8 @@
 import PageHeader from "../components/PageHeader";
 import SEO from "../components/SEO";
-import { BranchJsonLd } from "../components/JsonLd";
-import { branches, home } from "../lib/data";
+import { BranchJsonLd, BreadcrumbJsonLd } from "../components/JsonLd";
+import { branches } from "../lib/coreData";
+import { home } from "../lib/homeData";
 import BranchCards from "../sections/BranchCards";
 import CTASection from "../sections/CTASection";
 
@@ -10,6 +11,12 @@ export default function BranchesPage() {
     <>
       <SEO meta={branches.seo} />
       <BranchJsonLd />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", href: "/" },
+          { name: "Branches", href: "/branches" },
+        ]}
+      />
       <PageHeader
         eyebrow="Branches"
         title="Visit Aakash Eye Hospital"

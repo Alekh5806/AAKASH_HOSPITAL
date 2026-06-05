@@ -5,20 +5,40 @@
   },
   "items": [
     {
-      "quote": "This hospital is top most eye hospital in India. I am very satisfied and glad with eye care of my father. I give lot of thanks to Dr. Vishnu S. Patel Sir for his expertise and sweet behaviour.",
-      "name": "Bhagaram Mali",
-      "location": "Patient family",
+      "quote": "Patients repeatedly mention cooperative doctors, supportive staff and a clean, well-managed hospital environment for eye treatment.",
+      "name": "Public feedback theme",
+      "location": "Visnagar branch",
+      "theme": "Staff support",
+      "sourceLabel": "Based on public review themes",
       "rating": 5
     },
     {
-      "quote": "Superb facility provided by Aakash Hospital Visnagar. We feel like international hospital services.",
-      "name": "Nivedita Sancheti",
-      "location": "Visnagar",
+      "quote": "Surgery patients highlight smooth processes, guidance before and after treatment, and care-team follow-up after returning home.",
+      "name": "Public feedback theme",
+      "location": "Visnagar branch",
+      "theme": "Surgery guidance",
+      "sourceLabel": "Based on public review themes",
+      "rating": 5
+    },
+    {
+      "quote": "Ahmedabad patient stories call out doctor friendliness, treatment satisfaction and clear explanations during LASIK and cataract visits.",
+      "name": "Public feedback theme",
+      "location": "Ahmedabad branch",
+      "theme": "Doctor communication",
+      "sourceLabel": "Based on public review themes",
+      "rating": 5
+    },
+    {
+      "quote": "Bharuch feedback commonly praises safe eye-care service, good staff behaviour and helpful support through the visit.",
+      "name": "Public feedback theme",
+      "location": "Bharuch branch",
+      "theme": "Branch experience",
+      "sourceLabel": "Based on public review themes",
       "rating": 5
     }
   ],
   "notes": [
     "Legacy testimonial spam was intentionally excluded.",
-    "Quotes were lightly edited for spelling and readability while preserving meaning."
+    "Current home page testimonials are paraphrased public-review themes, not verbatim patient quotes."
   ]
 }

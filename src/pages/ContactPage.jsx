@@ -1,19 +1,13 @@
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Clock3,
-  Mail,
-  MapPin,
-  MessageCircle,
-  Navigation,
-  Phone,
-  Send,
-} from "lucide-react";
+import { Clock3, Mail, MapPin, MessageCircle, Navigation, Phone, Send } from "lucide-react";
 import { useForm, useWatch } from "react-hook-form";
-import { BranchJsonLd } from "../components/JsonLd";
+import { BranchJsonLd, BreadcrumbJsonLd } from "../components/JsonLd";
+import LazyMapFrame from "../components/LazyMapFrame";
 import SEO from "../components/SEO";
 import SmartImage from "../components/SmartImage";
-import { branches, services, site } from "../lib/data";
+import { branches, site } from "../lib/coreData";
+import { services } from "../lib/servicesData";
 import { appointmentSchema } from "../lib/schemas";
 import { buildWhatsAppLink, submitAppointment } from "../lib/submitAppointment";
 
@@ -106,14 +100,7 @@ function MobileDeskIcon() {
         strokeLinecap="round"
         strokeWidth="2.8"
       />
-      <rect
-        x="17.5"
-        y="15.5"
-        width="13"
-        height="17"
-        rx="3"
-        fill="rgba(10, 143, 149, 0.11)"
-      />
+      <rect x="17.5" y="15.5" width="13" height="17" rx="3" fill="rgba(10, 143, 149, 0.11)" />
       <circle cx="33" cy="31" r="9" fill="var(--color-brand-blue)" />
       <path
         d="M29.8 27.1c1.3 4.1 3.1 5.9 7.1 7.1l1.6-2.1c.3-.4.2-1-.3-1.2l-2.5-1.2c-.4-.2-.9-.1-1.2.3l-.7.9a9.6 9.6 0 0 1-2.7-2.7l.9-.7c.4-.3.5-.8.3-1.2l-1.2-2.5c-.2-.5-.8-.6-1.2-.3l-2.1 1.6Z"
@@ -139,7 +126,7 @@ export default function ContactPage() {
       phone: "",
       email: "",
       branch: defaultBranch.slug,
-      service: services.items[0]?.title ?? "",
+      service: "",
       preferredDate: "",
       message: "",
       botcheck: "",
@@ -170,7 +157,7 @@ export default function ContactPage() {
         phone: "",
         email: "",
         branch: selectedBranch.slug,
-        service: services.items[0]?.title ?? "",
+        service: "",
         preferredDate: "",
         message: "",
         botcheck: "",
@@ -187,6 +174,12 @@ export default function ContactPage() {
     <>
       <SEO meta={site.pageSeo.contact} />
       <BranchJsonLd />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", href: "/" },
+          { name: "Contact", href: "/contact" },
+        ]}
+      />
 
       <section className="contact-hero" aria-labelledby="contact-hero-title">
         <div className="container contact-hero__inner">
@@ -194,15 +187,23 @@ export default function ContactPage() {
             <span className="eyebrow">Contact Aakash Eye Hospital</span>
             <h1 id="contact-hero-title">Reach the right eye care team quickly</h1>
             <p>
-              Call, message, book a visit, or find directions for our Visnagar, Ahmedabad, and Bharuch
-              branches from one calm, patient-first contact desk.
+              Call, message, book a visit, or find directions for our Visnagar, Ahmedabad, and
+              Bharuch branches from one calm, patient-first contact desk.
             </p>
             <div className="contact-hero__actions">
-              <a className="button-link button-link--primary" href={`tel:${cleanTel(selectedPhone)}`}>
+              <a
+                className="button-link button-link--primary"
+                href={`tel:${cleanTel(selectedPhone)}`}
+              >
                 <Phone size={18} aria-hidden="true" />
                 <span>Call {selectedBranch.name}</span>
               </a>
-              <a className="button-link button-link--secondary" href={whatsappLink} target="_blank" rel="noreferrer">
+              <a
+                className="button-link button-link--secondary"
+                href={whatsappLink}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <MessageCircle size={18} aria-hidden="true" />
                 <span>WhatsApp Booking</span>
               </a>
@@ -237,17 +238,23 @@ export default function ContactPage() {
               <span className="eyebrow">Direct access</span>
               <h2>Choose your branch and connect with the right desk</h2>
               <p>
-                Select the nearest branch to update the call line, email, address, booking form, and map
-                details across the page.
+                Select the nearest branch to update the call line, email, address, booking form, and
+                map details across the page.
               </p>
             </div>
-            <div className="segmented-control contact-command__tabs" role="tablist" aria-label="Select branch">
+            <div
+              className="segmented-control contact-command__tabs"
+              role="tablist"
+              aria-label="Select branch"
+            >
               {branches.items.map((branch) => (
                 <button
                   key={branch.slug}
                   type="button"
                   aria-selected={selectedBranch.slug === branch.slug}
-                  onClick={() => setValue("branch", branch.slug, { shouldDirty: true, shouldTouch: true })}
+                  onClick={() =>
+                    setValue("branch", branch.slug, { shouldDirty: true, shouldTouch: true })
+                  }
                 >
                   {branch.name}
                 </button>
@@ -262,7 +269,9 @@ export default function ContactPage() {
               </span>
               <small>Call branch</small>
               <h3>{selectedPhone}</h3>
-              <p>Speak to the OPD or front desk team at {selectedBranch.name} for immediate guidance.</p>
+              <p>
+                Speak to the OPD or front desk team at {selectedBranch.name} for immediate guidance.
+              </p>
               <a href={`tel:${cleanTel(selectedPhone)}`}>Call now</a>
             </article>
 
@@ -272,7 +281,10 @@ export default function ContactPage() {
               </span>
               <small>Email</small>
               <h3>{selectedBranch.email}</h3>
-              <p>Use email when you want written follow-up, document sharing, or non-urgent coordination.</p>
+              <p>
+                Use email when you want written follow-up, document sharing, or non-urgent
+                coordination.
+              </p>
               <a href={`mailto:${selectedBranch.email}`}>Send email</a>
             </article>
 
@@ -312,7 +324,8 @@ export default function ContactPage() {
                 <span className="eyebrow">Appointment desk</span>
                 <strong>Clear support before your visit</strong>
                 <p>
-                  Choose the branch and department. The care team will confirm the next step with you.
+                  Choose the branch and department. The care team will confirm the next step with
+                  you.
                 </p>
               </div>
             </div>
@@ -322,8 +335,8 @@ export default function ContactPage() {
                 <span className="eyebrow">Book an appointment</span>
                 <h2>Request your visit with the right branch already selected</h2>
                 <p>
-                  Keep the essentials simple: patient details, preferred branch, care department, and a short
-                  note for the appointment team.
+                  Keep the essentials simple: patient details, preferred branch, care department,
+                  and a short note for the appointment team.
                 </p>
               </div>
               <div className="contact-booking__branch-meta">
@@ -348,33 +361,60 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <form className="appointment-form contact-booking__form" onSubmit={handleSubmit(onSubmit)} noValidate>
+              <form
+                className="appointment-form contact-booking__form"
+                onSubmit={handleSubmit(onSubmit)}
+                noValidate
+              >
                 <div className="contact-booking__form-head">
                   <div>
-                    <strong>Patient request</strong>
-                    <span>Share the details needed for the appointment team to call back.</span>
+                    <strong>Appointment request</strong>
+                    <span>
+                      Share your details and our branch team will contact you to confirm the visit.
+                    </span>
                   </div>
                   <em>{selectedBranch.name}</em>
                 </div>
-                <input type="text" tabIndex="-1" autoComplete="off" className="honeypot" {...register("botcheck")} />
+                <input
+                  type="text"
+                  tabIndex="-1"
+                  autoComplete="off"
+                  className="honeypot"
+                  {...register("botcheck")}
+                />
                 <div className="field-grid">
                   <label>
-                    <span>Full Name</span>
-                    <input type="text" autoComplete="name" {...register("name")} />
+                    <span>Patient Name</span>
+                    <input
+                      type="text"
+                      autoComplete="name"
+                      placeholder="Enter full name"
+                      {...register("name")}
+                    />
                     {errors.name ? <small>{errors.name.message}</small> : null}
                   </label>
                   <label>
-                    <span>Phone</span>
-                    <input type="tel" autoComplete="tel" {...register("phone")} />
+                    <span>Mobile Number</span>
+                    <input
+                      type="tel"
+                      autoComplete="tel"
+                      placeholder="Enter phone number"
+                      {...register("phone")}
+                    />
                     {errors.phone ? <small>{errors.phone.message}</small> : null}
                   </label>
                   <label>
-                    <span>Email</span>
-                    <input type="email" autoComplete="email" {...register("email")} />
+                    <span>Email Address</span>
+                    <input
+                      type="email"
+                      autoComplete="email"
+                      placeholder="Optional"
+                      {...register("email")}
+                    />
                     {errors.email ? <small>{errors.email.message}</small> : null}
                   </label>
                   <label>
-                    <span>Branch</span>
+                    <span>Preferred Branch</span>
                     <select {...register("branch")}>
                       {branches.items.map((branch) => (
                         <option value={branch.slug} key={branch.slug}>
@@ -385,8 +425,11 @@ export default function ContactPage() {
                     {errors.branch ? <small>{errors.branch.message}</small> : null}
                   </label>
                   <label>
-                    <span>Service / Department</span>
+                    <span>Department</span>
                     <select {...register("service")}>
+                      <option value="" disabled>
+                        Select department
+                      </option>
                       {services.items.map((service) => (
                         <option value={service.title} key={service.id}>
                           {service.title}
@@ -397,21 +440,34 @@ export default function ContactPage() {
                   </label>
                   <label>
                     <span>Preferred Date</span>
-                    <input type="date" {...register("preferredDate")} />
+                    <input type="date" autoComplete="off" {...register("preferredDate")} />
                     {errors.preferredDate ? <small>{errors.preferredDate.message}</small> : null}
                   </label>
                 </div>
                 <label className="contact-booking__message-field">
                   <span>Message</span>
-                  <textarea rows="5" {...register("message")} />
+                  <textarea
+                    rows="5"
+                    placeholder="Tell us briefly about your concern or preferred time."
+                    {...register("message")}
+                  />
                   {errors.message ? <small>{errors.message.message}</small> : null}
                 </label>
                 <div className="appointment-form__actions contact-booking__actions">
-                  <button className="button-link button-link--primary" type="submit" disabled={isSubmitting}>
-                    <span>{isSubmitting ? "Sending" : "Send Request"}</span>
+                  <button
+                    className="button-link button-link--primary"
+                    type="submit"
+                    disabled={isSubmitting}
+                  >
+                    <span>{isSubmitting ? "Sending" : "Send Appointment Request"}</span>
                     <Send size={18} aria-hidden="true" />
                   </button>
-                  <a className="button-link button-link--secondary" href={whatsappLink} target="_blank" rel="noreferrer">
+                  <a
+                    className="button-link button-link--secondary"
+                    href={whatsappLink}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <span>Book on WhatsApp</span>
                     <MessageCircle size={18} aria-hidden="true" />
                   </a>
@@ -434,8 +490,8 @@ export default function ContactPage() {
               <span className="eyebrow">Find the branch</span>
               <h2>Map, directions, and branch numbers</h2>
               <p>
-                Check the selected branch location, call the relevant desk, or open directions before your
-                visit.
+                Check the selected branch location, call the relevant desk, or open directions
+                before your visit.
               </p>
             </div>
           </div>
@@ -448,11 +504,9 @@ export default function ContactPage() {
                   Full map
                 </a>
               </div>
-              <iframe
+              <LazyMapFrame
                 title={`${selectedBranch.name} branch map`}
                 src={selectedBranch.mapEmbed}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
 

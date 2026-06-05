@@ -1,4 +1,4 @@
-import { site } from "../lib/data";
+import { site } from "../lib/coreData";
 
 const dictionary = {
   en: {

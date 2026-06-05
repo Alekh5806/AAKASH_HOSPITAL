@@ -15,19 +15,20 @@
   "pageSeo": {
     "about": {
       "title": "About Aakash Eye Hospital | Since 1993",
-      "description": "Learn about Aakash Eye Hospital's history, promise, mission, technology milestones and patient safety focus."
+      "description": "Learn about Aakash Eye Hospital's ophthalmology journey since 1993, technology milestones, branch growth and patient safety promise."
     },
     "appointment": {
       "title": "Book an Appointment | Aakash Eye Hospital",
-      "description": "Request an appointment at Aakash Eye Hospital or start a WhatsApp booking with your selected branch."
+      "description": "Book an eye care appointment at Aakash Eye Hospital in Visnagar, Ahmedabad or Bharuch, or start a WhatsApp booking with the selected branch."
     },
     "contact": {
       "title": "Contact Aakash Eye Hospital | Visnagar, Ahmedabad, Bharuch",
-      "description": "Find branch addresses, phone lines, email and appointment contacts for Aakash Eye Hospital."
+      "description": "Find Aakash Eye Hospital branch addresses, OPD phone numbers, email and appointment contacts for Visnagar, Ahmedabad and Bharuch."
     },
     "notFound": {
       "title": "Page Not Found | Aakash Eye Hospital",
-      "description": "The page you are looking for could not be found."
+      "description": "The page you are looking for could not be found.",
+      "robots": "noindex, follow"
     }
   },
   "businessHours": [
