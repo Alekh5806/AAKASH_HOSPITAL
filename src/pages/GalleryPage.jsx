@@ -22,7 +22,7 @@ export default function GalleryPage() {
             <span className="page-header__title-line">community activities</span>
           </>
         }
-        description="A view of hospital facilities and selected social activities from the legacy website."
+        description="Step inside Aakash Eye Hospital through selected views of our clinical spaces, advanced facilities, and community care initiatives."
         image="/assets/media/page-headers/optometry-detail.jpg"
         variant="gallery"
       />
