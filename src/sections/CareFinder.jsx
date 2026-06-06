@@ -20,6 +20,22 @@ import { revealVariants, staggerContainer } from "../lib/motion";
 
 const quickSearches = ["Cataract", "LASIK", "Retina", "Glaucoma"];
 
+function normalizeSearch(value = "") {
+  return value
+    .toString()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function compactSearch(value = "") {
+  return normalizeSearch(value).replace(/\s+/g, "");
+}
+
+function uniqueTerms(terms) {
+  return [...new Set(terms.filter(Boolean).map(normalizeSearch).filter(Boolean))];
+}
+
 function serviceKeywords(service) {
   return [
     service.title,
@@ -29,30 +45,86 @@ function serviceKeywords(service) {
   ].join(" ");
 }
 
+function scoreResult(item, query) {
+  if (!query) return item.defaultRank ?? 0;
+
+  const normalized = normalizeSearch(query);
+  const compact = compactSearch(query);
+  const tokens = normalized.split(" ").filter(Boolean);
+  const haystack = normalizeSearch(
+    `${item.type} ${item.title} ${item.description} ${item.keywords} ${item.aliases.join(" ")}`,
+  );
+  const compactHaystack = compactSearch(haystack);
+  let score = 0;
+
+  if (item.aliases.some((alias) => normalizeSearch(alias) === normalized)) score += 180;
+  if (normalizeSearch(item.title) === normalized) score += 160;
+  if (haystack.includes(normalized)) score += 90;
+  if (compact.length > 1 && compactHaystack.includes(compact)) score += 60;
+
+  tokens.forEach((token) => {
+    if (item.type.toLowerCase() === token) score += 80;
+    if (normalizeSearch(item.title).split(" ").includes(token)) score += 34;
+    if (haystack.split(" ").includes(token)) score += 22;
+    if (compactHaystack.includes(token)) score += 8;
+  });
+
+  return score;
+}
+
 export default function CareFinder() {
   const [query, setQuery] = useState("");
   const shouldReduceMotion = useReducedMotion();
-  const normalizedQuery = query.trim().toLowerCase();
+  const normalizedQuery = normalizeSearch(query);
 
   const results = useMemo(() => {
     const items = [
-      ...services.items.map((service) => ({
+      ...services.items.map((service, index) => ({
         type: "Service",
         title: service.title,
         description: service.shortDescription,
         href: `/services/${service.slug}`,
         icon: Activity,
         keywords: serviceKeywords(service),
+        aliases: uniqueTerms([
+          "service",
+          "services",
+          "treatment",
+          "treatments",
+          "surgery",
+          service.title,
+          service.slug,
+          service.id,
+          ...(service.featureBullets ?? []),
+        ]),
+        defaultRank: 100 - index,
       })),
-      ...doctors.items.map((doctor) => ({
+      ...doctors.items.map((doctor, index) => ({
         type: "Doctor",
         title: doctor.name,
         description: `${doctor.qualifications} | ${doctor.specialty} | ${doctor.branches.join(", ")}`,
         href: "/doctors",
         icon: UserRound,
-        keywords: `${doctor.name} ${doctor.qualifications} ${doctor.specialty} ${doctor.branches.join(" ")}`,
+        keywords: `${doctor.name} ${doctor.qualifications} ${doctor.specialty} ${doctor.bio} ${doctor.branches.join(" ")}`,
+        aliases: uniqueTerms([
+          "doctor",
+          "doctors",
+          "dr",
+          "specialist",
+          "specialists",
+          "surgeon",
+          "ophthalmologist",
+          "ophthalmology",
+          "eye doctor",
+          "eye specialist",
+          doctor.name.replace(/^Dr\.?\s+/i, ""),
+          doctor.name,
+          doctor.specialty,
+          ...doctor.branches,
+        ]),
+        defaultRank: 60 - index,
       })),
-      ...branches.items.map((branch) => ({
+      ...branches.items.map((branch, index) => ({
         type: "Branch",
         title: `${branch.name} Branch`,
         description: branch.address,
@@ -60,7 +132,23 @@ export default function CareFinder() {
         icon: Building2,
         keywords: `${branch.name} ${branch.address} ${branch.phoneGroups
           .flatMap((group) => group.numbers)
-          .join(" ")}`,
+          .join(" ")} ${branch.phoneGroups.map((group) => group.label).join(" ")}`,
+        aliases: uniqueTerms([
+          "branch",
+          "branches",
+          "location",
+          "locations",
+          "clinic",
+          "hospital",
+          "address",
+          "contact",
+          "phone",
+          "opd",
+          branch.name,
+          branch.slug,
+          branch.isHeadquarters ? "headquarters" : "",
+        ]),
+        defaultRank: 40 - index,
       })),
     ];
 
@@ -69,11 +157,9 @@ export default function CareFinder() {
     }
 
     return items
-      .filter((item) =>
-        `${item.title} ${item.description} ${item.keywords}`
-          .toLowerCase()
-          .includes(normalizedQuery),
-      )
+      .map((item) => ({ ...item, score: scoreResult(item, normalizedQuery) }))
+      .filter((item) => item.score > 0)
+      .sort((a, b) => b.score - a.score || (b.defaultRank ?? 0) - (a.defaultRank ?? 0))
       .slice(0, 4);
   }, [normalizedQuery]);
 

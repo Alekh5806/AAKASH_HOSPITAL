@@ -15,6 +15,7 @@ import ServiceGrid from "../sections/ServiceGrid";
 import StatsBand from "../sections/StatsBand";
 import TestimonialCarousel from "../sections/TestimonialCarousel";
 import Timeline from "../sections/Timeline";
+import VisionClarityFeature from "../sections/VisionClarityFeature";
 
 export default function HomePage() {
   const featuredServices = getServicesByIds(home.featuredServiceIds);
@@ -34,6 +35,7 @@ export default function HomePage() {
         description="The most requested care journeys, presented with simple routes into treatment details and booking."
         variant="featured"
       />
+      <VisionClarityFeature />
       <Timeline timeline={home.timeline} />
       <MissionVision data={home.missionVision} />
       <DoctorGrid
