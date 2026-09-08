@@ -4,7 +4,6 @@ import AppPreloader from "./AppPreloader";
 import CookieConsent from "./CookieConsent";
 import Footer from "./Footer";
 import Header from "./Header";
-import QuickActions from "./QuickActions";
 import ThemeTokens from "./ThemeTokens";
 
 function RouteScrollManager() {
@@ -43,7 +42,6 @@ export default function RootLayout() {
       <main id="main-content">
         <Outlet />
       </main>
-      <QuickActions />
       <Footer />
       <CookieConsent />
     </>

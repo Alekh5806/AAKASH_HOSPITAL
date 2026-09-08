@@ -29,16 +29,49 @@
       "rating": 5
     },
     {
-      "quote": "Bharuch feedback commonly praises safe eye-care service, good staff behaviour and helpful support through the visit.",
+      "quote": "Bharuch feedback commonly praises safe eye-care service, good staff behaviour and helpful support through every stage of the visit.",
       "name": "Public feedback theme",
       "location": "Bharuch branch",
       "theme": "Branch experience",
+      "sourceLabel": "Based on public review themes",
+      "rating": 5
+    },
+    {
+      "quote": "Reviewers describe an organised OPD: registration is quick, the queue is explained, and busy mornings still move at a steady pace.",
+      "name": "Public feedback theme",
+      "location": "Visnagar branch",
+      "theme": "Waiting and flow",
+      "sourceLabel": "Based on public review themes",
+      "rating": 5
+    },
+    {
+      "quote": "Families note that charges are explained before treatment begins, so the amount discussed at counselling is the amount they settle.",
+      "name": "Public feedback theme",
+      "location": "Ahmedabad branch",
+      "theme": "Clear costs",
+      "sourceLabel": "Based on public review themes",
+      "rating": 5
+    },
+    {
+      "quote": "Review visits are fixed before discharge, and patients mention reminder calls from the branch team when a check-up is due.",
+      "name": "Public feedback theme",
+      "location": "Bharuch branch",
+      "theme": "Follow-up care",
+      "sourceLabel": "Based on public review themes",
+      "rating": 5
+    },
+    {
+      "quote": "Reviews often note hospital cleanliness, well-kept waiting areas and modern examination equipment at every stage of the visit.",
+      "name": "Public feedback theme",
+      "location": "Ahmedabad branch",
+      "theme": "Facilities",
       "sourceLabel": "Based on public review themes",
       "rating": 5
     }
   ],
   "notes": [
     "Legacy testimonial spam was intentionally excluded.",
-    "Current home page testimonials are paraphrased public-review themes, not verbatim patient quotes."
+    "Current home page testimonials are paraphrased public-review themes, not verbatim patient quotes.",
+    "Themes five to eight were written for the moving testimonials rail and need hospital sign-off before launch."
   ]
 }

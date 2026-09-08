@@ -14,6 +14,10 @@ const ctaSchema = z.object({
   href: z.string().min(1),
 });
 
+const headerNavItemSchema = ctaSchema.extend({
+  dropdown: z.literal("branches").optional(),
+});
+
 const faqItemSchema = z.object({
   question: z.string().min(1),
   answer: z.string().min(1),
@@ -44,7 +48,21 @@ export const siteSchema = z
       primary: ctaSchema,
       secondary: ctaSchema,
     }),
-    socialLinks: z.array(ctaSchema),
+    header: z.object({
+      establishedLabel: z.string().min(1),
+      emergency: z.object({
+        label: z.string().min(1),
+        shortLabel: z.string().min(1),
+        phone: z.string().min(1),
+      }),
+      branchPicker: z.object({
+        label: z.string().min(1),
+        menuTitle: z.string().min(1),
+        menuHint: z.string().min(1),
+        allLabel: z.string().min(1),
+      }),
+    }),
+    socialLinks: z.array(ctaSchema.extend({ icon: z.string().optional() })),
     footer: z.object({
       summary: z.string(),
       copyright: z.string(),
@@ -54,7 +72,7 @@ export const siteSchema = z
   .passthrough();
 
 export const navigationSchema = z.object({
-  header: z.array(ctaSchema),
+  header: z.array(headerNavItemSchema),
   footer: z.array(
     z.object({
       title: z.string().min(1),
@@ -88,7 +106,6 @@ export const homeSchema = z
         description: z.string(),
       }),
     ),
-    featuredServiceIds: z.array(z.string()),
     timeline: z.object({
       eyebrow: z.string(),
       title: z.string(),
@@ -166,6 +183,7 @@ export const branchesSchema = z
         name: z.string(),
         slug: z.string(),
         isHeadquarters: z.boolean(),
+        locality: z.string(),
         address: z.string(),
         email: z.string().email(),
         phoneGroups: z.array(

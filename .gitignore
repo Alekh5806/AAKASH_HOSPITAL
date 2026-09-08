@@ -9,3 +9,17 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 node_modules
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.webp
+*.ico
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+public/assets/media/gallery/bladeless-facility.jpg
+public/assets/media/gallery/bladeless-facility.jpg

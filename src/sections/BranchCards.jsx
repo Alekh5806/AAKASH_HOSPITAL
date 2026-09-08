@@ -11,7 +11,7 @@ import {
   Navigation,
   Phone,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import LazyMapFrame from "../components/LazyMapFrame";
 import { revealVariants, staggerContainer } from "../lib/motion";
 
@@ -40,9 +40,20 @@ function buildMapLink(branch) {
 
 export default function BranchCards({ branches, showMaps = false }) {
   const shouldReduceMotion = useReducedMotion();
-  const [selectedSlug, setSelectedSlug] = useState(
-    branches.find((branch) => branch.isHeadquarters)?.slug ?? branches[0]?.slug,
-  );
+  const [searchParams] = useSearchParams();
+  const defaultSlug = branches.find((branch) => branch.isHeadquarters)?.slug ?? branches[0]?.slug;
+  const requestedSlug = searchParams.get("branch");
+  const initialSlug = branches.some((branch) => branch.slug === requestedSlug)
+    ? requestedSlug
+    : defaultSlug;
+  const [selectedSlug, setSelectedSlug] = useState(initialSlug);
+  const [syncedSlug, setSyncedSlug] = useState(initialSlug);
+
+  if (initialSlug !== syncedSlug) {
+    setSyncedSlug(initialSlug);
+    setSelectedSlug(initialSlug);
+  }
+
   const selectedBranch = useMemo(
     () => branches.find((branch) => branch.slug === selectedSlug) ?? branches[0],
     [branches, selectedSlug],

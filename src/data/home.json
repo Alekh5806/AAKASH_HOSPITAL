@@ -1,75 +1,285 @@
 {
   "seo": {
-    "title": "Aakash Eye Hospital | Advanced Eye Care Since 1993",
-    "description": "Aakash Eye Hospital provides advanced cataract, LASIK, retina, glaucoma and OPD eye care across Visnagar, Ahmedabad and Bharuch."
+    "title": "Aakash Eye Hospital | Advanced Eye Care Across 6 Gujarat Branches",
+    "description": "Aakash Eye Hospital provides advanced cataract, LASIK, retina, glaucoma and OPD eye care across six branches in Gujarat: Visnagar, Ahmedabad, Bharuch, Gota, Himmatnagar and Juhapura."
   },
   "hero": {
-    "eyebrow": "Multi-branch eye care in Gujarat",
-    "title": "Aakash Eye Hospital",
-    "subtitle": "Advanced technology, experienced specialists and patient-first ophthalmic care across Visnagar, Ahmedabad and Bharuch.",
-    "slides": [
+    "title": "Advanced eye care,",
+    "titleAccent": "close to home.",
+    "subtitle": "Cataract, LASIK, retina and glaucoma care from a team that has served Gujarat since 1993 - now in six cities.",
+    "stats": [
       {
-        "title": "Complete Eye Examination",
-        "description": "A branch-aware route into OPD, cataract, retina, glaucoma and laser care.",
-        "image": "/assets/media/stock/eye-exam-pexels-ai25studio-6749757.jpg",
-        "alt": "Ophthalmology eye examination in a clinical setting"
+        "value": "1993",
+        "label": "Founded in Visnagar"
       },
       {
-        "title": "Bladeless Robotic Laser Surgery",
-        "description": "For perfect vision, highest safety, faster recovery and 100% precision.",
-        "image": "/assets/media/gallery/bladeless-facility.jpg",
-        "alt": "Bladeless robotic laser surgery facility visual from Aakash Eye Hospital"
+        "value": "06",
+        "label": "Hospitals across Gujarat"
       },
       {
-        "title": "Better Vision. Better Tomorrow.",
-        "description": "Modern ophthalmology with clear communication, safety protocols and affordable care.",
-        "image": "/assets/media/stock/closeup-eye-pexels-andrea-bova-2953811.jpg",
-        "alt": "Close-up eye visual representing clear vision"
+        "value": "09",
+        "label": "Consulting specialists"
       }
     ],
-    "ctas": [
+    "video": {
+      "desktop": {
+        "webm": "/assets/media/heroes/hero-desktop.webm",
+        "mp4": "/assets/media/heroes/hero-desktop.mp4",
+        "poster": "/assets/media/heroes/hero-desktop-poster.jpg"
+      },
+      "mobile": {
+        "webm": "/assets/media/heroes/hero-mobile.webm",
+        "mp4": "/assets/media/heroes/hero-mobile.mp4",
+        "poster": "/assets/media/heroes/hero-mobile-poster.jpg"
+      },
+      "description": "Aakash Eye Hospital: the hospital building, the main atrium reception and an examination room where patients are seen at the slit lamp."
+    }
+  },
+  "impact": {
+    "eyebrow": "By the numbers",
+    "titleGujarati": "અંધકારથી અજવાળા તરફ",
+    "tagline": "Affordable, Ethical & Quality Eye Care",
+    "taglineAccent": "Since 1993",
+    "cards": [
       {
-        "label": "Book Appointment",
-        "href": "/appointment"
+        "id": "surgeries",
+        "kicker": "01",
+        "value": 100000,
+        "suffix": "+",
+        "label": "Surgeries performed",
+        "description": "Cataract, refractive, retina and glaucoma procedures since 1993.",
+        "visual": "mix",
+        "mix": [
+          {
+            "name": "Cataract",
+            "share": 58
+          },
+          {
+            "name": "LASIK & refractive",
+            "share": 18
+          },
+          {
+            "name": "Retina",
+            "share": 14
+          },
+          {
+            "name": "Glaucoma & other",
+            "share": 10
+          }
+        ]
       },
       {
-        "label": "Explore Services",
+        "id": "patients",
+        "kicker": "02",
+        "value": 500000,
+        "suffix": "+",
+        "label": "Patients cared for",
+        "description": "OPD consultations, screening camps and follow-up visits.",
+        "visual": "trend",
+        "trend": {
+          "caption": "Patient visits per year",
+          "startLabel": "1993",
+          "endLabel": "2025",
+          "points": [
+            8,
+            14,
+            22,
+            31,
+            29,
+            44,
+            58,
+            71,
+            86,
+            100
+          ]
+        }
+      },
+      {
+        "id": "doctors",
+        "kicker": "03",
+        "value": 9,
+        "suffix": "",
+        "label": "Specialists on the team",
+        "description": "Surgeons, vitreoretina consultants and optometrists across branches.",
+        "visual": "people"
+      },
+      {
+        "id": "branches",
+        "kicker": "04",
+        "value": 6,
+        "suffix": "",
+        "label": "Hospitals in Gujarat",
+        "description": "A hospital close to home, with one shared patient record.",
+        "visual": "branches"
+      }
+    ],
+    "actions": {
+      "primary": {
+        "label": "Book appointment",
+        "href": "/appointment"
+      },
+      "secondary": {
+        "label": "See how we treat",
         "href": "/services"
+      }
+    }
+  },
+  "conditions": {
+    "eyebrow": "What we treat",
+    "title": "Conditions we treat",
+    "slides": [
+      {
+        "id": "cataract",
+        "category": "Cataract",
+        "headline": "A cataract clouds the natural lens of the eye, turning sharp vision hazy and making night driving and reading harder.",
+        "image": "/assets/media/conditions/cataract-slit-lamp-pexels-6749706.jpg",
+        "imageAlt": "An ophthalmologist examining a patient at a slit lamp microscope",
+        "doctor": "Dr. Vishnu S. Patel",
+        "quote": "Cataract surgery is not something to postpone until vision is gone. Once the lens starts limiting daily activity, day-care phaco surgery restores clarity in a single sitting.",
+        "quoteShort": "Once the lens limits daily activity, day-care surgery restores clarity.",
+        "treatments": [
+          {
+            "label": "Phaco cataract surgery",
+            "slug": "phaco-cataract-surgery"
+          },
+          {
+            "label": "Bladeless robotic laser",
+            "slug": "bladeless-robotic-laser-surgery"
+          },
+          {
+            "label": "General OPD and refraction",
+            "slug": "general-ophthalmology-opd"
+          }
+        ],
+        "href": "/services/phaco-cataract-surgery"
+      },
+      {
+        "id": "refractive-error",
+        "category": "Refractive error",
+        "headline": "Short sight, long sight and astigmatism blur the image the eye forms, and glasses are only one of the ways to correct it.",
+        "image": "/assets/media/conditions/refraction-trial-frame-pexels-6749734.jpg",
+        "imageAlt": "An optometrist checking a patient using a trial frame with test lenses",
+        "doctor": "Dr. Saurabh Kapoor",
+        "quote": "A careful refraction comes first. Only after we confirm corneal thickness and a stable prescription do we discuss LASIK as an option for a patient.",
+        "quoteShort": "A careful refraction comes first, and only then do we discuss LASIK.",
+        "treatments": [
+          {
+            "label": "LASIK and excimer laser",
+            "slug": "lasik-excimer"
+          },
+          {
+            "label": "General OPD and refraction",
+            "slug": "general-ophthalmology-opd"
+          },
+          {
+            "label": "Bladeless robotic laser",
+            "slug": "bladeless-robotic-laser-surgery"
+          }
+        ],
+        "href": "/services/lasik-excimer"
+      },
+      {
+        "id": "bladeless",
+        "category": "Bladeless surgery",
+        "headline": "Bladeless femtosecond laser replaces the manual blade in cataract and LASIK steps, adding precision where it matters most.",
+        "image": "/assets/media/heroes/bladeless-robotic-laser-surgery.jpg",
+        "imageAlt": "Bladeless robotic laser surgery suite at Aakash Eye Hospital",
+        "doctor": "Dr. Sanjay B. Patel",
+        "quote": "The laser performs the incision and lens fragmentation to a planned depth. That consistency is what supports a smoother recovery for the patient.",
+        "quoteShort": "The laser cuts to a planned depth every time, which aids recovery.",
+        "treatments": [
+          {
+            "label": "Bladeless robotic laser",
+            "slug": "bladeless-robotic-laser-surgery"
+          },
+          {
+            "label": "Phaco cataract surgery",
+            "slug": "phaco-cataract-surgery"
+          },
+          {
+            "label": "LASIK and excimer laser",
+            "slug": "lasik-excimer"
+          }
+        ],
+        "href": "/services/bladeless-robotic-laser-surgery"
+      },
+      {
+        "id": "retina",
+        "category": "Retina",
+        "headline": "Diabetes and ageing can damage the retina quietly, which is why imaging often finds a problem before a patient notices one.",
+        "image": "/assets/media/conditions/retina-imaging-pexels-5765827.jpg",
+        "imageAlt": "A retinal imaging device displaying a scan of a patient eye",
+        "doctor": "Dr. Dhaivat Vasavada",
+        "quote": "Every patient with diabetes should have a dilated retina check each year. OCT and FFA let us see change early, while treatment still protects vision.",
+        "quoteShort": "Every patient with diabetes needs a dilated retina check each year.",
+        "treatments": [
+          {
+            "label": "Medical retina care",
+            "slug": "medical-retina"
+          },
+          {
+            "label": "General OPD and refraction",
+            "slug": "general-ophthalmology-opd"
+          },
+          {
+            "label": "Glaucoma care",
+            "slug": "glaucoma-care"
+          }
+        ],
+        "href": "/services/medical-retina"
+      },
+      {
+        "id": "glaucoma",
+        "category": "Glaucoma",
+        "headline": "Glaucoma damages the optic nerve, usually with raised eye pressure and usually without symptoms until side vision is already lost.",
+        "image": "/assets/media/conditions/glaucoma-screening-pexels-5766215.jpg",
+        "imageAlt": "A patient having eye pressure checked on a diagnostic machine with a clinician",
+        "doctor": "Dr. Asesh B. Patel",
+        "quote": "Vision lost to glaucoma does not come back, so screening is the whole battle. A pressure check and a field test take minutes at any of our branches.",
+        "quoteShort": "Sight lost to glaucoma never returns, so screening is the whole battle.",
+        "treatments": [
+          {
+            "label": "Glaucoma care",
+            "slug": "glaucoma-care"
+          },
+          {
+            "label": "General OPD and refraction",
+            "slug": "general-ophthalmology-opd"
+          },
+          {
+            "label": "Medical retina care",
+            "slug": "medical-retina"
+          }
+        ],
+        "href": "/services/glaucoma-care"
+      },
+      {
+        "id": "family-eye-care",
+        "category": "Family eye care",
+        "headline": "Children rarely say their vision is blurred, so school-age eye checks catch squint, lazy eye and glasses needs while they are still treatable.",
+        "image": "/assets/media/conditions/child-vision-test-pexels-5996608.jpg",
+        "imageAlt": "A child covering one eye during a vision test at an eye clinic",
+        "doctor": "Dr. Mahendra M. Patel",
+        "quote": "Bring a child for a check before school starts, not after a teacher notices. Early correction is what protects a young eye from lasting weakness.",
+        "quoteShort": "Bring a child for a check before school starts, not after.",
+        "treatments": [
+          {
+            "label": "General OPD and refraction",
+            "slug": "general-ophthalmology-opd"
+          },
+          {
+            "label": "LASIK and excimer laser",
+            "slug": "lasik-excimer"
+          },
+          {
+            "label": "Phaco cataract surgery",
+            "slug": "phaco-cataract-surgery"
+          }
+        ],
+        "href": "/services/general-ophthalmology-opd"
       }
     ]
   },
-  "stats": [
-    {
-      "label": "Years of care",
-      "value": 32,
-      "suffix": "+",
-      "description": "Established 8 August 1993"
-    },
-    {
-      "label": "Branches",
-      "value": 3,
-      "suffix": "",
-      "description": "Visnagar, Ahmedabad and Bharuch"
-    },
-    {
-      "label": "Cataract procedures",
-      "value": 100000,
-      "suffix": "+",
-      "description": "Legacy source states more than 1 lakh procedures"
-    },
-    {
-      "label": "Core specialties",
-      "value": 6,
-      "suffix": "",
-      "description": "Cataract, LASIK, retina, glaucoma, OPD and robotic laser care"
-    }
-  ],
-  "featuredServiceIds": [
-    "bladeless-robotic-laser-surgery",
-    "phaco-cataract-surgery",
-    "lasik-excimer",
-    "medical-retina"
-  ],
   "timeline": {
     "eyebrow": "A legacy of progress",
     "title": "Milestones in advanced eye care",
@@ -128,8 +338,8 @@
     ]
   },
   "cta": {
-    "title": "Ready to plan your visit?",
-    "description": "Choose a branch, tell us the service you need and our team will help you with the next step.",
+    "title": "Plan your visit",
+    "description": "Choose the hospital nearest to you, tell us what you need, and our team will confirm a time that works. Walk-in OPD is available at every branch.",
     "primary": {
       "label": "Book Appointment",
       "href": "/appointment"
@@ -138,5 +348,98 @@
       "label": "View Branches",
       "href": "/branches"
     }
+  },
+  "trust": {
+    "eyebrow": "Why choose us",
+    "title": "Why Choose Aakash Eye Hospital?",
+    "items": [
+      {
+        "icon": "Stethoscope",
+        "tone": "navy",
+        "title": "Expert care",
+        "description": "The surgeon who sees you at the first visit is the one who operates.",
+        "visual": "team",
+        "meta": "Practising since 1993"
+      },
+      {
+        "icon": "ScanEye",
+        "tone": "clinical",
+        "title": "Advanced technology",
+        "description": "Bladeless femtosecond laser, excimer, OCT imaging and perimetry, at every branch.",
+        "visual": "scan",
+        "meta": "Bladeless · OCT · Excimer"
+      },
+      {
+        "icon": "MapPinned",
+        "tone": "teal",
+        "title": "Care across locations",
+        "description": "Six hospitals in Gujarat, so a follow-up never means a day of travel.",
+        "visual": "map",
+        "meta": "Visnagar to Bharuch"
+      },
+      {
+        "icon": "HeartHandshake",
+        "tone": "accent",
+        "title": "Patient first",
+        "description": "You are told what a procedure can and cannot do before you decide.",
+        "visual": "explain",
+        "meta": "Clear guidance, no pressure"
+      },
+      {
+        "icon": "FolderHeart",
+        "tone": "paper",
+        "title": "Old case file promise",
+        "description": "Old case files have no due date. Bring yours on any future visit.",
+        "visual": "files",
+        "meta": "No due date, ever"
+      },
+      {
+        "icon": "ShieldCheck",
+        "tone": "clinical",
+        "title": "Quality promise",
+        "description": "Written protocols at every step, kept to protect patient safety.",
+        "visual": "checklist",
+        "meta": "Protocol-led safety"
+      }
+    ],
+    "filesYears": [
+      "1998",
+      "2011",
+      "2025"
+    ],
+    "explainSteps": [
+      "We explain",
+      "You ask",
+      "You decide"
+    ],
+    "checklist": [
+      "Pre-op checks",
+      "Sterile protocol",
+      "Follow-up review"
+    ]
+  },
+  "doctorHighlights": {
+    "eyebrow": "Our specialists",
+    "title": "Built around our",
+    "titleAccent": "senior doctors",
+    "lede": "Aakash Eye Hospital's medical and surgical team",
+    "ctaLabel": "Meet the full team",
+    "featured": [
+      "Dr. Vishnu S. Patel",
+      "Dr. Sanjay B. Patel",
+      "Dr. Dhaivat Vasavada",
+      "Dr. Saurabh Kapoor",
+      "Dr. Asesh B. Patel",
+      "A. K. Patel",
+      "Kashyap M. Patel",
+      "Bhavika R. Patel",
+      "Dr. Mahendra M. Patel"
+    ]
+  },
+  "voices": {
+    "eyebrow": "Patient voices",
+    "title": "What patients say after a visit",
+    "lede": "Recurring themes drawn from public reviews across our hospitals. They are summarised rather than quoted, so no words are put in a patient's mouth.",
+    "note": "Summarised from public reviews"
   }
 }

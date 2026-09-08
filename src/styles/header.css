@@ -1,0 +1,1138 @@
+/* Site header. Namespaced under .hd so global.css never restyles it. */
+
+.hd {
+  --hd-city-h: 44px;
+  --hd-main-h: 76px;
+  --hd-nav-h: 56px;
+  --hd-navy: var(--color-brand-blue-strong);
+  --hd-blue: var(--color-brand-blue);
+  --hd-rule: rgba(12, 44, 73, 0.12);
+  --hd-rule-soft: rgba(12, 44, 73, 0.07);
+  /* WCAG 1.4.11 wants 3:1 on the boundary of a control, and --hd-rule is a
+     decorative hairline at 1.2:1. Do not put --hd-rule on a button. */
+  --hd-edge: #7f8b96;
+  --hd-emergency: var(--color-danger);
+
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--hd-rule-soft);
+  transition: transform 260ms ease, box-shadow 220ms ease;
+}
+
+/* Every screen hands the header back to the page while the reader moves down,
+   and gets it back on the first scroll up. */
+.hd--hidden {
+  transform: translateY(-100%);
+}
+
+/* Tabbing into the header must always bring it back. */
+.hd:focus-within {
+  transform: none;
+}
+
+.hd--drawer-open {
+  z-index: 200;
+}
+
+.hd--scrolled {
+  box-shadow: 0 6px 22px rgba(12, 44, 73, 0.09);
+}
+
+.hd--drawer-open,
+.hd--drawer-open.hd--hidden {
+  transform: none;
+}
+
+.hd__container {
+  display: flex;
+  align-items: center;
+  width: min(100% - 32px, 1240px);
+  margin: 0 auto;
+}
+
+/* ---------- mobile city bar ---------- */
+
+.hd__citybar {
+  position: relative;
+  height: var(--hd-city-h);
+  background: var(--hd-navy);
+  color: #fff;
+  transition: height 220ms ease;
+}
+
+.hd--scrolled .hd__citybar {
+  height: 0;
+  overflow: hidden;
+}
+
+.hd__citybar .hd__container {
+  height: var(--hd-city-h);
+}
+
+.hd__citybar-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0 12px;
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+.hd__citybar-toggle:hover,
+.hd__citybar-toggle[aria-expanded="true"] {
+  border-color: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* "Your hospital" names what the city beside it is - the bar carried a lone
+   city name and no clue that it was a control that changes the OPD number. */
+.hd__pop-label {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.hd__citybar-toggle svg:last-child {
+  transition: transform 200ms ease;
+}
+
+.hd__citybar-toggle[aria-expanded="true"] svg:last-child {
+  transform: rotate(180deg);
+}
+
+/* ---------- brand row ---------- */
+
+.hd__main .hd__container {
+  height: var(--hd-main-h);
+  justify-content: space-between;
+  gap: 20px;
+  transition: height 220ms ease;
+}
+
+.hd--scrolled .hd__main .hd__container {
+  height: 64px;
+}
+
+.hd__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  flex: 0 0 auto;
+}
+
+.hd__brand img {
+  width: clamp(140px, 15vw, 168px);
+  height: auto;
+  transition: width 220ms ease;
+}
+
+.hd--scrolled .hd__brand img {
+  width: clamp(126px, 12vw, 144px);
+}
+
+.hd__brand-est {
+  display: grid;
+  align-content: center;
+  gap: 1px;
+  min-height: 42px;
+  border-left: 1px solid var(--hd-rule);
+  padding-left: 14px;
+  color: var(--hd-blue);
+  font-family: var(--font-heading);
+  line-height: 1.15;
+}
+
+.hd__brand-est strong {
+  font-size: 1.02rem;
+  font-weight: 600;
+}
+
+.hd__brand-est span {
+  color: var(--color-slate);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ---------- desktop utilities ---------- */
+
+.hd__utils {
+  display: flex;
+  align-items: center;
+  gap: clamp(18px, 2vw, 30px);
+}
+
+.hd__emergency {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--hd-emergency);
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.hd__emergency:hover span {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.hd__utils .hd__emergency-short,
+.hd__drawer-foot .hd__emergency-short,
+.hd__mobile-actions .hd__emergency-full {
+  display: none;
+}
+
+.hd__phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+
+.hd__phone strong {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.hd__phone:hover strong {
+  color: var(--hd-blue);
+}
+
+.hd__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--hd-navy);
+  padding: 0 20px;
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color 180ms ease;
+}
+
+.hd__cta:hover {
+  background: var(--color-ink);
+}
+
+/* ---------- generic dropdown shell ---------- */
+
+.hd__pop {
+  position: relative;
+}
+
+.hd__pop-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  border: 1px solid var(--hd-rule);
+  border-radius: var(--radius-md);
+  background: transparent;
+  padding: 0 12px;
+  color: var(--color-ink);
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.hd__pop-toggle:hover,
+.hd__pop-toggle[aria-expanded="true"] {
+  border-color: var(--hd-blue);
+  background: var(--color-brand-blue-soft);
+}
+
+.hd__pop-toggle svg:last-child {
+  transition: transform 200ms ease;
+}
+
+.hd__pop-toggle[aria-expanded="true"] svg:last-child {
+  transform: rotate(180deg);
+}
+
+.hd__panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 30;
+  border: 1px solid var(--hd-rule);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: 0 24px 56px rgba(12, 44, 73, 0.16);
+  padding: 8px;
+  animation: hd-pop 160ms ease-out;
+}
+
+@keyframes hd-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+.hd__panel-head {
+  display: grid;
+  gap: 2px;
+  border-bottom: 1px solid var(--hd-rule-soft);
+  padding: 8px 12px 10px;
+  margin-bottom: 4px;
+}
+
+.hd__panel-title {
+  color: var(--hd-navy);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.hd__panel-hint {
+  color: var(--color-slate);
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.hd__panel-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 6px;
+  border-top: 1px solid var(--hd-rule-soft);
+  padding: 12px;
+  color: var(--hd-blue);
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.hd__panel-foot:hover {
+  color: var(--color-ink);
+}
+
+/* ---------- branch picker list ---------- */
+
+.hd__branch-list {
+  display: grid;
+  gap: 2px;
+  width: 312px;
+  max-height: min(58vh, 430px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Same row as the hospitals menu: name, locality, and a check on the branch in
+   use. The six blue pin tiles that used to lead these rows repeated one glyph
+   six times and made the sheet look busier than the six words it carries. */
+.hd__branch-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  padding: 8px 12px;
+  color: var(--color-ink);
+  text-align: left;
+  transition: background-color 150ms ease;
+}
+
+.hd__branch-option:hover,
+.hd__branch-option[aria-checked="true"] {
+  background: var(--color-brand-blue-soft);
+}
+
+.hd__branch-text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.hd__branch-option strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-size: 0.97rem;
+  font-weight: 600;
+}
+
+.hd__branch-option[aria-checked="true"] strong {
+  color: var(--hd-blue);
+}
+
+.hd__branch-option small {
+  display: block;
+  overflow: hidden;
+  color: var(--color-slate);
+  font-size: 0.78rem;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hd__branch-check {
+  flex: 0 0 auto;
+  color: var(--hd-blue);
+}
+
+/* ---------- desktop nav row ---------- */
+
+.hd__navbar .hd__container {
+  height: var(--hd-nav-h);
+  justify-content: flex-start;
+  border-top: 1px solid var(--hd-rule-soft);
+}
+
+.hd__nav {
+  display: flex;
+  align-items: stretch;
+  gap: 34px;
+  height: 100%;
+}
+
+.hd__nav-link,
+.hd__nav-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  padding: 0;
+  color: var(--color-ink);
+  font-family: var(--font-heading);
+  font-size: 0.97rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    color 160ms ease,
+    border-color 160ms ease;
+}
+
+.hd__nav-link:hover,
+.hd__nav-trigger:hover,
+.hd__nav-trigger[aria-expanded="true"] {
+  color: var(--hd-blue);
+  border-bottom-color: rgba(18, 60, 97, 0.35);
+}
+
+.hd__nav-link--active {
+  color: var(--hd-blue);
+  border-bottom-color: var(--color-accent-magenta);
+}
+
+.hd__nav-trigger svg {
+  transition: transform 200ms ease;
+}
+
+.hd__nav-trigger[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+/* ---------- hospitals menu ---------- */
+
+.hd__mega-wrap {
+  position: relative;
+  display: flex;
+}
+
+/* One narrow column under its own trigger. The panel text is inset by its own
+   padding plus the row padding, so the offset pulls the branch names back into
+   line with the nav label above them. */
+.hd__mega {
+  --hd-mega-inset: 22px;
+
+  position: absolute;
+  top: calc(100% + 10px);
+  left: calc(var(--hd-mega-inset) * -1);
+  z-index: 30;
+  width: min(340px, calc(100vw - 32px));
+  border: 1px solid var(--hd-rule);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: 0 20px 44px rgba(12, 44, 73, 0.16);
+  padding: 8px;
+  animation: hd-mega 160ms ease-out;
+
+  /* A short laptop window must still reach the last city and the foot link. */
+  max-height: calc(100vh - var(--hd-main-h) - var(--hd-nav-h) - 28px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* The 10px gap above the panel would drop the hover and close the menu
+   mid-travel, so the panel bridges it with a transparent strip. */
+.hd__mega::before {
+  content: "";
+  position: absolute;
+  top: -11px;
+  right: 0;
+  left: 0;
+  height: 11px;
+}
+
+.hd__mega::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: calc(var(--hd-mega-inset) + 16px);
+  width: 11px;
+  height: 11px;
+  border-top: 1px solid var(--hd-rule);
+  border-left: 1px solid var(--hd-rule);
+  border-radius: 2px 0 0 0;
+  background: var(--color-surface);
+  transform: rotate(45deg);
+}
+
+@keyframes hd-mega {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+.hd__mega-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 12px 8px;
+}
+
+.hd__mega-head span {
+  color: var(--color-slate);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.hd__mega-head small {
+  color: var(--color-slate);
+  font-size: 0.75rem;
+}
+
+.hd__mega-list {
+  display: grid;
+  gap: 2px;
+}
+
+.hd__mega-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 48px;
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  transition:
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.hd__mega-item:hover,
+.hd__mega-item:focus-visible {
+  background: var(--color-brand-blue-soft);
+}
+
+.hd__mega-item[data-current] {
+  background: var(--color-brand-blue-soft);
+}
+
+.hd__mega-text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.hd__mega-text strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-ink);
+  font-family: var(--font-heading);
+  font-size: 0.97rem;
+  font-weight: 600;
+}
+
+.hd__mega-item:hover .hd__mega-text strong,
+.hd__mega-item[data-current] .hd__mega-text strong {
+  color: var(--hd-blue);
+}
+
+.hd__mega-text small {
+  overflow: hidden;
+  color: var(--color-slate);
+  font-size: 0.78rem;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hd__mega-mark {
+  flex: 0 0 auto;
+  color: var(--hd-blue);
+}
+
+/* The row chevron is a hover cue, not a permanent column of arrows. */
+.hd__mega-go {
+  flex: 0 0 auto;
+  color: var(--hd-blue);
+  opacity: 0;
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease;
+  transform: translateX(-4px);
+}
+
+.hd__mega-item:hover .hd__mega-go,
+.hd__mega-item:focus-visible .hd__mega-go {
+  opacity: 1;
+  transform: none;
+}
+
+.hd__tag {
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-magenta-soft);
+  padding: 2px 8px;
+  color: var(--color-accent-magenta);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ---------- mobile actions ---------- */
+
+.hd__mobile-actions {
+  display: none;
+  align-items: center;
+  gap: 6px;
+}
+
+.hd__iconbtn {
+  display: inline-grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid var(--hd-rule);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--hd-navy);
+  touch-action: manipulation;
+}
+
+.hd__iconbtn:hover {
+  background: var(--color-brand-blue-soft);
+}
+
+/* ---------- mobile drawer ----------
+
+   The drawer leads with navigation and keeps the actions pinned in the thumb
+   zone at the bottom, which is the opposite of the order it had. Before, a
+   full-width CTA, two ghost buttons and a four-line address block sat above
+   the links, so on a 390x844 phone the reader saw three of the seven routes
+   and had to scroll a navigation menu to reach Gallery or Contact.
+
+   The branch block is now the only place the drawer names a hospital. The
+   address panel and the separate "Our Hospitals" accordion below it said the
+   same thing twice; the accordion is folded into this block, and the nav row
+   of the same name is an ordinary link to /branches like every other row.
+
+   Rows carry no chevron. Seven identical arrows pointing at seven links tell
+   the reader nothing - the same reason the desktop hospitals menu dropped its
+   six MapPin tiles. The magenta inset bar still means "the page you are on".
+*/
+
+.hd__drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 210;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(12, 44, 73, 0.55);
+  animation: hd-fade 180ms ease-out;
+}
+
+/* The sheet stops short of the left edge so the dimmed page stays visible
+   behind it: a full-bleed white panel reads as a page, not as a layer. */
+.hd__drawer-panel {
+  display: flex;
+  width: min(400px, 92%);
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-surface);
+  box-shadow: -22px 0 54px rgba(12, 44, 73, 0.26);
+  animation: hd-slide 260ms var(--e-ease);
+}
+
+@keyframes hd-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes hd-slide {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes hd-rise {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+}
+
+.hd__drawer-panel:focus {
+  outline: none;
+}
+
+.hd__drawer-head {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--hd-rule-soft);
+  padding: 13px 16px;
+}
+
+.hd__drawer-head img {
+  width: 148px;
+  height: auto;
+}
+
+.hd__drawer-close {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--hd-edge);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--hd-navy);
+  touch-action: manipulation;
+}
+
+.hd__drawer-close:hover {
+  background: var(--color-brand-blue-soft);
+}
+
+/* Only this strip scrolls, so the brand row above and the actions below stay
+   put while the reader moves through the branch list. */
+.hd__drawer-scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.hd__drawer-branch {
+  border-bottom: 1px solid var(--hd-rule-soft);
+  padding: 12px;
+}
+
+.hd__drawer-branch-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 68px;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--color-clinical);
+  padding: 11px 14px;
+  text-align: left;
+}
+
+.hd__drawer-branch-text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.hd__drawer-branch-text small {
+  color: var(--color-slate);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.hd__drawer-branch-text strong {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--hd-blue);
+  font-family: var(--font-heading);
+  font-size: 1.08rem;
+  font-weight: 600;
+}
+
+.hd__drawer-branch-text > span {
+  overflow: hidden;
+  color: var(--color-slate);
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hd__drawer-branch-cue {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-accent-magenta);
+  font-family: var(--font-heading);
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.hd__drawer-branch-cue svg {
+  transition: transform 200ms ease;
+}
+
+.hd__drawer-branch-toggle[aria-expanded="true"] .hd__drawer-branch-cue svg {
+  transform: rotate(180deg);
+}
+
+.hd__drawer-sub {
+  display: grid;
+  gap: 2px;
+  padding: 4px 0 2px;
+}
+
+/* The selected branch shows in the summary row and again, checked, in the
+   list. The heading is what makes that read as a list of choices rather than
+   as the same row printed twice. */
+.hd__drawer-sub .hd__drawer-label {
+  padding: 10px 12px 4px;
+}
+
+/* Same row anatomy as the desktop menu - name, locality, and a check on the
+   branch the reader is already on - at a thumb-sized height. */
+.hd__drawer-branch-link,
+.hd__drawer-sub-all {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 52px;
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  color: var(--color-ink);
+}
+
+.hd__drawer-branch-link span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.hd__drawer-branch-link:hover,
+.hd__drawer-branch-link[data-current] {
+  background: var(--color-brand-blue-soft);
+}
+
+.hd__drawer-branch-link strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+
+.hd__drawer-branch-link[data-current] strong {
+  color: var(--hd-blue);
+}
+
+.hd__drawer-branch-link small {
+  overflow: hidden;
+  color: var(--color-slate);
+  font-size: 0.79rem;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hd__drawer-branch-link svg,
+.hd__drawer-sub-all svg {
+  flex: 0 0 auto;
+  color: var(--hd-blue);
+}
+
+.hd__drawer-sub-all {
+  margin-top: 4px;
+  border-top: 1px solid var(--hd-rule-soft);
+  border-radius: 0;
+  color: var(--hd-blue);
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.hd__drawer-nav {
+  display: grid;
+  gap: 2px;
+  padding: 0 12px 14px;
+}
+
+.hd__drawer-label {
+  padding: 16px 12px 6px;
+  color: var(--color-slate);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.hd__drawer-link {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  border-radius: var(--radius-md);
+  padding: 0 12px;
+  color: var(--color-ink);
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 600;
+  animation: hd-rise 240ms var(--e-ease) backwards;
+  animation-delay: calc(var(--hd-i, 0) * 26ms + 90ms);
+}
+
+.hd__drawer-link:hover {
+  background: var(--color-brand-blue-soft);
+}
+
+.hd__drawer-link--active {
+  background: var(--color-clinical);
+  color: var(--hd-blue);
+  box-shadow: inset 3px 0 0 var(--color-accent-magenta);
+}
+
+/* The actions sit at the bottom because that is where a thumb rests, and they
+   stay there while the list above scrolls. */
+.hd__drawer-foot {
+  display: grid;
+  flex: 0 0 auto;
+  gap: 9px;
+  border-top: 1px solid var(--hd-rule);
+  background: var(--color-surface-alt);
+  padding: 13px 14px calc(13px + env(safe-area-inset-bottom));
+  box-shadow: 0 -12px 26px rgba(12, 44, 73, 0.07);
+}
+
+.hd__drawer-foot .hd__cta {
+  justify-content: center;
+  min-height: 52px;
+}
+
+.hd__drawer-trio {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+/* Icon over label: three side-by-side buttons are about 110px wide on a 390px
+   phone, and "WhatsApp" beside an icon overflowed that at a readable size. */
+.hd__ghost {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 58px;
+  border: 1px solid var(--hd-edge);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--hd-navy);
+  font-family: var(--font-heading);
+  font-size: 0.79rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.hd__ghost:hover {
+  background: var(--color-brand-blue-soft);
+}
+
+.hd__drawer-foot .hd__emergency {
+  justify-content: center;
+  min-height: 46px;
+  border: 1px solid rgba(165, 35, 27, 0.3);
+  border-radius: var(--radius-md);
+  background: #fdf3f2;
+  font-size: 0.95rem;
+}
+
+/* A 640px-tall phone cannot hold the whole menu at full size, so the frame
+   tightens - never the type, which older patients read. */
+@media (max-height: 720px) {
+  .hd__drawer-branch-toggle {
+    min-height: 60px;
+  }
+
+  .hd__drawer-label {
+    padding-top: 10px;
+  }
+
+  .hd__drawer-link {
+    min-height: 48px;
+  }
+
+  .hd__drawer-foot .hd__cta {
+    min-height: 48px;
+  }
+
+  .hd__ghost {
+    min-height: 54px;
+  }
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 1040px) {
+  .hd {
+    --hd-main-h: 64px;
+  }
+
+  .hd__utils,
+  .hd__navbar {
+    display: none;
+  }
+
+  .hd__mobile-actions {
+    display: flex;
+  }
+
+  .hd--scrolled .hd__main .hd__container {
+    height: var(--hd-main-h);
+  }
+
+  .hd--scrolled .hd__brand img {
+    width: clamp(140px, 15vw, 178px);
+  }
+
+  .hd__citybar .hd__pop {
+    position: static;
+  }
+
+  .hd__citybar .hd__panel {
+    top: 100%;
+    right: 0;
+    left: 0;
+    border-top: 0;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    padding: 6px;
+    box-shadow: 0 26px 50px rgba(12, 44, 73, 0.26);
+  }
+
+  /* The sheet drops over the page, so the page dims behind it. Without this it
+     read as a white block that had simply appeared in the layout. */
+  .hd__citybar:has(.hd__panel)::after {
+    content: "";
+    position: fixed;
+    z-index: 20;
+    inset: var(--hd-city-h) 0 0;
+    background: rgba(12, 44, 73, 0.34);
+    animation: hd-fade 180ms ease-out;
+  }
+
+  /* The bar collapses on scroll and clips its own overflow, which would take an
+     open sheet with it; while one is open the bar stays. */
+  .hd--scrolled .hd__citybar:has(.hd__panel) {
+    height: var(--hd-city-h);
+    overflow: visible;
+  }
+
+  .hd__branch-list {
+    width: auto;
+    max-height: min(62vh, 460px);
+  }
+}
+
+@media (min-width: 1041px) {
+  .hd__citybar {
+    display: none;
+  }
+}
+
+@media (max-width: 1199px) {
+  .hd__brand-est {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .hd__brand img {
+    width: 132px;
+  }
+
+  .hd__mobile-actions .hd__emergency {
+    font-size: 0.88rem;
+  }
+}
+
+/* Below this width the label no longer fits beside the logo and menu button;
+   the icon keeps a full-size tap target and the accessible name. */
+@media (max-width: 370px) {
+  .hd__mobile-actions .hd__emergency {
+    justify-content: center;
+    width: 44px;
+  }
+
+  .hd__mobile-actions .hd__emergency-short {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hd,
+  .hd *,
+  .hd::before,
+  .hd::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}

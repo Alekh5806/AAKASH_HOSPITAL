@@ -51,16 +51,114 @@
       "href": "tel:+917600082710"
     }
   },
+  "header": {
+    "establishedLabel": "Since 1993",
+    "emergency": {
+      "label": "Emergency Helpline",
+      "shortLabel": "Emergency",
+      "phone": "+91-760-008-2710"
+    },
+    "branchPicker": {
+      "label": "Your hospital",
+      "menuTitle": "Choose your hospital",
+      "allLabel": "View all hospitals",
+      "menuHint": "Sets the number you call and the branch we book you into."
+    }
+  },
   "socialLinks": [
     {
       "label": "Facebook",
+      "icon": "facebook",
       "href": "https://www.facebook.com/aakasheyehospital"
+    },
+    {
+      "label": "Instagram",
+      "icon": "instagram",
+      "href": "https://www.instagram.com/aakasheyehospital"
+    },
+    {
+      "label": "X",
+      "icon": "x",
+      "href": "https://x.com/aakasheyehosp"
     }
   ],
   "footer": {
-    "summary": "Aakash Eye Hospital provides advanced ophthalmic services across Visnagar, Ahmedabad and Bharuch with a focus on technology, patient safety and affordable care.",
+    "hospitalsTitle": "Our hospitals",
+    "cta": {
+      "title": "Need an eye check-up or a",
+      "titleAccent": "second opinion?",
+      "lede": "Book at the hospital nearest to you, or talk to our OPD team first about what to do next.",
+      "primaryLabel": "Book an appointment",
+      "whatsappLabel": "Ask on WhatsApp"
+    },
+    "contactLabels": {
+      "phone": "OPD and emergency helpline",
+      "email": "Email",
+      "hours": "OPD hours"
+    },
+    "emergencyNote": "For sudden vision loss, an eye injury, severe pain or a red eye that is getting worse, call the helpline above or go to your nearest hospital straight away.",
+    "disclaimers": [
+      "Treatment information on this website is general in nature and is written for patients and their families. It describes the care available at Aakash Eye Hospital; it is not a diagnosis, a treatment plan, or a substitute for an examination by an ophthalmologist. Results differ from person to person, and the procedure that suits one eye may not suit another.",
+      "Every treatment decision here follows an examination and a conversation with your surgeon that covers the alternatives, the risks and the expected recovery. Consultation and procedure charges depend on the tests you need, the lens or technology chosen, and any insurance or scheme cover, so please ask the OPD desk for a written estimate before a procedure is scheduled."
+    ],
+    "legalNote": "Aakash Eye Hospital, Visnagar - registered ophthalmic hospital operating since 8 August 1993.",
     "copyright": "Aakash Eye Hospital. All rights reserved.",
     "sourceNote": "Seed content references the legacy website at https://aakasheyehospital.com/ and the project brief."
+  },
+  "cookies": {
+    "banner": {
+      "eyebrow": "Your privacy",
+      "title": "We use cookies on this website",
+      "body": "Necessary cookies keep the site working and remember this choice. Optional cookies remember the hospital you pick and help us see which pages patients use.",
+      "bodyShort": "Necessary cookies keep this site working. Optional ones remember your hospital and how pages are used.",
+      "acceptLabel": "Accept all",
+      "rejectLabel": "Reject optional",
+      "customiseLabel": "Choose cookies"
+    },
+    "dialog": {
+      "eyebrow": "Your privacy",
+      "title": "Cookie preferences",
+      "lede": "Choose what this website may store on your device. You can change this at any time from the privacy link in the footer.",
+      "detailsLabel": "What this stores",
+      "closeLabel": "Close",
+      "saveLabel": "Save my choices",
+      "acceptLabel": "Accept all",
+      "rejectLabel": "Reject optional",
+      "note": "No cookie on this website stores your medical information, and we do not sell your data."
+    },
+    "categories": [
+      {
+        "id": "necessary",
+        "icon": "ShieldCheck",
+        "title": "Necessary",
+        "summary": "Keeps the website working and remembers your cookie choice. These cannot be switched off.",
+        "lockedLabel": "Always on",
+        "items": [
+          "aakash_cookie_preferences - stores the choice you make here for 180 days.",
+          "Security and page-delivery cookies set while you use the site."
+        ]
+      },
+      {
+        "id": "experience",
+        "icon": "MapPinned",
+        "title": "Website experience",
+        "summary": "Remembers the hospital you selected so the right OPD number and directions show on every page.",
+        "items": [
+          "aakash_selected_branch - remembers your chosen hospital on this device.",
+          "aakash_intro_seen - skips the opening animation for the rest of your visit."
+        ]
+      },
+      {
+        "id": "analytics",
+        "icon": "Gauge",
+        "title": "Analytics",
+        "summary": "Lets us count page visits so we can see which treatment pages patients need most. Off unless you turn it on.",
+        "items": [
+          "Aggregated page and visit counts only - never your name, contact details or appointment.",
+          "No analytics cookie is set on your device while this stays off."
+        ]
+      }
+    ]
   },
   "notes": [
     "Business hours are placeholder values and should be verified with the hospital.",

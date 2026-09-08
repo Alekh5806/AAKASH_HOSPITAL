@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarDays, MessageCircle, Send } from "lucide-react";
 import { useForm, useWatch } from "react-hook-form";
+import { useSearchParams } from "react-router-dom";
 import { BreadcrumbJsonLd } from "../components/JsonLd";
 import PageHeader from "../components/PageHeader";
 import SEO from "../components/SEO";
@@ -14,6 +15,15 @@ const defaultBranch = branches.items[0];
 
 export default function AppointmentPage() {
   const [status, setStatus] = useState({ type: "idle", message: "" });
+  const [searchParams] = useSearchParams();
+  const requestedBranch = searchParams.get("branch");
+  const requestedService = searchParams.get("service");
+  const requestedName = searchParams.get("name");
+  const initialBranch = branches.items.some((branch) => branch.slug === requestedBranch)
+    ? requestedBranch
+    : defaultBranch.slug;
+  const initialService =
+    services.items.find((service) => service.id === requestedService)?.title ?? "";
   const {
     register,
     handleSubmit,
@@ -23,11 +33,11 @@ export default function AppointmentPage() {
   } = useForm({
     resolver: zodResolver(appointmentSchema),
     defaultValues: {
-      name: "",
+      name: requestedName ?? "",
       phone: "",
       email: "",
-      branch: defaultBranch.slug,
-      service: "",
+      branch: initialBranch,
+      service: initialService,
       preferredDate: "",
       message: "",
       botcheck: "",

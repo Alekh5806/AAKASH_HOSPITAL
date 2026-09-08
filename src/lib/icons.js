@@ -1,10 +1,13 @@
 import {
   Activity,
+  CalendarCheck2,
   CircleHelp,
   Eye,
   FolderHeart,
   Gauge,
   Goal,
+  HeartHandshake,
+  MapPinned,
   ScanEye,
   ShieldCheck,
   Sparkles,
@@ -13,11 +16,14 @@ import {
 
 const icons = {
   Activity,
+  CalendarCheck2,
   CircleHelp,
   Eye,
   FolderHeart,
   Gauge,
   Goal,
+  HeartHandshake,
+  MapPinned,
   ScanEye,
   ShieldCheck,
   Sparkles,

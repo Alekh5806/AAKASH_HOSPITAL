@@ -1,17 +1,30 @@
-import { useEffect, useState } from "react";
+import { createElement, useCallback, useEffect, useRef, useState } from "react";
+import { ChevronDown, Cookie, X } from "lucide-react";
+import { site } from "../lib/coreData";
+import { getIcon } from "../lib/icons";
 
 const COOKIE_NAME = "aakash_cookie_preferences";
 const COOKIE_DAYS = 180;
-const defaultPreferences = {
-  necessary: true,
-  experience: true,
-  analytics: false,
-};
-const allPreferences = {
-  necessary: true,
-  experience: true,
-  analytics: true,
-};
+/* The banner waits for AppPreloader (1900ms) to finish before it appears, so a
+   first-time visitor never gets the consent card slid in behind the intro. */
+const BANNER_DELAY_MS = 2100;
+const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+const { banner: bannerCopy, dialog: dialogCopy, categories } = site.cookies;
+const optionalCategories = categories.filter((category) => category.id !== "necessary");
+
+/* Every optional category starts off, which is also exactly what Reject
+   optional stores. A pre-ticked switch would be consent the reader never gave,
+   and it has to be written out key by key: a bare { necessary: true } would let
+   normalize() fill the missing categories back in from the defaults. */
+const noOptional = optionalCategories.reduce(
+  (preferences, category) => ({ ...preferences, [category.id]: false }),
+  { necessary: true },
+);
+const allPreferences = optionalCategories.reduce(
+  (preferences, category) => ({ ...preferences, [category.id]: true }),
+  { necessary: true },
+);
 
 function readCookie() {
   const value = document.cookie
@@ -35,141 +48,291 @@ function writeCookie(preferences) {
   document.cookie = `${COOKIE_NAME}=${encodeURIComponent(JSON.stringify(preferences))}; expires=${expires}; path=/; SameSite=Lax`;
 }
 
-function getInitialCookieState() {
-  const savedPreferences = readCookie();
+function normalize(preferences) {
+  return { ...noOptional, ...preferences, necessary: true };
+}
 
-  if (!savedPreferences) {
-    return {
-      isVisible: true,
-      preferences: defaultPreferences,
-    };
+function CookieSwitch({ category, checked, onChange }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      className="ck__switch"
+      aria-checked={checked}
+      aria-labelledby={`ck-cat-${category.id}`}
+      onClick={onChange}
+    >
+      <span className="ck__switch-track" aria-hidden="true">
+        <span className="ck__switch-knob" />
+      </span>
+      <span className="ck__switch-state">{checked ? "On" : "Off"}</span>
+    </button>
+  );
+}
+
+function CookieCategory({ category, checked, onChange }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const isLocked = category.id === "necessary";
+  const detailsId = `ck-details-${category.id}`;
+
+  return (
+    <li className="ck__cat" data-locked={isLocked || undefined}>
+      <div className="ck__cat-head">
+        <span className="ck__cat-icon" aria-hidden="true">
+          {createElement(getIcon(category.icon), { size: 18, strokeWidth: 1.7 })}
+        </span>
+        <span className="ck__cat-title" id={`ck-cat-${category.id}`}>
+          {category.title}
+        </span>
+        {isLocked ? (
+          <span className="ck__cat-lock">{category.lockedLabel}</span>
+        ) : (
+          <CookieSwitch category={category} checked={checked} onChange={onChange} />
+        )}
+      </div>
+
+      <p className="ck__cat-text">{category.summary}</p>
+
+      <button
+        type="button"
+        className="ck__cat-more"
+        aria-expanded={isOpen}
+        aria-controls={detailsId}
+        onClick={() => setIsOpen((open) => !open)}
+      >
+        {dialogCopy.detailsLabel}
+        <ChevronDown size={15} aria-hidden="true" />
+      </button>
+
+      <ul className="ck__cat-list" id={detailsId} hidden={!isOpen}>
+        {category.items.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+    </li>
+  );
+}
+
+function getStoredPreferences() {
+  if (typeof document === "undefined") {
+    return null;
   }
 
-  return {
-    isVisible: false,
-    preferences: { ...defaultPreferences, ...savedPreferences, necessary: true },
-  };
+  const saved = readCookie();
+  return saved ? normalize(saved) : null;
 }
 
 export default function CookieConsent() {
-  const initialState = useState(getInitialCookieState)[0];
-  const [isVisible, setIsVisible] = useState(initialState.isVisible);
-  const [isEditing, setIsEditing] = useState(false);
-  const [preferences, setPreferences] = useState(initialState.preferences);
+  const [storedPreferences] = useState(getStoredPreferences);
+  const [mode, setMode] = useState(null);
+  const [preferences, setPreferences] = useState(storedPreferences ?? noOptional);
+  const dialogRef = useRef(null);
+  const openerRef = useRef(null);
+
+  useEffect(() => {
+    if (storedPreferences) return undefined;
+
+    const timer = window.setTimeout(() => setMode("banner"), BANNER_DELAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [storedPreferences]);
 
   useEffect(() => {
     function openPreferences() {
-      const savedPreferences = readCookie();
+      const saved = readCookie();
 
-      if (savedPreferences) {
-        setPreferences({ ...defaultPreferences, ...savedPreferences, necessary: true });
+      if (saved) {
+        setPreferences(normalize(saved));
       }
 
-      setIsEditing(true);
-      setIsVisible(true);
+      openerRef.current = document.activeElement;
+      setMode("dialog");
     }
 
     window.addEventListener("aakash:open-cookie-preferences", openPreferences);
     return () => window.removeEventListener("aakash:open-cookie-preferences", openPreferences);
   }, []);
 
-  function savePreferences(nextPreferences) {
-    const normalizedPreferences = { ...nextPreferences, necessary: true };
-    writeCookie(normalizedPreferences);
-    setPreferences(normalizedPreferences);
-    setIsVisible(false);
-    setIsEditing(false);
+  /* Closing the dialog without choosing falls back to the banner when nothing
+     has been stored yet, so a reader who opens the details and changes their
+     mind is still asked rather than silently left with no choice recorded. */
+  const close = useCallback((options = {}) => {
+    setMode(options.saved || readCookie() ? null : "banner");
+    const opener = openerRef.current;
+    openerRef.current = null;
+
+    if (opener?.isConnected) {
+      opener.focus();
+    }
+  }, []);
+
+  /* The dialog is the only surface that takes the screen, so it is the only one
+     that locks the page, traps Tab and answers Escape. The banner stays a
+     dismissible layer the reader can scroll past. */
+  useEffect(() => {
+    if (mode !== "dialog") return undefined;
+
+    const panel = dialogRef.current;
+    const previousOverflow = document.body.style.overflow;
+
+    document.body.style.overflow = "hidden";
+    panel?.querySelector(FOCUSABLE)?.focus();
+
+    function onKeyDown(event) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        close();
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const focusable = Array.from(panel?.querySelectorAll(FOCUSABLE) ?? []).filter(
+        (node) => node.offsetParent !== null,
+      );
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [mode, close]);
+
+  function save(next) {
+    const normalized = normalize(next);
+    writeCookie(normalized);
+    setPreferences(normalized);
+    close({ saved: true });
   }
 
-  function togglePreference(key) {
-    setPreferences((currentPreferences) => ({
-      ...currentPreferences,
-      [key]: !currentPreferences[key],
-    }));
+  function toggle(id) {
+    setPreferences((current) => ({ ...current, [id]: !current[id] }));
   }
 
-  if (!isVisible) {
+  if (!mode) {
     return null;
   }
 
-  return (
-    <aside className="cookie-consent" aria-labelledby="cookie-consent-title">
-      <div className="cookie-consent__copy">
-        <span>Privacy Preferences</span>
-        <h2 id="cookie-consent-title">A smoother visit with respectful cookies.</h2>
-        <p>
-          We use essential cookies to save this choice. Optional cookies can help remember website
-          preferences and understand general site usage.
-        </p>
-      </div>
-
-      {isEditing ? (
-        <div className="cookie-consent__settings" aria-label="Cookie preference settings">
-          <label>
-            <input type="checkbox" checked readOnly />
-            <span>
-              Necessary
-              <small>Required for privacy choices and core website functions.</small>
-            </span>
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={preferences.experience}
-              onChange={() => togglePreference("experience")}
-            />
-            <span>
-              Experience
-              <small>Remembers helpful website preferences for future visits.</small>
-            </span>
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={preferences.analytics}
-              onChange={() => togglePreference("analytics")}
-            />
-            <span>
-              Analytics
-              <small>Allows privacy-friendly measurement if analytics are added.</small>
-            </span>
-          </label>
+  if (mode === "banner") {
+    return (
+      <aside className="ck ck__banner" aria-labelledby="ck-banner-title">
+        <span className="ck__glyph" aria-hidden="true">
+          <Cookie size={20} strokeWidth={1.7} />
+        </span>
+        <div className="ck__banner-copy">
+          <span className="ck__eyebrow">{bannerCopy.eyebrow}</span>
+          <h2 className="ck__banner-title" id="ck-banner-title">
+            {bannerCopy.title}
+          </h2>
+          <p className="ck__text ck__text--full">{bannerCopy.body}</p>
+          <p className="ck__text ck__text--short">{bannerCopy.bodyShort}</p>
         </div>
-      ) : null}
+        <div className="ck__actions">
+          <button
+            type="button"
+            className="ck__btn ck__btn--primary"
+            onClick={() => save(allPreferences)}
+          >
+            {bannerCopy.acceptLabel}
+          </button>
+          <button type="button" className="ck__btn" onClick={() => save(noOptional)}>
+            {bannerCopy.rejectLabel}
+          </button>
+          <button
+            type="button"
+            className="ck__more"
+            onClick={() => {
+              openerRef.current = null;
+              setMode("dialog");
+            }}
+          >
+            {bannerCopy.customiseLabel}
+          </button>
+        </div>
+      </aside>
+    );
+  }
 
-      <div className="cookie-consent__actions">
-        {isEditing ? (
+  return (
+    <div className="ck ck__overlay">
+      <button
+        type="button"
+        className="ck__scrim"
+        aria-label={dialogCopy.closeLabel}
+        tabIndex={-1}
+        onClick={() => close()}
+      />
+      <section
+        className="ck__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ck-dialog-title"
+        aria-describedby="ck-dialog-lede"
+        ref={dialogRef}
+      >
+        <header className="ck__dialog-head">
+          <span className="ck__glyph" aria-hidden="true">
+            <Cookie size={20} strokeWidth={1.7} />
+          </span>
+          <div>
+            <span className="ck__eyebrow">{dialogCopy.eyebrow}</span>
+            <h2 className="ck__dialog-title" id="ck-dialog-title">
+              {dialogCopy.title}
+            </h2>
+          </div>
+          <button type="button" className="ck__close" onClick={() => close()}>
+            <X size={18} aria-hidden="true" />
+            <span className="ck__sr">{dialogCopy.closeLabel}</span>
+          </button>
+        </header>
+
+        <div className="ck__dialog-body">
+          <p className="ck__text" id="ck-dialog-lede">
+            {dialogCopy.lede}
+          </p>
+
+          <ul className="ck__cats">
+            {categories.map((category) => (
+              <CookieCategory
+                key={category.id}
+                category={category}
+                checked={category.id === "necessary" ? true : Boolean(preferences[category.id])}
+                onChange={() => toggle(category.id)}
+              />
+            ))}
+          </ul>
+
+          <p className="ck__note">{dialogCopy.note}</p>
+        </div>
+
+        <footer className="ck__dialog-foot">
           <button
             type="button"
-            className="cookie-consent__primary"
-            onClick={() => savePreferences(preferences)}
+            className="ck__btn ck__btn--primary"
+            onClick={() => save(preferences)}
           >
-            Save Preferences
+            {dialogCopy.saveLabel}
           </button>
-        ) : (
-          <button
-            type="button"
-            className="cookie-consent__primary"
-            onClick={() => savePreferences(allPreferences)}
-          >
-            Accept All
+          <button type="button" className="ck__btn" onClick={() => save(allPreferences)}>
+            {dialogCopy.acceptLabel}
           </button>
-        )}
-        <button
-          type="button"
-          onClick={() =>
-            savePreferences({ ...defaultPreferences, experience: false, analytics: false })
-          }
-        >
-          Reject Optional
-        </button>
-        <button
-          type="button"
-          onClick={() => (isEditing ? savePreferences(allPreferences) : setIsEditing(true))}
-        >
-          {isEditing ? "Accept All" : "Customize"}
-        </button>
-      </div>
-    </aside>
+          <button type="button" className="ck__btn" onClick={() => save(noOptional)}>
+            {dialogCopy.rejectLabel}
+          </button>
+        </footer>
+      </section>
+    </div>
   );
 }

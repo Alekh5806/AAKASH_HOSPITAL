@@ -1,35 +1,36 @@
 {
   "colors": {
-    "brandBlue": "#1556A6",
-    "brandBlueStrong": "#073B78",
-    "brandBlueSoft": "#EAF3FF",
-    "accentMagenta": "#D91C7A",
-    "accentMagentaSoft": "#FDEAF4",
-    "ink": "#142033",
-    "slate": "#5C6878",
-    "muted": "#DDE7F0",
+    "brandBlue": "#123C61",
+    "brandBlueStrong": "#0C2C49",
+    "brandBlueSoft": "#EAEFF4",
+    "accentMagenta": "#B81657",
+    "accentMagentaSoft": "#F7E9EF",
+    "ink": "#10161C",
+    "slate": "#4B535C",
+    "muted": "#E3E2DD",
     "surface": "#FFFFFF",
-    "surfaceAlt": "#F7FAFC",
-    "clinical": "#F1F7FB",
-    "teal": "#168A9A",
-    "gold": "#C99A2E",
-    "success": "#157F5B",
-    "danger": "#B42318"
+    "surfaceAlt": "#F5F4F1",
+    "clinical": "#EAEFF4",
+    "teal": "#1B6B72",
+    "gold": "#9A7B2E",
+    "success": "#1B6B4A",
+    "danger": "#A5231B"
   },
   "fonts": {
     "body": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
-    "heading": "Poppins, Inter, ui-sans-serif, system-ui, sans-serif"
+    "heading": "Inter Tight, Inter, ui-sans-serif, system-ui, sans-serif",
+    "display": "Source Serif 4, Georgia, Times New Roman, serif"
   },
   "radius": {
-    "xs": "6px",
-    "sm": "8px",
-    "md": "12px",
-    "lg": "16px",
+    "xs": "2px",
+    "sm": "3px",
+    "md": "4px",
+    "lg": "6px",
     "pill": "999px"
   },
   "shadows": {
-    "sm": "0 8px 22px rgba(7, 59, 120, 0.08)",
-    "md": "0 18px 42px rgba(7, 59, 120, 0.12)",
-    "lg": "0 28px 68px rgba(7, 59, 120, 0.16)"
+    "sm": "0 1px 2px rgba(16, 22, 28, 0.06)",
+    "md": "0 8px 24px rgba(16, 22, 28, 0.08)",
+    "lg": "0 24px 60px rgba(16, 22, 28, 0.12)"
   }
 }

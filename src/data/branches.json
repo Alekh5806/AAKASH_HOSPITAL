@@ -1,27 +1,35 @@
 {
   "seo": {
     "title": "Branches | Aakash Eye Hospital",
-    "description": "Addresses, appointment numbers and contact details for Aakash Eye Hospital branches in Visnagar, Ahmedabad and Bharuch."
+    "description": "Addresses, appointment numbers and contact details for all six Aakash Eye Hospital branches across Gujarat."
   },
   "items": [
     {
       "name": "Visnagar",
       "slug": "visnagar",
       "isHeadquarters": true,
+      "locality": "M.N. College Road, North Gujarat",
       "address": "Near New Court, M.N. College Road, Near GEB, Visnagar - 384315, North Gujarat",
       "email": "info@aakasheyehospital.com",
       "phoneGroups": [
         {
           "label": "OPD",
-          "numbers": ["+91-760-008-2710"]
+          "numbers": [
+            "+91-760-008-2710"
+          ]
         },
         {
           "label": "Operation",
-          "numbers": ["(02765)222075", "+91-942-687-7080"]
+          "numbers": [
+            "(02765)222075",
+            "+91-942-687-7080"
+          ]
         },
         {
           "label": "LASIK",
-          "numbers": ["+91-942-922-6318"]
+          "numbers": [
+            "+91-942-922-6318"
+          ]
         }
       ],
       "whatsappNumber": "917600082710",
@@ -36,16 +44,22 @@
       "name": "Ahmedabad",
       "slug": "ahmedabad",
       "isHeadquarters": false,
+      "locality": "Odhav Circle, S.P. Ring Road",
       "address": "Siddhi Vinayak Arcade, 2nd Wing, 1st Floor, 200' S.P. Ring Road, Odhav Circle, Near Gujarat Vepari Maha Mandal, Odhav, Ahmedabad - 382410",
       "email": "info@aakasheyehospital.com",
       "phoneGroups": [
         {
           "label": "OPD",
-          "numbers": ["(079)-22901515", "+91-937-415-1616"]
+          "numbers": [
+            "(079)-22901515",
+            "+91-937-415-1616"
+          ]
         },
         {
           "label": "Operation / LASIK",
-          "numbers": ["+91-999-880-7891"]
+          "numbers": [
+            "+91-999-880-7891"
+          ]
         }
       ],
       "whatsappNumber": "919998807891",
@@ -60,16 +74,25 @@
       "name": "Bharuch",
       "slug": "bharuch",
       "isHeadquarters": false,
+      "locality": "Opp. Navi Vasahat, Bharuch",
       "address": "F-101-106, 201-204, R K Casta, Near Healing Touch Hospital, Opp. Navi Vasahat, Bharuch",
       "email": "info@aakasheyehospital.com",
       "phoneGroups": [
         {
           "label": "OPD",
-          "numbers": ["(026)-42242359", "+91-749-000-4903", "+91-749-000-4904"]
+          "numbers": [
+            "(026)-42242359",
+            "+91-749-000-4903",
+            "+91-749-000-4904"
+          ]
         },
         {
           "label": "Operation",
-          "numbers": ["(026)-42242359", "+91-749-000-4903", "+91-749-000-4904"]
+          "numbers": [
+            "(026)-42242359",
+            "+91-749-000-4903",
+            "+91-749-000-4904"
+          ]
         }
       ],
       "whatsappNumber": "917490004903",
@@ -79,11 +102,99 @@
       },
       "mapEmbed": "https://www.google.com/maps?q=Aakash%20Eye%20Hospital%20Bharuch&output=embed",
       "hoursLabel": "Call branch for today's OPD schedule"
+    },
+    {
+      "name": "Gota",
+      "slug": "gota",
+      "isHeadquarters": false,
+      "locality": "Ananta Space, Gota",
+      "address": "Ananta Space, 505-08, Gota, Ahmedabad, Gujarat 382470",
+      "email": "info@aakasheyehospital.com",
+      "phoneGroups": [
+        {
+          "label": "OPD",
+          "numbers": [
+            "+91-900-000-0001"
+          ]
+        },
+        {
+          "label": "Operation / LASIK",
+          "numbers": [
+            "+91-900-000-0002"
+          ]
+        }
+      ],
+      "whatsappNumber": "919000000001",
+      "coords": {
+        "lat": 23.0757,
+        "lng": 72.5495
+      },
+      "mapEmbed": "https://www.google.com/maps?q=Aakash%20Eye%20Hospital%20Gota%20Ahmedabad&output=embed",
+      "hoursLabel": "Call branch for today's OPD schedule"
+    },
+    {
+      "name": "Himmatnagar",
+      "slug": "himmatnagar",
+      "isHeadquarters": false,
+      "locality": "Sahakari Jin Road, NH-48",
+      "address": "2nd Floor, Upadhyay M Corporate, Sahakari Jin Rd, near Ola Showroom, Sahakari Jin, NH48, Himatnagar, Gujarat 383001",
+      "email": "info@aakasheyehospital.com",
+      "phoneGroups": [
+        {
+          "label": "OPD",
+          "numbers": [
+            "+91-900-000-0003"
+          ]
+        },
+        {
+          "label": "Operation / LASIK",
+          "numbers": [
+            "+91-900-000-0004"
+          ]
+        }
+      ],
+      "whatsappNumber": "919000000003",
+      "coords": {
+        "lat": 23.5986,
+        "lng": 72.9666
+      },
+      "mapEmbed": "https://www.google.com/maps?q=Aakash%20Eye%20Hospital%20Himmatnagar&output=embed",
+      "hoursLabel": "Call branch for today's OPD schedule"
+    },
+    {
+      "name": "Juhapura",
+      "slug": "juhapura",
+      "isHeadquarters": false,
+      "locality": "Vasna Road, Sarkhej",
+      "address": "Amber Tower, 306-314, Blue Water Complex, Vasna Road, near Sagar Avenue, Sarkhej, Ahmedabad, Gujarat 380055",
+      "email": "info@aakasheyehospital.com",
+      "phoneGroups": [
+        {
+          "label": "OPD",
+          "numbers": [
+            "+91-900-000-0005"
+          ]
+        },
+        {
+          "label": "Operation / LASIK",
+          "numbers": [
+            "+91-900-000-0006"
+          ]
+        }
+      ],
+      "whatsappNumber": "919000000005",
+      "coords": {
+        "lat": 23.0129,
+        "lng": 72.5241
+      },
+      "mapEmbed": "https://www.google.com/maps?q=Aakash%20Eye%20Hospital%20Juhapura%20Ahmedabad&output=embed",
+      "hoursLabel": "Call branch for today's OPD schedule"
     }
   ],
   "notes": [
     "Ahmedabad OPD mobile differs between the brief (+91-937-415-1616) and legacy site (+91-937-413-1616). The brief value is used here; verify before launch.",
     "Map coordinates are approximate and should be verified before production release.",
-    "Business hours should be confirmed by the hospital team."
+    "Business hours should be confirmed by the hospital team.",
+    "Gota, Himmatnagar and Juhapura contact numbers are temporary placeholders and must be replaced with real branch numbers before launch."
   ]
 }

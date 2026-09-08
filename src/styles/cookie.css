@@ -1,0 +1,685 @@
+/* =========================================================================
+   Cookie consent - Editorial Clinical
+   Namespace: .ck / .ck__*   |   loaded after footer.css
+
+   Two surfaces, one component. The banner is a card the reader can ignore
+   and scroll past; the dialog is a real modal that takes the screen, locks
+   the page and traps focus. They share the tokens below and nothing else.
+   ========================================================================= */
+
+.ck {
+  --ck-card: #ffffff;
+  --ck-rule: var(--e-rule);
+  /* Control outlines. WCAG 1.4.11 wants 3:1 on the boundary of a control, and
+     --e-rule is 1.2:1 on white. This is the header's --hd-edge: 3.48:1 on the
+     card and 3.16:1 on the footer band the ghost buttons sit on. Do not put
+     --e-rule or --ck-rule on a button here, and do not lighten this to match
+     the hairlines - #949aa1 measured 2.58:1 on that band. */
+  --ck-edge: #7f8b96;
+  --ck-radius: 14px;
+  --ck-shadow: 0 18px 60px rgba(12, 44, 73, 0.22);
+  font-family: var(--e-sans);
+}
+
+.ck__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---- shared type ---- */
+
+.ck__eyebrow {
+  display: block;
+  color: var(--e-accent);
+  font-family: var(--e-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.ck__text {
+  margin: 0;
+  color: var(--e-ink-2);
+  font-size: 0.92rem;
+  line-height: 1.58;
+}
+
+/* The phone gets a shorter sentence rather than a clamped one, the same way
+   the conditions rail carries quoteShort: a consent notice has to stay
+   readable, so the height comes out of authored copy, never out of truncation. */
+.ck__text--short {
+  display: none;
+}
+
+.ck__glyph {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--e-paper-2);
+  color: var(--e-navy);
+}
+
+/* ---- shared controls ---- */
+
+.ck__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  border: 1px solid var(--ck-edge);
+  border-radius: 3px;
+  background: var(--ck-card);
+  padding: 12px 20px;
+  color: var(--e-ink);
+  font-family: var(--e-sans);
+  font-size: 0.93rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  transition:
+    background-color 180ms var(--e-ease),
+    border-color 180ms var(--e-ease),
+    color 180ms var(--e-ease);
+}
+
+.ck__btn:hover {
+  border-color: var(--e-ink);
+  background: var(--e-paper-2);
+}
+
+.ck__btn--primary {
+  border-color: var(--e-navy);
+  background: var(--e-navy);
+  color: #fff;
+}
+
+.ck__btn--primary:hover {
+  border-color: var(--e-ink);
+  background: var(--e-ink);
+  color: #fff;
+}
+
+.ck__more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  padding: 4px 2px;
+  color: var(--e-ink);
+  font-family: var(--e-sans);
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.3;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--e-rule-2);
+  transition:
+    color 180ms var(--e-ease),
+    text-decoration-color 180ms var(--e-ease);
+}
+
+.ck__more:hover {
+  color: var(--e-accent);
+  text-decoration-color: var(--e-accent);
+}
+
+.ck :is(button):focus-visible {
+  outline: 2px solid var(--e-accent);
+  outline-offset: 2px;
+}
+
+/* =========================================================================
+   Banner
+   ========================================================================= */
+
+.ck__banner {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  /* Under the header (200) and its mobile drawer (210) on purpose: the drawer
+     is a full-height sheet, and a consent card floating on top of it would
+     cover the appointment and call actions pinned in its thumb zone. The
+     banner is a layer the reader can leave alone; the dialog above it at 260
+     is the one that takes the screen. */
+  z-index: 190;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 14px 16px;
+  width: min(460px, calc(100vw - 48px));
+  border: 1px solid var(--ck-rule);
+  border-radius: var(--ck-radius);
+  background: var(--ck-card);
+  box-shadow: var(--ck-shadow);
+  padding: 22px;
+  animation: ck-rise 340ms var(--e-ease) both;
+}
+
+.ck__banner-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.ck__banner-title {
+  margin: 0;
+  color: var(--e-ink);
+  font-family: var(--e-tight);
+  font-size: 1.12rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.22;
+}
+
+.ck__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  grid-column: 2;
+}
+
+.ck__actions .ck__btn {
+  flex: 1 1 auto;
+  min-width: 140px;
+}
+
+.ck__actions .ck__more {
+  flex: 1 0 100%;
+  justify-content: flex-start;
+}
+
+@keyframes ck-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+/* =========================================================================
+   Dialog
+   ========================================================================= */
+
+.ck__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 260;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.ck__scrim {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(9, 28, 46, 0.55);
+  animation: ck-fade 200ms var(--e-ease) both;
+}
+
+.ck__dialog {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(620px, 100%);
+  max-height: min(86vh, 760px);
+  border-radius: var(--ck-radius);
+  background: var(--ck-card);
+  box-shadow: var(--ck-shadow);
+  overflow: hidden;
+  animation: ck-pop 260ms var(--e-ease) both;
+}
+
+.ck__dialog-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  flex: none;
+  border-bottom: 1px solid var(--ck-rule);
+  padding: 22px 22px 18px;
+}
+
+.ck__dialog-title {
+  margin: 2px 0 0;
+  color: var(--e-ink);
+  font-family: var(--e-tight);
+  font-size: clamp(1.25rem, 2.4vw, 1.5rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
+.ck__close {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: -4px -6px 0 auto;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--e-ink-2);
+  transition:
+    background-color 180ms var(--e-ease),
+    color 180ms var(--e-ease);
+}
+
+.ck__close:hover {
+  background: var(--e-paper-2);
+  color: var(--e-ink);
+}
+
+.ck__dialog-body {
+  display: grid;
+  gap: 14px;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 18px 22px 20px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ---- categories ---- */
+
+.ck__cats {
+  display: grid;
+  gap: 9px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ck__cat {
+  border: 1px solid var(--ck-rule);
+  border-radius: 10px;
+  background: var(--e-paper);
+  padding: 13px 16px 9px;
+}
+
+.ck__cat[data-locked] {
+  background: var(--e-paper-2);
+}
+
+.ck__cat-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ck__cat-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--e-paper-2);
+  color: var(--e-navy);
+}
+
+.ck__cat[data-locked] .ck__cat-icon {
+  background: var(--ck-card);
+}
+
+.ck__cat-title {
+  flex: 1 1 auto;
+  color: var(--e-ink);
+  font-family: var(--e-tight);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+
+.ck__cat-lock {
+  flex: none;
+  border: 1px solid var(--e-rule-2);
+  border-radius: 999px;
+  padding: 5px 11px;
+  color: var(--e-ink-2);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ck__cat-text {
+  margin: 8px 0 0;
+  color: var(--e-ink-2);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.ck__cat-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  border: 0;
+  background: transparent;
+  padding: 6px 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.ck__cat-more:hover {
+  color: var(--e-accent);
+}
+
+.ck__cat-more svg {
+  flex: none;
+  transition: transform 200ms var(--e-ease);
+}
+
+.ck__cat-more[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+/* The disclosure is toggled with the hidden attribute, and display: grid below
+   would win over the browser's [hidden] rule without this. */
+.ck__cat-list[hidden] {
+  display: none;
+}
+
+.ck__cat-list {
+  display: grid;
+  gap: 7px;
+  list-style: none;
+  border-top: 1px solid var(--ck-rule);
+  margin: 4px 0 0;
+  padding: 10px 0 2px;
+}
+
+.ck__cat-list li {
+  position: relative;
+  color: var(--e-ink-2);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  padding-left: 16px;
+}
+
+.ck__cat-list li::before {
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--e-accent);
+  content: "";
+}
+
+/* ---- switch ---- */
+
+.ck__switch {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 9px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+/* The switch is 54x32, which clears the WCAG 2.2 minimum on its own; this
+   stretches the pressable area to 44px tall without growing the control. */
+.ck__switch::after {
+  position: absolute;
+  inset: -6px -4px;
+  content: "";
+}
+
+.ck__switch-track {
+  position: relative;
+  display: block;
+  width: 54px;
+  height: 32px;
+  border: 1px solid var(--ck-edge);
+  border-radius: 999px;
+  background: var(--e-paper-3);
+  transition:
+    background-color 200ms var(--e-ease),
+    border-color 200ms var(--e-ease);
+}
+
+.ck__switch-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  display: block;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ck-card);
+  box-shadow: 0 1px 3px rgba(12, 44, 73, 0.3);
+  transition: transform 200ms var(--e-ease);
+}
+
+.ck__switch[aria-checked="true"] .ck__switch-track {
+  border-color: var(--e-navy);
+  background: var(--e-navy);
+}
+
+.ck__switch[aria-checked="true"] .ck__switch-knob {
+  transform: translateX(22px);
+}
+
+.ck__switch-state {
+  min-width: 3ch;
+  color: var(--e-ink-2);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.ck__switch[aria-checked="true"] .ck__switch-state {
+  color: var(--e-navy);
+}
+
+/* ---- note and footer ---- */
+
+.ck__note {
+  margin: 0;
+  color: var(--e-ink-2);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.ck__dialog-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  flex: none;
+  border-top: 1px solid var(--ck-rule);
+  background: var(--e-paper-2);
+  padding: 16px 22px;
+}
+
+.ck__dialog-foot .ck__btn {
+  flex: 1 1 auto;
+  min-width: 150px;
+}
+
+@keyframes ck-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes ck-pop {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+}
+
+/* =========================================================================
+   Responsive
+   ========================================================================= */
+
+/* Tablet: the banner spans the width rather than sitting in a corner, where a
+   460px card left two thirds of the row empty. */
+@media (max-width: 860px) {
+  .ck__banner {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    width: auto;
+  }
+
+  /* The buttons hug their labels on the wide band. Stretched to half the row
+     each they were a pair of 300px slabs, heavier than anything else on the
+     screen; the phone block below stretches them again, where the width is
+     the only way to keep both decisions the same size. */
+  .ck__actions .ck__btn {
+    flex: 0 0 auto;
+  }
+}
+
+/* Phone: both surfaces become bottom sheets. The dialog keeps its own scroll
+   and pins the actions in the thumb zone, so a reader never has to scroll a
+   consent sheet to reach Accept. */
+@media (max-width: 720px) {
+  /* The sheet keeps the glyph beside the copy rather than above it, and pairs
+     the two decisions on one row. Stacked, the banner stood 397px tall on a
+     390x844 phone - 47% of the screen for a notice - and it is 268px here. */
+  .ck__banner {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 12px 12px;
+    border-width: 1px 0 0;
+    border-radius: 18px 18px 0 0;
+    padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+    max-height: 82vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .ck__banner .ck__glyph {
+    width: 34px;
+    height: 34px;
+  }
+
+  .ck__text--full {
+    display: none;
+  }
+
+  .ck__text--short {
+    display: block;
+  }
+
+  .ck__actions {
+    grid-column: 1 / -1;
+    gap: 8px;
+  }
+
+  .ck__actions .ck__btn {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .ck__actions .ck__more {
+    justify-content: center;
+  }
+
+  .ck__overlay {
+    place-items: end center;
+    padding: 0;
+  }
+
+  .ck__dialog {
+    width: 100%;
+    max-height: 92vh;
+    border-radius: 18px 18px 0 0;
+    animation-name: ck-rise;
+  }
+
+  .ck__dialog-head {
+    padding: 18px 16px 14px;
+  }
+
+  .ck__dialog-body {
+    padding: 16px 16px 20px;
+  }
+
+  .ck__dialog-foot {
+    gap: 8px;
+    padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+  }
+
+  /* Save leads on its own row; the two blanket choices share the next one.
+     Three stacked buttons took 160px of a sheet whose job is the list above
+     them, and both of these are still 175px wide on a 390px phone. */
+  .ck__dialog-foot .ck__btn {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .ck__dialog-foot .ck__btn--primary {
+    flex: 1 1 100%;
+  }
+}
+
+/* Very narrow phones: the pair of banner buttons is 140px wide at 320px, and
+   Reject optional broke to two lines there, leaving the two decisions at
+   different heights. The side padding goes rather than the label or the type. */
+@media (max-width: 400px) {
+  .ck__actions .ck__btn {
+    padding-inline: 8px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Short handsets: tighten the frame, never the type - older patients read
+   this site, and a consent sheet is the one place the wording matters. */
+@media (max-height: 640px) {
+  .ck__dialog-head {
+    padding-block: 14px 12px;
+  }
+
+  .ck__cat {
+    padding: 12px 14px 10px;
+  }
+
+  .ck__dialog-foot {
+    padding-block: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ck__banner,
+  .ck__dialog,
+  .ck__scrim {
+    animation: none;
+  }
+
+  .ck__btn,
+  .ck__more,
+  .ck__close,
+  .ck__switch-track,
+  .ck__switch-knob,
+  .ck__cat-more svg {
+    transition: none;
+  }
+}
