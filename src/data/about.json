@@ -1,0 +1,119 @@
+{
+  "journey": {
+    "eyebrow": "About us",
+    "establishedYear": 1993,
+    "establishedLabel": "8 August 1993",
+    "title": "From one Visnagar clinic to",
+    "titleAccent": "an eye care network",
+    "lede": "Aakash Eye Hospital opened in Visnagar in 1993 as a single ophthalmic care setup. Every step since has been about bringing better diagnostics and surgical care closer to the patients who need them.",
+    "milestonesLabel": "Milestones",
+    "milestonesTitle": "How the hospital kept moving forward",
+    "milestonesLede": "The moments that shaped our clinical capability and our reach across Gujarat.",
+    "milestones": [
+      {
+        "year": "1993",
+        "tag": "Founded",
+        "title": "Founded at Visnagar",
+        "description": "Aakash Eye Hospital started on 8 August 1993 in a town of nearly 100,000 people, with an initial 1,500 sq ft setup.",
+        "metric": "1,500 sq ft"
+      },
+      {
+        "year": "1995",
+        "tag": "Surgery",
+        "title": "Phaco cataract surgery begins",
+        "description": "The hospital became one of the pioneers in phaco cataract surgery in the region.",
+        "metric": "Phaco"
+      },
+      {
+        "year": "2009",
+        "tag": "Technology",
+        "title": "Excimer laser added",
+        "description": "Excimer laser technology was introduced for glass removal and refractive procedures.",
+        "metric": "Excimer"
+      },
+      {
+        "year": "2011",
+        "tag": "Diagnostics",
+        "title": "Retina diagnostics expanded",
+        "description": "OCT, Green Laser and FFA capabilities were added for medical retina care.",
+        "metric": "OCT, FFA"
+      },
+      {
+        "year": "2014",
+        "tag": "New hospital",
+        "title": "Ahmedabad branch opens",
+        "description": "The Odhav, Ahmedabad branch opened in a facility of approximately 5,500 sq ft.",
+        "metric": "5,500 sq ft"
+      }
+    ],
+    "now": {
+      "tag": "Where we are",
+      "label": "Today",
+      "title": "One hospital, many doorsteps",
+      "description": "Patients are seen across our hospitals by a consultant team covering cataract, refractive, retina, glaucoma and paediatric eye care, and an old case file is welcome at any of them.",
+      "figures": [
+        { "key": "years", "label": "Years of care" },
+        { "key": "hospitals", "label": "Eye hospitals" },
+        { "key": "specialists", "label": "Eye specialists" }
+      ],
+      "ctaLabel": "Read our vision and mission"
+    }
+  },
+  "vision": {
+    "eyebrow": "About us",
+    "title": "Why this hospital",
+    "titleAccent": "exists",
+    "lede": "Our mission and vision were written for one thing: comprehensive eye care that a family in a small town can reach as easily as a family in a city.",
+    "statementsLabel": "Mission and vision",
+    "statements": [
+      {
+        "kind": "Mission",
+        "icon": "Goal",
+        "text": "To excel in cutting-edge eye care technology, education and ophthalmology research while keeping care affordable.",
+        "note": "What we work on every day."
+      },
+      {
+        "kind": "Vision",
+        "icon": "Eye",
+        "text": "To provide comprehensive ophthalmic services of international standards to all sections of society.",
+        "note": "Where we are taking the hospital."
+      }
+    ],
+    "valuesLabel": "Core values",
+    "valuesTitle": "The promises behind every consultation",
+    "valuesLede": "These are the operating rules behind consultation, surgery planning and follow-up.",
+    "values": [
+      {
+        "title": "Patient safety first",
+        "icon": "ShieldCheck",
+        "description": "Careful protocols at every step, written to reduce errors and to keep surgery and follow-up predictable."
+      },
+      {
+        "title": "Care that stays affordable",
+        "icon": "HandCoins",
+        "description": "Costs are explained before treatment, and affordability is part of how we plan care rather than an afterthought."
+      },
+      {
+        "title": "Technology in the right hands",
+        "icon": "ScanEye",
+        "description": "Phaco, excimer laser, OCT and retina diagnostics are used by consultants who read the results with you."
+      },
+      {
+        "title": "Your file has no due date",
+        "icon": "FolderHeart",
+        "description": "Old case papers stay valid. Bring the previous file on a future visit and your history comes with you."
+      },
+      {
+        "title": "Teaching and research",
+        "icon": "GraduationCap",
+        "description": "Education and ophthalmology research keep the clinical team learning, and that learning reaches the OPD."
+      },
+      {
+        "title": "Open to every patient",
+        "icon": "Users",
+        "description": "Comprehensive ophthalmic services for all sections of society, at each of our hospitals."
+      }
+    ],
+    "ctaLabel": "See how the hospital grew"
+  }
+}

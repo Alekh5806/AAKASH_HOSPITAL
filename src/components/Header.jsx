@@ -108,15 +108,18 @@ function BranchPicker({ branch, isOpen, onSelect, onToggle, variant }) {
   );
 }
 
-/* The hospitals menu is a single-column list, not a two-column mega panel: six
-   short city names read faster in one column, and the panel stays narrow
-   enough to sit under its own trigger rather than spanning half the header.
-   Keyboard support is roving focus over the rows, which is what a menu button
-   with a list of links is expected to do. */
-function HospitalsMenu({
+/* One dropdown shell for every nav menu that has one: a single narrow column
+   under its own trigger, because a short list reads faster in one column and
+   the panel stays narrow enough to sit under the link that opened it rather
+   than spanning half the header. Keyboard support is roving focus over the
+   rows, which is what a menu button with a list of links is expected to do. */
+function NavDropdown({
   label,
-  activeSlug,
-  selectedSlug,
+  panelId,
+  headTitle,
+  headMeta,
+  items,
+  footer,
   isActiveSection,
   isOpen,
   onClose,
@@ -152,11 +155,11 @@ function HospitalsMenu({
   }
 
   function moveFocus(step) {
-    const items = Array.from(panelRef.current?.querySelectorAll(".hd__mega-item") ?? []);
-    if (items.length === 0) return;
-    const from = items.indexOf(document.activeElement);
-    const next = step === "first" ? 0 : step === "last" ? items.length - 1 : from + step;
-    items[Math.min(Math.max(next, 0), items.length - 1)].focus();
+    const rows = Array.from(panelRef.current?.querySelectorAll(".hd__mega-item") ?? []);
+    if (rows.length === 0) return;
+    const from = rows.indexOf(document.activeElement);
+    const next = step === "first" ? 0 : step === "last" ? rows.length - 1 : from + step;
+    rows[Math.min(Math.max(next, 0), rows.length - 1)].focus();
   }
 
   function onTriggerKeyDown(event) {
@@ -178,8 +181,6 @@ function HospitalsMenu({
     moveFocus(step);
   }
 
-  const currentSlug = activeSlug ?? selectedSlug;
-
   return (
     <div
       className="hd__mega-wrap"
@@ -196,7 +197,7 @@ function HospitalsMenu({
         className={`hd__nav-trigger ${isActiveSection ? "hd__nav-link--active" : ""}`}
         type="button"
         aria-expanded={isOpen}
-        aria-controls="hd-hospitals-menu"
+        aria-controls={panelId}
         aria-haspopup="true"
         onClick={() => onToggle(!isOpen)}
         onKeyDown={onTriggerKeyDown}
@@ -205,28 +206,28 @@ function HospitalsMenu({
         <ChevronDown size={16} aria-hidden="true" />
       </button>
       {isOpen ? (
-        <div className="hd__mega" id="hd-hospitals-menu" ref={panelRef} onKeyDown={onPanelKeyDown}>
+        <div className="hd__mega" id={panelId} ref={panelRef} onKeyDown={onPanelKeyDown}>
           <p className="hd__mega-head">
-            <span>{branchPicker.menuTitle}</span>
-            <small>{branches.items.length} cities</small>
+            <span>{headTitle}</span>
+            {headMeta ? <small>{headMeta}</small> : null}
           </p>
           <div className="hd__mega-list">
-            {branches.items.map((item) => (
+            {items.map((item) => (
               <Link
-                key={item.slug}
+                key={item.key}
                 className="hd__mega-item"
-                data-current={item.slug === currentSlug ? "true" : undefined}
-                aria-current={item.slug === activeSlug ? "page" : undefined}
-                to={branchHref(item.slug)}
+                data-current={item.current ? "true" : undefined}
+                aria-current={item.isPage ? "page" : undefined}
+                to={item.to}
               >
                 <span className="hd__mega-text">
                   <strong>
-                    {item.name}
-                    {item.isHeadquarters ? <span className="hd__tag">Head Office</span> : null}
+                    {item.title}
+                    {item.tag ? <span className="hd__tag">{item.tag}</span> : null}
                   </strong>
-                  <small>{item.locality}</small>
+                  <small>{item.subtitle}</small>
                 </span>
-                {item.slug === currentSlug ? (
+                {item.current ? (
                   <Check className="hd__mega-mark" size={17} aria-hidden="true" />
                 ) : (
                   <ChevronRight className="hd__mega-go" size={16} aria-hidden="true" />
@@ -234,10 +235,12 @@ function HospitalsMenu({
               </Link>
             ))}
           </div>
-          <Link className="hd__panel-foot" to="/branches">
-            <span>{branchPicker.allLabel}</span>
-            <ChevronRight size={16} aria-hidden="true" />
-          </Link>
+          {footer ? (
+            <Link className="hd__panel-foot" to={footer.to}>
+              <span>{footer.label}</span>
+              <ChevronRight size={16} aria-hidden="true" />
+            </Link>
+          ) : null}
         </div>
       ) : null}
     </div>
@@ -249,7 +252,7 @@ export default function Header() {
   const locationKey = `${location.pathname}${location.search}`;
   const headerRef = useRef(null);
   const drawerRef = useRef(null);
-  const hospitalsTriggerRef = useRef(null);
+  const dropdownTriggers = useRef({});
 
   const [selectedSlug, setSelectedSlug] = useState(
     () => readStoredBranch() ?? getPrimaryBranch(branches.items).slug,
@@ -262,10 +265,13 @@ export default function Header() {
   const [isHidden, setIsHidden] = useState(false);
   const menusOpenRef = useRef(false);
 
+  const aboutNavItem = navigation.header.find((item) => item.dropdown === "about");
+  const drawerNavItems = navigation.header.flatMap((item) => item.children ?? [item]);
   const selectedBranch = findBranch(selectedSlug) ?? getPrimaryBranch(branches.items);
   const selectedPhone = getPrimaryPhone(selectedBranch);
   const urlBranchSlug = new URLSearchParams(location.search).get("branch");
   const isHospitalsSection = location.pathname === "/branches";
+  const isAboutSection = location.pathname.startsWith("/about");
 
   const closeAll = useCallback(() => {
     setOpenMenu(null);
@@ -371,7 +377,7 @@ export default function Header() {
     function onKeyDown(event) {
       if (event.key !== "Escape") return;
       setOpenMenu((current) => {
-        if (current === "hospitals") hospitalsTriggerRef.current?.focus();
+        dropdownTriggers.current[current]?.focus();
         return null;
       });
     }
@@ -423,6 +429,34 @@ export default function Header() {
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [drawerOpen]);
+
+  const dropdownMenus = {
+    branches: {
+      headMeta: `${branches.items.length} cities`,
+      isActiveSection: isHospitalsSection,
+      footer: { to: "/branches", label: branchPicker.allLabel },
+      items: branches.items.map((item) => ({
+        key: item.slug,
+        to: branchHref(item.slug),
+        title: item.name,
+        tag: item.isHeadquarters ? "Head Office" : undefined,
+        subtitle: item.locality,
+        current: item.slug === (urlBranchSlug ?? selectedSlug),
+        isPage: item.slug === urlBranchSlug,
+      })),
+    },
+    about: {
+      isActiveSection: isAboutSection,
+      items: (aboutNavItem?.children ?? []).map((child) => ({
+        key: child.href,
+        to: child.href,
+        title: child.label,
+        subtitle: child.description,
+        current: location.pathname === child.href,
+        isPage: location.pathname === child.href,
+      })),
+    },
+  };
 
   const bookHref = `/appointment?branch=${selectedBranch.slug}`;
   const emergencyLink = (
@@ -513,20 +547,31 @@ export default function Header() {
       <div className="hd__navbar">
         <div className="hd__container">
           <nav className="hd__nav" aria-label="Primary">
-            {navigation.header.map((item) =>
-              item.dropdown === "branches" ? (
-                <HospitalsMenu
-                  key={item.href}
-                  label={item.label}
-                  activeSlug={urlBranchSlug}
-                  selectedSlug={selectedSlug}
-                  isActiveSection={isHospitalsSection}
-                  isOpen={openMenu === "hospitals"}
-                  triggerRef={hospitalsTriggerRef}
-                  onClose={() => setOpenMenu(null)}
-                  onToggle={(next) => setOpenMenu(next ? "hospitals" : null)}
-                />
-              ) : (
+            {navigation.header.map((item) => {
+              if (item.dropdown) {
+                const menu = dropdownMenus[item.dropdown];
+
+                return (
+                  <NavDropdown
+                    key={item.href}
+                    label={item.label}
+                    panelId={`hd-menu-${item.dropdown}`}
+                    headTitle={item.menuTitle ?? item.label}
+                    headMeta={menu.headMeta}
+                    items={menu.items}
+                    footer={menu.footer}
+                    isActiveSection={menu.isActiveSection}
+                    isOpen={openMenu === item.dropdown}
+                    triggerRef={(node) => {
+                      dropdownTriggers.current[item.dropdown] = node;
+                    }}
+                    onClose={() => setOpenMenu(null)}
+                    onToggle={(next) => setOpenMenu(next ? item.dropdown : null)}
+                  />
+                );
+              }
+
+              return (
                 <NavLink
                   key={item.href}
                   className={({ isActive }) =>
@@ -537,8 +582,8 @@ export default function Header() {
                 >
                   {item.label}
                 </NavLink>
-              ),
-            )}
+              );
+            })}
           </nav>
         </div>
       </div>
@@ -619,7 +664,7 @@ export default function Header() {
 
               <nav className="hd__drawer-nav" aria-label="Mobile">
                 <p className="hd__drawer-label">Menu</p>
-                {navigation.header.map((item, index) => (
+                {drawerNavItems.map((item, index) => (
                   <NavLink
                     key={item.href}
                     className={({ isActive }) =>

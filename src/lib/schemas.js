@@ -15,7 +15,11 @@ const ctaSchema = z.object({
 });
 
 const headerNavItemSchema = ctaSchema.extend({
-  dropdown: z.literal("branches").optional(),
+  dropdown: z.enum(["branches", "about"]).optional(),
+  menuTitle: z.string().optional(),
+  children: z
+    .array(ctaSchema.extend({ description: z.string().min(1) }))
+    .optional(),
 });
 
 const faqItemSchema = z.object({
@@ -106,33 +110,70 @@ export const homeSchema = z
         description: z.string(),
       }),
     ),
-    timeline: z.object({
-      eyebrow: z.string(),
+    cta: z.object({
       title: z.string(),
-      items: z.array(
+      description: z.string(),
+      primary: ctaSchema,
+      secondary: ctaSchema,
+    }),
+  })
+  .passthrough();
+
+export const aboutSchema = z
+  .object({
+    journey: z.object({
+      eyebrow: z.string(),
+      establishedYear: z.number(),
+      establishedLabel: z.string(),
+      title: z.string(),
+      titleAccent: z.string(),
+      lede: z.string(),
+      milestonesLabel: z.string(),
+      milestonesTitle: z.string(),
+      milestonesLede: z.string(),
+      milestones: z.array(
         z.object({
           year: z.string(),
+          tag: z.string(),
           title: z.string(),
           description: z.string(),
+          metric: z.string(),
         }),
       ),
+      now: z.object({
+        tag: z.string(),
+        label: z.string(),
+        title: z.string(),
+        description: z.string(),
+        figures: z.array(z.object({ key: z.string(), label: z.string() })),
+        ctaLabel: z.string(),
+      }),
     }),
-    missionVision: z.object({
+    vision: z.object({
       eyebrow: z.string(),
       title: z.string(),
-      items: z.array(
+      titleAccent: z.string(),
+      lede: z.string(),
+      statementsLabel: z.string(),
+      statements: z.array(
+        z.object({
+          kind: z.string(),
+          icon: z.string(),
+          text: z.string(),
+          note: z.string(),
+        }),
+      ),
+      valuesLabel: z.string(),
+      valuesTitle: z.string(),
+      valuesLede: z.string(),
+      values: z.array(
         z.object({
           title: z.string(),
           icon: z.string(),
           description: z.string(),
         }),
       ),
-    }),
-    cta: z.object({
-      title: z.string(),
-      description: z.string(),
-      primary: ctaSchema,
-      secondary: ctaSchema,
+      ctaLabel: z.string(),
     }),
   })
   .passthrough();

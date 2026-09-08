@@ -767,7 +767,7 @@
 
 .hd__drawer-branch {
   border-bottom: 1px solid var(--hd-rule-soft);
-  padding: 12px;
+  padding: 10px 12px;
 }
 
 .hd__drawer-branch-toggle {
@@ -914,11 +914,11 @@
 .hd__drawer-nav {
   display: grid;
   gap: 2px;
-  padding: 0 12px 14px;
+  padding: 0 12px 6px;
 }
 
 .hd__drawer-label {
-  padding: 16px 12px 6px;
+  padding: 10px 12px 4px;
   color: var(--color-slate);
   font-size: 0.68rem;
   font-weight: 600;
@@ -926,10 +926,13 @@
   text-transform: uppercase;
 }
 
+/* 48px rather than 52px: the About entry gives the drawer an eighth row, and
+   the whole list plus every action still has to fit a 390x844 phone with
+   nothing to scroll. Still well clear of the 44px minimum. */
 .hd__drawer-link {
   display: flex;
   align-items: center;
-  min-height: 52px;
+  min-height: 48px;
   border-radius: var(--radius-md);
   padding: 0 12px;
   color: var(--color-ink);

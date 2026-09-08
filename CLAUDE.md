@@ -89,6 +89,7 @@ Deployment target:
     |   |-- SmartImage.jsx
     |   `-- ThemeTokens.jsx
     |-- data
+    |   |-- about.json
     |   |-- branches.json
     |   |-- doctors.json
     |   |-- gallery.json
@@ -102,6 +103,7 @@ Deployment target:
     |-- i18n
     |   `-- strings.js
     |-- lib
+    |   |-- aboutData.js
     |   |-- contact.js
     |   |-- coreData.js
     |   |-- data.js
@@ -115,7 +117,8 @@ Deployment target:
     |   |-- submitAppointment.js
     |   `-- testimonialsData.js
     |-- pages
-    |   |-- AboutPage.jsx
+    |   |-- AboutJourneyPage.jsx
+    |   |-- AboutVisionPage.jsx
     |   |-- AppointmentPage.jsx
     |   |-- BranchesPage.jsx
     |   |-- ContactPage.jsx
@@ -126,6 +129,7 @@ Deployment target:
     |   |-- ServiceDetailPage.jsx
     |   `-- ServicesPage.jsx
     |-- sections
+    |   |-- AboutSwitch.jsx          (both about pages)
     |   |-- BranchCards.jsx          (branches page)
     |   |-- ConditionsCarousel.jsx   (home)
     |   |-- CTASection.jsx
@@ -144,6 +148,7 @@ Deployment target:
     |   |-- system.css
     |   |-- header.css
     |   |-- landing.css
+    |   |-- about.css
     |   |-- footer.css
     |   `-- cookie.css
     `-- types
@@ -158,7 +163,7 @@ Deployment target:
 - Editable content belongs in `src/data` JSON files whenever possible.
 - Data access and validation helpers belong in `src/lib`.
 - Global styling lives in `src/styles/global.css`; keep changes scoped and avoid unrelated rewrites.
-- Namespaced stylesheets own their own components and are imported from `src/main.jsx` after `global.css`: the site header owns `src/styles/header.css` (`.hd` / `.hd__*`), the landing page owns `src/styles/landing.css` (`.lp-`), the footer owns `src/styles/footer.css` (`.ft-`), and the cookie consent owns `src/styles/cookie.css` (`.ck` / `.ck__*`). Never restyle these components from `global.css` or `system.css` - the header in particular used to be styled from three places at once, and one source of truth is what keeps it predictable.
+- Namespaced stylesheets own their own components and are imported from `src/main.jsx` after `global.css`: the site header owns `src/styles/header.css` (`.hd` / `.hd__*`), the landing page owns `src/styles/landing.css` (`.lp-`), the footer owns `src/styles/footer.css` (`.ft-`), the two About pages own `src/styles/about.css` (`.ab-`), and the cookie consent owns `src/styles/cookie.css` (`.ck` / `.ck__*`). Never restyle these components from `global.css` or `system.css` - the header in particular used to be styled from three places at once, and one source of truth is what keeps it predictable.
 - `src/lib/contact.js` holds the shared phone/WhatsApp/map link helpers. Use it instead of re-declaring `cleanTel`, `getPrimaryPhone`, `buildWhatsApp` or `buildMapLink` in a component.
 - Public media should live under `public/assets/media` and be referenced with `/assets/media/...` paths. The hero film lives in `heroes/` alongside the stills.
 - Prefer existing helpers such as `SEO`, `JsonLd`, `ButtonLink`, `SmartImage`, `Reveal`, and `LazyMapFrame` before creating new primitives.
@@ -316,7 +321,9 @@ The page ends there, on the patient wall, and the footer carries the closing app
 
 ```text
 /
-/about
+/about                (redirects to /about/journey)
+/about/journey
+/about/vision
 /services
 /services/:slug
 /doctors
@@ -329,6 +336,45 @@ The page ends there, on the patient wall, and the footer carries the closing app
 
 The navigation uses `Our Hospitals` in the header with a dropdown that links branch choices into the existing `/branches?branch=<slug>` experience. Separate branch detail pages are planned later, but should not be created until requested.
 
+## About us
+
+About us is **two pages behind one nav item**, not one page. The header's `About` entry is a dropdown: the reader chooses `Our journey` or `Vision and mission` and lands on that page directly. `/about` itself is a redirect to `/about/journey`, so old links and bookmarks still resolve.
+
+- All copy lives in `src/data/about.json` and is read through `src/lib/aboutData.js`. The pages are `src/pages/AboutJourneyPage.jsx` and `src/pages/AboutVisionPage.jsx`, and both own `src/styles/about.css` (`.ab-`).
+- These are the **first inner pages built in the `.e-*` design system** from `system.css` rather than on `PageHeader` and the older `global.css` page styles. They use `.e-sec`, `.e-shell`, `.e-head`, `.e-h1`/`.e-h2`/`.e-h3`, `.e-lede`, `.e-body` and `.e-link`, and `about.css` only adds what those do not cover. Nothing here restyles a shared primitive.
+- The page they replaced was a single `/about` route rendering a story panel, a flat journey list and a principles grid. Its `.about-*` rules (about 430 lines of `global.css`), its `about-panel-sheen` keyframe and the `.page-header--about` variant went with it.
+- Both pages end by pointing at the other one, and the footer carries the appointment CTA, so neither renders `CTASection`.
+
+### AboutSwitch
+
+`src/sections/AboutSwitch.jsx` is the two-up control under the head of **both** pages, and it reads the same `navigation.header` About `children` the dropdown does - the labels can never drift between the header and the page.
+
+- It exists because the dropdown is a desktop affordance: on a phone that choice is buried inside the drawer, so without this the reader would have to open the drawer to move between two sibling pages. Here it is one tap.
+- The current page is the filled navy card, so the control doubles as a "you are here" marker. Two columns from 761px up, stacked on a phone.
+
+### Our journey
+
+`AboutJourneyPage` is the animated timeline. Milestones come from `about.journey.milestones`; the closing `now` card is the only one whose figures are computed - years from `journey.establishedYear`, hospitals from `branches.json`, specialists from `doctors.json` - so the count of hospitals can never contradict the rest of the site.
+
+- The spine fills as the reader scrolls (`useScroll` on the track plus `useSpring`), which is the whole point of the page: it shows how far through the story you are without a separate progress bar. Under `prefers-reduced-motion` the fill renders complete and every card renders at full opacity - verified, not assumed.
+- Each milestone owns its own `useInView` trigger and animates its dot and card once, the same pattern `ImpactStats` and `WhyChooseUs` use on the landing page.
+- **The marker column width and the spine position share one token, `--ab-gutter`.** The dot is centred in that column and the spine sits at half of it, so a dot lands on the line at every breakpoint. They were separate values first and the phone dots sat 8px to the left of the spine. Measured dot-to-spine offset is now 0px at 320, 390, 820 and 1440px; re-measure if either value changes.
+- Cards alternate around a centred spine above 900px and fall to a single column beside a left gutter below it. Alternating needs width a phone does not have, and one reading edge scans faster.
+- The `now` card's tag is `Where we are`, not `Today` - the year slot already says `Today`, and the pill repeating it read as a mistake.
+
+### Vision and mission
+
+`AboutVisionPage` is the mission, the vision and the core values.
+
+- The two statements sit in the page's one dark band, set in the serif at display size, because they are the hospital's own words and they should read as a statement rather than as a card.
+- The six core values are all derived from those two sentences (safety, affordability, technology, continuity, teaching, access) rather than invented alongside them. `Old case file promise` and `Quality promise` from the old page survive here as two of the six.
+- The value cards carry an icon, a title and one sentence, and no figures - `ImpactStats` on the landing page owns the numbers.
+- A decorative `01`-`06` numeral was dropped from the cards: it measured 2.9:1 (`--e-ink-3` on paper) and told the reader nothing the list order did not.
+
+**Contrast is measured, not assumed.** On the navy: statements and the switch's active card 14.3:1, statement notes 7.7:1, the `now` card's body 10.0:1 and its figure labels 8.1:1. On paper: headings 18.2:1, body and milestone tags 7.8:1, the lede 7.8:1. One fix came out of measuring - the `Established` micro label was `--e-ink-3` at 3.19:1 and moved to `--e-ink-2`. Note that `.e-label` itself measures 3.19:1 on light sections **site-wide**, which is a pre-existing issue on the landing page too, not something these pages introduced.
+
+Measured with no page overflow and no target under 24px at 320, 390, 820 and 1440px.
+
 ## Header
 
 `src/components/Header.jsx` follows the Narayana Health reference layout and is the only consumer of `src/styles/header.css`.
@@ -337,11 +383,12 @@ The navigation uses `Our Hospitals` in the header with a dropdown that links bra
 - Everything in the header aligns to the container edges: the logo, the first nav link text, the rule between the two rows, and the trailing CTA. Nav spacing comes from `gap`, not from link padding, so the first link and its active underline stay flush with the logo. Verify alignment by measuring, not by eye.
 - Mobile (<= 1040px): a navy branch bar on top, then a brand row with the emergency link and the menu button; the nav row is replaced by a right-side drawer.
 - The header keeps a selected branch in `localStorage` (`aakash_selected_branch`). It drives the displayed OPD number, the Book Appointment query string and the drawer call/WhatsApp/directions actions, and it adopts `?branch=<slug>` whenever a page is opened for a specific branch.
-- Nav items come from `navigation.header`; the item carrying `"dropdown": "branches"` renders the hospitals menu, and its label comes from that JSON entry rather than being written into the component. Header labels and the emergency number live in `site.header`.
+- Nav items come from `navigation.header`. An item carrying a `dropdown` key renders a menu instead of a link - `"branches"` for the hospitals menu and `"about"` for the two About pages - and its label comes from that JSON entry rather than being written into the component. Header labels and the emergency number live in `site.header`.
+- Both menus are the same component, `NavDropdown`, which owns the `.hd__mega*` rules: one narrow column, hover-open gated on a fine pointer, a close timer over the gap, and roving `ArrowDown`/`ArrowUp`/`Home`/`End` focus with `Escape` returning focus to its trigger. It takes rows and an optional footer link, so the hospitals menu keeps `View all hospitals` and the About menu has no footer. Triggers are held in one `dropdownTriggers` map keyed by the dropdown name, which is what lets `Escape` focus the right one. Do not fork it for a third menu - add rows.
 
 ### Hospitals menu
 
-`HospitalsMenu` in `Header.jsx` owns the `.hd__mega*` rules in `header.css`; the drawer renders the same list as `.hd__drawer-branch-link` rows.
+The hospitals menu is `NavDropdown` fed by `branches.json`; the drawer renders the same list as `.hd__drawer-branch-link` rows.
 
 - It is a **single 340px column**, not the 660px two-column mega panel it replaced. Six short city names read faster in one column, and a narrow panel sits under its own trigger instead of spanning half the header - the wide version was a white slab dropped over the hero with no visible relationship to the link that opened it.
 - The panel is offset left by `--hd-mega-inset` (22px, its own padding plus the row padding) so the branch names line up under the nav label, and a small caret points back at the trigger.
@@ -362,7 +409,9 @@ The navigation uses `Our Hospitals` in the header with a dropdown that links bra
 
 The drawer is the `.hd__drawer*` rules in `header.css`, and it is a navigation menu first: the reader opened it to go somewhere.
 
-- **Order is nav, then actions.** The panel is a fixed brand row, a scrolling middle, and a footer pinned in the thumb zone (Book Appointment, then Call OPD / WhatsApp / Directions as a three-up, then the emergency line). Before this the CTA, two ghost buttons and a four-line address block sat *above* the links, so a 390x844 phone showed three of the seven routes and the reader had to scroll a menu to reach Gallery or Contact. All seven rows and every action now fit that phone with nothing to scroll (measured: `scrollHeight - clientHeight` on `.hd__drawer-scroll` is 0 at 390x844, 155px at 360x640).
+- **Order is nav, then actions.** The panel is a fixed brand row, a scrolling middle, and a footer pinned in the thumb zone (Book Appointment, then Call OPD / WhatsApp / Directions as a three-up, then the emergency line). Before this the CTA, two ghost buttons and a four-line address block sat *above* the links, so a 390x844 phone showed three of the routes and the reader had to scroll a menu to reach Gallery or Contact.
+- **A parent with `children` is replaced by its children, not by an accordion.** `drawerNavItems` flattens `navigation.header`, so the drawer lists `Our journey` and `Vision and mission` as ordinary rows instead of an `About` row the reader has to expand. That is why the drawer has eight rows where the header nav has seven items.
+- All eight rows and every action still fit a 390x844 phone with nothing to scroll (measured: `scrollHeight - clientHeight` on `.hd__drawer-scroll` is 0 at 390x844 and 414x896, 191px at 360x640). The eighth row was paid for out of the frame and never out of the type: rows are 48px rather than 52px (still clear of the 44px minimum; measured smallest target is 46px) and the branch block, the `Menu` label and the nav padding each gave up a few pixels. If a ninth row is ever added, re-measure - there is no slack left at 390x844.
 - **One branch block, not two.** The address panel and the `Our Hospitals` accordion under it named the same hospital twice. The block at the top of the scroll area is now the only place a hospital is named: a summary row (`Your hospital`, name, locality) that expands to the six cities under a `Choose your hospital` heading - the heading is what keeps the checked row from reading as the summary printed twice. The nav row of the same name is an ordinary link to `/branches`, like every other row.
 - **No chevron on a nav row.** Seven identical arrows pointing at seven links tell the reader nothing, for the same reason the desktop hospitals menu dropped its six `MapPin` tiles. The magenta inset bar still means "the page you are on"; the branch check still means "your hospital".
 - The three footer actions stack icon over label. Side by side they are about 110px wide on a 390px phone, and `WhatsApp` beside an icon overflowed that at a readable size.
@@ -456,7 +505,8 @@ The drawer is the `.hd__drawer*` rules in `header.css`, and it is a navigation m
 
 - `src/data/site.json`: brand, logo, global CTAs, defaults, business hours, social links, and the whole `footer` block (summary, action-block copy, contact labels, emergency note, medical fine print, copyright).
 - `src/data/navigation.json`: header navigation, and the two page-link columns the footer renders. The footer's third column is the branches and is derived from `branches.json`.
-- `src/data/home.json`: homepage hero, impact, conditions, trust, doctor-highlight and patient-voices copy. It also still holds `timeline`, `missionVision` and `cta`, which the home page no longer renders - `AboutPage` reads the first two and `CTASection` reads the third on five inner pages.
+- `src/data/home.json`: homepage hero, impact, conditions, trust, doctor-highlight and patient-voices copy. It also still holds `cta`, which the home page no longer renders - `CTASection` reads it on five inner pages. `timeline` and `missionVision` used to live here and are now `about.json`'s `journey.milestones` and `vision.statements`.
+- `src/data/about.json`: the two About pages. `journey` holds the founding date, the milestone list and the closing `now` block; `vision` holds the mission and vision statements and the core values.
 - `src/data/services.json`: service cards, service details, and FAQs.
 - `src/data/doctors.json`: doctor profiles, branch associations and the one-line `highlight` used by `DoctorHighlights`.
 - `src/data/branches.json`: branch names, slugs, addresses, phone groups, email, maps, WhatsApp numbers.
@@ -512,6 +562,8 @@ Manual checks:
 - Business hours are placeholders and should be confirmed by the hospital team.
 - Doctor bios should be replaced with approved final copy, and the one-line `highlight` for each doctor needs the same sign-off.
 - Patient-voice themes are summarised from public reviews and need hospital sign-off before launch.
+- The journey timeline carries the five milestones the hospital has confirmed (1993, 1995, 2009, 2011, 2014). The opening years for Bharuch, Gota, Himmatnagar and Juhapura, and the year bladeless laser surgery started, are not in any data file - get them from the hospital and add them to `about.json` rather than estimating.
+- The six core values on `/about/vision` are written from the approved mission and vision sentences, but the wording itself is drafted and needs hospital sign-off.
 - The footer's medical fine print (`site.footer.disclaimers`, `emergencyNote`, `legalNote`) is drafted, not approved. It needs the hospital's sign-off, and `legalNote` in particular should be checked against the hospital's registration details before launch.
 - `site.socialLinks` carries Facebook, Instagram and X. **The Instagram and X URLs are assumed from the Facebook handle and must be checked against the hospital's real accounts before launch.** Adding a further account needs a JSON entry plus its brand-mark path in `socialMarks`.
 - Doctor portraits are 270x260 and inconsistently framed; replace with ~1200x1500 studio portraits on a consistent background before launch.

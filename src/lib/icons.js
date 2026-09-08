@@ -6,12 +6,15 @@ import {
   FolderHeart,
   Gauge,
   Goal,
+  GraduationCap,
+  HandCoins,
   HeartHandshake,
   MapPinned,
   ScanEye,
   ShieldCheck,
   Sparkles,
   Stethoscope,
+  Users,
 } from "lucide-react";
 
 const icons = {
@@ -22,12 +25,15 @@ const icons = {
   FolderHeart,
   Gauge,
   Goal,
+  GraduationCap,
+  HandCoins,
   HeartHandshake,
   MapPinned,
   ScanEye,
   ShieldCheck,
   Sparkles,
   Stethoscope,
+  Users,
 };
 
 export function getIcon(name) {

@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import HydrateFallback from "./components/HydrateFallback";
 import RootLayout from "./components/RootLayout";
 
@@ -21,7 +21,15 @@ const router = createBrowserRouter([
       },
       {
         path: "about",
-        lazy: lazyPage(() => import("./pages/AboutPage.jsx")),
+        element: <Navigate to="/about/journey" replace />,
+      },
+      {
+        path: "about/journey",
+        lazy: lazyPage(() => import("./pages/AboutJourneyPage.jsx")),
+      },
+      {
+        path: "about/vision",
+        lazy: lazyPage(() => import("./pages/AboutVisionPage.jsx")),
       },
       {
         path: "services",

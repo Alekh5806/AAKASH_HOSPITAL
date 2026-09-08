@@ -6,7 +6,21 @@
     },
     {
       "label": "About",
-      "href": "/about"
+      "href": "/about",
+      "dropdown": "about",
+      "menuTitle": "About us",
+      "children": [
+        {
+          "label": "Our journey",
+          "href": "/about/journey",
+          "description": "Milestones since 1993"
+        },
+        {
+          "label": "Vision and mission",
+          "href": "/about/vision",
+          "description": "What we promise patients"
+        }
+      ]
     },
     {
       "label": "Services",
@@ -64,8 +78,12 @@
       "title": "Hospital",
       "items": [
         {
-          "label": "About us",
-          "href": "/about"
+          "label": "Our journey",
+          "href": "/about/journey"
+        },
+        {
+          "label": "Our vision",
+          "href": "/about/vision"
         },
         {
           "label": "Our doctors",

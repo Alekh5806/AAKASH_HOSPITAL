@@ -280,63 +280,6 @@
       }
     ]
   },
-  "timeline": {
-    "eyebrow": "A legacy of progress",
-    "title": "Milestones in advanced eye care",
-    "items": [
-      {
-        "year": "1993",
-        "title": "Founded at Visnagar",
-        "description": "Aakash Eye Hospital started on 8 August 1993 in a town of nearly 100,000 people, with an initial 1,500 sq ft setup."
-      },
-      {
-        "year": "1995",
-        "title": "Phaco cataract surgery begins",
-        "description": "The hospital became one of the pioneers in phaco cataract surgery in the region."
-      },
-      {
-        "year": "2009",
-        "title": "Excimer laser added",
-        "description": "Excimer laser technology was introduced for glass removal and refractive procedures."
-      },
-      {
-        "year": "2011",
-        "title": "Retina diagnostics expanded",
-        "description": "OCT, Green Laser and FFA capabilities were added for medical retina care."
-      },
-      {
-        "year": "2014",
-        "title": "Ahmedabad branch opens",
-        "description": "The Odhav, Ahmedabad branch opened in a facility of approximately 5,500 sq ft."
-      }
-    ]
-  },
-  "missionVision": {
-    "eyebrow": "Our promise",
-    "title": "Technology-led care with a lifelong patient relationship",
-    "items": [
-      {
-        "title": "Mission",
-        "icon": "Goal",
-        "description": "To excel in cutting-edge eye care technology, education and ophthalmology research while keeping care affordable."
-      },
-      {
-        "title": "Vision",
-        "icon": "Eye",
-        "description": "To provide comprehensive ophthalmic services of international standards to all sections of society."
-      },
-      {
-        "title": "Quality Promise",
-        "icon": "ShieldCheck",
-        "description": "To exceed patient expectations through careful protocols that reduce errors and enhance patient safety."
-      },
-      {
-        "title": "Old Case File Promise",
-        "icon": "FolderHeart",
-        "description": "Old-case patient files have no due date; patients are encouraged to bring the previous case file on future visits."
-      }
-    ]
-  },
   "cta": {
     "title": "Plan your visit",
     "description": "Choose the hospital nearest to you, tell us what you need, and our team will confirm a time that works. Walk-in OPD is available at every branch.",

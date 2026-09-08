@@ -6,6 +6,7 @@ import "./styles/global.css";
 import "./styles/system.css";
 import "./styles/header.css";
 import "./styles/landing.css";
+import "./styles/about.css";
 import "./styles/footer.css";
 import "./styles/cookie.css";
 

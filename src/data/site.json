@@ -13,9 +13,13 @@
     "url": "https://aakasheyehospital.com/"
   },
   "pageSeo": {
-    "about": {
-      "title": "About Aakash Eye Hospital | Since 1993",
-      "description": "Learn about Aakash Eye Hospital's ophthalmology journey since 1993, technology milestones, branch growth and patient safety promise."
+    "aboutJourney": {
+      "title": "Our Journey | Aakash Eye Hospital Since 1993",
+      "description": "The Aakash Eye Hospital story since 1993: phaco cataract surgery, excimer laser, retina diagnostics and growth into an eye care network across Gujarat."
+    },
+    "aboutVision": {
+      "title": "Vision, Mission and Core Values | Aakash Eye Hospital",
+      "description": "The mission, vision and core values behind Aakash Eye Hospital: affordable, technology-led ophthalmic care of international standards for all sections of society."
     },
     "appointment": {
       "title": "Book an Appointment | Aakash Eye Hospital",
