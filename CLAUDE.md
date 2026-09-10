@@ -66,6 +66,7 @@ Deployment target:
 |           |-- doctors
 |           |-- gallery
 |           |-- heroes
+|           |-- journey
 |           |-- page-headers
 |           `-- stock
 `-- src
@@ -138,9 +139,13 @@ Deployment target:
     |   |-- FAQ.jsx                  (service detail page)
     |   |-- Gallery.jsx
     |   |-- Hero.jsx                 (home)
+    |   |-- AboutNext.jsx            (both about pages)
     |   |-- ImpactStats.jsx          (home)
+    |   |-- JourneyTimeline.jsx      (about journey page)
     |   |-- PageIntroGrid.jsx
     |   |-- PatientStories.jsx       (home)
+    |   |-- VisionStatements.jsx     (about vision page)
+    |   |-- VisionValues.jsx         (about vision page)
     |   |-- ServiceGrid.jsx          (services page)
     |   `-- WhyChooseUs.jsx          (home)
     |-- styles
@@ -341,9 +346,20 @@ The navigation uses `Our Hospitals` in the header with a dropdown that links bra
 About us is **two pages behind one nav item**, not one page. The header's `About` entry is a dropdown: the reader chooses `Our journey` or `Vision and mission` and lands on that page directly. `/about` itself is a redirect to `/about/journey`, so old links and bookmarks still resolve.
 
 - All copy lives in `src/data/about.json` and is read through `src/lib/aboutData.js`. The pages are `src/pages/AboutJourneyPage.jsx` and `src/pages/AboutVisionPage.jsx`, and both own `src/styles/about.css` (`.ab-`).
+- **Both pages are three grounds, in order: paper, then the page's own dark band, then paper again.** Journey is opening / timeline stage / next-chapter plate; vision is opening / mission statements / values and the plate. The ground changes twice and each change is deliberate, which is what keeps a full-viewport dark stage from reading as an unrelated slab dropped into a white page.
 - These are the **first inner pages built in the `.e-*` design system** from `system.css` rather than on `PageHeader` and the older `global.css` page styles. They use `.e-sec`, `.e-shell`, `.e-head`, `.e-h1`/`.e-h2`/`.e-h3`, `.e-lede`, `.e-body` and `.e-link`, and `about.css` only adds what those do not cover. Nothing here restyles a shared primitive.
 - The page they replaced was a single `/about` route rendering a story panel, a flat journey list and a principles grid. Its `.about-*` rules (about 430 lines of `global.css`), its `about-panel-sheen` keyframe and the `.page-header--about` variant went with it.
 - Both pages end by pointing at the other one, and the footer carries the appointment CTA, so neither renders `CTASection`.
+
+### AboutNext
+
+`src/sections/AboutNext.jsx` is the closing plate on **both** About pages - the "both pages end by pointing at the other one" rule, built once instead of twice.
+
+- It reads the same `navigation.header` About `children` that the dropdown and `AboutSwitch` read, so the two pages can never disagree about what the other one is called or where it lives.
+- It previews the next page with **that page's own `title`, `titleAccent` and `lede`**, not with a second summary written for the link, and labels the button with the current page's `ctaLabel`. Nothing here is new copy.
+- It is a filled navy panel inset in a paper section, not a full-bleed band. The journey page arrives at it straight off the navy stage, and two dark bands meeting edge to edge would read as one long band with a seam in it.
+- Copy left, action right from 901px, stacked below it. Left as one column the panel was two thirds empty on a laptop.
+- It replaced the plain `e-link` that used to sit at the end of each page - `.ab-values__next` on vision, and a link inside the timeline's closing stop on journey. A link buried in the last frame of a pinned film is not a page ending.
 
 ### AboutSwitch
 
@@ -354,26 +370,70 @@ About us is **two pages behind one nav item**, not one page. The header's `About
 
 ### Our journey
 
-`AboutJourneyPage` is the animated timeline. Milestones come from `about.journey.milestones`; the closing `now` card is the only one whose figures are computed - years from `journey.establishedYear`, hospitals from `branches.json`, specialists from `doctors.json` - so the count of hospitals can never contradict the rest of the site.
+`AboutJourneyPage` is the page head and the switch; the timeline is `src/sections/JourneyTimeline.jsx`, which owns the `.ab-time`, `.ab-stage` and `.ab-rail` rules in `about.css`.
 
-- The spine fills as the reader scrolls (`useScroll` on the track plus `useSpring`), which is the whole point of the page: it shows how far through the story you are without a separate progress bar. Under `prefers-reduced-motion` the fill renders complete and every card renders at full opacity - verified, not assumed.
-- Each milestone owns its own `useInView` trigger and animates its dot and card once, the same pattern `ImpactStats` and `WhyChooseUs` use on the landing page.
-- **The marker column width and the spine position share one token, `--ab-gutter`.** The dot is centred in that column and the spine sits at half of it, so a dot lands on the line at every breakpoint. They were separate values first and the phone dots sat 8px to the left of the spine. Measured dot-to-spine offset is now 0px at 320, 390, 820 and 1440px; re-measure if either value changes.
-- Cards alternate around a centred spine above 900px and fall to a single column beside a left gutter below it. Alternating needs width a phone does not have, and one reading edge scans faster.
-- The `now` card's tag is `Where we are`, not `Today` - the year slot already says `Today`, and the pill repeating it read as a mistake.
+**The page around it.** The paper opening carries the page's identity - eyebrow, headline, lede, the founding date set in the serif, and `AboutSwitch`. The stage then opens on its own **title card** (`.ab-time__intro`): the milestones label, `milestonesTitle` in display serif, the lede and a scroll cue, on the navy. That card is what bridges paper into film - the section head used to sit on paper above the stage, which meant the page stacked two blocks of dark-on-white text in front of a dark stage and read flat. The card is deliberately **flat navy with no glow of its own**: the pinned frame below carries the stage lighting, and giving the card a second gradient drew a visible line across the join. The page then closes on `AboutNext`.
+
+**It is a pinned stage, not a list.** The stage is six screens tall, the frame inside it is `position: sticky` for that whole height, and scroll progress across the stage is what plays the stops. The reader scrolls normally and travels through the years. **Nothing jacks the scroll** - there is no wheel handler, no scroll hijack and no fixed positioning; take the sticky frame away and the page still scrolls at its own speed.
+
+Milestones come from `about.journey.milestones`; the closing `now` stop is the only one whose figures are computed - years from `journey.establishedYear`, hospitals from `branches.json`, specialists from `doctors.json` - so the count of hospitals can never contradict the rest of the site. The two are flattened into one `stops` array, so the rail, the paint loop and the list all index the same thing.
+
+**The four things that move.**
+
+1. **The photograph wipes open** behind a travelling accent line (`.ab-stage__sweep`) and holds a slow Ken Burns push from 1.16 to 1.
+2. **The year rolls.** `YearRoll` is a digit odometer: one column per digit over a strip of 0-9, shifted by exactly one line, each column a beat behind the last. It rolls from the previous stop's year to this one, so 1995 to 2009 visibly turns three digits. A label that is not a plain number - the closing `Today` - is set as a word instead, and `.ab-stage__odo-a11y` carries the year for screen readers because the digit strips are `aria-hidden`.
+3. **The same year again, oversized and outlined**, drifts behind the stop (`.ab-stage__ghost`). It rolls with the foreground one, which is what gives the stage depth.
+4. **The rail is a film scrubber**, not a menu: the playhead travels it as the reader scrolls, the ticks behind fill in, and any tick jumps to that stop.
+
+**The timings are deliberately asymmetric, and the reason matters.** The outgoing photograph dissolves over the tail of its own segment and is gone exactly as the next one starts to wipe open, so the frame is never empty and two photographs are never mixed. The copy is a beat behind the picture at both ends, which is what stops one stop's paragraph being read on top of the next one's. The constants at the top of the file are shares of a segment; change them together, not one at a time.
+
+**The paint loop writes styles to the DOM directly, and must keep doing so.** Scroll-linked values handed to a `style` prop get promoted to WAAPI animations by framer-motion, and a stop whose segment starts at progress 0 was mishandled there: the opening stop faded *up* across the whole stage instead of out at the end of its own segment, so two stops were legible at once and the ghost year of 1993 sat behind 2009. Measured, not guessed - `getAnimations()` on the stop returned an `Animation` with the segment's own keyframes, and computed opacity disagreed with the inline value. Six property writes per stop per frame is the fix; do not move these back onto motion values. framer is still used for the odometer springs, which are discrete and fine.
+
+**Three traps that cost real debugging.**
+
+- **A stop still ahead must have its frame hidden, not just its photograph clipped.** All six sit in one grid cell; a clipped `.ab-stage__frame` stops the picture, but `.ab-stage__media` keeps painting its own panel and drop shadow over whatever is playing. Six shadows were stacking over the live stop.
+- **The stops are top-aligned, never centred.** Their copy runs to different lengths, so centring each one inside the shared cell parked the photograph at a different height and the frame jumped between stops - measured at 99px, 147px and 161px for three different stops on one phone.
+- **Below 520px of viewport height the stage unpins itself** (`SHORT_VIEWPORT`, checked with `useSyncExternalStore`). A phone held sideways has no height for a photograph, a year and a paragraph at once - it overflowed the pinned frame by 49px - so it falls back to the stacked article, which is also exactly what `prefers-reduced-motion` gets.
+
+**The unpinned fallback is the same DOM, not a second design.** `data-mode="static"` un-sticks the frame, stacks the stops, drops the ghost year and the sweep, and pins the rail to the bottom of the viewport as a jump nav. In that mode the active stop comes from an `IntersectionObserver` on a band across the viewport middle rather than from scroll progress, because there are no segments to divide, and a rail jump is `scrollIntoView` on the stop's own id rather than a scroll offset.
+
+**Layout and measurement.**
+
+- Two columns from 1024px - photograph left, copy right - and one column below it, photograph over copy. Photographs are 4:3, cropped into `public/assets/media/journey` from the existing `page-headers` and `gallery` assets, 33-119KB each; the hospital's own files are landscape and a portrait crop of a 770x460 source is 345px wide and unusable.
+- **None of the six photographs shows the hospital it describes.** Replace them with the hospital's own photography of Visnagar, the theatre and the Odhav building when it exists; nothing in the CSS needs to change when they land.
+- Every stop must fit inside the pinned frame at every size. Measure `.ab-stage__stops` against the pin height minus the rail before adding anything to a stop - the slack is 198px on a 390x844 phone and 54px on a 360x640 one, and the `now` stop with its three figures and its link is always the tallest.
+- Contrast on the navy, measured: the title and metric 14.3:1, body 10.9:1, the accent tag 7.5:1, the counter, the figure labels and the rail's inactive years 7.0:1. The ghost year is a 0.13 stroke and carries no information.
+- Measured with no page overflow, no target under 24px and no target under 44px on the rail, at 320, 360, 390, 414, 820, 844 landscape, 1280 and 1920px, in both modes.
 
 ### Vision and mission
 
-`AboutVisionPage` is the mission, the vision and the core values.
+`AboutVisionPage` is the opening, the two statements, the core values and the closing plate. The statements are their own section, `src/sections/VisionStatements.jsx`.
 
-- The two statements sit in the page's one dark band, set in the serif at display size, because they are the hospital's own words and they should read as a statement rather than as a card.
-- The six core values are all derived from those two sentences (safety, affordability, technology, continuity, teaching, access) rather than invented alongside them. `Old case file promise` and `Quality promise` from the old page survive here as two of the six.
-- The value cards carry an icon, a title and one sentence, and no figures - `ImpactStats` on the landing page owns the numbers.
-- A decorative `01`-`06` numeral was dropped from the cards: it measured 2.9:1 (`--e-ink-3` on paper) and told the reader nothing the list order did not.
+**The two statements are the hospital's own approved words and are quoted verbatim.** They are not paraphrased, shortened or split; the only editorial decision on the page is which phrase in each one carries the promise.
 
-**Contrast is measured, not assumed.** On the navy: statements and the switch's active card 14.3:1, statement notes 7.7:1, the `now` card's body 10.0:1 and its figure labels 8.1:1. On paper: headings 18.2:1, body and milestone tags 7.8:1, the lede 7.8:1. One fix came out of measuring - the `Established` micro label was `--e-ink-3` at 3.19:1 and moved to `--e-ink-2`. Note that `.e-label` itself measures 3.19:1 on light sections **site-wide**, which is a pre-existing issue on the landing page too, not something these pages introduced.
+- That phrase is named by `highlight`, a substring of `text`, and is lifted into the accent serif italic. A `highlight` that does not appear in its sentence is ignored rather than dropped or duplicated, so re-wording a statement can never silently lose part of it.
+- The emphasis is **colour and italic only, never an underline or a highlight bar**: these sentences run to six lines and more, and a background rule drawn under an inline element breaks at every line box.
+- They are full-width editorial rows, not a two-up grid. The mission is 380 characters, and half a shell is not a measure that can carry that at display size - it ran to eleven lines with a third of the row empty beside it. The measure is capped at `48ch` and the marker column uses the same `3fr / 9fr` proportions as `.e-head`, so the statements line up with the section head above them.
+- Below 900px the marker becomes a row above the statement (icon, index, kind) rather than a column beside it: a 3fr label column is about 90px there, narrower than the icon itself.
 
-Measured with no page overflow and no target under 24px at 320, 390, 820 and 1440px.
+**The six core values are derived from those two sentences and nothing else** - only what you truly need, affordability, a patient-first culture, evidence and modern technology, one standard everywhere, always learning. `Old case file promise` from the earlier version of this page is gone: it is a real hospital promise and it still has a tile in `WhyChooseUs` on the landing page, but it is not in the approved statements and these six have to be derivable from them.
+
+`src/sections/VisionValues.jsx` renders them as a **ruled ledger, not a grid of cards**. Six cards were six separate objects that said nothing about each other; six numbered rows on hairlines read as one ordered set of rules and scan down a single edge.
+
+- **There is no icon, and that is the point.** Six lucide glyphs in six rings were decoration repeated six times, and they made the section read like a template rather than an institution - the same mistake the hospitals menu made with six `MapPin` tiles and the drawer made with a chevron on every nav row, both since removed for the same reason. The serif numeral is the row's only marker, set at display size, and the copy gets the width back. `vision.values` therefore carries no `icon` field; `VisionStatements` still uses icons, because there are two of them and they are not repeated.
+- **Each rule quotes the fragment it comes from.** `source` is an exact substring of the mission or the vision and `sourceKind` names which, set in the accent serif italic the statements use for their own key phrases. That is what makes "quoted from the mission or the vision above" something a reader can check rather than something the page asserts, and it ties the two sections into one argument. **If a statement is ever re-worded, re-check every `source`** - the fragments are verified by hand, not at runtime.
+- **The reader's row lights up, and that state comes from scroll position as well as `:hover`.** Hover does not exist on a touch screen, and the section would otherwise be inert on the device most patients use. An `IntersectionObserver` on a thin band across the middle of the viewport marks one row at a time; the mark is the accent drawn across that row's top rule, the same device the timeline's playhead uses. The rows are content, not controls, so nothing here is focusable and no tap target was added.
+- The row shape is identical at every width - number, title, quoted fragment, sentence, always in that order. Only the wrapping changes: four columns from 1024px, and below that the quote and the sentence drop under the title. `.ab-values__lead` takes `display: contents` there so its two children can hold their own rows; it is a plain div, so dissolving its box costs nothing semantically - do not do this to an element with an implicit ARIA role.
+- Below 560px both the quote and the sentence go full width. Indented under the title they would have about 190px of measure on a 320px phone. The type never shrinks with the frame.
+- The cards carry no figures - `ImpactStats` on the landing page owns the numbers.
+- A decorative `01`-`06` numeral was dropped from the old cards for measuring 2.9:1 (`--e-ink-3` on paper). It earns its place in the ledger because it is now the row's only marker and the rows are an ordered list a reader can count and refer back to, but it is `--e-ink-2` (7.8:1), and `--e-accent` (5.8:1) on the active row - never `--e-ink-3`.
+- Rows align on the **baseline**, not the centre: the numeral, the title and the sentence sit on one line across the row, which is what stops six rows from reading as six loose blocks.
+
+**The opening's promise stamp is the sibling of the journey page's founding date** - same block, same micro-label-over-serif treatment. There it dates the hospital; here it names the three words the vision rests on (`vision.promise`). Without it the lede row is half empty on a laptop, and the two About pages stop looking like a pair.
+
+**Contrast on this page is measured, not assumed.** On the navy: the statements and their kind labels 14.3:1, the accent phrase 7.5:1, the notes 7.7:1, the statement index 6.1:1. On paper: value titles 18.2:1, value copy, the source label and the idle index 7.8:1, the quoted fragment 6.4:1 and 5.8:1 on the active row's tint, the promise stamp's label 7.8:1 and its words 18.2:1. One fix came out of measuring - the statement index was `rgba(255,255,255,0.42)` at 3.3:1, under the 4.5:1 that 0.78rem semibold needs, and moved to 0.6.
+
+Measured with no page overflow and no target under 24px at 320, 360, 390, 414, 560, 768, 820, 1024, 1280, 1440, 1920 and 2560px, in both motion modes.
 
 ## Header
 
@@ -506,7 +566,7 @@ The drawer is the `.hd__drawer*` rules in `header.css`, and it is a navigation m
 - `src/data/site.json`: brand, logo, global CTAs, defaults, business hours, social links, and the whole `footer` block (summary, action-block copy, contact labels, emergency note, medical fine print, copyright).
 - `src/data/navigation.json`: header navigation, and the two page-link columns the footer renders. The footer's third column is the branches and is derived from `branches.json`.
 - `src/data/home.json`: homepage hero, impact, conditions, trust, doctor-highlight and patient-voices copy. It also still holds `cta`, which the home page no longer renders - `CTASection` reads it on five inner pages. `timeline` and `missionVision` used to live here and are now `about.json`'s `journey.milestones` and `vision.statements`.
-- `src/data/about.json`: the two About pages. `journey` holds the founding date, the milestone list and the closing `now` block; `vision` holds the mission and vision statements and the core values.
+- `src/data/about.json`: the two About pages. `nextLabel` is the eyebrow on the closing plate both pages share. `journey` holds the founding date, the milestone list (each with its own `image` and `alt`), the title-card and year-rail labels, the scroll cue, the closing `now` block and the page-level `ctaLabel` the plate uses; `vision` holds the mission and vision statements and the core values.
 - `src/data/services.json`: service cards, service details, and FAQs.
 - `src/data/doctors.json`: doctor profiles, branch associations and the one-line `highlight` used by `DoctorHighlights`.
 - `src/data/branches.json`: branch names, slugs, addresses, phone groups, email, maps, WhatsApp numbers.
@@ -562,8 +622,9 @@ Manual checks:
 - Business hours are placeholders and should be confirmed by the hospital team.
 - Doctor bios should be replaced with approved final copy, and the one-line `highlight` for each doctor needs the same sign-off.
 - Patient-voice themes are summarised from public reviews and need hospital sign-off before launch.
+- The journey timeline's six photographs are the site's existing curated stock, cropped into `public/assets/media/journey`; none of them shows the hospital it describes. Replace them with the hospital's own photography before launch - it is the single biggest upgrade available to that page.
 - The journey timeline carries the five milestones the hospital has confirmed (1993, 1995, 2009, 2011, 2014). The opening years for Bharuch, Gota, Himmatnagar and Juhapura, and the year bladeless laser surgery started, are not in any data file - get them from the hospital and add them to `about.json` rather than estimating.
-- The six core values on `/about/vision` are written from the approved mission and vision sentences, but the wording itself is drafted and needs hospital sign-off.
+- The mission and vision on `/about/vision` are the hospital's own approved wording, quoted verbatim. The six core values are derived from those two sentences but the value wording itself is drafted and needs hospital sign-off.
 - The footer's medical fine print (`site.footer.disclaimers`, `emergencyNote`, `legalNote`) is drafted, not approved. It needs the hospital's sign-off, and `legalNote` in particular should be checked against the hospital's registration details before launch.
 - `site.socialLinks` carries Facebook, Instagram and X. **The Instagram and X URLs are assumed from the Facebook handle and must be checked against the hospital's real accounts before launch.** Adding a further account needs a JSON entry plus its brand-mark path in `socialMarks`.
 - Doctor portraits are 270x260 and inconsistently framed; replace with ~1200x1500 studio portraits on a consistent background before launch.

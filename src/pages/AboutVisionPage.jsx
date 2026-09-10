@@ -1,13 +1,11 @@
-import { createElement } from "react";
-import { ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
 import { BreadcrumbJsonLd } from "../components/JsonLd";
-import Reveal from "../components/Reveal";
 import SEO from "../components/SEO";
 import { about } from "../lib/aboutData";
 import { site } from "../lib/coreData";
-import { getIcon } from "../lib/icons";
+import AboutNext from "../sections/AboutNext";
 import AboutSwitch from "../sections/AboutSwitch";
+import VisionStatements from "../sections/VisionStatements";
+import VisionValues from "../sections/VisionValues";
 
 const { vision } = about;
 
@@ -31,61 +29,25 @@ export default function AboutVisionPage() {
           </h1>
           <div className="ab-top__row">
             <p className="e-lede ab-top__lede">{vision.lede}</p>
+            {/* The sibling of the journey page's founding date, in the same
+                stamp: there it dates the hospital, here it names the three
+                words the vision statement rests on. */}
+            <p className="ab-top__est ab-top__est--stack">
+              <span>{vision.promiseLabel}</span>
+              {vision.promise.map((word) => (
+                <strong key={word}>{word}</strong>
+              ))}
+            </p>
           </div>
           <AboutSwitch />
         </div>
       </section>
 
-      <section className="e-sec e-sec--dark ab-say">
-        <div className="e-shell">
-          <div className="e-head">
-            <span className="e-label">{vision.statementsLabel}</span>
-          </div>
-          <div className="ab-say__grid">
-            {vision.statements.map((statement) => (
-              <Reveal key={statement.kind} as="article" className="ab-say__item">
-                <p className="ab-say__kind">
-                  {createElement(getIcon(statement.icon), { size: 20, "aria-hidden": "true" })}
-                  <span>{statement.kind}</span>
-                </p>
-                <p className="ab-say__text">{statement.text}</p>
-                <p className="ab-say__note">{statement.note}</p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
+      <VisionStatements />
 
-      <section className="e-sec ab-values">
-        <div className="e-shell">
-          <div className="e-head">
-            <span className="e-label">{vision.valuesLabel}</span>
-            <div className="e-head__body">
-              <h2 className="e-h2">{vision.valuesTitle}</h2>
-              <p className="e-lede">{vision.valuesLede}</p>
-            </div>
-          </div>
+      <VisionValues />
 
-          <ul className="ab-values__grid">
-            {vision.values.map((value, index) => (
-              <li key={value.title}>
-                <Reveal className="ab-values__card" delay={(index % 3) * 0.06}>
-                  <span className="ab-values__icon" aria-hidden="true">
-                    {createElement(getIcon(value.icon), { size: 22 })}
-                  </span>
-                  <h3 className="e-h3">{value.title}</h3>
-                  <p className="e-body">{value.description}</p>
-                </Reveal>
-              </li>
-            ))}
-          </ul>
-
-          <Link className="e-link ab-values__next" to="/about/journey">
-            {vision.ctaLabel}
-            <ArrowRight size={16} aria-hidden="true" />
-          </Link>
-        </div>
-      </section>
+      <AboutNext />
     </>
   );
 }

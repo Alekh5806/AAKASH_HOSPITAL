@@ -7,10 +7,11 @@
 
 /* ---------- shared page head ---------- */
 
+/* The page opens on paper and hands off to the navy stage below, so the ground
+   darkens gently across the block rather than cutting at the section edge. */
 .ab-top {
-  border-bottom: 1px solid var(--e-rule);
-  background: linear-gradient(180deg, var(--e-paper-2) 0%, var(--e-paper) 100%);
-  padding-block: clamp(40px, 5vw, 76px) clamp(32px, 4vw, 56px);
+  background: linear-gradient(180deg, var(--e-paper) 0%, var(--e-paper-2) 100%);
+  padding-block: clamp(52px, 7vw, 104px) clamp(44px, 5.5vw, 78px);
 }
 
 .ab-top__title {
@@ -56,12 +57,24 @@
   text-transform: uppercase;
 }
 
+.ab-top__est--stack {
+  gap: 2px;
+}
+
+.ab-top__est--stack strong {
+  font-size: clamp(1.12rem, 1.7vw, 1.44rem);
+  line-height: 1.28;
+}
+
+/* Set in the serif, like the year on the stage and the established year in the
+   footer, so the three places the site dates itself share one voice. */
 .ab-top__est strong {
   color: var(--e-ink);
-  font-family: var(--e-tight);
-  font-size: 1.12rem;
-  font-weight: 600;
+  font-family: var(--e-serif);
+  font-size: clamp(1.28rem, 1.9vw, 1.62rem);
+  font-weight: 400;
   letter-spacing: -0.01em;
+  line-height: 1.1;
   white-space: nowrap;
 }
 
@@ -121,157 +134,366 @@
   color: rgba(255, 255, 255, 0.74);
 }
 
-/* ---------- journey: the timeline ---------- */
+/* ---------- journey: the scroll stage ---------- */
 
-/* The marker column and the spine share one gutter token, so a dot is always
-   centred on the line at every breakpoint. */
+/* The timeline is a pinned cinema. The stage is tall, the frame inside it is
+   stuck to the viewport for the whole of that height, and scroll progress across
+   the stage is what plays the stops - so the reader scrolls normally and travels
+   through the years rather than past a list. Nothing here jacks the scroll. */
+
 .ab-time {
-  --ab-gutter: 72px;
+  --ab-soft: #f4a6c4;
+  background: var(--e-navy);
 }
 
-.ab-time__track {
+/* Flat navy on purpose. The pinned frame below carries the stage lighting, and
+   giving the title card a glow of its own drew a visible line across the join
+   where one gradient stopped and the next one started. */
+.ab-time__intro {
   position: relative;
+  overflow: hidden;
+  padding-block: clamp(64px, 9vw, 130px) clamp(46px, 6vw, 88px);
+  color: #fff;
 }
 
-/* The spine is centred between the two card columns on desktop and sits in the
-   marker gutter on narrow screens; both positions are set on .ab-time__marker
-   too, so the dots always land on the line. */
-.ab-time__spine {
-  position: absolute;
-  top: 8px;
-  bottom: 8px;
-  left: 50%;
-  width: 2px;
-  margin-left: -1px;
-  background: var(--e-rule);
-}
-
-.ab-time__spine-fill {
-  display: block;
-  width: 100%;
-  height: 100%;
-  transform-origin: top center;
-  background: linear-gradient(180deg, var(--e-navy) 0%, var(--e-accent) 100%);
-}
-
-.ab-time__list {
+.ab-time__intro-grid {
   display: grid;
-  gap: clamp(28px, 4vw, 52px);
+  justify-items: start;
+  gap: clamp(16px, 2.2vw, 24px);
+}
+
+.ab-time__intro .e-label {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.ab-time__intro-title {
+  margin: 0;
+  max-width: 17ch;
+  color: #fff;
+  font-family: var(--e-serif);
+  font-size: clamp(2.1rem, 4.6vw, 3.9rem);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.ab-time__intro-lede {
+  max-width: 56ch;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.ab-time__cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: clamp(6px, 1.4vw, 14px) 0 0;
+  color: rgba(255, 255, 255, 0.62);
+  font-family: var(--e-sans);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.ab-time__cue svg {
+  flex: none;
+  animation: ab-cue 2s var(--e-ease) infinite;
+}
+
+@keyframes ab-cue {
+  0%,
+  100% {
+    transform: translateY(-3px);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(3px);
+    opacity: 1;
+  }
+}
+
+.ab-stage {
+  --stop-scroll: 82vh;
+  --ab-stage-ink-2: rgba(255, 255, 255, 0.86);
+  --ab-stage-ink-3: rgba(255, 255, 255, 0.66);
+  position: relative;
+  height: calc(var(--stops) * var(--stop-scroll));
+  background: var(--e-navy);
+  color: #fff;
+}
+
+@supports (height: 100svh) {
+  .ab-stage {
+    --stop-scroll: 82svh;
+  }
+}
+
+.ab-stage__pin {
+  position: sticky;
+  top: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  height: 100vh;
+  overflow: hidden;
+  /* A single soft light source keeps the navy from reading as a flat slab. Both
+     focal points sit well inside the frame so its top edge stays the same tone
+     as the title card above it and the join stays invisible. */
+  background:
+    radial-gradient(115% 85% at 16% 46%, rgba(38, 96, 148, 0.46) 0%, rgba(12, 44, 73, 0) 62%),
+    radial-gradient(90% 70% at 92% 96%, rgba(184, 22, 87, 0.24) 0%, rgba(12, 44, 73, 0) 60%);
+}
+
+@supports (height: 100svh) {
+  .ab-stage__pin {
+    height: 100svh;
+  }
+}
+
+.ab-stage__inner {
+  align-self: center;
+  width: var(--e-shell);
+  margin-inline: auto;
+  min-height: 0;
+}
+
+/* Every stop shares one grid cell, so the tallest sets the height and no stop
+   can shift the layout as it fades in. */
+.ab-stage__stops {
+  display: grid;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.ab-time__item {
+.ab-stage__stop {
+  position: relative;
+  grid-area: 1 / 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--ab-gutter) minmax(0, 1fr);
-  align-items: start;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(28px, 4vw, 64px);
 }
 
-.ab-time__item[data-side="start"] .ab-time__card {
-  grid-column: 1;
+/* Resting state before the first paint, and the state a browser with JS off
+   would keep: only the opening stop shows. The paint loop owns these six
+   properties from the first frame onward. */
+.ab-stage[data-mode="scroll"] .ab-stage__stop {
+  pointer-events: none;
 }
 
-.ab-time__item[data-side="end"] .ab-time__card {
-  grid-column: 3;
+.ab-stage[data-mode="scroll"] .ab-stage__stop:first-child {
+  pointer-events: auto;
 }
 
-.ab-time__marker {
-  grid-column: 2;
-  display: flex;
-  justify-content: center;
-  padding-top: 26px;
+.ab-stage[data-mode="scroll"] .ab-stage__copy,
+.ab-stage[data-mode="scroll"] .ab-stage__ghost {
+  opacity: 0;
+  will-change: opacity, transform;
 }
 
-.ab-time__dot {
+.ab-stage[data-mode="scroll"] .ab-stage__stop:first-child .ab-stage__copy,
+.ab-stage[data-mode="scroll"] .ab-stage__stop:first-child .ab-stage__ghost {
+  opacity: 1;
+}
+
+.ab-stage[data-mode="scroll"] .ab-stage__media {
+  opacity: 0;
+  will-change: opacity;
+}
+
+.ab-stage[data-mode="scroll"] .ab-stage__stop:first-child .ab-stage__media {
+  opacity: 1;
+}
+
+.ab-stage[data-mode="scroll"] .ab-stage__frame {
+  clip-path: inset(0% 0% 100% 0%);
+}
+
+.ab-stage[data-mode="scroll"] .ab-stage__stop:first-child .ab-stage__frame {
+  clip-path: inset(0% 0% 0% 0%);
+}
+
+.ab-stage[data-mode="scroll"] .ab-stage__zoom {
+  will-change: transform;
+}
+
+.ab-stage[data-mode="scroll"] .ab-stage__sweep {
+  opacity: 0;
+}
+
+/* ---------- the stop's photograph ---------- */
+
+.ab-stage__media {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  width: 100%;
+  height: min(58vh, 470px);
+  overflow: hidden;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 34px 90px rgba(3, 15, 27, 0.55);
+}
+
+@supports (height: 100svh) {
+  .ab-stage__media {
+    height: min(58svh, 470px);
+  }
+}
+
+.ab-stage__frame,
+.ab-stage__zoom {
+  position: absolute;
+  inset: 0;
   display: block;
-  width: 15px;
-  height: 15px;
-  border: 2px solid var(--e-navy);
-  border-radius: 50%;
-  background: var(--e-paper);
-  box-shadow: 0 0 0 5px var(--e-paper);
 }
 
-.ab-time__dot--now {
-  border-color: var(--e-accent);
+.ab-stage__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The accent line rides the leading edge of the wipe and fades out when the
+   photograph is fully open. */
+.ab-stage__sweep {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
   background: var(--e-accent);
+  box-shadow: 0 0 22px 2px rgba(184, 22, 87, 0.75);
 }
 
-.ab-time__card {
-  border: 1px solid var(--e-rule);
-  border-radius: 4px;
-  background: var(--e-paper);
-  padding: clamp(20px, 2.4vw, 28px);
+/* ---------- the stop's copy ---------- */
+
+.ab-stage__copy {
+  position: relative;
+  z-index: 1;
+  max-width: 46ch;
 }
 
-.ab-time__card--now {
-  border-color: var(--e-navy);
-  background: var(--e-navy);
-  color: #fff;
-}
-
-.ab-time__meta {
+.ab-stage__count {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 8px 14px;
-  margin: 0 0 12px;
-}
-
-.ab-time__year {
-  color: var(--e-ink);
-  font-family: var(--e-serif);
-  font-size: clamp(1.9rem, 3vw, 2.5rem);
-  font-weight: 400;
-  letter-spacing: -0.02em;
-  line-height: 1;
-  font-variant-numeric: lining-nums;
-}
-
-.ab-time__tag {
-  border: 1px solid var(--e-rule-2);
-  border-radius: 999px;
-  padding: 4px 11px;
-  color: var(--e-ink-2);
-  font-family: var(--e-sans);
-  font-size: 0.7rem;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  color: var(--ab-stage-ink-3);
+  font-family: var(--e-tight);
+  font-size: 0.78rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+
+.ab-stage__count i {
+  width: 26px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.ab-stage__tag {
+  display: block;
+  color: var(--e-accent-soft, #f4a6c4);
+  font-family: var(--e-sans);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
-.ab-time__card .e-h3 {
+/* ---------- the rolling year ---------- */
+
+.ab-stage__odo {
+  display: flex;
+  margin: 6px 0 14px;
+  color: #fff;
+  font-family: var(--e-serif);
+  font-size: clamp(3.4rem, 7vw, 7rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.ab-stage__odo-a11y {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* One column per digit; the strip holds 0-9 and shifts by exactly one line. */
+.ab-stage__odo-col {
+  display: block;
+  height: 1.05em;
+  overflow: hidden;
+}
+
+.ab-stage__odo-strip {
+  display: block;
+}
+
+.ab-stage__odo-strip span {
+  display: block;
+  height: 1.05em;
+  line-height: 1.05;
+}
+
+.ab-stage__odo--word {
+  display: block;
+  font-style: italic;
+}
+
+/* The same year again, oversized and outlined behind the stop. It rolls with
+   the foreground one, which is what gives the stage its depth. */
+.ab-stage__ghost {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: -4%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  user-select: none;
+}
+
+.ab-stage__odo--ghost {
+  margin: 0;
+  color: transparent;
+  font-size: clamp(11rem, 30vw, 28rem);
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.13);
+}
+
+.ab-stage__copy .e-h3 {
+  color: #fff;
   margin-bottom: 8px;
 }
 
-.ab-time__metric {
-  margin: 14px 0 0;
-  border-top: 1px solid var(--e-rule);
-  padding-top: 12px;
-  color: var(--e-ink-2);
+.ab-stage__copy .e-body {
+  color: var(--ab-stage-ink-2);
+}
+
+.ab-stage__metric {
+  display: inline-block;
+  margin: 20px 0 0;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 999px;
+  padding: 7px 15px;
+  color: #fff;
   font-family: var(--e-sans);
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.ab-time__card--now .ab-time__year,
-.ab-time__card--now .e-h3 {
-  color: #fff;
-}
-
-.ab-time__card--now .ab-time__tag {
-  border-color: rgba(255, 255, 255, 0.45);
-  color: rgba(255, 255, 255, 0.86);
-}
-
-.ab-time__card--now .e-body {
-  color: rgba(255, 255, 255, 0.82);
-}
-
-.ab-time__figures {
+.ab-stage__figures {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
@@ -280,12 +502,12 @@
   padding-top: 18px;
 }
 
-.ab-time__figures div {
+.ab-stage__figures div {
   display: grid;
   gap: 3px;
 }
 
-.ab-time__figures strong {
+.ab-stage__figures strong {
   color: #fff;
   font-family: var(--e-serif);
   font-size: clamp(1.6rem, 2.4vw, 2.1rem);
@@ -293,77 +515,282 @@
   line-height: 1;
 }
 
-.ab-time__figures span {
-  color: rgba(255, 255, 255, 0.72);
+.ab-stage__figures span {
+  color: var(--ab-stage-ink-3);
   font-family: var(--e-sans);
   font-size: 0.82rem;
   line-height: 1.35;
 }
 
-.ab-time__next {
-  margin-top: 22px;
-  color: #fff;
-  border-bottom-color: rgba(255, 255, 255, 0.4);
-  white-space: normal;
+/* ---------- the scrubber rail ---------- */
+
+/* A film scrubber, not a menu: the playhead travels it as the reader scrolls,
+   the ticks behind it fill in, and any tick can be clicked to jump. */
+.ab-rail {
+  align-self: end;
+  padding-bottom: clamp(14px, 2.2vw, 26px);
 }
 
-.ab-time__next:hover {
+.ab-rail__shell {
+  position: relative;
+  width: var(--e-shell);
+  margin-inline: auto;
+}
+
+.ab-rail__track {
+  position: absolute;
+  top: 11px;
+  left: calc(50% / var(--stops));
+  right: calc(50% / var(--stops));
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.ab-rail__fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  border-radius: 2px;
+  background: var(--e-accent);
+}
+
+.ab-rail__head {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: var(--e-accent);
+  box-shadow: 0 0 0 5px rgba(184, 22, 87, 0.3);
+}
+
+.ab-rail__list {
+  position: relative;
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ab-rail__list > li {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.ab-rail__btn {
+  display: grid;
+  justify-items: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 44px;
+  border: 0;
+  background: none;
+  padding: 7px 2px 0;
+  color: var(--ab-stage-ink-3);
+  font-family: var(--e-tight);
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: color 200ms var(--e-ease);
+}
+
+.ab-rail__btn:hover {
   color: #fff;
-  border-bottom-color: #fff;
+}
+
+.ab-rail__btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.ab-rail__dot {
+  width: 10px;
+  height: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  background: var(--e-navy);
+  transition:
+    transform 220ms var(--e-ease),
+    background-color 220ms var(--e-ease),
+    border-color 220ms var(--e-ease);
+}
+
+.ab-rail__btn[data-state="past"] .ab-rail__dot {
+  border-color: var(--e-accent);
+  background: var(--e-accent);
+}
+
+.ab-rail__btn[data-state="on"] {
+  color: #fff;
+}
+
+.ab-rail__btn[data-state="on"] .ab-rail__dot {
+  border-color: #fff;
+  background: #fff;
+  transform: scale(1.3);
+}
+
+.ab-rail__year {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* ---------- reduced motion: the same stage, unpinned ---------- */
+
+/* Nothing is hidden and nothing is redrawn - the stops simply stack and read as
+   an ordinary article, with the rail kept as a jump nav along the bottom. */
+.ab-stage[data-mode="static"] {
+  height: auto;
+}
+
+.ab-stage[data-mode="static"] .ab-stage__pin {
+  display: block;
+  position: static;
+  height: auto;
+  overflow: visible;
+  padding-block: clamp(52px, 7vw, 96px);
+}
+
+.ab-stage[data-mode="static"] .ab-stage__inner {
+  padding-bottom: 88px;
+}
+
+.ab-stage[data-mode="static"] .ab-stage__stops {
+  gap: clamp(48px, 7vw, 92px);
+}
+
+.ab-stage[data-mode="static"] .ab-stage__stop {
+  grid-area: auto;
+}
+
+.ab-stage[data-mode="static"] .ab-stage__ghost,
+.ab-stage[data-mode="static"] .ab-stage__sweep {
+  display: none;
+}
+
+.ab-stage[data-mode="static"] .ab-rail {
+  position: sticky;
+  bottom: 14px;
+  padding-block: 10px 4px;
+  background: var(--e-navy);
+  border-top: 1px solid var(--e-rule-dark);
 }
 
 /* ---------- vision: mission and vision statements ---------- */
 
-.ab-say .e-head {
-  margin-bottom: clamp(28px, 3.4vw, 40px);
-}
-
+/* The two statements are the page. They are set as full-width editorial rows
+   rather than side by side in a two-up grid: the hospital's own wording runs to
+   forty and fifty words, and half a shell is not a measure that can carry that
+   at display size without breaking to a dozen short lines. */
 .ab-say {
-  --ab-say-mark: #f4a6c4;
+  --ab-soft: #f4a6c4;
+  overflow: hidden;
+  background-image: radial-gradient(
+    90% 80% at 82% 6%,
+    rgba(38, 96, 148, 0.4) 0%,
+    rgba(12, 44, 73, 0) 62%
+  );
 }
 
-.ab-say__grid {
+.ab-say .e-head {
+  margin-bottom: clamp(30px, 4vw, 52px);
+}
+
+.ab-say__list {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(28px, 4vw, 64px);
+  gap: clamp(30px, 4.4vw, 60px);
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
+/* Same label column / body column proportions as .e-head, so the statements
+   line up with the section head above them instead of starting a new grid. */
 .ab-say__item {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+  align-items: start;
+  gap: clamp(18px, 3vw, 48px);
   border-top: 1px solid var(--e-rule-dark);
-  padding-top: 22px;
+  padding-top: clamp(24px, 3vw, 38px);
+}
+
+.ab-say__mark-col {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+}
+
+.ab-say__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 50%;
+  color: var(--ab-soft);
+}
+
+/* 0.6, not the 0.42 it started at: 0.78rem semibold needs 4.5:1 and 0.42
+   measured 3.3:1 on the navy. */
+.ab-say__index {
+  color: rgba(255, 255, 255, 0.6);
+  font-family: var(--e-tight);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums;
 }
 
 .ab-say__kind {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 18px;
+  margin: 0;
   color: #fff;
   font-family: var(--e-sans);
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
-.ab-say__kind svg {
-  flex: none;
-  color: var(--ab-say-mark);
+/* 48ch, not the 60-plus a 9fr column would allow and not the 34 it started at.
+   The mission is 380 characters: at a narrower measure it ran to eleven lines
+   with a third of the row empty beside it, and at a wider one a display serif
+   stops being scannable. */
+/* A grid child holding prose needs this or a single long unbreakable string
+   can push the column past its track. */
+.ab-say__body {
+  min-width: 0;
 }
 
 .ab-say__text {
   margin: 0;
+  max-width: 48ch;
   color: #fff;
   font-family: var(--e-serif);
-  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-size: clamp(1.3rem, 2.1vw, 1.85rem);
   font-weight: 400;
   letter-spacing: -0.015em;
-  line-height: 1.28;
+  line-height: 1.38;
   text-wrap: pretty;
 }
 
+/* The one phrase in each statement that carries the promise. Colour and italic
+   only - no underline: these sentences wrap over six or more lines, and a
+   background rule drawn under an inline element breaks at every line box. */
+.ab-say__mark {
+  color: var(--ab-soft);
+  font-style: italic;
+}
+
 .ab-say__note {
-  margin: 18px 0 0;
+  margin: clamp(18px, 2vw, 24px) 0 0;
   color: rgba(255, 255, 255, 0.7);
   font-family: var(--e-sans);
   font-size: 0.95rem;
@@ -372,83 +799,238 @@
 
 /* ---------- vision: core values ---------- */
 
-.ab-values__grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(14px, 1.8vw, 22px);
+/* Numbered rows on hairlines, not a card grid. The cards were six separate
+   objects that said nothing about each other; the rows read as one ordered set
+   of rules and scan down a single edge. */
+.ab-values__list {
   list-style: none;
   margin: 0;
   padding: 0;
+  border-bottom: 1px solid var(--e-rule);
 }
 
-.ab-values__card {
+.ab-values__item {
   position: relative;
-  height: 100%;
-  border: 1px solid var(--e-rule);
-  border-radius: 4px;
-  background: var(--e-paper);
-  padding: clamp(20px, 2.2vw, 26px);
-  transition: border-color 200ms var(--e-ease);
+  border-top: 1px solid var(--e-rule);
+  transition: background-color 260ms var(--e-ease);
 }
 
-.ab-values__card:hover {
-  border-color: var(--e-rule-2);
+/* The reader's row is marked by drawing the accent across its top rule, which
+   is the same device the timeline's playhead uses. */
+.ab-values__item::before {
+  content: "";
+  position: absolute;
+  inset: -1px 0 auto 0;
+  height: 2px;
+  background: var(--e-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 420ms var(--e-ease);
 }
 
-.ab-values__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 4px;
+.ab-values__item[data-active="true"]::before,
+.ab-values__item:hover::before {
+  transform: scaleX(1);
+}
+
+.ab-values__item[data-active="true"],
+.ab-values__item:hover {
   background: var(--e-paper-2);
-  color: var(--e-navy);
-  margin-bottom: 16px;
 }
 
-.ab-values__card .e-h3 {
-  margin-bottom: 8px;
+/* Baseline alignment, not centre: the numeral, the title and the sentence all
+   sit on one line across the row, which is what stops a ledger of six rows from
+   looking like six loose blocks. */
+.ab-values__row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 4fr) minmax(0, 6fr);
+  align-items: baseline;
+  gap: clamp(14px, 2.6vw, 40px);
+  padding-block: clamp(22px, 2.6vw, 32px);
 }
 
-.ab-values__next {
-  margin-top: clamp(28px, 3.4vw, 40px);
+/* The row's only marker, so it is set as one: serif, at display size, tabular so
+   all six align. --e-ink-2, never --e-ink-3 - a numeral was dropped from the old
+   cards for measuring 2.9:1 on paper. It earns its place here because the rows
+   are an ordered list a reader can count and refer back to, but only at a
+   contrast that can actually be read. */
+.ab-values__index {
+  color: var(--e-ink-2);
+  font-family: var(--e-serif);
+  font-size: clamp(1.5rem, 2.3vw, 2.1rem);
+  font-variant-numeric: lining-nums tabular-nums;
+  line-height: 1;
+  transition: color 260ms var(--e-ease);
+}
+
+.ab-values__item[data-active="true"] .ab-values__index,
+.ab-values__item:hover .ab-values__index {
+  color: var(--e-accent);
+}
+
+.ab-values__lead {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+/* The fragment each rule is taken from, set in the accent serif italic the
+   statements use for their own key phrases. It is what makes "quoted from the
+   mission or the vision above" something the reader can check rather than
+   something the page asserts. */
+.ab-values__source {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin: 0;
+}
+
+.ab-values__from {
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.ab-values__quote {
+  color: var(--e-accent);
+  font-family: var(--e-serif);
+  font-size: 0.98rem;
+  font-style: italic;
+  line-height: 1.4;
+  quotes: "\201C" "\201D";
+}
+
+.ab-values__text {
+  max-width: 52ch;
+  min-width: 0;
+}
+
+/* ---------- about: the next chapter plate ---------- */
+
+/* Filled, and inset in a paper section rather than run full bleed: the journey
+   page arrives here straight off the navy stage, and two dark bands meeting
+   edge to edge would read as one long band with a seam in it. */
+.ab-next {
+  --ab-soft: #f4a6c4;
+}
+
+/* Copy left, action right: capped at a readable measure the panel would
+   otherwise be two thirds empty on a laptop. */
+.ab-next__panel {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(24px, 4vw, 56px);
+  border-radius: 10px;
+  background: var(--e-navy);
+  padding: clamp(30px, 4.6vw, 66px);
+  background-image: radial-gradient(
+    110% 130% at 88% 8%,
+    rgba(184, 22, 87, 0.28) 0%,
+    rgba(12, 44, 73, 0) 60%
+  );
+}
+
+.ab-next__copy {
+  display: grid;
+  justify-items: start;
+  gap: clamp(12px, 1.6vw, 18px);
+}
+
+.ab-next__panel .e-label {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.ab-next__title {
+  max-width: 19ch;
+  color: #fff;
+}
+
+.ab-next__title em {
+  color: var(--ab-soft);
+  font-family: var(--e-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.ab-next__lede {
+  max-width: 58ch;
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.ab-next__cta {
   white-space: normal;
+  text-align: center;
 }
 
 /* ---------- responsive ---------- */
 
+/* One column below the laptop breakpoint: the stage keeps its full height, so
+   the photograph sits over the copy and both stay inside one screen. */
+@media (max-width: 1023px) {
+  /* Top-aligned, not centred: the stops share one grid cell and their copy runs
+     to different lengths, so centring each one parked the photograph at a
+     different height and the frame jumped between stops. */
+  .ab-stage__stop {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: clamp(16px, 3vw, 26px);
+  }
+
+  .ab-stage__odo--ghost {
+    -webkit-text-stroke-color: rgba(255, 255, 255, 0.09);
+  }
+
+  .ab-stage__media {
+    height: clamp(132px, 24vh, 300px);
+  }
+
+  .ab-stage__copy {
+    max-width: none;
+  }
+
+  .ab-stage__odo {
+    font-size: clamp(2.8rem, 11vw, 4.4rem);
+    margin-bottom: 10px;
+  }
+
+  .ab-stage__odo--ghost {
+    font-size: clamp(9rem, 48vw, 18rem);
+  }
+
+  .ab-stage__ghost {
+    left: -8%;
+  }
+
+  .ab-stage__figures {
+    margin-top: 16px;
+    padding-top: 14px;
+  }
+}
+
+@supports (height: 100svh) {
+  @media (max-width: 1023px) {
+    .ab-stage__media {
+      height: clamp(132px, 24svh, 300px);
+    }
+  }
+}
+
 @media (max-width: 900px) {
-  /* One column of cards beside a left gutter: alternating sides need width the
-     phone does not have, and a single reading edge is easier to scan. */
-  .ab-time {
-    --ab-gutter: 42px;
+  .ab-next__panel {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
   }
 
-  .ab-time__spine {
-    left: calc(var(--ab-gutter) / 2);
-    margin-left: -1px;
-  }
-
-  .ab-time__item,
-  .ab-time__item[data-side="start"],
-  .ab-time__item[data-side="end"] {
-    grid-template-columns: var(--ab-gutter) minmax(0, 1fr);
-  }
-
-  .ab-time__item[data-side="start"] .ab-time__card,
-  .ab-time__item[data-side="end"] .ab-time__card {
-    grid-column: 2;
-  }
-
-  .ab-time__marker {
-    grid-column: 1;
-    padding-top: 24px;
-  }
-
-  .ab-say__grid,
-  .ab-values__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .ab-next__cta {
+    margin-top: clamp(6px, 1.6vw, 14px);
   }
 }
 
@@ -462,38 +1044,181 @@
     gap: 10px;
   }
 
-  .ab-time__list {
-    gap: 20px;
+  .ab-stage__count {
+    margin-bottom: 10px;
   }
 
-  .ab-time {
-    --ab-gutter: 34px;
+  .ab-stage__metric {
+    margin-top: 14px;
   }
 
-  .ab-time__figures {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .ab-rail__btn {
+    font-size: 0.78rem;
+    gap: 7px;
+  }
+}
+
+/* Short screens - small phones and every phone held sideways - buy their height
+   back from the frame, never from the body copy: older patients read this. */
+@media (max-height: 700px) {
+  .ab-stage__media {
+    height: clamp(118px, 20vh, 220px);
+  }
+
+  .ab-stage__odo {
+    font-size: clamp(2.4rem, 9vw, 3.4rem);
+  }
+
+  .ab-stage__figures {
+    margin-top: 12px;
+    padding-top: 12px;
     gap: 10px;
   }
 
-  .ab-say__grid,
-  .ab-values__grid {
+  .ab-stage__figures span {
+    font-size: 0.74rem;
+  }
+}
+
+@supports (height: 100svh) {
+  @media (max-height: 700px) {
+    .ab-stage__media {
+      height: clamp(118px, 20svh, 220px);
+    }
+  }
+}
+
+/* A phone held sideways has width to spare and no height at all, so each stop
+   goes back to two columns rather than stacking its own photograph and copy.
+   Below 520px of height the stage also unpins - see SHORT_VIEWPORT. */
+@media (orientation: landscape) and (max-height: 620px) {
+  .ab-stage__stop {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
+    gap: clamp(20px, 3vw, 40px);
+  }
+
+  .ab-stage__media {
+    height: min(52vh, 260px);
+  }
+
+  .ab-stage__odo {
+    font-size: clamp(2.2rem, 6vw, 3rem);
+  }
+}
+
+@supports (height: 100svh) {
+  @media (orientation: landscape) and (max-height: 620px) {
+    .ab-stage__media {
+      height: min(52svh, 260px);
+    }
+  }
+}
+
+/* The vision page's own breakpoints: unrelated to the timeline above. */
+@media (max-width: 900px) {
+  /* The marker turns into a row above the statement rather than a column beside
+     it - a 3fr label column is about 90px here, narrower than the icon. */
+  .ab-say__item {
     grid-template-columns: minmax(0, 1fr);
+    gap: clamp(16px, 2.6vw, 22px);
+  }
+
+  .ab-say__mark-col {
+    grid-auto-flow: column;
+    justify-content: start;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .ab-say__text {
+    max-width: none;
+  }
+
+  /* Number, ring and title on one line, then the quote, then the rule's own
+     sentence. Order and content never change - only where each line wraps.
+     .ab-values__lead dissolves so its two children can take their own rows;
+     it is a plain div, so losing its box costs nothing semantically. */
+  .ab-values__row {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: baseline;
+    row-gap: 10px;
+  }
+
+  .ab-values__lead {
+    display: contents;
+  }
+
+  .ab-values__index {
+    grid-area: 1 / 1;
+  }
+
+  .ab-values__lead .e-h3 {
+    grid-area: 1 / 2;
+  }
+
+  .ab-values__source {
+    grid-area: 2 / 2;
+  }
+
+  .ab-values__text {
+    grid-area: 3 / 2;
+    max-width: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .ab-say__icon {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Below this the indent under the title costs more measure than it buys, so the
+   sentence takes the full width. The type never shrinks: older patients read
+   this page. */
+@media (max-width: 560px) {
+  .ab-values__row {
+    gap: 10px 16px;
+    padding-block: 20px;
+  }
+
+  /* Both the quote and the sentence take the full width: indented under the
+     title they would be about 190px of measure on a 320px phone. */
+  .ab-values__source {
+    grid-area: 2 / 1 / auto / -1;
+  }
+
+  .ab-values__text {
+    grid-area: 3 / 1 / auto / -1;
+  }
+
+  .ab-values__quote {
+    font-size: 0.92rem;
   }
 }
 
 @media (max-width: 480px) {
-  .ab-time__meta {
-    gap: 6px 10px;
+  .ab-rail__btn {
+    font-size: 0.72rem;
+    padding-inline: 0;
   }
 
-  .ab-time__figures span {
-    font-size: 0.76rem;
+  .ab-stage__figures span {
+    font-size: 0.72rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .ab-switch__item,
-  .ab-values__card {
+  .ab-rail__btn,
+  .ab-rail__dot,
+  .ab-values__item,
+  .ab-values__item::before,
+  .ab-values__index {
     transition: none;
+  }
+
+  .ab-time__cue svg {
+    animation: none;
   }
 }

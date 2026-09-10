@@ -1,4 +1,5 @@
 {
+  "nextLabel": "Keep reading",
   "journey": {
     "eyebrow": "About us",
     "establishedYear": 1993,
@@ -6,44 +7,56 @@
     "title": "From one Visnagar clinic to",
     "titleAccent": "an eye care network",
     "lede": "Aakash Eye Hospital opened in Visnagar in 1993 as a single ophthalmic care setup. Every step since has been about bringing better diagnostics and surgical care closer to the patients who need them.",
+    "scrollCue": "Scroll to travel the years",
     "milestonesLabel": "Milestones",
     "milestonesTitle": "How the hospital kept moving forward",
-    "milestonesLede": "The moments that shaped our clinical capability and our reach across Gujarat.",
+    "milestonesLede": "The moments that shaped our clinical capability and our reach across Gujarat. Pick a year to jump straight to it.",
+    "railLabel": "Timeline years",
     "milestones": [
       {
         "year": "1993",
         "tag": "Founded",
         "title": "Founded at Visnagar",
         "description": "Aakash Eye Hospital started on 8 August 1993 in a town of nearly 100,000 people, with an initial 1,500 sq ft setup.",
-        "metric": "1,500 sq ft"
+        "metric": "1,500 sq ft",
+        "image": "/assets/media/journey/1993-visnagar-clinic.jpg",
+        "alt": "Consulting room at Aakash Eye Hospital with an examination chair and slit lamp"
       },
       {
         "year": "1995",
         "tag": "Surgery",
         "title": "Phaco cataract surgery begins",
         "description": "The hospital became one of the pioneers in phaco cataract surgery in the region.",
-        "metric": "Phaco"
+        "metric": "Phaco",
+        "image": "/assets/media/journey/1995-phaco-surgery.jpg",
+        "alt": "Surgical microscope positioned over a patient in the operating theatre"
       },
       {
         "year": "2009",
         "tag": "Technology",
         "title": "Excimer laser added",
         "description": "Excimer laser technology was introduced for glass removal and refractive procedures.",
-        "metric": "Excimer"
+        "metric": "Excimer",
+        "image": "/assets/media/journey/2009-excimer-laser.jpg",
+        "alt": "Patient under a laser during a refractive eye procedure"
       },
       {
         "year": "2011",
         "tag": "Diagnostics",
         "title": "Retina diagnostics expanded",
         "description": "OCT, Green Laser and FFA capabilities were added for medical retina care.",
-        "metric": "OCT, FFA"
+        "metric": "OCT, FFA",
+        "image": "/assets/media/journey/2011-retina-diagnostics.jpg",
+        "alt": "Optometrist examining a patient's eyes through a slit lamp"
       },
       {
         "year": "2014",
         "tag": "New hospital",
         "title": "Ahmedabad branch opens",
         "description": "The Odhav, Ahmedabad branch opened in a facility of approximately 5,500 sq ft.",
-        "metric": "5,500 sq ft"
+        "metric": "5,500 sq ft",
+        "image": "/assets/media/journey/2014-ahmedabad-branch.jpg",
+        "alt": "Daylit corridor inside the Ahmedabad hospital building"
       }
     ],
     "now": {
@@ -51,67 +64,91 @@
       "label": "Today",
       "title": "One hospital, many doorsteps",
       "description": "Patients are seen across our hospitals by a consultant team covering cataract, refractive, retina, glaucoma and paediatric eye care, and an old case file is welcome at any of them.",
+      "image": "/assets/media/journey/today-network.jpg",
+      "alt": "Patients and staff at an Aakash Eye Hospital reception desk",
       "figures": [
-        { "key": "years", "label": "Years of care" },
-        { "key": "hospitals", "label": "Eye hospitals" },
-        { "key": "specialists", "label": "Eye specialists" }
-      ],
-      "ctaLabel": "Read our vision and mission"
-    }
+        {
+          "key": "years",
+          "label": "Years of care"
+        },
+        {
+          "key": "hospitals",
+          "label": "Eye hospitals"
+        },
+        {
+          "key": "specialists",
+          "label": "Eye specialists"
+        }
+      ]
+    },
+    "ctaLabel": "Read our vision and mission"
   },
   "vision": {
     "eyebrow": "About us",
     "title": "Why this hospital",
     "titleAccent": "exists",
-    "lede": "Our mission and vision were written for one thing: comprehensive eye care that a family in a small town can reach as easily as a family in a city.",
+    "lede": "Two sentences decide how this hospital is run - what we owe the patient in front of us today, and the institution we are building for the patients who come after.",
+    "promiseLabel": "The foundation",
+    "promise": ["Affordable", "Ethical", "Uncompromised"],
     "statementsLabel": "Mission and vision",
+    "statementsTitle": "The two sentences behind every decision",
     "statements": [
       {
         "kind": "Mission",
+        "index": "01",
         "icon": "Goal",
-        "text": "To excel in cutting-edge eye care technology, education and ophthalmology research while keeping care affordable.",
+        "text": "To improve lives through compassionate eye care by combining skilled professionals, modern technology, evidence-based medicine, and a patient-first culture. We are committed to recommending only what our patients truly need, delivering consistent quality across every Aakash Eye Hospital, and continuously learning, improving, and innovating to serve future generations better.",
+        "highlight": "recommending only what our patients truly need",
         "note": "What we work on every day."
       },
       {
         "kind": "Vision",
+        "index": "02",
         "icon": "Eye",
-        "text": "To provide comprehensive ophthalmic services of international standards to all sections of society.",
+        "text": "To bring Aakash Eye Hospital's way of practising medicine to as many people as possible by building one of the world's most trusted eye care institutions - where affordable, ethical, and uncompromised quality care remains the foundation of every decision.",
+        "highlight": "one of the world's most trusted eye care institutions",
         "note": "Where we are taking the hospital."
       }
     ],
     "valuesLabel": "Core values",
     "valuesTitle": "The promises behind every consultation",
-    "valuesLede": "These are the operating rules behind consultation, surgery planning and follow-up.",
+    "valuesLede": "Six operating rules. Each one is quoted from the mission or the vision above, not written alongside them.",
     "values": [
       {
-        "title": "Patient safety first",
-        "icon": "ShieldCheck",
-        "description": "Careful protocols at every step, written to reduce errors and to keep surgery and follow-up predictable."
+        "title": "Only what you truly need",
+        "sourceKind": "Mission",
+        "source": "recommending only what our patients truly need",
+        "description": "We recommend the treatment a patient actually needs, and say so plainly when a procedure can wait or is not required at all."
       },
       {
         "title": "Care that stays affordable",
-        "icon": "HandCoins",
-        "description": "Costs are explained before treatment, and affordability is part of how we plan care rather than an afterthought."
+        "sourceKind": "Vision",
+        "source": "affordable, ethical, and uncompromised quality care",
+        "description": "Affordability is built into how treatment is planned rather than applied at the end, and costs are explained before anything is scheduled."
       },
       {
-        "title": "Technology in the right hands",
-        "icon": "ScanEye",
-        "description": "Phaco, excimer laser, OCT and retina diagnostics are used by consultants who read the results with you."
+        "title": "A patient-first culture",
+        "sourceKind": "Mission",
+        "source": "a patient-first culture",
+        "description": "Compassion is part of the clinical work: unhurried explanations, questions answered in your own language, and time for the family."
       },
       {
-        "title": "Your file has no due date",
-        "icon": "FolderHeart",
-        "description": "Old case papers stay valid. Bring the previous file on a future visit and your history comes with you."
+        "title": "Evidence and modern technology",
+        "sourceKind": "Mission",
+        "source": "modern technology, evidence-based medicine",
+        "description": "Skilled consultants read modern diagnostics and follow evidence-based medicine, so a plan can be explained as well as recommended."
       },
       {
-        "title": "Teaching and research",
-        "icon": "GraduationCap",
-        "description": "Education and ophthalmology research keep the clinical team learning, and that learning reaches the OPD."
+        "title": "The same standard everywhere",
+        "sourceKind": "Mission",
+        "source": "consistent quality across every Aakash Eye Hospital",
+        "description": "One set of clinical protocols across every Aakash Eye Hospital, so the care at a branch matches the care at the head office."
       },
       {
-        "title": "Open to every patient",
-        "icon": "Users",
-        "description": "Comprehensive ophthalmic services for all sections of society, at each of our hospitals."
+        "title": "Always learning",
+        "sourceKind": "Mission",
+        "source": "continuously learning, improving, and innovating",
+        "description": "The team keeps learning, improving and innovating, so the next generation of patients is served better than the last."
       }
     ],
     "ctaLabel": "See how the hospital grew"
