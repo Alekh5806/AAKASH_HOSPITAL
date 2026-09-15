@@ -2,12 +2,15 @@ import { createElement, useCallback, useEffect, useRef, useState } from "react";
 import { ChevronDown, Cookie, X } from "lucide-react";
 import { site } from "../lib/coreData";
 import { getIcon } from "../lib/icons";
+import { INTRO_DONE_EVENT, INTRO_EXIT_MS, isIntroPending } from "../lib/intro";
 
 const COOKIE_NAME = "aakash_cookie_preferences";
 const COOKIE_DAYS = 180;
-/* The banner waits for AppPreloader (1900ms) to finish before it appears, so a
-   first-time visitor never gets the consent card slid in behind the intro. */
-const BANNER_DELAY_MS = 2100;
+/* On a first visit the banner waits for the opening curtain to lift and then
+   settles in a beat later, so it is never slid in behind the intro; a visit
+   with no curtain gets it after a short pause rather than the old fixed wait. */
+const BANNER_DELAY_MS = 600;
+const BANNER_AFTER_INTRO_MS = INTRO_EXIT_MS + 500;
 const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 const { banner: bannerCopy, dialog: dialogCopy, categories } = site.cookies;
@@ -132,8 +135,22 @@ export default function CookieConsent() {
   useEffect(() => {
     if (storedPreferences) return undefined;
 
-    const timer = window.setTimeout(() => setMode("banner"), BANNER_DELAY_MS);
-    return () => window.clearTimeout(timer);
+    let timer = null;
+    const show = (delay) => {
+      timer = window.setTimeout(() => setMode("banner"), delay);
+    };
+    const onIntroDone = () => show(BANNER_AFTER_INTRO_MS);
+
+    if (isIntroPending()) {
+      window.addEventListener(INTRO_DONE_EVENT, onIntroDone, { once: true });
+    } else {
+      show(BANNER_DELAY_MS);
+    }
+
+    return () => {
+      window.removeEventListener(INTRO_DONE_EVENT, onIntroDone);
+      window.clearTimeout(timer);
+    };
   }, [storedPreferences]);
 
   useEffect(() => {

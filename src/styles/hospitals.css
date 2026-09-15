@@ -1,0 +1,578 @@
+/* =========================================================================
+   Our hospitals - the index
+   Namespace: .hs-*   |   loaded after branch.css
+   Built on the .e-* design system in system.css; nothing here restyles a
+   shared primitive.
+
+   One head and one instrument: a drawn map of Gujarat beside six rows, one
+   per hospital. The rows are the controls - each opens that hospital's own
+   page and carries its OPD number and directions - and the map answers them.
+   On a phone the map sticks under the header and the row passing beneath it
+   is the one lit, so scrolling the list walks the traveller down the state.
+   ========================================================================= */
+
+.hs {
+  /* WCAG 1.4.11 wants 3:1 on the boundary of a control, and --e-rule-2
+     measures 1.58:1 on paper. Same edge value the header, the cookie sheet
+     and the hospital page use. Do not lighten it. */
+  --hs-edge: #7f8b96;
+  /* The most of the screen the stuck map may take on a phone or tablet. */
+  --hs-map-cap: min(40vh, 380px);
+  background: linear-gradient(180deg, #faf8f4 0%, var(--e-paper-2) 100%);
+  padding-block: clamp(22px, 2.8vw, 36px) clamp(56px, 6vw, 100px);
+}
+
+/* ---------- the head ---------- */
+
+.hs-head {
+  display: grid;
+  justify-items: center;
+  margin-bottom: clamp(30px, 4.2vw, 60px);
+  text-align: center;
+}
+
+/* The count in the serif with the state in italic accent, the hospital page's
+   own title device: there the city changes from page to page, here it is the
+   one word that says where all six are. */
+.hs-head__title {
+  margin: 12px 0 0;
+  max-width: 16ch;
+  color: var(--e-ink);
+  font-family: var(--e-serif);
+  font-size: clamp(2.3rem, 6.2vw, 4.4rem);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.hs-head__title em {
+  display: block;
+  color: var(--e-accent);
+  font-style: italic;
+}
+
+.hs-head__lede {
+  max-width: 46ch;
+  margin: clamp(14px, 1.8vw, 22px) 0 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: clamp(1rem, 1.2vw, 1.14rem);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* ---------- the instrument ---------- */
+
+.hs-find {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(28px, 4vw, 56px);
+}
+
+/* Sticky beside the list on a laptop, so the map stays on screen while the
+   pointer runs down the rows. Flex, not grid: a sticky grid item is confined
+   to its own row and never sticks. */
+.hs-map {
+  position: sticky;
+  top: calc(var(--hd-height) + 20px);
+  z-index: 2;
+  flex: 0 0 clamp(400px, 42%, 540px);
+  overflow: clip;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 18px;
+  background:
+    radial-gradient(120% 90% at 20% 10%, rgba(27, 107, 114, 0.35) 0%, rgba(27, 107, 114, 0) 55%),
+    linear-gradient(160deg, #123c61 0%, #0b2843 100%);
+  box-shadow: 0 30px 70px rgba(4, 12, 22, 0.35);
+  padding: 8px;
+}
+
+/* The scene keeps the drawing's own proportions at every width, so the labels
+   placed over it in percentages always land on their dots. Where the card is
+   wider than the scene, the navy carries on either side. */
+.hs-map__scene {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 660 / 492;
+  margin-inline: auto;
+}
+
+.hs-map__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.hs-map__dot {
+  fill: #fff;
+  stroke: #b81657;
+  stroke-width: 2.5;
+  transition:
+    fill 220ms var(--e-ease),
+    stroke 220ms var(--e-ease),
+    r 220ms var(--e-ease);
+}
+
+.hs-map__pin[data-active] .hs-map__dot {
+  fill: #b81657;
+  stroke: #fff;
+  r: 7.5;
+}
+
+.hs-map__glow {
+  opacity: 0;
+  transition: opacity 320ms var(--e-ease);
+}
+
+.hs-map__pin[data-active] .hs-map__glow {
+  opacity: 1;
+}
+
+.hs-map__hit {
+  cursor: pointer;
+}
+
+.hs-map__traveller {
+  fill: #fff;
+  stroke: #b81657;
+  stroke-width: 2.5;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.7));
+}
+
+/* Labels beside their dots, at a real type size. `translate`, never
+   `transform`: framer-motion writes the fade-up to `transform`, and a CSS
+   transform would be thrown away with it. */
+.hs-map__label {
+  position: absolute;
+  translate: 12px -50%;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: var(--e-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1.3;
+  text-shadow: 0 1px 8px rgba(4, 12, 22, 0.8);
+  white-space: nowrap;
+  pointer-events: none;
+  /* Room for the pill it becomes when lit, taken out of the margins so the
+     text itself never moves. */
+  border-radius: 999px;
+  padding: 3px 8px;
+  margin: -3px -8px;
+  transition:
+    background-color 200ms var(--e-ease),
+    color 200ms var(--e-ease);
+}
+
+.hs-map__label[data-side="left"] {
+  translate: calc(-100% - 12px) -50%;
+}
+
+/* The lit hospital's label is a white pill in place: the map's readout at
+   every width, and one that covers nothing. It grows outward from the dot,
+   so a pill on one side of the cluster never reaches a label on the other. */
+
+.hs-map__label[data-active] {
+  background: #fff;
+  color: var(--e-navy);
+  text-shadow: none;
+}
+
+/* The state's name behind the drawing, the way a printed map carries its
+   title: a 0.07 stroke of the serif in the empty south-west. */
+.hs-map__ghost {
+  position: absolute;
+  right: 6%;
+  bottom: 5%;
+  color: rgba(255, 255, 255, 0.07);
+  font-family: var(--e-serif);
+  font-size: clamp(2.4rem, 7vw, 4.4rem);
+  font-style: italic;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Whether the OPD is open right now, in the one corner the drawing leaves
+   empty at every width: bottom left, over the sea. The hours are the same at
+   every hospital, so it is said once here rather than six times in the rows. */
+.hs-map__stamp {
+  --br-edge-light: rgba(255, 255, 255, 0.46);
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+}
+
+/* ---------- the rows ---------- */
+
+.hs-list {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.hs-list__label {
+  margin: 0 0 14px;
+}
+
+.hs-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--e-rule);
+}
+
+.hs-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 14px 18px;
+  border-bottom: 1px solid var(--e-rule);
+  padding: 18px 14px 18px 20px;
+  transition: background-color 220ms var(--e-ease);
+}
+
+/* The lit row's one mark: a hairline down its left edge that fills accent,
+   the hospital page's own card signature. */
+.hs-row::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  left: 0;
+  width: 2px;
+  background: var(--e-accent);
+  transform: scaleY(0);
+  transition: transform 260ms var(--e-ease);
+}
+
+.hs-row[data-active] {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.hs-row[data-active]::before {
+  transform: scaleY(1);
+}
+
+/* The whole row opens the hospital's page: the link's halo covers the row and
+   the two actions sit above it. */
+.hs-row__main {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.hs-row__main::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.hs-row:has(.hs-row__main:focus-visible) {
+  outline: 2px solid var(--e-accent);
+  outline-offset: -2px;
+}
+
+.hs-row__main:focus {
+  outline: none;
+}
+
+.hs-row__name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  color: var(--e-ink);
+  font-family: var(--e-serif);
+  font-size: clamp(1.25rem, 1.6vw, 1.5rem);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  transition: color 200ms var(--e-ease);
+}
+
+.hs-row[data-active] .hs-row__name {
+  color: var(--e-navy);
+}
+
+.hs-row__name em {
+  border-radius: 999px;
+  background: rgba(184, 22, 87, 0.09);
+  padding: 3px 8px;
+  color: var(--e-accent);
+  font-family: var(--e-sans);
+  font-size: 0.6rem;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.hs-row__where {
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.hs-row__actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 8px;
+}
+
+.hs-row__act {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--hs-edge);
+  border-radius: 999px;
+  background: #fff;
+  padding: 0 15px;
+  color: var(--e-navy);
+  font-family: var(--e-sans);
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  transition:
+    background-color 200ms var(--e-ease),
+    border-color 200ms var(--e-ease),
+    color 200ms var(--e-ease);
+}
+
+.hs-row__act:hover,
+.hs-row__act:focus-visible {
+  border-color: var(--e-navy);
+  background: var(--e-navy);
+  color: #fff;
+}
+
+/* The row's route marker. It is visual only - the link is the whole row - so
+   it takes no pointer and no name of its own. */
+.hs-row__go {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: color 200ms var(--e-ease);
+}
+
+.hs-row__go svg {
+  transition: transform 240ms var(--e-ease);
+}
+
+.hs-row[data-active] .hs-row__go {
+  color: var(--e-accent);
+}
+
+.hs-row[data-active] .hs-row__go svg {
+  transform: translate(2px, -2px);
+}
+
+.hs-note {
+  max-width: 60ch;
+  margin: 18px 0 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+/* ---------- widths ---------- */
+
+/* Beside the map the list is narrower than the page, so the row sheds its
+   words before its street wraps: the route marker's words go below 1300px
+   and the action words below 1180px, where the pills drop to glyphs. The
+   rows are still 44px targets with their names in aria-label. */
+@media (min-width: 1024px) and (max-width: 1299px) {
+  .hs-row__go span {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1179px) {
+  /* With the pills as glyphs the list needs less, so the map takes more. */
+  .hs-map {
+    flex-basis: 46%;
+  }
+
+  .hs-row__word {
+    display: none;
+  }
+
+  .hs-row__act {
+    padding: 0;
+  }
+}
+
+@media (max-width: 1023px) {
+  /* Stacked: the map leads and sticks under the header, the rows scroll
+     beneath it, and the row passing under it is the one lit. */
+  .hs-find {
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .hs-map {
+    top: var(--hd-height);
+    flex: none;
+    width: 100%;
+    border-radius: 14px;
+    /* Shallower than the laptop's: the list's label sits directly under the
+       card here, and the deep shadow pulled it down to 4.6:1. */
+    box-shadow: 0 14px 34px rgba(4, 12, 22, 0.22);
+    transition: top 160ms var(--e-ease);
+  }
+
+  /* The header hides on scroll-down, which is exactly when a reader is
+     working through the rows; the map follows it up. */
+  body:has(.hd--hidden) .hs-map {
+    top: 0;
+  }
+
+  .hs-map__scene {
+    width: min(100%, calc(var(--hs-map-cap) * 660 / 492));
+  }
+
+  .hs-list {
+    width: 100%;
+  }
+}
+
+/* A phone held sideways has no height for a stuck map and the rows under it:
+   at 390px tall the map was a 156px drawing marooned in an 844px navy card
+   that never left the screen. Below 520px of height the map is a plain card
+   at the top, hugging the drawing, and the rows are the controls - the same
+   call the journey timeline makes when it unpins its stage. */
+@media (max-width: 1023px) and (max-height: 520px) {
+  .hs {
+    --hs-map-cap: 62vh;
+  }
+
+  .hs-map {
+    position: relative;
+    top: auto;
+    width: fit-content;
+    max-width: 100%;
+    margin-inline: auto;
+  }
+
+  .hs-map__stamp .br-status__detail {
+    display: none;
+  }
+}
+
+@media (max-width: 699px) {
+  .hs {
+    --hs-map-cap: min(38vh, 300px);
+  }
+
+  /* Two lines on a phone - `Six hospitals` over `across Gujarat` - rather
+     than three with `across` stranded on its own line between them. */
+  .hs-head__title {
+    max-width: none;
+  }
+
+  .hs-head__title em {
+    display: inline;
+  }
+
+  .hs-map {
+    padding: 4px;
+  }
+
+  .hs-map__label {
+    font-size: 0.72rem;
+    translate: 10px -50%;
+  }
+
+  .hs-map__label[data-side="left"] {
+    translate: calc(-100% - 10px) -50%;
+  }
+
+  /* The pill alone on a phone map; the closing time is on every hospital's
+     own page, and two lines here sat across Saurashtra. */
+  .hs-map__stamp {
+    left: 12px;
+    bottom: 12px;
+  }
+
+  .hs-map__stamp .br-status__detail {
+    display: none;
+  }
+
+  .hs-map__stamp .br-status__pill {
+    padding: 6px 12px 6px 10px;
+    font-size: 0.82rem;
+    background: rgba(9, 21, 33, 0.55);
+  }
+
+  .hs-map__ghost {
+    bottom: 8%;
+  }
+
+  /* A row is a name, its street, two glyph actions and an arrow - one line
+     each, so six rows sit under the stuck map on a 390x844 phone. */
+  .hs-row {
+    gap: 12px;
+    padding: 14px 10px 14px 16px;
+  }
+
+  .hs-row__word,
+  .hs-row__go span {
+    display: none;
+  }
+
+  .hs-row__act {
+    padding: 0;
+  }
+
+  .hs-row__name {
+    font-size: 1.2rem;
+  }
+
+  .hs-row__where {
+    font-size: 0.86rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .hs-row {
+    gap: 10px;
+    padding-left: 12px;
+  }
+
+  .hs-map__stamp .br-status__pill {
+    font-size: 0.76rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hs-map,
+  .hs-map__dot,
+  .hs-map__glow,
+  .hs-row,
+  .hs-row::before,
+  .hs-row__name,
+  .hs-row__act,
+  .hs-row__go,
+  .hs-row__go svg {
+    transition: none;
+  }
+}

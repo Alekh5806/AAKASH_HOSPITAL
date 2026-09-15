@@ -15,7 +15,16 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  min-height: clamp(560px, 84vh, 880px);
+  /* The hero owns the first screen: exactly the viewport minus the header at
+     rest, at every size. Sized by a share of the viewport it left a strip of
+     the next section's empty top padding showing under the stat band - 43px
+     on a 390x844 phone, 79px on a 1080p monitor - and a blank strip of paper
+     under a navy band is not a "peek", it is a gap. svh is the viewport with
+     the browser's own bars showing, which is the screen a reader lands on; vh
+     is the fallback for browsers without it. --hd-height comes from
+     header.css. */
+  min-height: calc(100vh - var(--hd-height));
+  min-height: calc(100svh - var(--hd-height));
   overflow: hidden;
   background: var(--e-navy);
   color: #fff;
@@ -221,9 +230,8 @@
 @media (max-width: 760px) {
   .e-hero {
     display: grid;
-    grid-template-rows: 1fr auto;
+    grid-template-rows: minmax(0, 1fr) auto;
     justify-content: stretch;
-    min-height: min(82svh, 760px);
   }
 
   /* `display: contents` dissolves the shell box so the copy and the stats can
@@ -242,9 +250,18 @@
 
   .e-hero__media {
     position: relative;
+    min-height: 0;
   }
 
+  /* Out of flow, so the film's own 3:4 size is not the row's minimum. The
+     section only has a min-height, which leaves the grid's block size
+     indefinite and its 1fr row content-sized - and a 360px-wide portrait
+     video is 480px of content, which held the row open and pushed the stat
+     band 42px past the fold on a 360x640 phone. Absolute, the row is what
+     the screen has left, and `cover` crops the film to it. */
   .e-hero__video {
+    position: absolute;
+    inset: 0;
     object-position: 50% 46%;
   }
 
@@ -371,10 +388,6 @@
 /* Short handsets and landscape phones. Height comes out of the frame and the
    spacing, never out of the type - older patients read this site. */
 @media (max-width: 760px) and (max-height: 700px) {
-  .e-hero {
-    min-height: min(94svh, 620px);
-  }
-
   .e-hero__actions {
     margin-top: 16px;
   }
@@ -1007,6 +1020,11 @@
 }
 
 @media (max-width: 720px) {
+  /* Gap equals inset, for the same reason as the conditions rail: a 14px gap
+     left a 2px sliver of the previous card at the screen edge after a snap. */
+  .e-voices {
+    --voices-gap: 16px;
+  }
   .e-voices__row[data-mode="step"],
   .e-voices__row[data-mode="static"] {
     scroll-padding-inline: 16px;
@@ -1042,6 +1060,11 @@
      while thumbing to the next. The frame tightens, the copy never does. */
   .e-why__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* The desktop mosaic offsets need natural heights; a phone has no offsets,
+       and two tiles in a row with different heights left ragged gaps under
+       the shorter one. Stretched, each pair shares a bottom edge and the
+       proof line sits on it. */
+    align-items: stretch;
     gap: 10px;
   }
   .e-why__grid > *:nth-child(2n),
@@ -1079,7 +1102,11 @@
 
   /* The visuals now live in a ~137px column, so each one is refitted rather
      than left to overflow or wrap into a second row. */
+  /* The visual takes the row's slack, so the shorter tile of a pair spreads
+     its spare height around its visual rather than parking it all above the
+     proof line. */
   .e-why__visual {
+    flex: 1 1 auto;
     min-height: 40px;
   }
   .e-why__team img,
@@ -1138,97 +1165,6 @@
   }
   .e-why__tile:hover {
     transform: none;
-  }
-}
-
-/* =========================================================================
-   FAQ
-   ========================================================================= */
-
-.e-faq {
-  border-top: 1px solid var(--e-rule);
-}
-
-.e-faq details {
-  border-bottom: 1px solid var(--e-rule);
-}
-
-.e-faq summary {
-  display: grid;
-  grid-template-columns: 66px minmax(0, 1fr) 28px;
-  align-items: baseline;
-  gap: 10px;
-  padding: clamp(20px, 2.3vw, 26px) 0;
-  cursor: pointer;
-  list-style: none;
-  color: var(--e-ink);
-  font-family: var(--e-tight);
-  font-size: clamp(1.02rem, 1.5vw, 1.28rem);
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  line-height: 1.3;
-  transition: color 200ms var(--e-ease);
-}
-
-.e-faq summary::-webkit-details-marker {
-  display: none;
-}
-
-.e-faq summary:hover {
-  color: var(--e-accent);
-}
-
-.e-faq summary span:first-child {
-  color: var(--e-ink-3);
-  font-family: var(--e-serif);
-  font-size: 1rem;
-  font-weight: 400;
-}
-
-.e-faq__sign {
-  justify-self: end;
-  align-self: center;
-  color: var(--e-ink-3);
-  font-family: var(--e-sans);
-  font-size: 1.3rem;
-  font-weight: 300;
-  line-height: 1;
-  transition: transform 260ms var(--e-ease);
-}
-
-.e-faq details[open] .e-faq__sign {
-  transform: rotate(45deg);
-}
-
-.e-faq__answer {
-  grid-column: 2 / 3;
-  margin: 0;
-  padding: 0 0 clamp(22px, 2.4vw, 30px);
-  max-width: 62ch;
-  color: var(--e-ink-2);
-  font-size: 1rem;
-  line-height: 1.68;
-}
-
-.e-faq__body {
-  display: grid;
-  grid-template-columns: 66px minmax(0, 1fr) 28px;
-  gap: 10px;
-}
-
-/* ----------------------------------------------------- FAQ RESPONSIVE -- */
-
-@media (max-width: 760px) {
-  .e-faq summary,
-  .e-faq__body {
-    grid-template-columns: 40px minmax(0, 1fr) 24px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .e-faq__sign,
-  .e-faq summary {
-    transition: none;
   }
 }
 
@@ -1425,7 +1361,7 @@
 
 .e-impact__caption {
   margin: 0;
-  color: var(--e-ink-3);
+  color: var(--e-ink-2);
   font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -1464,7 +1400,7 @@
   gap: 8px;
   border-top: 1px solid var(--e-rule);
   padding-top: 8px;
-  color: var(--e-ink-3);
+  color: var(--e-ink-2);
   font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -1534,7 +1470,7 @@
 .e-impact__more {
   background: transparent !important;
   padding-block: 2px !important;
-  color: var(--e-ink-3);
+  color: var(--e-ink-2);
   font-size: 0.74rem;
   font-weight: 500;
 }
@@ -1551,13 +1487,15 @@
 }
 
 .e-impact__chip {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  min-height: 40px;
   border: 1px solid var(--e-rule);
   border-radius: 999px;
   background: var(--e-paper);
-  padding: 9px 12px;
+  padding: 0 13px;
   color: var(--e-ink-2);
   font-size: 0.78rem;
   font-weight: 600;
@@ -1566,6 +1504,14 @@
     background-color 320ms var(--e-ease),
     border-color 320ms var(--e-ease),
     color 320ms var(--e-ease);
+}
+
+/* Each chip is a link. A 40px chip with a 3px invisible halo is a 46px target
+   that still leaves 2px between rows at the 8px gap. */
+.e-impact__chip::after {
+  content: "";
+  position: absolute;
+  inset: -3px 0;
 }
 
 .e-impact__chip svg {
@@ -1606,15 +1552,92 @@
   }
 }
 
+/* Phones: four figures in two columns, not four stacked cards. Stacked, the
+   band measured 2067px on every phone - 2.45 screens on a 390x844 and 3.8 on
+   a 320x568 - for four numbers, which is where a reader stops scrolling.
+   Two columns put all four figures on one screen, the way a numbers band is
+   meant to be read: at a glance, then on.
+
+   The two big counts keep their charts - four bars and a sparkline read fine
+   in a half column. The specialists and hospitals cards drop theirs: a list of
+   three names or six cities in a 140px column is a list nobody can read, and
+   both lists are already on the page - the doctor rail two sections down
+   carries the same people with their photographs, and the footer lists every
+   hospital. Dropped rather than shrunk, like the hero's lede. The frame gives;
+   the type stays near its full-width sizes. */
 @media (max-width: 620px) {
   .e-impact__grid {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 10px;
+  }
+  .e-impact__card {
+    gap: 4px;
+    border-radius: 14px;
+    padding: 16px 14px 14px;
+  }
+  .e-impact__kicker {
+    font-size: 0.68rem;
+  }
+  .e-impact__figure {
+    margin-top: 4px;
+  }
+  /* Fluid rather than stepped: "4,52,902+" is the widest figure and has to
+     fit a half column at 320px (111px inner) as well as at 430px. */
+  .e-count {
+    font-size: clamp(1.5rem, 7.8vw, 2.1rem);
+  }
+  .e-impact__label {
+    font-size: 0.98rem;
+  }
+  .e-impact__desc {
+    font-size: 0.84rem;
+    line-height: 1.5;
   }
   .e-impact__visual {
+    margin-top: 14px;
+    border-radius: 8px;
+    padding: 12px 10px;
     min-height: 0;
   }
-  .e-impact__trend svg {
-    height: 76px;
+  .e-impact__card[data-visual="people"] .e-impact__visual,
+  .e-impact__card[data-visual="branches"] .e-impact__visual {
+    display: none;
+  }
+  /* Name on its own line, bar and share beneath it. In a half column the
+     name and the share cannot share a row without the name being cut to
+     "LASIK & refra...", and truncation is not how this site makes room. */
+  .e-impact__mix {
+    gap: 9px;
+  }
+  .e-impact__mix li {
+    gap: 4px 8px;
+  }
+  .e-impact__mixName {
+    grid-column: 1 / -1;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+  .e-impact__mixName,
+  .e-impact__mixShare {
+    font-size: 0.72rem;
+  }
+  .e-impact__track {
+    grid-column: 1;
+    grid-row: 2;
+    height: 5px;
+  }
+  .e-impact__mixShare {
+    grid-row: 2;
+    grid-column: 2;
+  }
+  .e-impact__caption,
+  .e-impact__axis {
+    font-size: 0.62rem;
+  }
+  .e-impact__axis {
+    padding-top: 6px;
   }
   .e-impact__actions .e-btn {
     width: 100%;
@@ -1944,8 +1967,11 @@
    this site avoids. Here the card dissolves into a hairline rule and the
    quote sits directly on the navy, so the slide reads as one object. */
 @media (max-width: 760px) {
+  /* The gap equals the inset on purpose: with a 14px gap inside a 16px inset
+     the previous slide ended 2px inside the screen, and a white sliver sat at
+     the left edge after every snap. */
   .e-cond__track {
-    gap: 14px;
+    gap: 16px;
     padding-inline: 16px;
     scroll-padding-inline: 16px;
   }

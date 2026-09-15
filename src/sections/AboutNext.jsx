@@ -33,8 +33,13 @@ export default function AboutNext() {
             </h2>
             <p className="e-lede ab-next__lede">{targetPage.lede}</p>
           </div>
+          {/* Two labels, CSS picks one - the same device as the conditions
+              rail's quoteShort. The full label is 254px at this size and a
+              360px phone gives the button 228px; the short one is the target
+              page's own name, which is what the header and the switch call it. */}
           <Link className="e-btn e-btn--light ab-next__cta" to={target.href}>
-            {currentPage.ctaLabel}
+            <span className="ab-next__cta-full">{currentPage.ctaLabel}</span>
+            <span className="ab-next__cta-short">{currentPage.ctaLabelShort}</span>
             <ArrowRight size={17} aria-hidden="true" />
           </Link>
         </div>

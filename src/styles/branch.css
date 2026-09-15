@@ -1,0 +1,2054 @@
+/* =========================================================================
+   Our hospitals - one hospital's page
+   Namespace: .br-*   |   loaded after service-detail.css
+   Built on the .e-* design system in system.css; nothing here restyles a
+   shared primitive.
+
+   Six blocks, each answering one question a visitor has about a building:
+   what is this place (the hero), where is it and how do I reach it (the
+   locate band, on the page's one dark ground), who will I see (the team),
+   what can be treated here (care), what does it look like inside (the
+   mosaic), and is another hospital closer (the way on). A phone reader also
+   gets an action bar that follows them down.
+   ========================================================================= */
+
+.br-hero,
+.br-locate,
+.br-team,
+.br-care,
+.br-inside,
+.br-others,
+.br-bar {
+  /* WCAG 1.4.11 wants 3:1 on the boundary of a control, and --e-rule-2
+     measures 1.58:1 on paper. Same edge value the header, the cookie sheet,
+     the services index and the service page use. Do not lighten it. */
+  --br-edge: #7f8b96;
+  --br-edge-light: rgba(255, 255, 255, 0.46);
+}
+
+/* Two labels in the markup and CSS picks one - the conditions rail's quoteShort
+   device. Every short form is authored copy, never a truncation. */
+.br-short {
+  display: none;
+}
+
+/* Every accent word on this page is the same device: the city, or the one
+   noun the sentence turns on, in the serif italic the hero uses. */
+.br-locate .e-h2 em,
+.br-team .e-h2 em,
+.br-inside .e-h2 em {
+  color: var(--e-accent);
+  font-family: var(--e-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.br-locate .e-h2 em {
+  color: #fff;
+}
+
+/* ---------- the hero ---------- */
+
+.br-hero {
+  background: linear-gradient(180deg, #faf8f4 0%, var(--e-paper-2) 100%);
+  padding-block: clamp(18px, 2.4vw, 30px) clamp(30px, 4vw, 56px);
+}
+
+.br-hero__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  margin-left: -2px;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: color 200ms var(--e-ease);
+}
+
+.br-hero__back svg {
+  transition: transform 240ms var(--e-ease);
+}
+
+.br-hero__back:hover {
+  color: var(--e-accent);
+}
+
+.br-hero__back:hover svg {
+  transform: translateX(-3px);
+}
+
+.br-hero__head {
+  display: grid;
+  justify-items: center;
+  margin-top: clamp(6px, 1.4vw, 16px);
+  text-align: center;
+}
+
+/* The network's name in the serif with the city in italic accent: the one
+   word on the page that changes from hospital to hospital. */
+.br-hero__title {
+  margin: 0;
+  max-width: 20ch;
+  color: var(--e-ink);
+  font-family: var(--e-serif);
+  font-size: clamp(2.3rem, 6.4vw, 4.6rem);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.br-hero__title em {
+  display: block;
+  color: var(--e-accent);
+  font-style: italic;
+}
+
+.br-hero__lede {
+  max-width: 56ch;
+  margin: clamp(14px, 1.8vw, 22px) 0 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: clamp(1rem, 1.2vw, 1.16rem);
+  line-height: 1.6;
+}
+
+.br-hero__actions {
+  width: 100%;
+  margin-top: clamp(20px, 2.4vw, 30px);
+}
+
+/* ---------- hero actions ---------- */
+
+.br-act {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px 18px;
+}
+
+.br-act__wrap {
+  display: inline-flex;
+  flex: none;
+}
+
+.br-act__book {
+  flex: none;
+}
+
+.br-act__quiet {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 48px;
+  color: var(--e-ink);
+  font-family: var(--e-sans);
+}
+
+.br-act__quiet svg {
+  flex: none;
+  box-sizing: content-box;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--br-edge);
+  border-radius: 999px;
+  padding: 9px;
+  transition:
+    border-color 200ms var(--e-ease),
+    background-color 200ms var(--e-ease),
+    color 200ms var(--e-ease);
+}
+
+.br-act__quiet:hover svg {
+  border-color: var(--e-navy);
+  background: var(--e-navy);
+  color: #fff;
+}
+
+.br-act__quiet span {
+  display: grid;
+  gap: 1px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: left;
+}
+
+.br-act__quiet em {
+  color: var(--e-ink-2);
+  font-size: 0.76rem;
+  font-style: normal;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- the media frame ---------- */
+
+.br-frame {
+  position: relative;
+  isolation: isolate;
+  aspect-ratio: 21 / 9;
+  overflow: hidden;
+  border-radius: clamp(14px, 1.6vw, 22px);
+  margin-top: clamp(24px, 3.2vw, 46px);
+  background: #1d2833;
+  box-shadow: 0 26px 60px rgba(16, 22, 28, 0.16);
+}
+
+.br-frame__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.br-frame__media picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* The photograph settles rather than simply appearing: a 10s push from 1.05 to
+   1, once, then it holds. One slow move on one image is what keeps the opening
+   from reading as a printed page - it is not a loop, and it never repeats. */
+.br-frame__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: br-settle 10s var(--e-ease) 1 forwards;
+  /* The signboard sits just past the middle of the facade photograph; every
+     crop from 21:9 to 5:6 keeps it in frame. */
+  object-position: 50% 56%;
+}
+
+@keyframes br-settle {
+  from {
+    transform: scale(1.05);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.br-frame__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(14, 32, 48, 0.36) 0%,
+      rgba(14, 32, 48, 0.12) 36%,
+      rgba(12, 27, 41, 0.36) 72%,
+      rgba(10, 23, 36, 0.5) 100%
+    ),
+    linear-gradient(90deg, rgba(14, 32, 48, 0.22) 0%, rgba(14, 32, 48, 0) 55%);
+}
+
+.br-frame__tags {
+  display: flex;
+  position: absolute;
+  z-index: 1;
+  top: clamp(12px, 1.6vw, 20px);
+  left: clamp(12px, 1.6vw, 20px);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.br-frame__tags span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 999px;
+  background: rgba(12, 27, 41, 0.52);
+  backdrop-filter: blur(10px);
+  padding: 6px 13px;
+  color: #fff;
+  font-family: var(--e-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.br-frame__tags i {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--e-accent);
+}
+
+/* The foot carries its own floor: the label and chips have to hold on a
+   sunlit facade, and a wash sized for that would flatten the sky. */
+.br-frame__foot {
+  display: grid;
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  gap: 10px;
+  background: linear-gradient(
+    180deg,
+    rgba(9, 21, 33, 0) 0%,
+    rgba(9, 21, 33, 0.72) 38%,
+    rgba(9, 21, 33, 0.9) 100%
+  );
+  padding: clamp(30px, 5vw, 56px) clamp(12px, 1.6vw, 20px) clamp(12px, 1.6vw, 20px);
+}
+
+.br-frame__label {
+  padding-left: 2px;
+  color: #fff;
+  font-family: var(--e-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.br-chips {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(8px, 0.9vw, 12px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.br-chip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  align-content: start;
+  gap: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 12px;
+  /* Dark glass, not white: a white translucent panel raises the luminance
+     behind white type. */
+  background: rgba(11, 25, 39, 0.46);
+  backdrop-filter: blur(14px) saturate(130%);
+  padding: clamp(11px, 1.1vw, 15px);
+  transition:
+    background-color 240ms var(--e-ease),
+    border-color 240ms var(--e-ease),
+    transform 240ms var(--e-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .br-chip:hover {
+    border-color: rgba(255, 255, 255, 0.42);
+    background: rgba(11, 25, 39, 0.58);
+    transform: translateY(-2px);
+  }
+}
+
+.br-chip p {
+  margin: 0;
+  color: #fff;
+  font-family: var(--e-tight);
+  font-size: clamp(0.88rem, 1vw, 0.98rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.34;
+}
+
+.br-chip__tick {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--e-accent);
+  color: #fff;
+  margin-top: 1px;
+}
+
+/* ---------- find us ---------- */
+
+.br-locate {
+  background: linear-gradient(180deg, var(--e-navy) 0%, #0a2540 100%);
+}
+
+.br-locate .e-head {
+  margin-bottom: clamp(28px, 3.6vw, 48px);
+}
+
+.br-locate__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  align-items: start;
+  gap: clamp(24px, 4vw, 56px);
+}
+
+/* The frame the sketch and the live map share. Sticky from 1024px so the map
+   stays on screen while the reader runs down the numbers beside it. */
+.br-map {
+  position: sticky;
+  top: calc(var(--hd-height) + 20px);
+  aspect-ratio: 4 / 3;
+  overflow: clip;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 18px;
+  background:
+    radial-gradient(120% 90% at 20% 10%, rgba(27, 107, 114, 0.35) 0%, rgba(27, 107, 114, 0) 55%),
+    linear-gradient(160deg, #123c61 0%, #0b2843 100%);
+  box-shadow: 0 30px 70px rgba(4, 12, 22, 0.45);
+}
+
+.br-map__sketch,
+.br-map__live,
+.br-map__scene {
+  position: absolute;
+  inset: 0;
+}
+
+.br-map__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.br-map__iframe {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* The map's labels, in HTML so they keep a real type size at every width.
+   Places are centred on their block; the road label and the pin card hang
+   from their top-left corner. */
+.br-map__road,
+.br-map__place,
+.br-map__pin {
+  position: absolute;
+  font-family: var(--e-sans);
+  line-height: 1.35;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.br-map__road {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  background: rgba(9, 21, 33, 0.72);
+  padding: 5px 11px;
+  color: #fff;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* `translate`, not `transform`: framer-motion writes the label's fade-up to
+   `transform`, and a CSS centring transform would be thrown away with it.
+   Only the vertical axis is centred - the horizontal edge is anchored in the
+   component so a long landmark name can never run off the drawing. */
+.br-map__place {
+  translate: 0 -50%;
+  max-width: 46%;
+  white-space: normal;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  text-shadow: 0 1px 8px rgba(4, 12, 22, 0.8);
+}
+
+/* The right-hand label hangs from its top edge (see BranchMap): a wrapped name
+   grows downward into open ground rather than upward into the hospital. */
+.br-map__place[data-side="right"] {
+  translate: 0 0;
+  text-align: right;
+}
+
+/* Centred above the pin, with a pointer down to it. */
+.br-map__pin {
+  translate: -50% -100%;
+  border-radius: 8px;
+  background: #fff;
+  padding: 7px 11px;
+  color: var(--e-navy);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  box-shadow: 0 8px 22px rgba(4, 12, 22, 0.4);
+}
+
+.br-map__pin::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  border: 6px solid transparent;
+  border-top-color: #fff;
+  border-bottom: 0;
+  translate: -50% 0;
+}
+
+/* The city's name behind the drawing, the way a printed map carries its
+   title: a 0.07 stroke of the serif that says whose map this is and nothing
+   else. */
+.br-map__ghost {
+  position: absolute;
+  right: 6%;
+  bottom: 18%;
+  color: rgba(255, 255, 255, 0.07);
+  font-family: var(--e-serif);
+  font-size: clamp(2.4rem, 8vw, 4.2rem);
+  font-style: italic;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Top left: the one corner the drawing leaves empty at every width. Top right
+   met the hospital's own label on a 320px phone, and both bottom corners are
+   taken by New Court and the toggle. */
+.br-map__stamp {
+  display: inline-flex;
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  align-items: baseline;
+  gap: 6px;
+  color: #fff;
+  font-family: var(--e-serif);
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+
+.br-map__stamp small {
+  color: rgba(255, 255, 255, 0.62);
+  font-family: var(--e-sans);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* The one control on the map: sketch or live. Bottom right, the one corner
+   the drawing leaves empty at every width - bottom left it sat on the New
+   Court block, and at the top it sat on the hospital's own label on a phone. */
+.br-map__toggle {
+  display: inline-flex;
+  position: absolute;
+  z-index: 2;
+  right: 12px;
+  bottom: 12px;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  border: 1px solid var(--br-edge-light);
+  border-radius: 999px;
+  background: rgba(9, 21, 33, 0.72);
+  backdrop-filter: blur(10px);
+  padding: 0 16px;
+  color: #fff;
+  font-family: var(--e-sans);
+  font-size: 0.84rem;
+  font-weight: 600;
+  transition:
+    background-color 200ms var(--e-ease),
+    border-color 200ms var(--e-ease);
+}
+
+.br-map__toggle:hover {
+  border-color: #fff;
+  background: rgba(9, 21, 33, 0.9);
+}
+
+/* The live map is white; the stamp would be lost on it. */
+.br-map[data-live] .br-map__stamp {
+  display: none;
+}
+
+/* ---------- the live status ---------- */
+
+/* The one thing on this page that changes through the day, standing where the
+   lede stood: under the heading, at every width. */
+.br-status {
+  display: grid;
+  gap: 9px;
+  margin-top: 2px;
+  justify-items: start;
+  margin: 0;
+  font-family: var(--e-sans);
+}
+
+.br-status__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--br-edge-light);
+  border-radius: 999px;
+  padding: 8px 16px 8px 13px;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.br-status__detail {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+}
+
+/* The dot is the glance; the words carry the meaning, so its colour is never
+   the only thing saying whether the doors are open. */
+.br-status__dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.br-status[data-open] .br-status__dot {
+  background: #57d39b;
+  box-shadow: 0 0 0 0 rgba(87, 211, 155, 0.55);
+  animation: br-breathe 2.6s var(--e-ease) infinite;
+}
+
+@keyframes br-breathe {
+  0% {
+    box-shadow: 0 0 0 0 rgba(87, 211, 155, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 9px rgba(87, 211, 155, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(87, 211, 155, 0);
+  }
+}
+
+/* ---------- the details beside the map ---------- */
+
+.br-details {
+  display: grid;
+  gap: clamp(22px, 2.6vw, 32px);
+}
+
+/* The phone's three-way switch over one panel. It exists only below 760px -
+   the tabs are real ARIA controls, so they are rendered in JS rather than
+   hidden with CSS on the width where every panel is open at once. */
+.br-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+  border: 1px solid var(--br-edge-light);
+  border-radius: 999px;
+  padding: 3px;
+}
+
+.br-tab {
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.78);
+  font-family: var(--e-sans);
+  font-size: 0.92rem;
+  font-weight: 600;
+  transition: color 200ms var(--e-ease);
+}
+
+/* One pill that travels between tabs, not a background that blinks off one and
+   on to the next - the same element the services console and the service card
+   use. */
+.br-tab__pill {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: #fff;
+}
+
+.br-tab__text {
+  position: relative;
+  z-index: 1;
+}
+
+.br-tab[data-on] {
+  color: var(--e-navy);
+}
+
+/* The card grows to the panel rather than snapping to it, so the actions under
+   it never jump out from under a thumb. */
+.br-tabs__frame {
+  overflow: hidden;
+  margin-top: 16px;
+  transition: height 320ms var(--e-ease);
+}
+
+.br-details__block {
+  display: grid;
+  gap: 14px;
+  border-top: 1px solid var(--e-rule-dark);
+  padding-top: 18px;
+}
+
+.br-details__label {
+  color: rgba(255, 255, 255, 0.62);
+  font-family: var(--e-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.br-details__address {
+  max-width: 30ch;
+  margin: 0;
+  color: #fff;
+  font-family: var(--e-serif);
+  font-size: clamp(1.2rem, 1.7vw, 1.5rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  text-wrap: balance;
+}
+
+.br-landmarks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.br-landmarks li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  padding: 6px 12px;
+  color: #fff;
+  font-family: var(--e-sans);
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.br-landmarks svg {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.br-details__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  margin-top: 6px;
+}
+
+.br-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 52px;
+  border: 1px solid var(--br-edge-light);
+  border-radius: 3px;
+  background: transparent;
+  padding: 0 18px;
+  color: #fff;
+  font-family: var(--e-sans);
+  font-size: 0.92rem;
+  font-weight: 600;
+  transition:
+    border-color 200ms var(--e-ease),
+    background-color 200ms var(--e-ease);
+}
+
+.br-copy:hover {
+  border-color: #fff;
+}
+
+.br-copy[data-copied] {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.br-desks {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.br-desk {
+  display: grid;
+  grid-template-columns: 118px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 8px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-block: 12px;
+}
+
+.br-desk:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.br-desk__name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.72);
+  font-family: var(--e-sans);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.br-desk__numbers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+}
+
+/* A number is a 32px line with an underline; the ::after halo makes it a 44px
+   target without moving the underline, the same device as .e-link. Measure it
+   with elementFromPoint - the element rect cannot see the halo. */
+.br-desk__numbers a {
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+  min-height: 32px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  color: #fff;
+  font-family: var(--e-tight);
+  font-size: 1.08rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  transition:
+    border-color 200ms var(--e-ease),
+    color 200ms var(--e-ease);
+}
+
+.br-desk__numbers a::after {
+  content: "";
+  position: absolute;
+  inset: -6px 0;
+}
+
+.br-desk__numbers a:hover {
+  border-bottom-color: #fff;
+}
+
+.br-hours {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.br-hours li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #fff;
+  font-family: var(--e-sans);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.br-hours svg {
+  flex: none;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.br-hours strong {
+  display: block;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.br-details__note {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-family: var(--e-sans);
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+/* ---------- the team here ---------- */
+
+.br-team__lede,
+.br-others__lede {
+  flex: 1 1 100%;
+  max-width: 54ch;
+}
+
+/* Three columns is the shape for three consultants. A hospital with one or two
+   named gets a grid that fits them rather than one card marooned in a third of
+   the page - and a hospital with none renders no section at all, the way a
+   service with no `causes` renders no tab. */
+.br-team__grid[data-count="1"] {
+  grid-template-columns: minmax(0, 380px);
+}
+
+.br-team__grid[data-count="2"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 800px;
+}
+
+.br-team__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 24px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.br-doc {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--e-rule);
+  border-radius: 16px;
+  background: var(--e-paper);
+  padding: 14px 14px 16px;
+  transition:
+    border-color 240ms var(--e-ease),
+    box-shadow 240ms var(--e-ease),
+    transform 240ms var(--e-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .br-doc:hover {
+    border-color: var(--e-rule-2);
+    box-shadow: 0 18px 44px rgba(16, 22, 28, 0.1);
+    transform: translateY(-3px);
+  }
+}
+
+/* Square, like the landing rail: the hospital's files are 270x260, so a square
+   box is very nearly a 1:1 render rather than an upscale. */
+.br-doc__media {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--color-clinical);
+}
+
+.br-doc__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 16%;
+  transition: transform 600ms var(--e-ease);
+}
+
+.br-doc:hover .br-doc__img {
+  transform: scale(1.04);
+}
+
+.br-doc__specialty {
+  margin-top: 16px;
+  color: var(--e-accent);
+  font-family: var(--e-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.br-doc__name {
+  margin: 8px 0 0;
+  color: var(--e-ink);
+  font-family: var(--e-tight);
+  font-size: clamp(1.02rem, 1.2vw, 1.12rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.br-doc__name span {
+  color: var(--e-ink-2);
+  font-weight: 400;
+}
+
+.br-doc__text {
+  margin: 8px 0 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.br-team__support {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-top: 1px solid var(--e-rule);
+  margin-top: clamp(22px, 2.6vw, 32px);
+  padding-top: 20px;
+}
+
+.br-team__faces {
+  display: inline-flex;
+  flex: none;
+}
+
+.br-team__faces img {
+  width: 38px;
+  height: 38px;
+  border: 2px solid var(--e-paper);
+  border-radius: 999px;
+  background: var(--color-clinical);
+  object-fit: cover;
+  object-position: 50% 16%;
+}
+
+.br-team__faces img + img {
+  margin-left: -10px;
+}
+
+.br-team__support p {
+  margin: 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.br-team__support p span {
+  color: var(--e-ink);
+  font-weight: 500;
+}
+
+/* ---------- care here ---------- */
+
+.br-care .e-head {
+  margin-bottom: clamp(20px, 2.4vw, 30px);
+}
+
+.br-care__title {
+  max-width: 22ch;
+}
+
+/* Runs of one kind of care. Three columns from 1100px, two below it, one on a
+   phone - a run is a grid item rather than a column flow, because a heading
+   split from the treatments it names is worse than a ragged edge. */
+.br-care__groups {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: clamp(18px, 2.6vw, 30px) clamp(20px, 3vw, 40px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The label alone: the count that used to sit at the far right of the rule was
+   pure width, and the cards under it are the count. */
+.br-care__kind {
+  border-bottom: 1px solid var(--e-rule-2);
+  margin: 0 0 10px;
+  padding-bottom: 8px;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Two to a row at every width. `auto-fit`, not `auto-fill`: a run of one - the
+   urgent one - collapses the empty track and takes the full width, which is the
+   emphasis that run should have anyway. */
+.br-care__rows {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* An odd run leaves its last card alone in the left column, which is the empty
+   half-row the ledger before it was full of. It takes the width instead. */
+.br-care__rows li:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+.br-care__row {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  min-height: 62px;
+  border: 1px solid var(--e-rule);
+  border-radius: 12px;
+  background: var(--e-paper);
+  padding: 10px 13px;
+  transition:
+    border-color 200ms var(--e-ease),
+    box-shadow 200ms var(--e-ease),
+    transform 200ms var(--e-ease);
+}
+
+.br-care__name {
+  color: var(--e-ink);
+  font-family: var(--e-tight);
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+/* The one run a reader must not scroll past keeps the danger colour the rest of
+   the site gives it. */
+.br-care__group[data-urgent] .br-care__kind {
+  border-bottom-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.br-care__group[data-urgent] .br-care__row {
+  border-color: rgba(165, 35, 27, 0.38);
+  background: #fdf6f5;
+}
+
+.br-care__group[data-urgent] .br-care__name {
+  color: var(--color-danger);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .br-care__row:hover {
+    border-color: var(--e-navy);
+    box-shadow: 0 12px 28px rgba(16, 22, 28, 0.09);
+    transform: translateY(-2px);
+  }
+
+  .br-care__group[data-urgent] .br-care__row:hover {
+    border-color: var(--color-danger);
+  }
+}
+
+/* ---------- a look around ---------- */
+
+/* One instrument at every width: a stage, a caption, a row of thumbnails. The
+   build before it was three galleries - a mosaic, a grid and a rail - so which
+   one a reader met depended on their device. */
+.br-gallery {
+  display: grid;
+  gap: clamp(12px, 1.6vw, 18px);
+}
+
+/* A native scroll-snap rail, so a phone swipes it with the browser's own
+   momentum and direction lock. The height is fluid rather than an aspect
+   ratio: at 3:2 a full-shell stage would be 827px tall on a laptop. */
+.br-gallery__stage {
+  display: flex;
+  position: relative;
+  height: clamp(300px, 46vw, 520px);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  border-radius: clamp(14px, 1.6vw, 20px);
+  background: #16202b;
+}
+
+.br-gallery__stage::-webkit-scrollbar {
+  display: none;
+}
+
+.br-gallery__slide {
+  display: block;
+  position: relative;
+  flex: 0 0 100%;
+  overflow: hidden;
+  border: 0;
+  background: none;
+  padding: 0;
+  scroll-snap-align: start;
+}
+
+/* The photographs are the hospital's own and all four are the same 4:3 frame, so
+   the stage fills. It was `contain` over a blurred copy of itself while the set
+   mixed portrait and landscape - any single crop ratio butchered half of them.
+   If a portrait photograph is ever added back, that treatment has to come with
+   it; do not crop one. */
+.br-gallery__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.br-gallery__zoom {
+  display: inline-flex;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  background: rgba(9, 21, 33, 0.62);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  transition:
+    background-color 200ms var(--e-ease),
+    transform 200ms var(--e-ease);
+}
+
+.br-gallery__slide:hover .br-gallery__zoom {
+  background: var(--e-accent);
+  transform: scale(1.06);
+}
+
+.br-gallery__caption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0;
+  color: var(--e-ink);
+  font-family: var(--e-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.br-gallery__caption em {
+  color: var(--e-ink-2);
+  font-size: 0.86rem;
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The thumbnails are the navigation at every width - there are no arrows, so
+   there is no control that exists on one device and not another. */
+.br-gallery__thumbs {
+  display: flex;
+  gap: clamp(8px, 1vw, 12px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.br-gallery__thumbs li {
+  flex: 1 1 0;
+  max-width: 150px;
+}
+
+.br-gallery__thumb {
+  display: block;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 0;
+  border-radius: 10px;
+  background: var(--e-paper-3);
+  padding: 0;
+  opacity: 0.55;
+  transition:
+    opacity 220ms var(--e-ease),
+    transform 220ms var(--e-ease);
+}
+
+.br-gallery__thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The mark is drawn inside the thumbnail rather than as a border, so the row
+   never shifts by a pixel when the reader moves between photographs. */
+.br-gallery__thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  transition: border-color 220ms var(--e-ease);
+}
+
+.br-gallery__thumb:hover {
+  opacity: 0.85;
+}
+
+.br-gallery__thumb[data-on] {
+  opacity: 1;
+}
+
+.br-gallery__thumb[data-on]::after {
+  border-color: var(--e-accent);
+}
+
+/* From 1024px the caption and the thumbnails move beside the stage rather than
+   under it. Same three parts in the same DOM order - only the flow changes, the
+   way a section head reflows - and it keeps the stage off the full 1240px
+   shell, where a portrait photograph contained in it was a third of the width
+   with blur either side. */
+@media (min-width: 1024px) {
+  .br-gallery {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    grid-template-rows: auto minmax(0, 1fr);
+    column-gap: 22px;
+  }
+
+  .br-gallery__stage {
+    grid-row: 1 / 3;
+    height: 560px;
+  }
+
+  .br-gallery__caption {
+    align-self: start;
+    padding-top: 2px;
+  }
+
+  .br-gallery__thumbs {
+    flex-wrap: wrap;
+    align-content: start;
+  }
+
+  .br-gallery__thumbs li {
+    flex: 0 0 calc(50% - 6px);
+    max-width: none;
+  }
+}
+
+/* ---------- the photo viewer ---------- */
+
+/* BranchInside adds this while the viewer is open. */
+body.br-locked {
+  overflow: hidden;
+}
+
+/* Above the header and the drawer, below the cookie dialog - it is a layer the
+   reader opened, not a consent decision. */
+.br-viewer {
+  display: grid;
+  position: fixed;
+  z-index: 240;
+  inset: 0;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 14px;
+  background: rgba(8, 16, 24, 0.95);
+  backdrop-filter: blur(6px);
+  padding: max(16px, env(safe-area-inset-top)) 0 max(16px, env(safe-area-inset-bottom));
+}
+
+/* A scroll-snap rail, so a phone swipes between photographs with the browser's
+   own momentum and direction lock rather than a drag handler. */
+/* Stretch, not centre: the slides have to fill the row for `max-height: 100%`
+   on the photograph to resolve against something. Centred, a portrait
+   photograph was content-sized and rendered at 269px in an 844px viewer. */
+.br-viewer__rail {
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  overscroll-behavior: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.br-viewer__rail::-webkit-scrollbar {
+  display: none;
+}
+
+.br-viewer__slide {
+  display: flex;
+  flex: 0 0 100%;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  margin: 0;
+  padding-inline: 16px;
+  scroll-snap-align: center;
+}
+
+.br-viewer__slide img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 12px;
+  object-fit: contain;
+}
+
+.br-viewer__close {
+  display: inline-flex;
+  position: absolute;
+  z-index: 2;
+  top: max(14px, env(safe-area-inset-top));
+  right: 14px;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid var(--br-edge-light);
+  border-radius: 999px;
+  background: rgba(8, 16, 24, 0.7);
+  color: #fff;
+  transition:
+    border-color 200ms var(--e-ease),
+    background-color 200ms var(--e-ease);
+}
+
+.br-viewer__close:hover {
+  border-color: #fff;
+  background: rgba(8, 16, 24, 0.9);
+}
+
+/* Chevrons are a pointer affordance: on a touch screen the next photograph is
+   a swipe away and an arrow only covers the picture. */
+.br-viewer__step {
+  display: inline-flex;
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid var(--br-edge-light);
+  border-radius: 999px;
+  background: rgba(8, 16, 24, 0.7);
+  color: #fff;
+  transform: translateY(-50%);
+  transition:
+    border-color 200ms var(--e-ease),
+    opacity 200ms var(--e-ease);
+}
+
+.br-viewer__step[data-side="prev"] {
+  left: 14px;
+}
+
+.br-viewer__step[data-side="next"] {
+  right: 14px;
+}
+
+.br-viewer__step:hover {
+  border-color: #fff;
+}
+
+.br-viewer__step:disabled {
+  opacity: 0.3;
+}
+
+.br-viewer__caption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  width: min(1240px, calc(100% - 32px));
+  margin: 0 auto;
+  color: #fff;
+  font-family: var(--e-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.br-viewer__caption em {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.86rem;
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- other hospitals ---------- */
+
+/* One card, three across on a laptop, two on a tablet, one on a phone. */
+.br-others__list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.br-others__row {
+  display: grid;
+  position: relative;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 80px;
+  overflow: hidden;
+  border: 1px solid var(--e-rule);
+  border-radius: 14px;
+  background: var(--e-paper);
+  padding: 14px 14px 14px 18px;
+  transition:
+    border-color 200ms var(--e-ease),
+    box-shadow 200ms var(--e-ease),
+    transform 200ms var(--e-ease);
+}
+
+/* A hairline that fills accent on hover: the card's one signature, and what the
+   five repeated map pins were failing to be. */
+.br-others__row::before {
+  content: "";
+  position: absolute;
+  top: 16px;
+  bottom: 16px;
+  left: 0;
+  width: 2px;
+  border-radius: 999px;
+  background: var(--e-rule-2);
+  transition: background-color 200ms var(--e-ease);
+}
+
+.br-others__row:hover {
+  border-color: var(--e-rule-2);
+  box-shadow: 0 14px 34px rgba(16, 22, 28, 0.08);
+  transform: translateY(-2px);
+}
+
+.br-others__row:hover::before {
+  background: var(--e-accent);
+}
+
+.br-others__copy {
+  display: grid;
+  gap: 4px;
+}
+
+/* The city in the serif this page uses for the things it names. */
+.br-others__name {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  color: var(--e-ink);
+  font-family: var(--e-serif);
+  font-size: 1.3rem;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+}
+
+.br-others__name em {
+  border-radius: 999px;
+  background: var(--color-clinical);
+  padding: 3px 9px;
+  color: var(--e-navy-2);
+  font-family: var(--e-sans);
+  font-size: 0.62rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.br-others__where {
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.br-others__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--e-rule-2);
+  border-radius: 999px;
+  color: var(--e-ink);
+  transition:
+    background-color 200ms var(--e-ease),
+    border-color 200ms var(--e-ease),
+    color 200ms var(--e-ease),
+    transform 200ms var(--e-ease);
+}
+
+.br-others__row:hover .br-others__arrow {
+  border-color: var(--e-navy);
+  background: var(--e-navy);
+  color: #fff;
+  transform: translate(2px, -2px);
+}
+
+/* ---------- the action bar ---------- */
+
+.br-bar {
+  display: none;
+  position: sticky;
+  bottom: 0;
+  z-index: 4;
+  border-top: 1px solid var(--e-rule);
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  padding: 8px max(12px, env(safe-area-inset-left)) max(8px, env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-right));
+  box-shadow: 0 -8px 24px rgba(16, 22, 28, 0.1);
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.br-bar[data-shown] {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.br-bar__inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.br-bar__quiet {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 52px;
+  min-height: 48px;
+  padding: 0 12px;
+  border: 1px solid var(--br-edge);
+  border-radius: 12px;
+  color: var(--e-ink);
+  font-family: var(--e-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.br-bar__book {
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 48px;
+  border-radius: 12px;
+  background: var(--e-navy);
+  padding: 0 16px;
+  color: #fff;
+  font-family: var(--e-sans);
+  font-size: 0.94rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.br-bar__short {
+  display: none;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 1099px) {
+  .br-care__groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Wherever the map sits above the details rather than beside them, the details
+   are one card with a switch - see BranchLocate. */
+@media (max-width: 1023px) {
+  .br-locate__grid {
+    display: block;
+    overflow: clip;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.045);
+  }
+
+  .br-map {
+    position: relative;
+    top: auto;
+    max-width: none;
+    aspect-ratio: 16 / 9;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .br-details {
+    gap: 0;
+    padding: clamp(14px, 2vw, 22px);
+  }
+
+  /* Inside the card the blocks are panels of a switch, not stacked rows, so
+     they carry neither the rule above them nor its padding - and not their own
+     label either, because the tab above them has just said the same word. */
+  .br-details__block {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .br-details__block--panel .br-details__label {
+    display: none;
+  }
+
+  .br-details__actions {
+    margin-top: 16px;
+  }
+
+  .br-others__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .br-frame {
+    aspect-ratio: 3 / 2;
+  }
+
+
+  .br-chips {
+    display: flex;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .br-chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .br-chip {
+    flex: 0 0 min(74%, 260px);
+    scroll-snap-align: start;
+  }
+
+  .br-bar {
+    display: block;
+  }
+}
+
+@media (max-width: 760px) {
+  /* A phone reads this page in one column, so the frame gives and the type
+     never does: six sections at the desktop rhythm spent 768px on padding
+     alone, which is most of a screen of nothing. */
+  .br-locate,
+  .br-team,
+  .br-care,
+  .br-inside,
+  .br-others {
+    padding-block: 44px;
+  }
+
+  .br-locate .e-head,
+  .br-team .e-head,
+  .br-care .e-head,
+  .br-inside .e-head,
+  .br-others .e-head {
+    padding-top: 16px;
+    margin-bottom: 20px;
+  }
+
+  /* The sketch needs height to read at phone width; a 16:9 strip of it does
+     not. */
+  .br-map {
+    aspect-ratio: 5 / 4;
+  }
+
+  /* Directions and Copy share one row at every phone width. Wrapping, they
+     stacked into two full-width rows at 320px - a screen's worth of button
+     for two actions. The e-btn's own padding gives, the labels never do. */
+  .br-details__actions {
+    flex-wrap: nowrap;
+  }
+
+  .br-details__actions > * {
+    flex: 1 1 0;
+    justify-content: center;
+    padding-inline: 12px;
+  }
+
+  .br-viewer__step {
+    display: none;
+  }
+
+  .br-others__row {
+    min-height: 76px;
+  }
+
+  /* One column of runs on a phone: two would give a 24-character heading about
+     160px and break every second name. The cards inside stay two across. */
+  .br-care__groups {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .br-care__groups {
+    gap: 18px;
+  }
+
+  .br-desk {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+}
+
+/* Taller again below 640px, so the photograph keeps its share once the foot has
+   taken its own. The quiet actions leave the hero here: the action bar that
+   rises the moment the hero scrolls away carries all three. */
+@media (max-width: 860px) {
+  /* Stacked, the head reads heading, sentence, then the link - not the link
+     wedged between the two. */
+  .e-head__row .br-team__lede,
+  .e-head__row .br-others__lede {
+    order: 2;
+  }
+
+  .br-team__head .e-link,
+  .br-care__head .e-link,
+  .br-others__head .e-link {
+    order: 3;
+  }
+}
+
+@media (max-width: 640px) {
+  .br-frame {
+    aspect-ratio: 5 / 6;
+  }
+
+  .br-others__list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+
+  .br-frame__tags {
+    display: none;
+  }
+
+  /* The phone's first screen carries every way in, not just one. Below 640px
+     the row becomes the drawer's foot: the appointment across the top and the
+     three ways to reach this hospital under it, icon over label. They were
+     hidden here before, on the argument that the sticky bar carries them - but
+     that bar only rises once the hero has gone, so the first screen offered a
+     single action and the page read as a brochure. The bar still watches this
+     row, so the two are never on screen together. */
+  .br-act {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .br-act__wrap {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .br-act__book {
+    width: 100%;
+  }
+
+  .br-act__quiet {
+    flex-direction: column;
+    justify-content: center;
+    gap: 7px;
+    min-height: 72px;
+    border: 1px solid var(--br-edge);
+    border-radius: 14px;
+    padding: 8px 4px;
+  }
+
+  /* The tile carries the boundary now, so the glyph drops its own ring. */
+  .br-act__quiet svg,
+  .br-act__quiet:hover svg {
+    width: 19px;
+    height: 19px;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    color: var(--e-navy);
+  }
+
+  .br-act__quiet span {
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  .br-act__quiet em {
+    display: none;
+  }
+
+  /* Authored short copy takes over wherever the full line costs a screen. */
+  .br-full {
+    display: none;
+  }
+
+  .br-short {
+    display: inline;
+  }
+
+  /* On a phone a doctor is a row - portrait left, words right - so three
+     consultants take one screen rather than three. Three columns hold down to
+     641px: two would leave the third card orphaned and upscale every portrait. */
+  .br-team__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .br-team__grid {
+    gap: 10px;
+  }
+
+  .br-doc {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    align-content: start;
+    column-gap: 14px;
+    padding: 12px;
+  }
+
+  .br-doc__media {
+    grid-row: 1 / 4;
+    align-self: start;
+  }
+
+  .br-doc__specialty {
+    margin-top: 2px;
+  }
+
+  .br-doc__name {
+    margin-top: 4px;
+    font-size: 1rem;
+  }
+
+  /* The post-nominals take their own line in the phone row: in a ~170px
+     column `Dr. Vishnu S. Patel, MBBS, MS` broke inside the name. */
+  .br-doc__sep {
+    display: none;
+  }
+
+  .br-doc__quals {
+    display: block;
+    margin-top: 2px;
+    font-size: 0.9rem;
+  }
+
+  .br-doc__text {
+    margin-top: 6px;
+    font-size: 0.88rem;
+  }
+
+  .br-team__support {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 560px) {
+  /* Words on the action a reader is most likely to want, glyphs on the other
+     three: four full labels cannot share a 358px row at a 48px target. */
+  .br-bar__quiet {
+    gap: 0;
+    padding: 0;
+  }
+
+  .br-bar__quiet span {
+    display: none;
+  }
+
+  .br-bar__quiet svg {
+    width: 19px;
+    height: 19px;
+  }
+}
+
+@media (max-width: 420px) {
+  .br-bar__full {
+    display: none;
+  }
+
+  .br-bar__short {
+    display: inline;
+  }
+
+  .br-map__toggle {
+    padding: 0 14px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .br-bar__quiet {
+    min-width: 46px;
+  }
+
+  /* A 288px map has no room for the stamp's word beside the hospital's own
+     label; the number alone still reads as a PIN in the corner of a map. */
+  .br-map__stamp {
+    font-size: 0.9rem;
+  }
+
+  /* The left label and the toggle share the foot of a 288px map. At 46% a long
+     landmark - `Healing Touch Hospital`, `Upadhyay M Corporate` - reached into
+     the toggle; 40% stops it 18px short of it, and it wraps instead. */
+  .br-map__place {
+    max-width: 40%;
+  }
+
+  .br-map__stamp small {
+    display: none;
+  }
+
+  .br-bar__book {
+    gap: 7px;
+    padding: 0 10px;
+    font-size: 0.9rem;
+  }
+
+  .br-doc {
+    grid-template-columns: 84px minmax(0, 1fr);
+  }
+}
+
+/* ---------- reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  /* The status still says whether the doors are open; only the breathing goes,
+     and the photograph is simply there at its final size. */
+  .br-status[data-open] .br-status__dot,
+  .br-frame__img {
+    animation: none;
+  }
+
+  .br-tabs__frame,
+  .br-care__row,
+  .br-gallery__zoom,
+  .br-gallery__thumb,
+  .br-hero__back svg,
+  .br-chip,
+  .br-doc,
+  .br-doc__img,
+  .br-others__row,
+  .br-others__arrow {
+    transition: none;
+  }
+
+  .br-hero__back:hover svg,
+  .br-chip:hover,
+  .br-doc:hover,
+  .br-doc:hover .br-doc__img,
+  .br-gallery__slide:hover .br-gallery__zoom,
+  .br-care__row:hover,
+  .br-others__row:hover,
+  .br-others__row:hover .br-others__arrow {
+    transform: none;
+  }
+}

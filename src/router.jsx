@@ -48,6 +48,10 @@ const router = createBrowserRouter([
         lazy: lazyPage(() => import("./pages/BranchesPage.jsx")),
       },
       {
+        path: "branches/:slug",
+        lazy: lazyPage(() => import("./pages/BranchPage.jsx")),
+      },
+      {
         path: "gallery",
         lazy: lazyPage(() => import("./pages/GalleryPage.jsx")),
       },

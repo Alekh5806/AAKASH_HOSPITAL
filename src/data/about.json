@@ -81,7 +81,8 @@
         }
       ]
     },
-    "ctaLabel": "Read our vision and mission"
+    "ctaLabel": "Read our vision and mission",
+    "ctaLabelShort": "Vision and mission"
   },
   "vision": {
     "eyebrow": "About us",
@@ -151,6 +152,7 @@
         "description": "The team keeps learning, improving and innovating, so the next generation of patients is served better than the last."
       }
     ],
-    "ctaLabel": "See how the hospital grew"
+    "ctaLabel": "See how the hospital grew",
+    "ctaLabelShort": "Our journey"
   }
 }

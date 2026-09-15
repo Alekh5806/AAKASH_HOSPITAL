@@ -1,0 +1,36 @@
+{
+  "seo": {
+    "title": "Contact Aakash Eye Hospital | Six Hospitals Across Gujarat",
+    "description": "Call, WhatsApp or find directions to any Aakash Eye Hospital in Visnagar, Ahmedabad, Bharuch, Gota, Himmatnagar or Juhapura. Every OPD, operation and LASIK desk number in one place."
+  },
+  "label": "Contact",
+  "title": "The right desk,",
+  "titleAccent": "one call away.",
+  "lede": "Six hospitals across Gujarat, and each one answers its own phone. Choose yours and every way in is one tap away.",
+  "bookLabel": "Need an appointment? Book online",
+  "desk": {
+    "pickLabel": "Choose your hospital",
+    "pickHint": "Your choice also sets the number at the top of every page.",
+    "headOfficeTag": "Head office",
+    "readoutLabel": "OPD line",
+    "connectedLabel": "Connected to {branch}",
+    "callLabel": "Call OPD",
+    "whatsappLabel": "WhatsApp",
+    "directionsLabel": "Directions",
+    "emailLabel": "Email",
+    "whatsappMessage": "Hello Aakash Eye Hospital, I would like to reach the {branch} hospital."
+  },
+  "directory": {
+    "label": "Every desk",
+    "title": "Every number,",
+    "titleAccent": "every hospital",
+    "lede": "The OPD line books visits and answers questions. The operation and LASIK desks reach the surgical team directly.",
+    "emergencyLabel": "Eye emergency",
+    "emergencyNote": "Sudden loss of sight, an injury or a chemical splash: call this line first, from any hospital's area.",
+    "openLabel": "View hospital",
+    "headOfficeTag": "Head office",
+    "emailLabel": "Write to us",
+    "emailNote": "One address reaches every hospital.",
+    "hoursLabel": "OPD hours"
+  }
+}

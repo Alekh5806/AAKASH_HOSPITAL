@@ -1,0 +1,384 @@
+/* =========================================================================
+   Opening curtain and the initial route wait
+   Namespace: .pl   |   AppPreloader.jsx, HydrateFallback.jsx, IntroMark.jsx
+   ========================================================================= */
+
+/* The aperture radius is registered so it can be transitioned; both the
+   curtain and its rim read it. */
+@property --pl-r {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+:root {
+  --pl-iris: clamp(240px, 46vw, 360px);
+  --pl-lift: 4vh;
+  --pl-pupil: #06182a;
+}
+
+/* A phone held sideways has no height for the mark and the two lines under
+   it - the copy ran 54px past the bottom at 844x390. The mark gives, never
+   the type, and the static frame in index.html carries the same rule. */
+@media (max-height: 520px) {
+  :root {
+    --pl-iris: clamp(150px, 36vh, 240px);
+    --pl-lift: 7vh;
+  }
+}
+
+body.pl-lock {
+  overflow: hidden;
+}
+
+/* The curtain is the accent; the paper is a layer over it with a hole 3px
+   wider, so the accent shows only as the rim of the aperture as it opens.
+   The curtain's own hole is 1px inside the radius so that at rest, at 0, it
+   is closed - a hole from 0 to 1px punched a white pinprick through the
+   centre of the pupil.
+   Every gradient ends on an explicit `#000 100%` stop. At rest the curtain's
+   stops are `-1px, 0px`, and Safari renders a radial-gradient whose stops all
+   sit at or below zero as almost entirely transparent - the whole hold was
+   see-through on a Mac, the page showing under the curtain until the aperture
+   started to move. Chrome paints the same gradient solid. The trailing stop
+   gives the gradient a real extent in both and changes nothing visible. */
+.pl {
+  --pl-r: 0px;
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  overflow: hidden;
+  background: var(--e-accent);
+  touch-action: none;
+  overscroll-behavior: contain;
+  -webkit-mask: radial-gradient(
+    circle at 50% calc(50% - var(--pl-lift)),
+    transparent calc(var(--pl-r) - 1px),
+    #000 var(--pl-r),
+    #000 100%
+  );
+  mask: radial-gradient(
+    circle at 50% calc(50% - var(--pl-lift)),
+    transparent calc(var(--pl-r) - 1px),
+    #000 var(--pl-r),
+    #000 100%
+  );
+  transition:
+    --pl-r 850ms cubic-bezier(0.7, 0, 0.3, 1),
+    opacity 240ms ease 610ms;
+}
+
+.pl::before {
+  position: absolute;
+  inset: 0;
+  background: var(--e-paper);
+  content: "";
+  -webkit-mask: radial-gradient(
+    circle at 50% calc(50% - var(--pl-lift)),
+    transparent calc(var(--pl-r) + 2px),
+    #000 calc(var(--pl-r) + 3px),
+    #000 100%
+  );
+  mask: radial-gradient(
+    circle at 50% calc(50% - var(--pl-lift)),
+    transparent calc(var(--pl-r) + 2px),
+    #000 calc(var(--pl-r) + 3px),
+    #000 100%
+  );
+}
+
+.pl[data-phase="open"] {
+  --pl-r: calc(hypot(50vw, calc(50vh + var(--pl-lift))) + 6px);
+  opacity: 0;
+}
+
+.pl__stage,
+.pl__copy {
+  position: absolute;
+  left: 50%;
+  z-index: 1;
+  transition:
+    opacity 260ms ease,
+    scale 850ms var(--e-ease);
+}
+
+.pl[data-phase="open"] .pl__stage,
+.pl[data-phase="open"] .pl__copy {
+  opacity: 0;
+  scale: 1.05;
+}
+
+.pl__stage {
+  top: calc(50% - var(--pl-lift));
+  width: var(--pl-iris);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+}
+
+.pl__iris {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* ---------- the iris draws itself ----------
+   The pupil is already on screen (the static frame in index.html carries it);
+   the limbus draws round it, the stroma grows out of it, the rings arrive
+   last. Every start value is the seed the static frame painted. */
+
+.pl__ring {
+  fill: none;
+  stroke: var(--e-navy);
+  stroke-opacity: 0.16;
+  stroke-width: 1;
+  opacity: 0;
+  transform-origin: 200px 200px;
+}
+
+.pl__ring--a {
+  stroke-dasharray: 3 12;
+  animation:
+    pl-in 480ms ease 520ms forwards,
+    pl-spin 64s linear infinite;
+}
+
+.pl__ring--b {
+  stroke-dasharray: 2 22;
+  stroke-opacity: 0.22;
+  animation:
+    pl-in 480ms ease 440ms forwards,
+    pl-spin 44s linear infinite reverse;
+}
+
+.pl__ring--c {
+  stroke-dasharray: 60 26;
+  stroke-opacity: 0.12;
+  animation:
+    pl-in 480ms ease 360ms forwards,
+    pl-spin 88s linear infinite;
+}
+
+.pl__body,
+.pl__glow {
+  opacity: 0;
+  transform-origin: 200px 200px;
+  animation: pl-bloom 620ms var(--e-ease) 180ms forwards;
+}
+
+.pl__stroma line {
+  stroke: #7fd3e6;
+  stroke-opacity: 0.34;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  opacity: 0;
+  transform-origin: 200px 200px;
+  animation: pl-grow 380ms var(--e-ease) calc(260ms + var(--pl-i) * 7ms) forwards;
+}
+
+.pl__limbus {
+  fill: none;
+  stroke: var(--e-navy);
+  stroke-opacity: 0.5;
+  stroke-width: 2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transform: rotate(-90deg);
+  transform-origin: 200px 200px;
+  animation: pl-draw 760ms cubic-bezier(0.65, 0, 0.35, 1) 60ms forwards;
+}
+
+.pl__glow {
+  pointer-events: none;
+}
+
+.pl__pupil {
+  fill: var(--pl-pupil);
+  animation:
+    pl-pupil 700ms var(--e-ease) 120ms forwards,
+    pl-pupil-idle 6s ease-in-out 1200ms infinite;
+}
+
+.pl__spark {
+  fill: #ffffff;
+  fill-opacity: 0.7;
+  opacity: 0;
+  transform-origin: 170px 168px;
+  animation: pl-spark 240ms var(--e-ease) 760ms forwards;
+}
+
+/* ---------- the copy ----------
+   The wordmark and the line rise once the static frame in index.html has the
+   logo decoded and the serif loaded - `pl-ready` on <html>, stamped at
+   `--pl-ready-at` - never in a fallback face. `--pl-t` is the time React
+   mounted, so the same animations here resume exactly where the static frame
+   left them: a negative delay when the rise was already under way, the full
+   delay when React arrived first and the class lands later. */
+
+.pl__copy {
+  top: calc(50% - var(--pl-lift) + var(--pl-iris) / 2 + 2px);
+  display: grid;
+  width: max-content;
+  max-width: calc(100vw - 48px);
+  justify-items: center;
+  gap: 10px;
+  translate: -50% 0;
+  text-align: center;
+}
+
+.pl__logo {
+  width: clamp(124px, 32vw, 152px);
+  height: auto;
+  opacity: 0;
+}
+
+.pl-ready .pl__logo {
+  animation: pl-rise 420ms var(--e-ease)
+    calc(0ms - max(0ms, var(--pl-t, 0ms) - var(--pl-ready-at, 0ms))) forwards;
+}
+
+.pl__line {
+  margin: 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-serif);
+  font-size: clamp(0.98rem, 1.6vw, 1.08rem);
+  line-height: 1.4;
+  opacity: 0;
+}
+
+.pl-ready .pl__line {
+  animation: pl-rise 420ms var(--e-ease)
+    calc(100ms - max(0ms, var(--pl-t, 0ms) - var(--pl-ready-at, 0ms))) forwards;
+}
+
+.pl__line em {
+  color: var(--e-accent);
+  font-style: italic;
+}
+
+/* ---------- initial route wait ----------
+   A reload with the intro already seen. Bare paper until the frame has been
+   up for a beat, then the finished mark fades in - a cached route arrives
+   long before that, so nothing flashes; only a slow load gets the mark. */
+
+.pl--wait .pl__stage,
+.pl--wait .pl__copy {
+  opacity: 0;
+  transition: opacity 320ms ease;
+}
+
+.pl--wait[data-settled] .pl__stage,
+.pl--wait[data-settled] .pl__copy {
+  opacity: 1;
+}
+
+@keyframes pl-in {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pl-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pl-bloom {
+  from {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pl-grow {
+  from {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pl-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pl-pupil {
+  to {
+    r: 42px;
+  }
+}
+
+@keyframes pl-pupil-idle {
+  0%,
+  100% {
+    r: 42px;
+  }
+
+  50% {
+    r: 37px;
+  }
+}
+
+@keyframes pl-spark {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pl-rise {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* Still means finished: the wait frame is always still, and the curtain is
+   still under `prefers-reduced-motion` (decided in JS, which also skips the
+   floor and the aperture). Every part sits at its final state with no delay
+   to wait out - the global reduced-motion rule zeroes durations, not delays,
+   so without this a 480ms delay would be 480ms of nothing. */
+.pl[data-still] .pl__ring,
+.pl[data-still] .pl__body,
+.pl[data-still] .pl__glow,
+.pl[data-still] .pl__stroma line,
+.pl[data-still] .pl__spark,
+.pl[data-still] .pl__logo,
+.pl[data-still] .pl__line {
+  animation: none;
+  opacity: 1;
+  transform: none;
+  translate: 0 0;
+}
+
+.pl[data-still] .pl__pupil {
+  animation: none;
+  r: 42px;
+}
+
+.pl[data-still] .pl__limbus {
+  animation: none;
+  stroke-dashoffset: 0;
+}

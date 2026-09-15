@@ -4,6 +4,7 @@ import { ArrowRight, Pause, Phone, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import { branches } from "../lib/coreData";
 import { cleanTel, getPrimaryBranch, getPrimaryPhone } from "../lib/contact";
+import { INTRO_DONE_EVENT, isIntroPending, useIntroDone } from "../lib/intro";
 
 const PHONE_QUERY = "(max-width: 760px)";
 
@@ -42,8 +43,13 @@ function HeroVideo({ video, reduceMotion }) {
   }, []);
 
   /* Reduced motion opens on the poster and hands the reader the play button,
-     so motion is never started for them but is never taken away either. */
-  const [isPlaying, setIsPlaying] = useState(!reduceMotion);
+     so motion is never started for them but is never taken away either. On a
+     first visit the film is also held at its first frame while the opening
+     curtain is up, and starts as the curtain opens onto it - otherwise the
+     reader joins a loop that has been running unseen for two seconds. */
+  const [heldAtMount] = useState(isIntroPending);
+  const heldByIntroRef = useRef(heldAtMount);
+  const [isPlaying, setIsPlaying] = useState(!reduceMotion && !heldAtMount);
   const pausedByUserRef = useRef(reduceMotion);
 
   const toggle = useCallback(() => {
@@ -85,7 +91,9 @@ function HeroVideo({ video, reduceMotion }) {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          if (!pausedByUserRef.current) element.play().catch(() => {});
+          if (!pausedByUserRef.current && !heldByIntroRef.current) {
+            element.play().catch(() => {});
+          }
         } else if (!element.paused) {
           element.pause();
         }
@@ -97,6 +105,17 @@ function HeroVideo({ video, reduceMotion }) {
     return () => observer.disconnect();
   }, [reduceMotion, source.mp4]);
 
+  useEffect(() => {
+    if (!heldByIntroRef.current || reduceMotion) return undefined;
+
+    const release = () => {
+      heldByIntroRef.current = false;
+      if (!pausedByUserRef.current) videoRef.current?.play().catch(() => {});
+    };
+    window.addEventListener(INTRO_DONE_EVENT, release, { once: true });
+    return () => window.removeEventListener(INTRO_DONE_EVENT, release);
+  }, [reduceMotion]);
+
   return (
     <>
       <video
@@ -104,7 +123,7 @@ function HeroVideo({ video, reduceMotion }) {
         ref={attachVideo}
         className="e-hero__video"
         poster={source.poster}
-        autoPlay={!reduceMotion}
+        autoPlay={!reduceMotion && !heldAtMount}
         muted
         loop
         playsInline
@@ -138,6 +157,11 @@ function HeroVideo({ video, reduceMotion }) {
 
 export default function Hero({ hero }) {
   const shouldReduceMotion = useReducedMotion();
+  /* The copy waits for the curtain and then a beat, so the aperture has
+     cleared the headline before it rises; a page reached in-session has no
+     curtain and no beat. */
+  const introDone = useIntroDone();
+  const [afterIntro] = useState(isIntroPending);
   const primaryBranch = getPrimaryBranch(branches.items);
   const primaryPhone = getPrimaryPhone(primaryBranch);
 
@@ -152,8 +176,12 @@ export default function Hero({ hero }) {
         <motion.div
           className="e-hero__copy"
           initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 22 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: shouldReduceMotion ? 0 : 0.85, ease: [0.32, 0.72, 0, 1] }}
+          animate={introDone || shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }}
+          transition={{
+            duration: shouldReduceMotion ? 0 : 0.85,
+            delay: shouldReduceMotion || !afterIntro ? 0 : 0.35,
+            ease: [0.32, 0.72, 0, 1],
+          }}
         >
           <h1>
             {hero.title}

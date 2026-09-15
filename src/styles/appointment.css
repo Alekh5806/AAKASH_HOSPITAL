@@ -1,0 +1,1300 @@
+/* =========================================================================
+   Appointment
+   Namespace: .ap-*   |   loaded after contact.css
+   Built on the .e-* design system in system.css; nothing here restyles a
+   shared primitive.
+
+   One head and one instrument: five questions in a card the reader steps
+   through, and the appointment slip beside it that writes itself as each
+   answer lands. The slip is the WhatsApp message; Send opens WhatsApp with
+   it, addressed to the chosen hospital's line.
+   ========================================================================= */
+
+.ap {
+  /* WCAG 1.4.11 wants 3:1 on the boundary of a control, and --e-rule-2
+     measures 1.58:1 on paper. Same edge value the header, the cookie sheet
+     and the contact page use. Do not lighten it. */
+  --ap-edge: #7f8b96;
+  --ap-edge-light: rgba(255, 255, 255, 0.46);
+  /* The slip's paper, and the ground it sits on. The ground is flat rather
+     than a gradient because the slip's perforation notches are painted in
+     it, and a notch has to match the pixel behind it exactly. */
+  --ap-ground: #f8f7f3;
+  --ap-paper: #fffefb;
+  --ap-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  background: var(--ap-ground);
+  padding-block: clamp(22px, 2.8vw, 36px) clamp(56px, 6vw, 100px);
+}
+
+/* ---------- the head ---------- */
+
+.ap-head {
+  display: grid;
+  justify-items: center;
+  margin-bottom: clamp(26px, 3.6vw, 48px);
+  text-align: center;
+}
+
+.ap-head__title {
+  margin: 12px 0 0;
+  max-width: 18ch;
+  color: var(--e-ink);
+  font-family: var(--e-serif);
+  font-size: clamp(2.3rem, 6.2vw, 4.4rem);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.ap-head__title em {
+  display: block;
+  color: var(--e-accent);
+  font-style: italic;
+}
+
+.ap-head__lede {
+  max-width: 46ch;
+  margin: clamp(14px, 1.8vw, 22px) 0 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: clamp(1rem, 1.2vw, 1.14rem);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* ---------- the two columns ---------- */
+
+.ap-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  align-items: start;
+  gap: clamp(24px, 3vw, 44px);
+}
+
+.ap-aside {
+  position: sticky;
+  top: calc(var(--hd-height) + 20px);
+}
+
+/* ---------- the card ---------- */
+
+.ap-card {
+  position: relative;
+  overflow: clip;
+  border: 1px solid var(--e-rule);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 30px 70px rgba(16, 22, 28, 0.1);
+  padding: clamp(20px, 3vw, 36px);
+}
+
+/* The card's one ornament: a rule along its top edge, navy through teal to
+   accent - the services console's device. */
+.ap-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, var(--e-navy), var(--color-teal), var(--e-accent));
+}
+
+/* ---------- the rail ---------- */
+
+/* Five dots on a track, the track filling behind the reader. Five equal
+   columns put the dot centres at 10, 30, 50, 70 and 90% of the width, which
+   is why the track runs from 10% to 90%. */
+.ap-rail {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 0 0 clamp(24px, 3vw, 34px);
+  padding: 0;
+  list-style: none;
+}
+
+.ap-rail__track {
+  position: absolute;
+  top: 17px;
+  right: 10%;
+  left: 10%;
+  height: 2px;
+  background: var(--e-rule-2);
+  transform-origin: left center;
+}
+
+.ap-rail__fill {
+  position: absolute;
+  inset: 0;
+  background: var(--e-navy);
+  transform-origin: left center;
+}
+
+.ap-rail__button {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 44px;
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--e-ink-2);
+  cursor: pointer;
+}
+
+.ap-rail__button:disabled {
+  cursor: default;
+}
+
+.ap-rail__dot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--ap-edge);
+  border-radius: 999px;
+  background: #fff;
+  transition:
+    border-color 240ms var(--ap-ease),
+    background-color 240ms var(--ap-ease),
+    box-shadow 240ms var(--ap-ease),
+    transform 240ms var(--ap-ease);
+}
+
+/* The ring the next dot takes as the fill reaches it, one shot. */
+.ap-rail__dot::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border: 2px solid var(--e-accent);
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ap-rail__dot.is-hit::after {
+  animation: ap-hit 640ms var(--ap-ease);
+}
+
+@keyframes ap-hit {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+
+.ap-rail__num,
+.ap-rail__check {
+  grid-area: 1 / 1;
+  transition:
+    opacity 200ms var(--ap-ease),
+    transform 240ms var(--ap-ease);
+}
+
+.ap-rail__num {
+  font-family: var(--e-sans);
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.ap-rail__check {
+  color: #fff;
+  opacity: 0;
+  transform: scale(0.4);
+}
+
+.ap-rail__label {
+  font-family: var(--e-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  transition: color 200ms var(--ap-ease);
+}
+
+.ap-rail__step[data-on] .ap-rail__dot {
+  border-color: var(--e-navy);
+  background: var(--e-navy);
+  color: #fff;
+  box-shadow: 0 0 0 5px rgba(12, 44, 73, 0.12);
+  transform: scale(1.08);
+}
+
+.ap-rail__step[data-on] .ap-rail__label {
+  color: var(--e-ink);
+}
+
+.ap-rail__step[data-done] .ap-rail__dot {
+  border-color: var(--e-navy);
+  background: var(--e-navy);
+}
+
+.ap-rail__step[data-done] .ap-rail__num {
+  opacity: 0;
+  transform: scale(0.4);
+}
+
+.ap-rail__step[data-done] .ap-rail__check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ap-rail__button:not(:disabled):hover .ap-rail__dot {
+    border-color: var(--e-ink);
+  }
+  .ap-rail__button:not(:disabled):hover .ap-rail__label {
+    color: var(--e-ink);
+  }
+}
+
+/* ---------- the step ---------- */
+
+/* The frame's height follows the panel inside it, written by the flow. */
+.ap-card__frame {
+  position: relative;
+  overflow: hidden;
+  transition: height 360ms var(--ap-ease);
+}
+
+.ap-step {
+  display: grid;
+  align-content: start;
+  gap: clamp(18px, 2.4vw, 26px);
+}
+
+.ap-step__head {
+  display: grid;
+  gap: 6px;
+}
+
+.ap-step__title {
+  margin: 0;
+  color: var(--e-ink);
+  font-family: var(--e-tight);
+  font-size: clamp(1.45rem, 2.4vw, 1.9rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.ap-step__lede {
+  margin: 0;
+  max-width: 52ch;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+/* ---------- typed fields ---------- */
+
+.ap-field {
+  display: grid;
+  gap: 8px;
+}
+
+.ap-field__label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--e-ink);
+  font-family: var(--e-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.ap-field__count {
+  color: var(--e-ink-2);
+  font-size: 0.78rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.ap-input {
+  width: 100%;
+  min-height: 54px;
+  border: 1px solid var(--ap-edge);
+  border-radius: 12px;
+  background: #fff;
+  padding: 13px 16px;
+  color: var(--e-ink);
+  font-family: var(--e-sans);
+  font-size: 1.05rem;
+  line-height: 1.4;
+  transition:
+    border-color 200ms var(--ap-ease),
+    box-shadow 200ms var(--ap-ease);
+}
+
+.ap-input::placeholder {
+  color: var(--e-ink-3);
+}
+
+.ap-input:focus {
+  border-color: var(--e-navy);
+  box-shadow: 0 0 0 4px rgba(12, 44, 73, 0.12);
+  outline: 0;
+}
+
+.ap-input[aria-invalid] {
+  border-color: var(--color-danger);
+}
+
+.ap-input[aria-invalid]:focus {
+  box-shadow: 0 0 0 4px rgba(165, 35, 27, 0.14);
+}
+
+.ap-input--area {
+  min-height: 118px;
+  resize: vertical;
+}
+
+/* The mobile field carries a +91 in its left margin. A reader typing a
+   number from abroad starts with a plus, and the prefix steps aside. */
+.ap-input-wrap {
+  position: relative;
+}
+
+.ap-input__prefix {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 1.05rem;
+  translate: 0 -50%;
+  pointer-events: none;
+  transition: opacity 160ms var(--ap-ease);
+}
+
+.ap-input-wrap .ap-input {
+  padding-left: 58px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ap-input-wrap[data-intl] .ap-input__prefix {
+  opacity: 0;
+}
+
+.ap-input-wrap[data-intl] .ap-input {
+  padding-left: 16px;
+}
+
+.ap-field__hint,
+.ap-field__error {
+  margin: 0;
+  font-family: var(--e-sans);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.ap-field__hint {
+  color: var(--e-ink-2);
+}
+
+.ap-field__error {
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+.ap-field--date {
+  max-width: 300px;
+}
+
+.ap-when {
+  display: grid;
+  gap: 12px;
+}
+
+/* ---------- choice chips ---------- */
+
+.ap-choice {
+  display: grid;
+  gap: 14px;
+}
+
+.ap-choice__label {
+  margin: 0;
+}
+
+.ap-choice__group {
+  display: grid;
+  gap: 8px;
+}
+
+.ap-choice__group + .ap-choice__group {
+  margin-top: 6px;
+}
+
+.ap-choice__heading {
+  margin: 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.ap-choice__list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ap-chip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 56px;
+  overflow: hidden;
+  border: 1px solid var(--ap-edge);
+  border-radius: 12px;
+  background: #fff;
+  padding: 11px 14px;
+  color: var(--e-ink);
+  text-align: left;
+  transition:
+    border-color 200ms var(--ap-ease),
+    color 200ms var(--ap-ease),
+    box-shadow 200ms var(--ap-ease);
+}
+
+/* The chosen chip's tint is one element that travels between chips. */
+.ap-chip__bg {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: var(--e-navy);
+}
+
+.ap-chip__body,
+.ap-chip__mark {
+  position: relative;
+  z-index: 1;
+}
+
+.ap-chip__body {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.ap-chip__title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  font-family: var(--e-sans);
+  font-size: 0.94rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.ap-chip__title svg {
+  flex: none;
+}
+
+.ap-chip__title em {
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 2px 7px;
+  color: var(--e-accent);
+  font-size: 0.62rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.ap-chip__sub {
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.84rem;
+  line-height: 1.35;
+  transition: color 200ms var(--ap-ease);
+}
+
+/* A ring that fills and draws a check when chosen - "this one" is never only
+   a colour. */
+.ap-chip__mark {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid var(--ap-edge);
+  border-radius: 999px;
+  transition:
+    border-color 200ms var(--ap-ease),
+    background-color 200ms var(--ap-ease);
+}
+
+.ap-chip__mark::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 9px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -60%) rotate(45deg) scale(0);
+  opacity: 0;
+  transition:
+    transform 240ms var(--ap-ease) 60ms,
+    opacity 160ms var(--ap-ease) 60ms;
+}
+
+/* Choosing sends one ring out from the mark. It also runs when a panel
+   opens on a chip already chosen, which is the reader being shown their
+   current answer. */
+.ap-chip__mark::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border: 2px solid var(--e-accent);
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ap-chip[data-on] .ap-chip__mark::before {
+  animation: ap-hit 620ms var(--ap-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ap-chip:hover {
+    border-color: var(--e-ink);
+    box-shadow: 0 8px 20px rgba(16, 22, 28, 0.08);
+  }
+}
+
+.ap-chip[data-on] {
+  border-color: var(--e-navy);
+  color: #fff;
+  box-shadow: none;
+}
+
+.ap-chip[data-on] .ap-chip__sub {
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.ap-chip[data-on] .ap-chip__title em {
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.ap-chip[data-on] .ap-chip__mark {
+  border-color: var(--e-accent);
+  background: var(--e-accent);
+}
+
+.ap-chip[data-on] .ap-chip__mark::after {
+  transform: translate(-50%, -60%) rotate(45deg) scale(1);
+  opacity: 1;
+}
+
+/* Day tiles: a rail the reader swipes, a day per tile. The chosen tile
+   carries an accent bar along its foot in place of the ring. */
+.ap-choice[data-shape="tile"] .ap-choice__list {
+  display: flex;
+  gap: 10px;
+  margin: -6px;
+  padding: 6px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 6px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  /* The rail fades at its right edge, which is what says it continues. */
+  mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent);
+}
+
+.ap-choice[data-shape="tile"] .ap-choice__list::-webkit-scrollbar {
+  display: none;
+}
+
+.ap-choice[data-shape="tile"] .ap-chip {
+  flex: 0 0 auto;
+  width: 96px;
+  min-height: 98px;
+  justify-content: center;
+  padding: 10px 8px;
+  scroll-snap-align: start;
+  text-align: center;
+}
+
+.ap-choice[data-shape="tile"] .ap-chip__mark {
+  display: none;
+}
+
+.ap-choice[data-shape="tile"] .ap-chip::after {
+  content: "";
+  position: absolute;
+  inset: auto 14px 0;
+  z-index: 1;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--e-accent);
+  transform: scaleX(0);
+  transition: transform 260ms var(--ap-ease);
+}
+
+.ap-choice[data-shape="tile"] .ap-chip[data-on]::after {
+  transform: scaleX(1);
+}
+
+.ap-tile {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+}
+
+.ap-tile--word {
+  gap: 6px;
+  font-family: var(--e-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.ap-tile__weekday,
+.ap-tile__month {
+  font-family: var(--e-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.3;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ap-tile__weekday {
+  color: var(--e-ink-2);
+}
+
+.ap-tile__month {
+  color: var(--e-ink-2);
+}
+
+.ap-chip[data-on] .ap-tile__weekday,
+.ap-chip[data-on] .ap-tile__month {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.ap-tile__day {
+  font-family: var(--e-serif);
+  font-size: 1.75rem;
+  font-weight: 400;
+  line-height: 1;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* The time of day: four across where they fit, two by two where they do
+   not - measured, not chosen, so the card beside the slip at 1024px does not
+   wrap `Any time` into two lines. */
+.ap-choice[data-shape="segment"] .ap-choice__list {
+  grid-template-columns: repeat(auto-fit, minmax(122px, 1fr));
+}
+
+/* ---------- the foot ---------- */
+
+.ap-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: clamp(22px, 3vw, 30px);
+  border-top: 1px solid var(--e-rule);
+  padding-top: 20px;
+}
+
+.ap-foot[data-first] {
+  justify-content: flex-end;
+}
+
+.ap-foot .e-btn {
+  border-radius: 12px;
+}
+
+.ap-foot__next {
+  position: relative;
+  min-width: 200px;
+  overflow: hidden;
+}
+
+.ap-foot__next svg {
+  transition: transform 240ms var(--ap-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ap-foot__next:hover svg {
+    transform: translateX(4px);
+  }
+}
+
+/* The send button arrives with one sheen across it and a small wave of the
+   glyph - the one moment the primary action asks for the eye. */
+.ap-foot__send::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 40%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  transform: translateX(-140%) skewX(-16deg);
+  animation: ap-sheen 1.3s var(--ap-ease) 0.7s 1;
+  pointer-events: none;
+}
+
+.ap-foot__send svg {
+  animation: ap-wave 0.9s var(--ap-ease) 1s 1;
+}
+
+@keyframes ap-sheen {
+  to {
+    transform: translateX(380%) skewX(-16deg);
+  }
+}
+
+@keyframes ap-wave {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  30% {
+    transform: rotate(-14deg) scale(1.12);
+  }
+  60% {
+    transform: rotate(10deg) scale(1.08);
+  }
+}
+
+/* ---------- the way out ---------- */
+
+.ap-call {
+  display: flex;
+  justify-content: center;
+  margin: clamp(22px, 3vw, 34px) 0 0;
+}
+
+/* ---------- the slip ---------- */
+
+.ap-slip {
+  --br-edge-light: var(--ap-edge-light);
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  background: var(--ap-paper);
+  box-shadow: 0 24px 60px rgba(16, 22, 28, 0.12);
+}
+
+.ap-slip__head {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  overflow: hidden;
+  background: linear-gradient(160deg, #123c61 0%, #0b2843 100%);
+  padding: 22px 24px 24px;
+  color: #fff;
+}
+
+/* The teal light in the head drifts, slowly - the same glow the contact
+   card carries, at the same strength, so nothing measured on it changes;
+   it simply moves. */
+.ap-slip__head::before {
+  content: "";
+  position: absolute;
+  inset: -30% -20%;
+  background: radial-gradient(
+    45% 45% at 30% 25%,
+    rgba(27, 107, 114, 0.4) 0%,
+    rgba(27, 107, 114, 0) 70%
+  );
+  animation: ap-drift 18s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.ap-slip__head > * {
+  position: relative;
+}
+
+@keyframes ap-drift {
+  0% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(9%, 10%);
+  }
+  100% {
+    transform: translate(-6%, 14%);
+  }
+}
+
+.ap-slip__head .e-label {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.ap-slip__to {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  color: inherit;
+}
+
+.ap-slip__to-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--e-sans);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.ap-slip__to strong {
+  color: #fff;
+  font-family: var(--e-serif);
+  font-size: clamp(1.7rem, 2.2vw, 2.1rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.ap-slip__via {
+  color: rgba(255, 255, 255, 0.74);
+  font-family: var(--e-sans);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.ap-slip__via b {
+  color: #fff;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* The perforation between the head and the lines, with a notch cut into
+   each edge in the ground's own colour. */
+.ap-slip__tear {
+  position: relative;
+  height: 0;
+  margin: 0 16px;
+  border-top: 2px dashed var(--e-rule-2);
+}
+
+.ap-slip__tear::before,
+.ap-slip__tear::after {
+  content: "";
+  position: absolute;
+  top: -12px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--ap-ground);
+}
+
+.ap-slip__tear::before {
+  left: -27px;
+}
+
+.ap-slip__tear::after {
+  right: -27px;
+}
+
+.ap-slip__lines {
+  display: grid;
+  margin: 0;
+  padding: 16px 24px 6px;
+}
+
+.ap-slip__line {
+  position: relative;
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 12px;
+  border-bottom: 1px solid var(--e-rule);
+  padding: 11px 0 10px;
+}
+
+/* The pen: an accent mark in the margin beside the line being written,
+   travelling down the slip as the reader goes. */
+.ap-slip__pen {
+  position: absolute;
+  top: 12px;
+  bottom: 11px;
+  left: -14px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--e-accent);
+}
+
+.ap-slip__line[data-active] dt {
+  color: var(--e-ink);
+}
+
+/* The highlighter sweep as a chosen answer lands on its line. */
+.ap-slip__wash {
+  position: absolute;
+  inset: -4px -6px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgba(184, 22, 87, 0.16), rgba(184, 22, 87, 0.05));
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+.ap-slip__line dt {
+  transition: color 200ms var(--ap-ease);
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.ap-slip__line dd {
+  position: relative;
+  min-height: 1.7rem;
+  margin: 0;
+}
+
+/* An unanswered line is a dotted leader; the leader fades as ink arrives. */
+.ap-slip__line dd::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 9px;
+  left: 0;
+  height: 3px;
+  background-image: radial-gradient(circle, var(--e-rule-2) 1.2px, transparent 1.6px);
+  background-size: 7px 3px;
+  background-repeat: repeat-x;
+  transition: opacity 260ms var(--ap-ease);
+}
+
+.ap-slip__line[data-filled] dd::after {
+  opacity: 0;
+}
+
+.ap-slip__value {
+  display: block;
+  color: var(--e-ink);
+  font-family: var(--e-serif);
+  font-size: 1.12rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.ap-slip__foot {
+  display: grid;
+  gap: 8px;
+  padding: 10px 24px 22px;
+}
+
+.ap-slip__stamp-slot {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+/* A rubber stamp: outlined caps, a little off true, inked onto the paper. */
+.ap-slip__stamp {
+  display: inline-block;
+  border: 2.5px solid var(--e-accent);
+  border-radius: 6px;
+  padding: 7px 12px;
+  color: var(--e-accent);
+  font-family: var(--e-tight);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1;
+  text-transform: uppercase;
+  transform-origin: center;
+  mix-blend-mode: multiply;
+}
+
+.ap-slip__stamp[data-sent] {
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.ap-slip__note {
+  margin: 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+/* The slip inside the card's last step, on widths with no room beside it. */
+.ap-slip[data-compact] {
+  border: 1px solid var(--e-rule);
+  box-shadow: none;
+}
+
+.ap-slip[data-compact] .ap-slip__head {
+  padding: 18px 20px 20px;
+}
+
+.ap-slip[data-compact] .ap-slip__lines {
+  padding: 12px 20px 4px;
+}
+
+.ap-slip[data-compact] .ap-slip__foot {
+  padding: 8px 20px 18px;
+}
+
+.ap-slip[data-compact] .ap-slip__tear::before,
+.ap-slip[data-compact] .ap-slip__tear::after {
+  background: #fff;
+}
+
+/* ---------- after sending ---------- */
+
+.ap-done {
+  display: grid;
+  gap: 18px;
+  justify-items: start;
+}
+
+.ap-done__mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: var(--color-success);
+  color: #fff;
+}
+
+/* Two rings run out from the mark as the receipt opens - the pin's ripples
+   on the hospital map, for the same reason: something just landed. */
+.ap-done__mark::before,
+.ap-done__mark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--color-success);
+  border-radius: 999px;
+  opacity: 0;
+  animation: ap-ring 1.4s var(--ap-ease) 0.25s 2;
+}
+
+.ap-done__mark::after {
+  animation-delay: 0.6s;
+}
+
+/* 1.65, not larger: the mark sits at the card's padding edge, and a wider
+   ring is cut off by the card on a phone. */
+@keyframes ap-ring {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.65);
+  }
+}
+
+.ap-done__hours {
+  display: grid;
+  gap: 0;
+  width: 100%;
+  max-width: 420px;
+  margin: 0;
+}
+
+.ap-done__hours dt {
+  margin-bottom: 6px;
+}
+
+.ap-done__hours dd {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0;
+  border-top: 1px solid var(--e-rule);
+  padding: 10px 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+.ap-done__hours strong {
+  color: var(--e-ink);
+  font-weight: 600;
+  text-align: right;
+}
+
+.ap-done__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+}
+
+.ap-done__actions .e-btn {
+  border-radius: 12px;
+}
+
+.ap-done__again {
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
+  background: none;
+  padding-top: 0;
+  padding-inline: 0;
+}
+
+.ap-done .ap-slip {
+  width: 100%;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 1180px) {
+  .ap-grid {
+    grid-template-columns: minmax(0, 1.4fr) minmax(300px, 1fr);
+  }
+}
+
+@media (max-width: 1023px) {
+  .ap-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .ap-card {
+    border-radius: 18px;
+  }
+  .ap-rail__label {
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+  }
+}
+
+@media (max-width: 640px) {
+  .ap-head__lede {
+    display: none;
+  }
+  /* On a phone the chips are full-width rows, not two columns: in a 160px
+     column `Comprehensive Glaucoma Care` ran to three lines under the ring
+     and every run of an odd count left a lone card. Uniform rows read as one
+     list and every title sits on one line. */
+  .ap-choice[data-shape="row"] .ap-choice__list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* Back is a square with the arrow, and Continue / Send takes the rest of
+     the row: `Send on WhatsApp` and `Back` cannot share a 326px row as two
+     worded buttons. The word stays in the button's aria-label. */
+  .ap-foot__next {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .ap-foot__back {
+    flex: 0 0 52px;
+    width: 52px;
+    padding: 0;
+  }
+  .ap-foot__back span {
+    display: none;
+  }
+  .ap-slip__line {
+    grid-template-columns: 72px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 400px) {
+  .ap-chip {
+    padding-inline: 12px;
+  }
+  .ap-rail__label {
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+  }
+  .ap-card {
+    padding: 18px 16px 20px;
+  }
+}
+
+/* At 320px the send button cannot share the foot with Back at any padding,
+   so the primary takes the row and Back sits under it with its word. */
+@media (max-width: 360px) {
+  .ap-foot {
+    flex-wrap: wrap;
+  }
+  .ap-foot__next {
+    flex: 1 1 100%;
+    order: -1;
+  }
+  .ap-foot__back {
+    flex: 1 1 100%;
+    width: auto;
+  }
+  .ap-foot__back span {
+    display: inline;
+  }
+  .ap-rail__dot {
+    width: 32px;
+    height: 32px;
+  }
+  .ap-rail__track {
+    top: 15px;
+  }
+  .ap-slip__lines,
+  .ap-slip__foot {
+    padding-inline: 18px;
+  }
+  .ap-slip__head {
+    padding-inline: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ap-card__frame,
+  .ap-rail__dot,
+  .ap-rail__num,
+  .ap-rail__check,
+  .ap-rail__label,
+  .ap-input,
+  .ap-input__prefix,
+  .ap-chip,
+  .ap-chip__sub,
+  .ap-chip__mark,
+  .ap-chip__mark::after,
+  .ap-chip::after,
+  .ap-slip__line dt,
+  .ap-slip__line dd::after,
+  .ap-foot__next svg {
+    transition: none;
+  }
+  .ap-rail__dot::after,
+  .ap-chip__mark::before,
+  .ap-foot__send::after,
+  .ap-foot__send svg,
+  .ap-slip__head::before,
+  .ap-done__mark::before,
+  .ap-done__mark::after {
+    animation: none;
+  }
+}

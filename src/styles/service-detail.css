@@ -1,0 +1,1596 @@
+/* =========================================================================
+   Services - one service page
+   Namespace: .sd-*   |   loaded after services.css
+   Built on the .e-* design system in system.css; nothing here restyles a
+   shared primitive.
+
+   Five short blocks: a hero, one card the reader explores, the visit, the
+   questions, the way on - and an action bar that follows a phone reader down
+   the screen.
+
+   Two builds came before this one and both were too much page. The first gave
+   thin content the index's airy head and read as an empty wireframe; the second
+   filled the width but ran to eight screens on a phone. Most people open a
+   hospital website on a phone, often on the way in, so the detail now lives in
+   one tabbed card rather than a stack of full-width bands. If something new has
+   to go on this page, it goes in a tab.
+   ========================================================================= */
+
+.sd-hero,
+.sd-explore,
+.sd-sec,
+.sd-bar,
+.sd-missing {
+  /* WCAG 1.4.11 wants 3:1 on the boundary of a control, and --e-rule-2
+     measures 1.58:1 on paper. Same edge value the header, the cookie sheet and
+     the services index use: 3.48:1 on white. Do not lighten it, and do not put
+     --e-rule-2 on a control here. */
+  --sd-edge: #7f8b96;
+  --sd-edge-light: rgba(255, 255, 255, 0.46);
+}
+
+.sd-sec {
+  padding-block: clamp(40px, 4.6vw, 76px);
+  scroll-margin-top: 24px;
+}
+
+/* ---------- shared type ---------- */
+
+.sd-label {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.sd-h2 {
+  margin: 0;
+  max-width: 20ch;
+  color: var(--e-ink);
+  font-family: var(--e-tight);
+  font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+/* Heading left, the one link right. No band on this page carries enough copy
+   to justify the index's three-column head. */
+.sd-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px 32px;
+  margin-bottom: clamp(20px, 2.4vw, 30px);
+}
+
+/* ---------- the hero ---------- */
+
+/* Built to the Function Health "What we test" reference: an editorial head on
+   warm paper, then one wide media card carrying the photograph and a rail of
+   glass chips along its foot.
+ *
+ * It replaced a full-bleed navy band with the copy laid over the photograph.
+ * That band had to fight its own picture for contrast across eleven very
+ * different photographs and read as a stock banner; words on paper and picture
+ * in a frame lets the type be set properly and the photograph be a photograph. */
+.sd-hero {
+  background: linear-gradient(180deg, #faf8f4 0%, var(--e-paper-2) 100%);
+  padding-block: clamp(18px, 2.4vw, 30px) clamp(30px, 4vw, 56px);
+}
+
+.sd-hero__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  margin-left: -2px;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: color 200ms var(--e-ease);
+}
+
+.sd-hero__back svg {
+  transition: transform 240ms var(--e-ease);
+}
+
+.sd-hero__back:hover {
+  color: var(--e-accent);
+}
+
+.sd-hero__back:hover svg {
+  transform: translateX(-3px);
+}
+
+.sd-hero__head {
+  display: grid;
+  justify-items: center;
+  margin-top: clamp(6px, 1.4vw, 16px);
+  text-align: center;
+}
+
+/* The reference's signature: a serif display line with its closing word in
+   italic accent. splitServiceTitle takes that word off the end of the title -
+   every service but Oculoplasty ends on the noun that names the kind of care,
+   which is exactly the word the reference italicises. */
+.sd-hero__title {
+  margin: 0;
+  max-width: 16ch;
+  color: var(--e-ink);
+  font-family: var(--e-serif);
+  font-size: clamp(2.3rem, 6.4vw, 4.6rem);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.sd-hero__title em {
+  color: var(--e-accent);
+  font-style: italic;
+  /* The italic needs its own breathing room after a roman word. */
+  margin-left: 0.24em;
+}
+
+.sd-hero__lede {
+  max-width: 54ch;
+  margin: clamp(14px, 1.8vw, 22px) 0 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: clamp(1rem, 1.2vw, 1.16rem);
+  line-height: 1.6;
+}
+
+.sd-hero__actions {
+  margin-top: clamp(20px, 2.4vw, 30px);
+}
+
+/* The note belongs to the chips inside the frame, so it sits directly under it
+   and keeps the frame's own inset rather than the shell's centre line. */
+.sd-hero__note {
+  max-width: 68ch;
+  margin: clamp(12px, 1.6vw, 18px) auto 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.84rem;
+  line-height: 1.55;
+  text-align: center;
+}
+
+/* ---------- the media frame ---------- */
+
+/* A wide letterbox with air around it, not a hero band bled to the window. */
+.sd-frame {
+  position: relative;
+  isolation: isolate;
+  aspect-ratio: 21 / 9;
+  overflow: hidden;
+  border-radius: clamp(14px, 1.6vw, 22px);
+  margin-top: clamp(24px, 3.2vw, 46px);
+  background: #1d2833;
+  box-shadow: 0 26px 60px rgba(16, 22, 28, 0.16);
+}
+
+.sd-frame__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.sd-frame__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 40%;
+}
+
+/* The reference desaturates its footage behind a slate wash. Ours is the site's
+   own navy, heavy enough that white type reads on all eleven photographs and
+   graded down the frame so the chips sit on the darkest part of it. */
+.sd-frame__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(14, 32, 48, 0.4) 0%,
+      rgba(14, 32, 48, 0.18) 36%,
+      rgba(12, 27, 41, 0.4) 72%,
+      rgba(10, 23, 36, 0.5) 100%
+    ),
+    linear-gradient(90deg, rgba(14, 32, 48, 0.26) 0%, rgba(14, 32, 48, 0) 55%);
+}
+
+/* The two facts that identify the service, as glass on the photograph. */
+.sd-frame__tags {
+  display: flex;
+  position: absolute;
+  z-index: 1;
+  top: clamp(12px, 1.6vw, 20px);
+  left: clamp(12px, 1.6vw, 20px);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sd-frame__tags span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 999px;
+  background: rgba(12, 27, 41, 0.52);
+  backdrop-filter: blur(10px);
+  padding: 6px 13px;
+  color: #fff;
+  font-family: var(--e-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.sd-frame__tags i {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--e-accent);
+}
+
+/* The foot carries its own floor rather than relying on the frame's scrim. The
+   label and the chips have to be readable over eleven photographs that run from
+   a dark theatre to a near-white clinic, and a wash sized for the brightest of
+   them would flatten the rest; a local gradient under the foot leaves the top of
+   every picture bright and guarantees the ground where the type actually is. */
+.sd-frame__foot {
+  display: grid;
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  gap: 10px;
+  background: linear-gradient(
+    180deg,
+    rgba(9, 21, 33, 0) 0%,
+    rgba(9, 21, 33, 0.72) 38%,
+    rgba(9, 21, 33, 0.9) 100%
+  );
+  padding: clamp(30px, 5vw, 56px) clamp(12px, 1.6vw, 20px) clamp(12px, 1.6vw, 20px);
+}
+
+.sd-frame__label {
+  padding-left: 2px;
+  color: #fff;
+  font-family: var(--e-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* ---------- the glass chips ---------- */
+
+/* Four chips share the row from 901px up. Below that they are a scroll-snap
+   rail with the next one peeking, which is what says it can be swiped - the
+   same mechanism the conditions rail uses, and the browser's direction lock is
+   what keeps a horizontal swipe out of the page's vertical scroll. */
+.sd-chips {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(8px, 0.9vw, 12px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sd-chip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  align-content: start;
+  gap: 10px;
+  min-height: 0;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 12px;
+  /* Dark glass, not white. The chips sit on photographs that run from a dark
+     theatre to a near-white clinic, and a white translucent panel *raises* the
+     luminance behind white type - the tick measured 3.7:1 and the label 2.4:1
+     on the brightest of the eleven. A dark wash keeps the photograph visible
+     through the chip and makes the type reliable on all of them. */
+  background: rgba(11, 25, 39, 0.46);
+  backdrop-filter: blur(14px) saturate(130%);
+  padding: clamp(11px, 1.1vw, 15px);
+  transition:
+    background-color 240ms var(--e-ease),
+    border-color 240ms var(--e-ease),
+    transform 240ms var(--e-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sd-chip:hover {
+    border-color: rgba(255, 255, 255, 0.42);
+    background: rgba(11, 25, 39, 0.58);
+    transform: translateY(-2px);
+  }
+}
+
+.sd-chip p {
+  margin: 0;
+  color: #fff;
+  font-family: var(--e-tight);
+  font-size: clamp(0.88rem, 1vw, 0.98rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.34;
+}
+
+.sd-chip__tick {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--e-accent);
+  color: #fff;
+  /* on the cap height of the first line, not the middle of the block */
+  margin-top: 1px;
+}
+
+/* ---------- hero actions ---------- */
+
+.sd-act {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px 18px;
+}
+
+/* The wrapper exists to take the press without scaling the link's own box
+   shadow and border - it is the flex item, so it carries the widths. */
+.sd-act__wrap {
+  display: inline-flex;
+  flex: none;
+}
+
+.sd-hero__actions {
+  width: 100%;
+}
+
+.sd-act__book {
+  flex: none;
+}
+
+/* Emergency Eye Care leads with the helpline, and the number is part of the
+   button rather than a line of text under it. */
+.sd-act__urgent {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0 12px;
+  border-color: var(--color-danger);
+  background: var(--color-danger);
+  padding: 11px 24px;
+  text-align: left;
+}
+
+.sd-act__urgent:hover {
+  border-color: #8c1d16;
+  background: #8c1d16;
+}
+
+.sd-act__urgent svg {
+  grid-row: 1 / 3;
+}
+
+.sd-act__urgent span {
+  /* A colour rather than opacity, so the ratio is measurable: 5.8:1 on the
+     danger red, which 0.76rem semibold needs. */
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sd-act__urgent strong {
+  color: #fff;
+  font-size: 1.04rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.sd-act__quiet {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 48px;
+  color: var(--e-ink);
+  font-family: var(--e-sans);
+}
+
+.sd-act__quiet svg {
+  flex: none;
+  box-sizing: content-box;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--sd-edge);
+  border-radius: 999px;
+  padding: 9px;
+  transition:
+    border-color 200ms var(--e-ease),
+    background-color 200ms var(--e-ease),
+    color 200ms var(--e-ease);
+}
+
+.sd-act__quiet:hover svg {
+  border-color: var(--e-navy);
+  background: var(--e-navy);
+  color: #fff;
+}
+
+.sd-act__quiet span {
+  display: grid;
+  gap: 1px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.sd-act__quiet em {
+  color: var(--e-ink-2);
+  font-size: 0.76rem;
+  font-style: normal;
+  font-weight: 500;
+}
+
+/* ---------- the card the reader explores ---------- */
+
+.sd-explore {
+  background: linear-gradient(180deg, var(--e-paper-2) 0%, var(--e-paper) 62%);
+  padding-block: clamp(26px, 3vw, 46px) clamp(34px, 4vw, 62px);
+}
+
+.sd-card {
+  border: 1px solid var(--e-rule);
+  border-radius: 18px;
+  background: var(--e-paper);
+  overflow: clip;
+  box-shadow: 0 18px 50px rgba(16, 22, 28, 0.08);
+}
+
+.sd-card__tabs {
+  border-bottom: 1px solid var(--e-rule);
+  background: linear-gradient(180deg, #f7fafc 0%, var(--e-paper) 100%);
+}
+
+/* A scroller, not a wrap: four labels cannot share a 358px row, and a tab bar
+   that breaks to two lines stops reading as one control. */
+.sd-card__scroller {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  padding: 8px clamp(10px, 1.6vw, 16px);
+}
+
+.sd-card__scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.sd-tab {
+  display: inline-flex;
+  position: relative;
+  flex: none;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 clamp(14px, 1.6vw, 20px);
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.92rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: color 200ms var(--e-ease);
+}
+
+.sd-tab:hover {
+  color: var(--e-ink);
+}
+
+/* One pill that travels between tabs, not a background that blinks off one and
+   on to the next. */
+.sd-tab__pill {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: var(--e-navy);
+}
+
+.sd-tab__text {
+  position: relative;
+  z-index: 1;
+}
+
+.sd-tab[data-on] {
+  color: #fff;
+}
+
+/* The frame carries the measured height of whatever panel is showing, so the
+   card grows and shrinks rather than snapping between tabs. */
+.sd-card__frame {
+  overflow: hidden;
+  transition: height 320ms var(--e-ease);
+}
+
+.sd-card__body {
+  padding: clamp(20px, 2.6vw, 34px);
+}
+
+.sd-card__note {
+  margin: 0;
+  border-top: 1px solid var(--e-rule);
+  background: var(--color-clinical);
+  padding: 14px clamp(20px, 2.6vw, 34px);
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+/* ---------- panels inside the card ---------- */
+
+.sd-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.86fr);
+  align-items: center;
+  gap: clamp(20px, 3vw, 44px);
+}
+
+.sd-prose {
+  display: grid;
+  gap: 14px;
+  max-width: 58ch;
+}
+
+.sd-prose p {
+  margin: 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.sd-prose .sd-prose__lead {
+  color: var(--e-ink);
+  font-family: var(--e-tight);
+  font-size: clamp(1.1rem, 1.5vw, 1.34rem);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.45;
+}
+
+.sd-area {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #f7fafc 0%, var(--color-clinical) 100%);
+  padding: clamp(12px, 1.6vw, 18px);
+}
+
+.sd-area figcaption {
+  display: grid;
+  gap: 3px;
+}
+
+.sd-area figcaption span {
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.sd-area figcaption strong {
+  color: var(--e-ink);
+  font-family: var(--e-serif);
+  font-size: 1.16rem;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+
+.sd-area figcaption em {
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.9rem;
+  font-style: normal;
+  line-height: 1.5;
+}
+
+/* The causes panel's rows. */
+.sd-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sd-list li {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+  border-top: 1px solid var(--e-rule);
+  padding-block: clamp(14px, 1.6vw, 18px);
+}
+
+.sd-list li:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.sd-list p {
+  max-width: 62ch;
+  margin: 0;
+  color: var(--e-ink);
+  font-family: var(--e-tight);
+  font-size: clamp(1rem, 1.2vw, 1.14rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.45;
+}
+
+.sd-list li > span {
+  color: var(--e-ink-2);
+  font-family: var(--e-serif);
+  font-size: 1.06rem;
+  font-variant-numeric: lining-nums tabular-nums;
+  line-height: 1.4;
+}
+
+/* ---------- the signs panel ---------- */
+
+.sd-split--signs {
+  align-items: start;
+}
+
+.sd-signs {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sd-sign {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  min-height: 52px;
+  border: 1px solid var(--sd-edge);
+  border-radius: 12px;
+  background: var(--e-paper);
+  padding: 10px 14px;
+  color: var(--e-ink);
+  text-align: left;
+  transition:
+    border-color 200ms var(--e-ease),
+    background-color 200ms var(--e-ease),
+    box-shadow 200ms var(--e-ease),
+    color 200ms var(--e-ease);
+}
+
+.sd-sign__text {
+  font-family: var(--e-sans);
+  font-size: 0.96rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+/* A ring that fills and draws a check when chosen: an unambiguous "this one"
+   beside a label a reader may have only skimmed. */
+.sd-sign__mark {
+  position: relative;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid var(--sd-edge);
+  border-radius: 999px;
+  transition:
+    border-color 200ms var(--e-ease),
+    background-color 200ms var(--e-ease);
+}
+
+.sd-sign__mark::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 9px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -60%) rotate(45deg) scale(0);
+  opacity: 0;
+  transition:
+    transform 240ms var(--e-ease) 60ms,
+    opacity 160ms var(--e-ease) 60ms;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sd-sign:hover {
+    border-color: var(--e-ink);
+    box-shadow: 0 8px 20px rgba(16, 22, 28, 0.08);
+  }
+}
+
+.sd-sign[data-on] {
+  border-color: var(--e-navy);
+  background: var(--e-navy);
+  color: #fff;
+  box-shadow: none;
+}
+
+.sd-sign[data-on] .sd-sign__mark {
+  border-color: var(--e-accent);
+  background: var(--e-accent);
+}
+
+.sd-sign[data-on] .sd-sign__mark::after {
+  transform: translate(-50%, -60%) rotate(45deg) scale(1);
+  opacity: 1;
+}
+
+.sd-chart {
+  display: grid;
+  gap: 10px;
+}
+
+/* The finder's landscape readout with the card chrome taken off - the card
+   around it is already the card, and a card inside a card is the nested clutter
+   this site keeps removing. */
+.sd-chart .sv-scene {
+  --sd-readout-w: clamp(120px, 22vw, 170px);
+  --sd-readout-h: clamp(112px, 19vw, 152px);
+  display: grid;
+  position: static;
+  grid-template-columns: var(--sd-readout-w) minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #f7fafc 0%, var(--color-clinical) 100%);
+  padding: clamp(10px, 1.4vw, 14px);
+}
+
+.sd-chart .sv-scene__frame {
+  aspect-ratio: auto;
+  width: var(--sd-readout-w);
+  height: var(--sd-readout-h);
+  border-radius: 9px;
+}
+
+.sd-chart .sv-scene__caption {
+  gap: 4px;
+  text-align: left;
+}
+
+.sd-chart .sv-scene__label {
+  min-height: 0;
+  font-family: var(--e-serif);
+  font-size: clamp(1.04rem, 1.4vw, 1.22rem);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+}
+
+.sd-chart__hint {
+  margin: 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+/* ---------- the visit ---------- */
+
+.sd-visit {
+  background: var(--e-paper-2);
+}
+
+/* The visit as a track the reader scrubs: six dots carry the order at a glance,
+   and one panel answers what actually happens. Six numbered rows of one word
+   each - which is what this was - read as a skeleton on a phone and took three
+   times the height to say less. */
+.sd-step {
+  border: 1px solid var(--e-rule);
+  border-radius: 16px;
+  background: var(--e-paper);
+  padding: clamp(18px, 2.2vw, 26px);
+  box-shadow: 0 12px 34px rgba(16, 22, 28, 0.06);
+}
+
+.sd-step__track {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 clamp(18px, 2.2vw, 26px);
+  padding: 0;
+  list-style: none;
+}
+
+/* The rail runs between the first and last dot centres, so it is inset by half
+   a dot at each end rather than spanning the whole row. */
+.sd-step__track::before,
+.sd-step__fill {
+  content: "";
+  position: absolute;
+  top: 15px;
+  right: 16px;
+  left: 16px;
+  height: 2px;
+  border-radius: 2px;
+}
+
+.sd-step__track::before {
+  background: var(--e-rule-2);
+}
+
+/* The travelled part of the route fills in behind the reader. It carries no
+   transition of its own: the scroll handler writes --sd-progress every frame,
+   so the rail fills under a dragging thumb instead of lagging a fixed 420ms
+   behind it, and a dot press animates because the scroll it starts is smooth. */
+.sd-step__fill {
+  background: var(--e-navy);
+  transform: scaleX(var(--sd-progress, 0));
+  transform-origin: left center;
+}
+
+.sd-step__dot {
+  display: inline-flex;
+  position: relative;
+  z-index: 1;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--sd-edge);
+  border-radius: 999px;
+  background: var(--e-paper);
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  transition:
+    border-color 200ms var(--e-ease),
+    background-color 200ms var(--e-ease),
+    color 200ms var(--e-ease),
+    transform 220ms var(--e-ease);
+}
+
+/* 44px of tap target without a 44px dot: six of those do not fit a 320px screen,
+   and the dot has to stay small enough to read as a track. */
+.sd-step__dot::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 999px;
+}
+
+.sd-step__dot[data-state="done"] {
+  border-color: var(--e-navy);
+  color: var(--e-navy);
+}
+
+.sd-step__dot[data-state="on"] {
+  border-color: var(--e-navy);
+  background: var(--e-navy);
+  color: #fff;
+  transform: scale(1.14);
+}
+
+/* A native scroll-snap rail: swipe on a touch screen, dots on a pointer, and a
+   plain horizontal scroller without JavaScript. The browser's own direction lock
+   is why a horizontal swipe here never fights the page's vertical scroll - a
+   drag handler would have to reimplement that, badly.
+ *
+ * All six panels are in the row, so its height is the tallest of them and the
+ * card never resizes as the reader moves through. That replaced a measured
+ * min-height floor, which had to be re-measured whenever a description changed. */
+.sd-step__rail {
+  display: flex;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.sd-step__rail::-webkit-scrollbar {
+  display: none;
+}
+
+/* Exactly one panel wide, so the index is scrollLeft / clientWidth with no
+   stride arithmetic and no gap to keep in sync. */
+.sd-step__panel {
+  display: grid;
+  flex: 0 0 100%;
+  align-content: start;
+  gap: 6px;
+  scroll-snap-align: start;
+}
+
+.sd-step__name {
+  margin: 0;
+  color: var(--e-ink);
+  font-family: var(--e-tight);
+  font-size: clamp(1.16rem, 1.6vw, 1.4rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.sd-step__text {
+  max-width: 52ch;
+  margin: 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.sd-visit__lede {
+  max-width: 40ch;
+  margin: 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+.sd-visit__note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+  margin: clamp(24px, 3vw, 36px) 0 0;
+  border: 1px solid var(--e-rule);
+  border-radius: 14px;
+  background: var(--e-paper);
+  padding: clamp(16px, 2vw, 22px);
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
+.sd-visit__note > svg {
+  flex: none;
+  color: var(--e-accent);
+}
+
+.sd-visit__copy {
+  flex: 1 1 340px;
+}
+
+.sd-visit__copy strong {
+  display: block;
+  color: var(--e-ink);
+  font-family: var(--e-tight);
+  font-size: 1.04rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.sd-visit__copy p {
+  margin: 4px 0 0;
+}
+
+/* ---------- questions ---------- */
+
+.sd-faq {
+  background: var(--e-paper-2);
+}
+
+/* The head keeps its own column beside the list. A heading spanning the full
+   width above seven rows left the right half of every row empty, and the
+   answers need a measure anyway. */
+.sd-faq__shell {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  align-items: start;
+  gap: clamp(20px, 3.4vw, 56px);
+}
+
+.sd-faq__head {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+  /* The column is far shorter than the list, so it follows the reader down it
+     rather than leaving a screen of empty paper beside the last question. It
+     only sticks from 901px up, where the expanded header is 121px tall - so it
+     parks below that rather than sliding under it on a scroll up. */
+  position: sticky;
+  top: 132px;
+}
+
+.sd-faq__lede {
+  max-width: 32ch;
+  margin: 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.96rem;
+  line-height: 1.6;
+}
+
+/* A native <details> snaps open. ::details-content with interpolate-size lets
+   it glide instead, with no JavaScript and no loss of the semantics the element
+   is here for - a browser without support simply snaps, exactly as before.
+   interpolate-size inherits, so it is scoped to the list rather than :root. */
+.sd-faq__list {
+  display: grid;
+  gap: 2px;
+  interpolate-size: allow-keywords;
+}
+
+.sd-faq__item {
+  border-radius: 12px;
+  background: transparent;
+  padding-inline: clamp(12px, 1.4vw, 18px);
+  transition:
+    background-color 240ms var(--e-ease),
+    box-shadow 240ms var(--e-ease);
+}
+
+/* Hairlines between rows, not around them: a border on every item reads as a
+   stack of boxes. The rule belongs to the row below, so the open row never
+   carries one against its own rounded corner. */
+.sd-faq__item + .sd-faq__item::before {
+  content: "";
+  display: block;
+  height: 1px;
+  background: var(--e-rule-2);
+}
+
+.sd-faq__item[open] {
+  background: var(--e-paper);
+  box-shadow: 0 10px 30px rgba(16, 22, 28, 0.07);
+}
+
+.sd-faq__item[open]::before,
+.sd-faq__item[open] + .sd-faq__item::before {
+  background: transparent;
+}
+
+.sd-faq__item::details-content {
+  block-size: 0;
+  overflow: hidden;
+  transition:
+    block-size 320ms var(--e-ease),
+    content-visibility 320ms allow-discrete;
+}
+
+.sd-faq__item[open]::details-content {
+  block-size: auto;
+}
+
+.sd-faq__q {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 34px;
+  align-items: center;
+  gap: clamp(12px, 1.6vw, 18px);
+  padding-block: clamp(16px, 1.9vw, 22px);
+  color: var(--e-ink);
+  font-family: var(--e-tight);
+  font-size: clamp(1rem, 1.3vw, 1.14rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  list-style: none;
+  cursor: pointer;
+  transition: color 200ms var(--e-ease);
+}
+
+.sd-faq__q::-webkit-details-marker {
+  display: none;
+}
+
+.sd-faq__q:hover {
+  color: var(--e-accent);
+}
+
+.sd-faq__num {
+  color: var(--e-ink-2);
+  font-family: var(--e-serif);
+  font-size: 0.95rem;
+  font-variant-numeric: lining-nums tabular-nums;
+  transition: color 200ms var(--e-ease);
+}
+
+.sd-faq__item[open] .sd-faq__num {
+  color: var(--e-accent);
+}
+
+.sd-faq__sign {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--sd-edge);
+  border-radius: 999px;
+  background: var(--e-paper);
+  color: var(--e-ink);
+  transition:
+    transform 260ms var(--e-ease),
+    border-color 200ms var(--e-ease),
+    background-color 200ms var(--e-ease),
+    color 200ms var(--e-ease);
+}
+
+.sd-faq__item[open] .sd-faq__sign {
+  transform: rotate(45deg);
+  border-color: var(--e-navy);
+  background: var(--e-navy);
+  color: #fff;
+}
+
+/* The answer lines up under the question rather than under its number. */
+.sd-faq__body p {
+  max-width: 64ch;
+  margin: 0;
+  padding: 0 34px clamp(18px, 2.2vw, 24px) 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.98rem;
+  line-height: 1.7;
+}
+
+/* The way out sits after the last answer, where a reader who still has a
+   question actually is - on a phone the head is a screen and a half above. */
+.sd-faq__ask {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 24px;
+  margin: clamp(14px, 1.8vw, 20px) 0 0;
+  border-top: 1px solid var(--e-rule-2);
+  padding: clamp(16px, 2vw, 22px) clamp(12px, 1.4vw, 18px) 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.96rem;
+  line-height: 1.5;
+}
+
+/* ---------- other services ---------- */
+
+.sd-related {
+  background: var(--e-paper-2);
+}
+
+.sd-related__list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sd-related__row {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) 32px;
+  align-items: center;
+  gap: 14px;
+  height: 100%;
+  border: 1px solid var(--sd-edge);
+  border-radius: 14px;
+  background: var(--e-paper);
+  padding: 10px;
+  transition:
+    border-color 200ms var(--e-ease),
+    box-shadow 220ms var(--e-ease);
+}
+
+.sd-related__row:hover {
+  border-color: var(--e-navy);
+  box-shadow: 0 10px 26px rgba(16, 22, 28, 0.09);
+}
+
+.sd-related__media {
+  display: block;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--color-clinical);
+}
+
+.sd-related__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 520ms var(--e-ease);
+}
+
+.sd-related__row:hover .sd-related__img {
+  transform: scale(1.06);
+}
+
+.sd-related__copy {
+  display: grid;
+  gap: 3px;
+}
+
+.sd-related__cat {
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.sd-related__name {
+  color: var(--e-ink);
+  font-family: var(--e-serif);
+  font-size: 1.06rem;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.sd-related__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--sd-edge);
+  border-radius: 999px;
+  color: var(--e-ink);
+  transition:
+    border-color 200ms var(--e-ease),
+    background-color 200ms var(--e-ease),
+    transform 240ms var(--e-ease),
+    color 200ms var(--e-ease);
+}
+
+.sd-related__row:hover .sd-related__arrow {
+  border-color: var(--e-navy);
+  background: var(--e-navy);
+  color: #fff;
+  transform: translate(2px, -2px);
+}
+
+/* ---------- the action bar ---------- */
+
+/* Sticky at the bottom of <main>, never fixed: it follows the reader down the
+   page and releases at the footer, where the footer's own appointment CTA takes
+   over. That needs no spacer, and it can never sit on top of the drawer's
+   thumb-zone actions or the cookie sheet. Phones and small tablets only. */
+.sd-bar {
+  display: none;
+  position: sticky;
+  bottom: 0;
+  z-index: 4;
+  border-top: 1px solid var(--e-rule);
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  padding: 8px max(12px, env(safe-area-inset-left)) max(8px, env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-right));
+  box-shadow: 0 -8px 24px rgba(16, 22, 28, 0.1);
+  /* Off-screen it must not be tappable, and it must not trap a tab stop over
+     content the reader can see. */
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.sd-bar[data-shown] {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.sd-bar__inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sd-bar__quiet {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 88px;
+  min-height: 48px;
+  padding: 0 12px;
+  border: 1px solid var(--sd-edge);
+  border-radius: 12px;
+  color: var(--e-ink);
+  font-family: var(--e-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.sd-bar__quiet[data-urgent] {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.sd-bar__book {
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 48px;
+  border-radius: 12px;
+  background: var(--e-navy);
+  padding: 0 16px;
+  color: #fff;
+  font-family: var(--e-sans);
+  font-size: 0.94rem;
+  font-weight: 600;
+  /* One line, always. A label that breaks in two turns a 48px action into a
+     64px one and knocks the row out of alignment. */
+  white-space: nowrap;
+}
+
+/* ---------- a slug that does not exist ---------- */
+
+.sd-missing__title {
+  margin-top: 14px;
+  max-width: 18ch;
+}
+
+.sd-missing__lede {
+  max-width: 52ch;
+  margin: 16px 0 clamp(22px, 2.6vw, 30px);
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 1040px) {
+  .sd-related__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  /* The frame stops being a letterbox: at phone width a 21:9 crop is 150px tall
+     and the chips have nowhere to sit. It becomes nearly square, and the chips
+     become a scroll-snap rail with the next one peeking. */
+  .sd-frame {
+    aspect-ratio: 4 / 3;
+  }
+
+  .sd-chips {
+    display: flex;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .sd-chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sd-chip {
+    /* No floor: the rail is a flex row, so every chip already stretches to the
+       tallest of them and a min-height only adds dead space under the short ones. */
+    flex: 0 0 min(74%, 260px);
+    scroll-snap-align: start;
+  }
+
+  .sd-split {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  /* The drawing goes first: a patient recognises the part of the eye before
+     they read about it. The order sits on the wrapper, which is the grid
+     child - on the figure inside it, it did nothing, and the prose led. */
+  .sd-split__figure {
+    order: -1;
+  }
+
+  .sd-area {
+    max-width: 460px;
+  }
+
+  /* The chart leads the signs panel, then the list a thumb can reach. */
+  .sd-split--signs .sd-chart {
+    order: -1;
+  }
+
+  /* Stacked, the head is no longer a column to follow, so it stops sticking. */
+  .sd-faq__shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sd-faq__head {
+    position: static;
+    max-width: 46ch;
+  }
+
+  .sd-faq__lede {
+    max-width: none;
+  }
+
+  .sd-bar {
+    display: block;
+  }
+}
+
+@media (max-width: 760px) {
+  .sd-related__list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sd-faq__body p {
+    padding-right: 0;
+  }
+}
+
+/* Taller again below 640px, so the photograph keeps its share once the foot has
+   taken its own: at 3:2 a 390px screen left only 103px of picture, and a 320px
+   one just 36px. */
+@media (max-width: 640px) {
+  .sd-frame {
+    aspect-ratio: 5 / 6;
+  }
+
+  /* A phone hero carried twenty-one separate pieces of text before the reader
+     reached anything. These are the four that earn their place least on a small
+     screen: the two tags are how the reader got here and what the first tab
+     opens on, and Call and WhatsApp are both in the action bar that rises the
+     moment this one scrolls away - printing the branch name beside each of them
+     put "Bharuch" on the screen twice. One action, one picture, one list. */
+  .sd-frame__tags {
+    display: none;
+  }
+
+  .sd-act__quiet {
+    display: none;
+  }
+
+  .sd-act__wrap,
+  .sd-act__book,
+  .sd-act__urgent {
+    width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .sd-act__wrap,
+  .sd-act__book,
+  .sd-act__urgent {
+    width: 100%;
+  }
+
+  .sd-act__quiet {
+    flex: 1 1 42%;
+  }
+
+  /* Words on the action a reader is most likely to want, glyphs on the other
+     two: three full labels cannot share a 358px row at a 48px target. */
+  .sd-bar__quiet {
+    min-width: 52px;
+    gap: 0;
+    padding: 0;
+    font-size: 0;
+  }
+
+  .sd-bar__quiet svg {
+    width: 19px;
+    height: 19px;
+  }
+}
+
+/* Six 44px tap targets need 264px between them, and at 320px the shell is 288.
+   The card's padding is what gives: at 18px the rings overlapped by 3px and a
+   thumb near a boundary could open the wrong step. The dots never shrink. */
+@media (max-width: 360px) {
+  .sd-step {
+    padding: 14px 12px;
+  }
+
+  /* The same squeeze in the action bar: the two glyph buttons give up their
+     width so `Book appointment` keeps one line and its 48px height. */
+  .sd-bar__quiet {
+    min-width: 46px;
+  }
+
+  .sd-bar__book {
+    gap: 7px;
+    padding: 0 10px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .sd-chart .sv-scene {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .sd-chart .sv-scene__frame {
+    width: 100%;
+    height: clamp(104px, 30vw, 130px);
+  }
+}
+
+@media (max-width: 380px) {
+  .sd-act__quiet {
+    flex: 1 1 100%;
+  }
+}
+
+/* ---------- reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .sd-card__frame,
+  .sd-faq__item::details-content,
+  .sd-related__img,
+  .sd-related__arrow {
+    transition: none;
+  }
+
+  .sd-related__row:hover .sd-related__img,
+  .sd-related__row:hover .sd-related__arrow {
+    transform: none;
+  }
+
+  .sd-step__fill,
+  .sd-step__dot {
+    transition: none;
+  }
+
+  .sd-step__dot[data-state="on"] {
+    transform: none;
+  }
+
+  .sd-hero__back svg,
+  .sd-faq__sign,
+  .sd-sign,
+  .sd-sign__mark,
+  .sd-sign__mark::after {
+    transition: none;
+  }
+
+  .sd-hero__back:hover svg {
+    transform: none;
+  }
+
+  .sd-faq__item[open] .sd-faq__sign {
+    transform: rotate(45deg);
+  }
+
+  .sd-sign[data-on] .sd-sign__mark::after {
+    transform: translate(-50%, -60%) rotate(45deg) scale(1);
+  }
+}

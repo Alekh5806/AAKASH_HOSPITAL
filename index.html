@@ -8,7 +8,105 @@
       content="Aakash Eye Hospital provides cataract, LASIK, retina, glaucoma and OPD eye care across Visnagar, Ahmedabad and Bharuch."
     />
     <meta name="robots" content="index, follow, max-image-preview:large" />
-    <meta name="theme-color" content="#0C2C49" />
+    <meta name="color-scheme" content="light" />
+    <!-- White, to merge with the white header where a browser honours it. Chrome
+         for Android ignores this in dark mode and paints its own dark toolbar;
+         the header is built to sit under either. -->
+    <meta name="theme-color" content="#ffffff" />
+    <!-- The opening curtain's first frame: paper, the pupil seed, the wordmark
+         and the line, painted before any script so there is never a white
+         flash or a spinner ahead of it. AppPreloader paints the identical frame
+         on top and removes this one, resuming the wordmark's rise from this
+         clock; the inline script hides it when this session has already seen
+         the intro; the delayed animation hides it if JavaScript never runs.
+         The geometry is preloader.css's and must stay identical to it. -->
+    <style>
+      #app-intro {
+        --pl-iris: clamp(240px, 46vw, 360px);
+        --pl-lift: 4vh;
+        position: fixed;
+        inset: 0;
+        z-index: 300;
+        background: #ffffff;
+        animation: app-intro-safety 1ms linear 6s forwards;
+      }
+      @media (max-height: 520px) {
+        #app-intro {
+          --pl-iris: clamp(150px, 36vh, 240px);
+          --pl-lift: 7vh;
+        }
+      }
+      #app-intro > * {
+        position: absolute;
+        left: 50%;
+      }
+      #app-intro svg {
+        top: calc(50% - var(--pl-lift));
+        width: var(--pl-iris);
+        height: auto;
+        translate: -50% -50%;
+      }
+      #app-intro div {
+        top: calc(50% - var(--pl-lift) + var(--pl-iris) / 2 + 2px);
+        display: grid;
+        width: max-content;
+        max-width: calc(100vw - 48px);
+        justify-items: center;
+        gap: 10px;
+        translate: -50% 0;
+        text-align: center;
+      }
+      #app-intro img {
+        width: clamp(124px, 32vw, 152px);
+        height: auto;
+        opacity: 0;
+      }
+      #app-intro p {
+        margin: 0;
+        color: #4b535c;
+        font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+        font-size: clamp(0.98rem, 1.6vw, 1.08rem);
+        line-height: 1.4;
+        opacity: 0;
+      }
+      .pl-ready #app-intro img {
+        animation: app-intro-rise 420ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
+      }
+      .pl-ready #app-intro p {
+        animation: app-intro-rise 420ms cubic-bezier(0.32, 0.72, 0, 1) 100ms forwards;
+      }
+      #app-intro em {
+        color: #b81657;
+        font-style: italic;
+      }
+      .intro-seen #app-intro {
+        display: none;
+      }
+      @keyframes app-intro-rise {
+        from {
+          opacity: 0;
+          translate: 0 10px;
+        }
+        to {
+          opacity: 1;
+          translate: 0 0;
+        }
+      }
+      @keyframes app-intro-safety {
+        to {
+          visibility: hidden;
+          pointer-events: none;
+        }
+      }
+    </style>
+    <script>
+      window.__aakashIntroStart = performance.now();
+      try {
+        if (sessionStorage.getItem("aakash_intro_seen") === "true") {
+          document.documentElement.classList.add("intro-seen");
+        }
+      } catch (error) {}
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -50,6 +148,46 @@
     <title>Aakash Eye Hospital</title>
   </head>
   <body>
+    <div id="app-intro" aria-hidden="true">
+      <svg viewBox="0 0 400 400" focusable="false">
+        <circle cx="200" cy="200" r="12" fill="#06182a" />
+      </svg>
+      <div>
+        <img src="%BRAND_LOGO%" alt="" width="210" height="70" />
+        <p>%BRAND_TAGLINE_LEAD% <em>%BRAND_TAGLINE_SINCE%</em></p>
+      </div>
+      <!-- The wordmark and the line rise together once the image has decoded
+           and the serif has loaded, never in a fallback face or half-arrived;
+           the moment is stamped so React can resume the same rise. -->
+      <script>
+        (function () {
+          var html = document.documentElement;
+          var done = false;
+          function ready() {
+            if (done) return;
+            done = true;
+            html.style.setProperty(
+              "--pl-ready-at",
+              Math.round(performance.now() - window.__aakashIntroStart) + "ms"
+            );
+            html.classList.add("pl-ready");
+          }
+          var waits = [];
+          var logo = document.querySelector("#app-intro img");
+          if (logo && logo.decode) waits.push(logo.decode().catch(function () {}));
+          if (document.fonts && document.fonts.load) {
+            waits.push(
+              Promise.all([
+                document.fonts.load('400 1em "Source Serif 4"'),
+                document.fonts.load('italic 400 1em "Source Serif 4"'),
+              ]).catch(function () {})
+            );
+          }
+          Promise.all(waits).then(ready, ready);
+          setTimeout(ready, 1500);
+        })();
+      </script>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

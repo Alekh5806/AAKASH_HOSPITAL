@@ -1,7 +1,7 @@
 import { ArrowRight, ArrowUp, Clock, Mail, MessageCircle, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { branches, navigation, site } from "../lib/coreData";
-import { buildWhatsApp, cleanTel, getPrimaryBranch } from "../lib/contact";
+import { buildBranchHref, buildWhatsApp, cleanTel, getPrimaryBranch } from "../lib/contact";
 
 /* lucide-react 1.x dropped its brand icons, so the three marks the hospital
    actually links to are inlined here and keyed by `icon` in site.json. */
@@ -138,7 +138,7 @@ export default function Footer() {
               <ul>
                 {branches.items.map((branch) => (
                   <li key={branch.slug}>
-                    <Link to={`/branches?branch=${branch.slug}`}>
+                    <Link to={buildBranchHref(branch)}>
                       {branch.name}
                       {branch.isHeadquarters ? <em>Head office</em> : null}
                     </Link>

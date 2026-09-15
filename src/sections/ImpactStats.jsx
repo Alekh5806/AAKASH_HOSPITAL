@@ -3,6 +3,7 @@ import { motion, useInView, useReducedMotion } from "framer-motion";
 import { ArrowRight, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import CountUp from "../components/CountUp";
+import { buildBranchHref } from "../lib/contact";
 
 const EASE = [0.32, 0.72, 0, 1];
 
@@ -141,7 +142,7 @@ function BranchVisual({ branches, active, reduced }) {
           <Link
             className="e-impact__chip"
             data-active={index === highlighted ? "true" : "false"}
-            to={`/branches?branch=${branch.slug}`}
+            to={buildBranchHref(branch)}
           >
             <MapPin size={13} aria-hidden="true" />
             {branch.name}
@@ -164,6 +165,7 @@ function StatCard({ card, index, renderVisual, reduced }) {
   return (
     <motion.li
       className="e-impact__card"
+      data-visual={card.visual}
       ref={cardRef}
       initial={{ opacity: reduced ? 1 : 0, y: reduced ? 0 : 26 }}
       whileInView={{ opacity: 1, y: 0 }}

@@ -50,27 +50,27 @@
       "items": [
         {
           "label": "Cataract surgery",
-          "href": "/services/phaco-cataract-surgery"
+          "href": "/services/cataract-surgery"
         },
         {
-          "label": "Bladeless laser",
-          "href": "/services/bladeless-robotic-laser-surgery"
-        },
-        {
-          "label": "LASIK and Excimer",
-          "href": "/services/lasik-excimer"
+          "label": "LASIK and laser",
+          "href": "/services/lasik-refractive-surgery"
         },
         {
           "label": "Retina care",
-          "href": "/services/medical-retina"
+          "href": "/services/retina-services"
         },
         {
           "label": "Glaucoma care",
           "href": "/services/glaucoma-care"
         },
         {
+          "label": "Children's eyes",
+          "href": "/services/pediatric-eye-care"
+        },
+        {
           "label": "Eye check-up",
-          "href": "/services/general-ophthalmology-opd"
+          "href": "/services/comprehensive-eye-examination"
         }
       ]
     },

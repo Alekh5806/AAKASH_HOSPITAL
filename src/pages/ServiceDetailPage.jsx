@@ -1,61 +1,74 @@
-import {
-  ArrowUpRight,
-  CalendarDays,
-  CheckCircle2,
-  MapPin,
-  MessageCircle,
-  Phone,
-} from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { BreadcrumbJsonLd, FAQJsonLd, ServiceJsonLd } from "../components/JsonLd";
-import PageHeader from "../components/PageHeader";
 import SEO from "../components/SEO";
-import SmartImage from "../components/SmartImage";
+import ServiceActionBar from "../components/ServiceActionBar";
 import { branches } from "../lib/coreData";
-import { home } from "../lib/homeData";
-import { getServiceBySlug } from "../lib/servicesData";
-import CTASection from "../sections/CTASection";
-import FAQ from "../sections/FAQ";
+import { BRANCH_CHANGE_EVENT, getStoredBranch } from "../lib/contact";
+import {
+  getNumberedServices,
+  getPartForService,
+  getRelatedServices,
+  getServiceBySlug,
+  serviceDetail,
+  servicePage,
+} from "../lib/servicesData";
+import ServiceEmergency from "../sections/ServiceEmergency";
+import ServiceExplore from "../sections/ServiceExplore";
+import ServiceFaq from "../sections/ServiceFaq";
+import ServiceHero from "../sections/ServiceHero";
+import ServiceRelated from "../sections/ServiceRelated";
+import ServiceVisit from "../sections/ServiceVisit";
 
-function cleanTel(number) {
-  return number.startsWith("+") ? number.replace(/[^\d+]/g, "") : number.replace(/\D/g, "");
-}
-
-function getPrimaryPhone(branch) {
-  return (
-    branch.phoneGroups.find((group) => group.label.toLowerCase().includes("opd"))?.numbers[0] ??
-    branch.phoneGroups[0]?.numbers[0] ??
-    ""
-  );
-}
-
+/* One service, in five short blocks: what it is (a hero), everything about it
+ * (one card the reader explores), what a visit looks like, what they still want
+ * to ask, and the way on.
+ *
+ * The build before this one gave each of those its own full-width band and ran
+ * to eight screens on a phone. Most people open a hospital website on a phone,
+ * often on the way in, so the detail now lives in a tabbed card instead of a
+ * stack of sections, and the actions follow the reader down the screen.
+ *
+ * Emergency Eye Care keeps the same shape with two changes: the hero leads with
+ * the helpline, and the urgent band from the index page replaces the visit band
+ * - six steps that all begin with booking are the wrong answer there. */
 export default function ServiceDetailPage() {
   const { slug } = useParams();
+  const heroActionsRef = useRef(null);
   const service = getServiceBySlug(slug);
-  const primaryBranch = branches.items.find((branch) => branch.isHeadquarters) ?? branches.items[0];
-  const primaryPhone = primaryBranch ? getPrimaryPhone(primaryBranch) : "";
+  /* The hospital the reader picked in the header, so the number this page
+     offers is never a different one from the number at the top of the screen -
+     including when they change it while they are still reading. */
+  const [branch, setBranch] = useState(() => getStoredBranch(branches.items));
+
+  useEffect(() => {
+    const sync = () => setBranch(getStoredBranch(branches.items));
+    window.addEventListener(BRANCH_CHANGE_EVENT, sync);
+    return () => window.removeEventListener(BRANCH_CHANGE_EVENT, sync);
+  }, []);
+
+  const part = useMemo(() => (service ? getPartForService(service.slug) : null), [service]);
+  const related = useMemo(() => (service ? getRelatedServices(service.slug) : []), [service]);
+  const isUrgent = service?.category === "urgent";
 
   if (!service) {
+    const { notFound } = serviceDetail;
     return (
       <>
         <SEO
-          meta={{
-            title: "Service Not Found | Aakash Eye Hospital",
-            description: "This service could not be found.",
-          }}
+          meta={{ title: "Service not found | Aakash Eye Hospital", description: notFound.lede }}
         />
-        <PageHeader
-          eyebrow="Service"
-          title="Service not found"
-          description="The service you are looking for is not available in the current content."
-        />
-        <section className="section">
-          <div className="container">
-            <Link className="text-link" to="/services">
-              Back to services
+        <section className="e-sec sd-missing">
+          <div className="e-shell">
+            <span className="sd-label">{notFound.label}</span>
+            <h1 className="e-h1 sd-missing__title">{notFound.title}</h1>
+            <p className="e-lede sd-missing__lede">{notFound.lede}</p>
+            <Link className="e-btn" to="/services">
+              {notFound.ctaLabel}
             </Link>
           </div>
         </section>
+        <ServiceRelated items={getNumberedServices()} title={servicePage.index.title} />
       </>
     );
   }
@@ -72,90 +85,29 @@ export default function ServiceDetailPage() {
       />
       <ServiceJsonLd service={service} />
       <FAQJsonLd items={service.faq} />
-      <PageHeader eyebrow="Service" title={service.title} description={service.shortDescription} />
-      <section className="section service-detail">
-        <div className="container service-detail__grid">
-          <div className="service-detail__media">
-            <SmartImage
-              src={service.image}
-              alt={service.imageAlt}
-              className="service-detail__image"
-            />
-            <div className="service-detail__summary">
-              <span>Care pathway</span>
-              <strong>Consultation first, treatment after suitability confirmation.</strong>
-            </div>
-          </div>
-          <div className="service-detail__copy">
-            <span className="eyebrow">Service overview</span>
-            <h2>What this care pathway includes</h2>
-            {service.longDescription.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-            <div className="service-detail__actions">
-              <Link to="/appointment">
-                <CalendarDays size={18} aria-hidden="true" />
-                Book appointment
-              </Link>
-              <a
-                href={`https://wa.me/${primaryBranch.whatsappNumber}?text=${encodeURIComponent(
-                  `Hello Aakash Eye Hospital, I would like to ask about ${service.title}.`,
-                )}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <MessageCircle size={18} aria-hidden="true" />
-                WhatsApp
-              </a>
-              {primaryPhone ? (
-                <a href={`tel:${cleanTel(primaryPhone)}`}>
-                  <Phone size={18} aria-hidden="true" />
-                  Call OPD
-                </a>
-              ) : null}
-            </div>
-          </div>
-        </div>
-      </section>
 
-      <section className="section service-detail-highlights">
-        <div className="container">
-          <div className="service-detail-head">
-            <span className="eyebrow">Highlights</span>
-            <h2>What patients should know</h2>
-            <p>Key points to discuss with the care team before planning the next step.</p>
-          </div>
-          <ul className="feature-list">
-            {service.featureBullets.map((feature) => (
-              <li key={feature}>
-                <CheckCircle2 size={19} aria-hidden="true" />
-                <span>{feature}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      <ServiceHero
+        service={service}
+        part={part}
+        branch={branch}
+        urgent={isUrgent}
+        actionsRef={heroActionsRef}
+      />
 
-      <section className="section service-detail-branches">
-        <div className="container service-detail-branch-panel">
-          <div>
-            <span className="eyebrow">Branch guidance</span>
-            <h2>Confirm availability before visiting</h2>
-            <p>
-              Service availability and doctor timing can vary by branch. Share your concern with the
-              appointment desk so the team can guide you to the right location.
-            </p>
-          </div>
-          <Link to="/branches">
-            <MapPin size={18} aria-hidden="true" />
-            View branches
-            <ArrowUpRight size={16} aria-hidden="true" />
-          </Link>
-        </div>
-      </section>
+      <ServiceExplore service={service} />
 
-      <FAQ items={service.faq} title={`${service.title} questions`} />
-      <CTASection cta={home.cta} />
+      {isUrgent ? <ServiceEmergency showMore={false} /> : <ServiceVisit branch={branch} />}
+
+      <ServiceFaq items={service.faq} />
+
+      <ServiceRelated items={related} />
+
+      <ServiceActionBar
+        service={service}
+        branch={branch}
+        urgent={isUrgent}
+        anchorRef={heroActionsRef}
+      />
     </>
   );
 }

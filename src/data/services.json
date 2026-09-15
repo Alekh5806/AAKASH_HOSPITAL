@@ -3,121 +3,504 @@
     "title": "Eye Care Services | Aakash Eye Hospital",
     "description": "Explore cataract surgery, LASIK, medical retina, glaucoma, OPD and bladeless robotic laser eye care at Aakash Eye Hospital in Gujarat."
   },
-  "items": [
-    {
-      "id": "bladeless-robotic-laser-surgery",
-      "slug": "bladeless-robotic-laser-surgery",
-      "title": "Bladeless Robotic Laser Surgery",
-      "shortDescription": "Bladeless LASIK and bladeless cataract care designed for precision, safety and faster recovery.",
-      "longDescription": [
-        "Aakash Eye Hospital highlights bladeless robotic laser surgery for perfect vision, highest safety, faster recovery and 100% precision.",
-        "The service includes bladeless LASIK and bladeless cataract pathways supported by modern diagnostic planning."
-      ],
-      "icon": "ScanEye",
-      "image": "/assets/media/gallery/bladeless-facility.jpg",
-      "imageAlt": "Bladeless laser surgery facility visual",
-      "featureBullets": [
-        "Bladeless LASIK and bladeless cataract options",
-        "Precision-focused treatment planning",
-        "Faster recovery and patient safety emphasis",
-        "Advanced technology-led workflow"
-      ],
-      "faq": [
+  "page": {
+    "eyebrow": "Services",
+    "title": "You don't need the",
+    "titleAccent": "medical word for it.",
+    "lede": "Tell us what you are noticing, or open any service by name. Every service page explains what it is, how it is assessed and what happens at each step.",
+    "stampLabel": "At a glance",
+    "availabilityNote": "Availability of individual services and procedures varies between branches. Our team confirms the right location for you when you book.",
+    "categories": [
+      {
+        "id": "surgical",
+        "label": "Surgical care"
+      },
+      {
+        "id": "specialty",
+        "label": "Specialty clinics"
+      },
+      {
+        "id": "children",
+        "label": "Children and squint"
+      },
+      {
+        "id": "everyday",
+        "label": "Everyday care"
+      },
+      {
+        "id": "urgent",
+        "label": "Urgent"
+      }
+    ],
+    "finder": {
+      "label": "Step one",
+      "title": "Find your service",
+      "lede": "Three ways into the same list. Pick whichever feels natural - the list below narrows as you choose.",
+      "restingTitle": "Not sure what to pick?",
+      "restingText": "A comprehensive eye examination is the right starting point for any concern. The doctor examines your eyes and guides you to the correct service from there.",
+      "restingCtaLabel": "Go to eye examination",
+      "resultLabel": "Usually handled by",
+      "fallbackService": "comprehensive-eye-examination",
+      "note": "These suggestions are a starting point, not a diagnosis. The right assessment is decided by your doctor after examination.",
+      "concerns": [
         {
-          "question": "Is bladeless laser surgery available for every patient?",
-          "answer": "Suitability depends on eye health, corneal measurements and the doctor's examination. The team confirms eligibility after diagnostics."
+          "label": "My vision is blurred or hazy",
+          "service": "cataract-surgery",
+          "visual": "haze",
+          "group": "see"
         },
         {
-          "question": "Which branch should I contact for laser surgery?",
-          "answer": "LASIK numbers are listed for Visnagar and Ahmedabad. Bharuch patients can contact the local branch for guidance."
+          "label": "Glare or halos around lights",
+          "service": "cataract-surgery",
+          "visual": "glare",
+          "group": "see"
+        },
+        {
+          "label": "I want to reduce my dependence on glasses",
+          "service": "lasik-refractive-surgery",
+          "visual": "blur",
+          "group": "see"
+        },
+        {
+          "label": "I have diabetes",
+          "service": "retina-services",
+          "visual": "spots",
+          "group": "health"
+        },
+        {
+          "label": "Flashes, floaters or a shadow in my vision",
+          "service": "retina-services",
+          "visual": "floaters",
+          "group": "see"
+        },
+        {
+          "label": "Someone in my family has glaucoma",
+          "service": "glaucoma-care",
+          "visual": "tunnel",
+          "group": "health"
+        },
+        {
+          "label": "Watering, drooping or a lump on my eyelid",
+          "service": "oculoplasty",
+          "visual": "droop",
+          "group": "health"
+        },
+        {
+          "label": "My child needs an eye check",
+          "service": "pediatric-eye-care",
+          "visual": "clear",
+          "group": "child"
+        },
+        {
+          "label": "My child's spectacle number keeps rising",
+          "service": "myopia-clinic",
+          "visual": "blur",
+          "group": "child"
+        },
+        {
+          "label": "My child's eye turns inward or outward",
+          "service": "squint-services",
+          "visual": "double",
+          "group": "child"
+        },
+        {
+          "label": "I just want a routine check-up",
+          "service": "comprehensive-eye-examination",
+          "visual": "clear",
+          "group": "everyday"
+        },
+        {
+          "label": "I need new spectacles",
+          "service": "optical-services",
+          "visual": "blur",
+          "group": "everyday"
+        },
+        {
+          "label": "Sudden pain, injury or loss of vision",
+          "service": "emergency-eye-care",
+          "visual": "dark",
+          "group": "health"
         }
       ],
-      "seo": {
-        "title": "Bladeless Robotic Laser Surgery | Aakash Eye Hospital",
-        "description": "Bladeless LASIK and bladeless cataract laser surgery pathways at Aakash Eye Hospital for suitable patients."
+      "ctaLabel": "Find the right service",
+      "modes": [
+        {
+          "id": "notice",
+          "label": "What you have noticed",
+          "shortLabel": "Symptoms"
+        },
+        {
+          "id": "part",
+          "label": "Where it is in the eye",
+          "shortLabel": "Eye part"
+        },
+        {
+          "id": "kind",
+          "label": "By kind of care",
+          "shortLabel": "Care type"
+        }
+      ],
+      "partsLede": "Point at the part of the eye you are asking about.",
+      "partsHint": "Tap a part of the diagram, or pick from the list.",
+      "partsResultLabel": "Care for this part",
+      "parts": [
+        {
+          "id": "front",
+          "label": "Front window",
+          "hint": "The clear dome at the very front, and the surface that waters or reddens.",
+          "services": ["lasik-refractive-surgery", "comprehensive-eye-examination"]
+        },
+        {
+          "id": "lens",
+          "label": "The lens",
+          "hint": "Sits just behind the pupil and focuses light. It clouds with age.",
+          "services": ["cataract-surgery"]
+        },
+        {
+          "id": "retina",
+          "label": "The retina",
+          "hint": "The light-sensitive lining at the back, including the macula.",
+          "services": ["retina-services"]
+        },
+        {
+          "id": "nerve",
+          "label": "The optic nerve",
+          "hint": "Carries what you see to the brain. Damage here is usually silent at first.",
+          "services": ["glaucoma-care"]
+        },
+        {
+          "id": "lids",
+          "label": "Eyelids and tear ducts",
+          "hint": "Lids, lashes, lumps and the passages that drain tears.",
+          "services": ["oculoplasty"]
+        },
+        {
+          "id": "muscles",
+          "label": "Eye alignment",
+          "hint": "The muscles that aim both eyes at the same place.",
+          "services": ["squint-services", "pediatric-eye-care"]
+        },
+        {
+          "id": "power",
+          "label": "Focusing power",
+          "hint": "How strong a spectacle number the eye needs, and how it changes.",
+          "services": ["myopia-clinic", "optical-services"]
+        }
+      ],
+      "kindLede": "Choose the kind of care you are looking for.",
+      "status": {
+        "all": "Showing all {total} services",
+        "filtered": "Showing {count} of {total}",
+        "clear": "Clear",
+        "emptyTitle": "Nothing matches that yet",
+        "emptyText": "Clear the filter to see all services, or start with a comprehensive eye examination."
       },
-      "quickLabel": "Bladeless Laser"
+      "groups": [
+        {
+          "id": "see",
+          "label": "What you see"
+        },
+        {
+          "id": "health",
+          "label": "Your eyes and health"
+        },
+        {
+          "id": "child",
+          "label": "For your child"
+        },
+        {
+          "id": "everyday",
+          "label": "Everyday"
+        }
+      ],
+      "sceneLabel": "How it can look",
+      "sceneHint": "Hover or tap a description to see how people often describe it.",
+      "sceneHintTouch": "Tap a description to see how people often describe it.",
+      "sceneClear": "Clear vision"
     },
+    "index": {
+      "label": "All services",
+      "title": "What we treat",
+      "lede": "Open a service for what it involves, what to expect and the questions patients ask most.",
+      "filterLabel": "Filter by kind of care",
+      "allLabel": "All",
+      "openLabel": "Open",
+      "emptyLabel": "No services in this group."
+    },
+    "detail": {
+      "backLabel": "All services",
+      "bookLabel": "Book appointment",
+      "callLabel": "Call",
+      "whatsappLabel": "WhatsApp",
+      "whatsappMessage": "Hello Aakash Eye Hospital, I would like to ask about {service}.",
+      "barLabel": "Quick actions",
+      "hero": {
+        "areaLabel": "Area of the eye",
+        "includedLabel": "Included in this care",
+        "includedNote": "Discussed at your consultation and confirmed after examination."
+      },
+      "tabs": {
+        "overview": "Overview",
+        "causes": "Why it happens",
+        "symptoms": "Signs to notice"
+      },
+      "symptomsHint": "Tap a sign to see how people often describe it.",
+      "symptomsNote": "These descriptions are a starting point, not a diagnosis. Your doctor decides after examination.",
+      "visit": {
+        "label": "Your visit",
+        "title": "What happens when you come in",
+        "lede": "Every service here follows the same six steps. Swipe or tap a step to see what it involves.",
+        "stepLabel": "Step",
+        "availabilityTitle": "Confirm availability before you travel"
+      },
+      "questions": {
+        "label": "Questions",
+        "title": "Questions patients ask",
+        "lede": "What the team is asked most often about this service.",
+        "askLabel": "Still not sure about something?",
+        "ctaLabel": "Ask us directly"
+      },
+      "related": {
+        "label": "Keep looking",
+        "title": "Other services",
+        "ctaLabel": "See all {count}"
+      },
+      "notFound": {
+        "label": "Service",
+        "title": "We could not find that service",
+        "lede": "The link may be out of date. These are the services offered at Aakash Eye Hospital.",
+        "ctaLabel": "All services"
+      }
+    },
+    "pathway": {
+      "label": "How care works here",
+      "title": "The same six steps, whichever service you need.",
+      "steps": [
+        {
+          "kicker": "01",
+          "title": "Examination",
+          "description": "Vision, refraction and a detailed eye examination."
+        },
+        {
+          "kicker": "02",
+          "title": "Investigations",
+          "description": "Imaging or specialised tests only where clinically required."
+        },
+        {
+          "kicker": "03",
+          "title": "Consultation",
+          "description": "Findings explained, along with what they mean for you."
+        },
+        {
+          "kicker": "04",
+          "title": "Treatment plan",
+          "description": "Suitable options discussed with benefits and limitations."
+        },
+        {
+          "kicker": "05",
+          "title": "Treatment",
+          "description": "Medical, laser or surgical care as appropriate."
+        },
+        {
+          "kicker": "06",
+          "title": "Follow-up",
+          "description": "Review schedule set before you leave."
+        }
+      ]
+    },
+    "emergency": {
+      "label": "Emergency eye care",
+      "title": "Some eye conditions require urgent evaluation.",
+      "immediateLabel": "Chemical exposure - immediate action",
+      "immediateText": "If a chemical enters the eye, begin flushing the eye immediately with plenty of clean water and seek urgent medical attention. Do not delay irrigation while arranging transport or contacting the hospital.",
+      "signsLabel": "Seek prompt eye care for",
+      "signs": [
+        "Sudden loss or reduction of vision",
+        "Eye injury",
+        "Chemical exposure",
+        "Severe eye pain",
+        "Sudden onset of flashes or many new floaters",
+        "Curtain-like shadow in vision",
+        "Severe redness associated with pain",
+        "Sudden postoperative pain or reduction in vision",
+        "Foreign-body or penetrating injury"
+      ],
+      "ctaLabel": "Call now",
+      "ctaHref": "/contact",
+      "serviceSlug": "emergency-eye-care",
+      "secondaryLabel": "More about emergency eye care",
+      "lede": "If any of these apply, contact the hospital now rather than waiting for an appointment.",
+      "callHint": "The team will tell you where to go and what to do on the way."
+    }
+  },
+  "items": [
     {
-      "id": "phaco-cataract-surgery",
-      "slug": "phaco-cataract-surgery",
-      "title": "Phaco Cataract Surgery",
-      "shortDescription": "Modern cataract removal with phacoemulsification and intraocular lens implantation.",
+      "id": "cataract-surgery",
+      "slug": "cataract-surgery",
+      "title": "Cataract Surgery",
+      "shortDescription": "Clearer vision begins with the right diagnosis, the right lens plan, and the right surgery for you.",
       "longDescription": [
         "Cataract is the clouding of the natural crystalline lens, commonly associated with ageing. Surgery is the only known effective treatment for cataract removal.",
         "At Aakash Eye Hospital, cataract surgery is focused on removing the cloudy natural lens and replacing it with an intraocular lens. Phacoemulsification with IOL implantation is the core technique used at the center."
       ],
       "icon": "Eye",
-      "image": "/assets/media/gallery/facility-1.jpg",
-      "imageAlt": "Aakash Eye Hospital facility for cataract care",
+      "image": "/assets/media/conditions/cataract-slit-lamp-pexels-6749706.jpg",
+      "thumb": "/assets/media/services/cataract-surgery-thumb.jpg",
+      "imageAlt": "Slit lamp examination for cataract assessment",
       "featureBullets": [
-        "Phaco cataract surgery available since 1995",
-        "Outpatient day-care approach for suitable cases",
-        "IOL power calculation support with advanced diagnostics",
-        "Options may include monofocal, toric and multifocal IOLs after consultation"
+        "Phacoemulsification with intraocular lens implantation",
+        "Bladeless femtosecond-assisted steps where suitable",
+        "IOL power calculation supported by advanced diagnostics",
+        "Monofocal, toric and multifocal IOLs discussed after examination"
       ],
       "faq": [
         {
-          "question": "Does cataract surgery require admission?",
-          "answer": "Legacy content describes cataract surgery as an outpatient day-care procedure for suitable cases, usually with a short hospital stay."
+          "question": "Does cataract surgery need admission?",
+          "answer": "For suitable cases it is a day-care procedure: you come in, have the surgery and go home the same day. The team tells you beforehand if your case needs anything more."
         },
         {
-          "question": "Can normal activity resume after surgery?",
-          "answer": "Post-operative activity depends on the doctor's advice. The legacy content states that many patients resume normal work quickly while continuing eye drops."
+          "question": "Is the surgery painful?",
+          "answer": "The eye is numbed before the procedure, so it is not painful. You may feel light pressure and see moving lights, and the team talks you through what is happening."
+        },
+        {
+          "question": "Can both eyes be done on the same day?",
+          "answer": "Cataract surgery is usually planned one eye at a time. Your surgeon advises the gap before the second eye based on how the first one settles."
+        },
+        {
+          "question": "Which lens will be put in my eye?",
+          "answer": "Monofocal, toric and multifocal intraocular lenses are all discussed with you after the examination and the lens power measurements. The right one depends on your eye and on how you use your vision."
+        },
+        {
+          "question": "Will I still need glasses afterwards?",
+          "answer": "That depends on the lens chosen and on your eyes. Many people still use glasses for some tasks, most often for reading, and the doctor explains what to expect before you decide."
+        },
+        {
+          "question": "When can I go back to normal activity?",
+          "answer": "Most people return to routine work quickly while continuing the prescribed drops. Your own schedule comes from the doctor at the follow-up, and it is worth planning for that visit before the day of surgery."
+        },
+        {
+          "question": "What should I bring on the day?",
+          "answer": "Your previous case file, your current glasses, a list of the medicines you take, and someone to travel home with you."
         }
       ],
       "seo": {
-        "title": "Phaco Cataract Surgery | Aakash Eye Hospital",
-        "description": "Phaco cataract surgery with phacoemulsification and IOL implantation at Aakash Eye Hospital in Gujarat."
+        "title": "Cataract Surgery | Aakash Eye Hospital",
+        "description": "Phacoemulsification cataract surgery with intraocular lens implantation at Aakash Eye Hospital, Gujarat."
       },
-      "quickLabel": "Cataract"
+      "quickLabel": "Cataract",
+      "category": "surgical",
+      "causes": [
+        "Ageing is the most common reason the natural lens turns cloudy.",
+        "Diabetes, long-term steroid use and an old eye injury can bring it on earlier.",
+        "Smoking and years of strong sunlight are contributing factors."
+      ],
+      "symptoms": [
+        {
+          "text": "Cloudy, dim or misty vision",
+          "visual": "haze"
+        },
+        {
+          "text": "Glare or halos around lights at night",
+          "visual": "glare"
+        },
+        {
+          "text": "Colours look faded or yellowed",
+          "visual": "blur"
+        },
+        {
+          "text": "The spectacle number changes often",
+          "visual": "blur"
+        }
+      ]
     },
     {
-      "id": "lasik-excimer",
-      "slug": "lasik-excimer",
-      "title": "LASIK / Excimer",
-      "shortDescription": "Laser vision correction for reducing dependence on glasses or contact lenses.",
+      "id": "lasik-refractive-surgery",
+      "slug": "lasik-refractive-surgery",
+      "title": "LASIK & Refractive Surgery",
+      "shortDescription": "Freedom from glasses begins with finding out which procedure - if any - is right for your eyes.",
       "longDescription": [
         "LASIK is a surgical procedure for permanent removal or reduction of dependence on glasses and contact lenses.",
         "The legacy site describes the I Look Laser Vision Center at Aakash Eye Hospital as equipped with VISX STAR S4 IR technology, Wavescan aberrometer, pachymeter and topography support."
       ],
       "icon": "Sparkles",
-      "image": "/assets/media/stock/closeup-eye-pexels-andrea-bova-2953811.jpg",
-      "imageAlt": "Close-up eye visual for laser vision correction",
+      "image": "/assets/media/gallery/bladeless-facility.jpg",
+      "thumb": "/assets/media/services/lasik-refractive-surgery-thumb.jpg",
+      "imageAlt": "Laser surgery suite at Aakash Eye Hospital",
       "featureBullets": [
-        "Excimer laser added in 2009",
-        "Wavefront-guided diagnostic planning described by the legacy site",
-        "Outpatient workflow for suitable laser cases",
-        "ICL and refractive lens exchange may be discussed for higher refractive errors"
+        "Excimer laser vision correction, available since 2009",
+        "Bladeless robotic laser flap creation where suitable",
+        "Wavefront-guided diagnostic planning",
+        "ICL and refractive lens exchange discussed for higher powers"
       ],
       "faq": [
         {
-          "question": "Can both eyes be treated together?",
-          "answer": "The legacy LASIK content states that both eyes are commonly treated at the same time for suitable candidates."
+          "question": "How do I know whether LASIK will suit me?",
+          "answer": "Suitability is decided by tests, not by the spectacle number alone. Corneal thickness, corneal shape, the stability of your number and the general health of the eye all go into it."
         },
         {
-          "question": "What if LASIK is not suitable?",
-          "answer": "The doctor may discuss alternatives such as ICL or refractive lens exchange depending on eye measurements and refractive error."
+          "question": "Can both eyes be treated together?",
+          "answer": "Both eyes are commonly treated in the same session for suitable candidates. Your surgeon confirms this after the assessment."
+        },
+        {
+          "question": "Is the procedure painful?",
+          "answer": "Numbing drops are used, so the procedure itself is not painful. You will feel pressure for a short part of it."
+        },
+        {
+          "question": "What if LASIK is not suitable for me?",
+          "answer": "There are other routes. ICL and refractive lens exchange are discussed where the measurements or the refractive error make laser correction unsuitable."
+        },
+        {
+          "question": "When can I use screens and go back to work?",
+          "answer": "The doctor gives you a schedule for screens, driving and work at the follow-up, along with the drops and the protection to use in between."
+        },
+        {
+          "question": "Will the number come back later?",
+          "answer": "Laser correction treats the number you have now. The eye still ages, so reading glasses are usually needed at some stage regardless of the surgery."
+        },
+        {
+          "question": "Do I need someone to come with me?",
+          "answer": "Yes. Your vision will be settling afterwards, so arrange for someone to take you home."
         }
       ],
       "seo": {
-        "title": "LASIK and Excimer Laser | Aakash Eye Hospital",
-        "description": "LASIK and Excimer laser vision correction services at Aakash Eye Hospital for reducing dependence on glasses."
+        "title": "LASIK & Refractive Surgery | Aakash Eye Hospital",
+        "description": "LASIK, bladeless robotic laser and refractive surgery options at Aakash Eye Hospital for suitable patients."
       },
-      "quickLabel": "LASIK"
+      "quickLabel": "LASIK",
+      "category": "surgical",
+      "causes": [
+        "The eye focuses light in front of or behind the retina instead of on it.",
+        "The curve of the cornea and the length of the eye decide the number.",
+        "Most refractive errors settle by the early twenties, which is when surgery is considered."
+      ],
+      "symptoms": [
+        {
+          "text": "Distant things look blurred without glasses",
+          "visual": "blur"
+        },
+        {
+          "text": "Eye strain or headaches after screen work",
+          "visual": "haze"
+        },
+        {
+          "text": "Daily dependence on glasses or contact lenses",
+          "visual": "blur"
+        }
+      ]
     },
     {
-      "id": "medical-retina",
-      "slug": "medical-retina",
-      "title": "Medical Retina",
-      "shortDescription": "Retina diagnostics and care supported by OCT, Green Laser and FFA.",
+      "id": "retina-services",
+      "slug": "retina-services",
+      "title": "Retina Services",
+      "shortDescription": "Specialist care for diseases affecting the retina, macula and vitreous.",
       "longDescription": [
         "Aakash Eye Hospital expanded medical retina capabilities in 2011 with OCT, Green Laser and FFA.",
         "The service supports diagnosis and care planning for retina conditions requiring imaging and laser-based treatment pathways."
       ],
       "icon": "Activity",
-      "image": "/assets/media/stock/vision-consult-pexels-ai25studio-6749756.jpg",
-      "imageAlt": "Eye consultation visual for retina care",
+      "image": "/assets/media/conditions/retina-imaging-pexels-5765827.jpg",
+      "thumb": "/assets/media/services/retina-services-thumb.jpg",
+      "imageAlt": "Retinal imaging during an eye examination",
       "featureBullets": [
         "OCT imaging support",
         "Green Laser availability",
@@ -126,32 +509,73 @@
       ],
       "faq": [
         {
-          "question": "What tests are used for retina care?",
-          "answer": "The legacy history lists OCT, Green Laser and FFA as part of Aakash Eye Hospital's retina capabilities."
+          "question": "Why do my eyes need to be dilated?",
+          "answer": "Drops widen the pupil so the whole retina can be examined, not just the centre. Your vision stays blurred and light-sensitive for a few hours afterwards, so bring sunglasses and someone to travel with you."
         },
         {
-          "question": "Do all retina visits require imaging?",
-          "answer": "Imaging depends on the eye examination and the doctor's treatment plan."
+          "question": "I have diabetes. How often should my retina be checked?",
+          "answer": "A retina examination is advised at least once a year, and more often if changes are already present. Your doctor sets the interval after looking at your eyes."
+        },
+        {
+          "question": "What is an OCT scan?",
+          "answer": "A quick scan that photographs the layers of the retina. Nothing touches the eye and it takes a few minutes."
+        },
+        {
+          "question": "Are the injections into the eye painful?",
+          "answer": "The eye is numbed first. The injection itself takes moments, and the team explains the aftercare before you leave."
+        },
+        {
+          "question": "Will my vision come back after treatment?",
+          "answer": "That depends on the condition and on how early it is treated. Treatment often aims to protect the vision you have, and the doctor explains what is realistic for your eyes."
+        },
+        {
+          "question": "Are flashes and floaters serious?",
+          "answer": "A few floaters are common with age. A sudden shower of new floaters, flashes of light or a shadow across your sight needs to be checked urgently."
         }
       ],
       "seo": {
-        "title": "Medical Retina Care | Aakash Eye Hospital",
-        "description": "Medical retina diagnosis and treatment planning with OCT, Green Laser and FFA support at Aakash Eye Hospital."
+        "title": "Retina Services | Aakash Eye Hospital",
+        "description": "Medical retina care with OCT, FFA and laser support at Aakash Eye Hospital, Gujarat."
       },
-      "quickLabel": "Retina"
+      "quickLabel": "Retina",
+      "category": "specialty",
+      "causes": [
+        "Diabetes damages the small blood vessels of the retina over time.",
+        "Ageing changes at the macula affect the centre of vision.",
+        "High myopia, high blood pressure and injury all raise the risk."
+      ],
+      "symptoms": [
+        {
+          "text": "Floaters, flashes or a shadow across your sight",
+          "visual": "floaters"
+        },
+        {
+          "text": "Straight lines look bent or wavy",
+          "visual": "double"
+        },
+        {
+          "text": "A dark or empty patch in the centre of vision",
+          "visual": "spots"
+        },
+        {
+          "text": "Vision that drops suddenly",
+          "visual": "dark"
+        }
+      ]
     },
     {
       "id": "glaucoma-care",
       "slug": "glaucoma-care",
-      "title": "Glaucoma Care",
-      "shortDescription": "Evaluation and treatment planning for glaucoma, with a mission to prevent avoidable blindness.",
+      "title": "Comprehensive Glaucoma Care",
+      "shortDescription": "Protecting vision through early detection and long-term monitoring.",
       "longDescription": [
         "Glaucoma is a disease where pressure inside the eye can damage the nerve fibers forming the optic nerve.",
         "Aakash Eye Hospital's legacy glaucoma content describes detailed investigation with applanation tonometry, perimetry, GCC and RNFL analysis with OCT, optic disc photography and fundus camera support."
       ],
       "icon": "Gauge",
-      "image": "/assets/media/gallery/facility-4.jpg",
-      "imageAlt": "Diagnostic care area for glaucoma evaluation",
+      "image": "/assets/media/conditions/glaucoma-screening-pexels-5766215.jpg",
+      "thumb": "/assets/media/services/glaucoma-care-thumb.jpg",
+      "imageAlt": "Eye pressure screening for glaucoma",
       "featureBullets": [
         "Pressure and optic nerve evaluation",
         "Perimetry and OCT-supported analysis",
@@ -160,53 +584,566 @@
       ],
       "faq": [
         {
-          "question": "Who is at higher risk of glaucoma?",
-          "answer": "The legacy content lists family history, high myopia, high blood pressure, diabetes, long-term steroid use and past eye injuries as risk factors."
+          "question": "Can glaucoma be cured?",
+          "answer": "Glaucoma is controlled rather than cured. Treatment aims to stop further damage to the optic nerve, which is why it continues long term."
         },
         {
-          "question": "Can glaucoma be silent?",
-          "answer": "Yes. The legacy content calls glaucoma a silent blinding disease, so routine evaluation matters for high-risk patients."
+          "question": "Does glaucoma have symptoms?",
+          "answer": "Usually none in the early years, which is exactly why it is found on examination rather than by how the eye feels. Some types do cause pain, redness and halos, and those need urgent care."
+        },
+        {
+          "question": "Who is at higher risk?",
+          "answer": "A family history of glaucoma, a high spectacle number, diabetes, high blood pressure, long-term steroid use and a past eye injury all raise the risk."
+        },
+        {
+          "question": "Will I lose my sight?",
+          "answer": "Most people who are found early and treated regularly keep useful vision for life. Missing reviews and stopping drops are what put sight at risk."
+        },
+        {
+          "question": "Why do I need a field test every few months?",
+          "answer": "The field test is how the doctor sees whether the damage is progressing. One reading means little; the pattern over time is what guides treatment."
+        },
+        {
+          "question": "Do I have to use the drops for life?",
+          "answer": "Usually yes, and at the same time each day. Do not stop or change them without asking the doctor, even if the eye feels completely normal."
+        },
+        {
+          "question": "My parent has glaucoma. When should I be checked?",
+          "answer": "Earlier than someone without that history, and then at the interval the doctor advises. Mention the family history when you book."
         }
       ],
       "seo": {
-        "title": "Glaucoma Care | Aakash Eye Hospital",
-        "description": "Glaucoma evaluation, pressure checks and treatment planning at Aakash Eye Hospital in Gujarat."
+        "title": "Comprehensive Glaucoma Care | Aakash Eye Hospital",
+        "description": "Glaucoma screening, pressure monitoring, perimetry and long-term care at Aakash Eye Hospital."
       },
-      "quickLabel": "Glaucoma"
+      "quickLabel": "Glaucoma",
+      "category": "specialty",
+      "causes": [
+        "Pressure inside the eye damages the optic nerve, usually very slowly.",
+        "A family history of glaucoma raises the risk considerably.",
+        "Age, a high spectacle number and some long-term medicines also contribute."
+      ],
+      "symptoms": [
+        {
+          "text": "Usually nothing at all in the early years",
+          "visual": "clear"
+        },
+        {
+          "text": "Side vision narrowing without you noticing",
+          "visual": "tunnel"
+        },
+        {
+          "text": "Trouble adjusting to dim light",
+          "visual": "dark"
+        },
+        {
+          "text": "Pain with redness and halos needs urgent care",
+          "visual": "glare"
+        }
+      ]
     },
     {
-      "id": "general-ophthalmology-opd",
-      "slug": "general-ophthalmology-opd",
-      "title": "General Ophthalmology / OPD",
-      "shortDescription": "Everyday eye care, refraction, follow-ups and specialist referral pathways.",
+      "id": "oculoplasty",
+      "slug": "oculoplasty",
+      "title": "Oculoplasty",
+      "category": "specialty",
+      "quickLabel": "Oculoplasty",
+      "shortDescription": "Specialist care for eyelids, tear passages and structures around the eye.",
+      "longDescription": [
+        "Oculoplasty covers the eyelids, the tear drainage passages, the orbit and the tissues surrounding the eye. Problems here can affect comfort, vision and appearance.",
+        "The team assesses the cause first and then discusses which medical or surgical options are appropriate for you."
+      ],
+      "icon": "Eye",
+      "image": "/assets/media/stock/closeup-eye-pexels-andrea-bova-2953811.jpg",
+      "thumb": "/assets/media/services/oculoplasty-thumb.jpg",
+      "imageAlt": "Close-up of the eye and eyelid",
+      "featureBullets": [
+        "Assessment of eyelid position, lumps and swellings",
+        "Watering eye and tear duct evaluation",
+        "Drooping eyelid assessment where vision is affected",
+        "Surgical options discussed after examination"
+      ],
+      "faq": [
+        {
+          "question": "Is a watering eye always a blocked tear duct?",
+          "answer": "Not always. Watering has several causes, including dry eye and the position of the eyelid. The examination is what identifies the reason before any treatment is advised."
+        },
+        {
+          "question": "Is this cosmetic surgery?",
+          "answer": "The clinic treats problems of the eyelids, the tear passages and the socket that affect how the eye works and stays protected. Where appearance is also involved, that is discussed openly with you."
+        },
+        {
+          "question": "Will there be a visible scar?",
+          "answer": "Incisions are planned along the natural folds of the lid wherever the procedure allows. The surgeon explains what to expect for your particular case."
+        },
+        {
+          "question": "Will I be asleep for the procedure?",
+          "answer": "Many lid and tear-duct procedures are done under local anaesthesia with you awake and comfortable. Which one suits you depends on the procedure and on your general health."
+        },
+        {
+          "question": "How long does the swelling last?",
+          "answer": "Swelling and bruising around the lid settle gradually. The doctor gives you the expected schedule, along with when to use cold compresses and when to come back."
+        },
+        {
+          "question": "Which hospital should I go to for this?",
+          "answer": "Availability varies between branches. Tell the appointment desk what you are noticing and the team will send you to the right one."
+        }
+      ],
+      "seo": {
+        "title": "Oculoplasty | Aakash Eye Hospital",
+        "description": "Eyelid, tear passage and orbital care at Aakash Eye Hospital, Gujarat."
+      },
+      "causes": [
+        "Ageing loosens the eyelid skin and the muscle that lifts it.",
+        "A blocked tear passage stops tears draining as they should.",
+        "Injury, infection and lumps in the lid also need surgical care."
+      ],
+      "symptoms": [
+        {
+          "text": "An eyelid that droops over the eye",
+          "visual": "droop"
+        },
+        {
+          "text": "Watering that will not settle",
+          "visual": "haze"
+        },
+        {
+          "text": "A lump, swelling or crusting on the lid",
+          "visual": "spots"
+        }
+      ]
+    },
+    {
+      "id": "pediatric-eye-care",
+      "slug": "pediatric-eye-care",
+      "title": "Pediatric Eye Care",
+      "category": "children",
+      "quickLabel": "Child care",
+      "shortDescription": "Healthy vision plays an important role in a child's learning and development.",
+      "longDescription": [
+        "Children rarely say that their vision is blurred, so many eye problems are first noticed by a parent or a teacher rather than by the child.",
+        "Examinations are adapted to a child's age and attention span, and findings are explained to the parent along with what happens next."
+      ],
+      "icon": "Users",
+      "image": "/assets/media/conditions/child-vision-test-pexels-5996608.jpg",
+      "thumb": "/assets/media/services/pediatric-eye-care-thumb.jpg",
+      "imageAlt": "Child having a vision test",
+      "featureBullets": [
+        "Age-appropriate vision assessment and refraction",
+        "Lazy eye (amblyopia) evaluation and follow-up",
+        "School-age eye check-ups",
+        "Referral into squint or myopia care where needed"
+      ],
+      "faq": [
+        {
+          "question": "At what age should a child's eyes first be checked?",
+          "answer": "Bring a child whenever you notice something, and have the eyes checked before school even if nothing seems wrong. The doctor then sets the follow-up interval."
+        },
+        {
+          "question": "My child has no complaints. Is a check-up still useful?",
+          "answer": "Yes. Children adapt to reduced vision without reporting it, so a routine examination often finds something the child has never mentioned."
+        },
+        {
+          "question": "How do you test a child who cannot read letters?",
+          "answer": "There are age-appropriate tests using pictures, shapes and instruments that measure the eye directly, so a child does not need to read or even to speak."
+        },
+        {
+          "question": "Do the dilating drops harm my child's eyes?",
+          "answer": "No. They widen the pupil so the doctor can examine and measure the eye accurately. Vision is blurred and light-sensitive for a few hours afterwards."
+        },
+        {
+          "question": "Will my child need glasses for life?",
+          "answer": "Not necessarily. Numbers change while the eye is growing, which is why the follow-up schedule matters more than any single reading."
+        },
+        {
+          "question": "What is lazy eye, and can it be treated?",
+          "answer": "It is when one eye does not develop full vision even with glasses. It responds best to treatment when it is found early, which is the main reason for checking young children."
+        }
+      ],
+      "seo": {
+        "title": "Pediatric Eye Care | Aakash Eye Hospital",
+        "description": "Children's eye examinations, lazy eye assessment and school-age vision care at Aakash Eye Hospital."
+      },
+      "causes": [
+        "Children rarely complain, so most problems are found on examination.",
+        "Spectacle number, squint and lazy eye usually begin before school age.",
+        "Premature birth and a family history raise the risk."
+      ],
+      "symptoms": [
+        {
+          "text": "Sitting close to the screen or holding books near",
+          "visual": "blur"
+        },
+        {
+          "text": "Rubbing the eyes or blinking a lot",
+          "visual": "haze"
+        },
+        {
+          "text": "One eye turning in or out",
+          "visual": "double"
+        },
+        {
+          "text": "Tilting the head to look at something",
+          "visual": "blur"
+        }
+      ]
+    },
+    {
+      "id": "myopia-clinic",
+      "slug": "myopia-clinic",
+      "title": "Myopia Clinic",
+      "category": "children",
+      "quickLabel": "Myopia",
+      "shortDescription": "Monitoring increasing spectacle numbers during childhood and adolescence.",
+      "longDescription": [
+        "Short sight often begins in childhood and can change over several years. Tracking that change is what tells the team whether a plan is working.",
+        "The clinic records the measurements over time and discusses the options with the family at each review."
+      ],
+      "icon": "Gauge",
+      "image": "/assets/media/conditions/refraction-trial-frame-pexels-6749734.jpg",
+      "thumb": "/assets/media/services/myopia-clinic-thumb.jpg",
+      "imageAlt": "Trial frame refraction to measure spectacle power",
+      "featureBullets": [
+        "Repeat refraction recorded over time",
+        "Review appointments scheduled by the doctor",
+        "Discussion of options with the parent at each visit",
+        "Referral into pediatric or optical services where needed"
+      ],
+      "faq": [
+        {
+          "question": "Can the number be stopped from rising?",
+          "answer": "Progression can often be slowed, but an eye that has already grown does not shrink back. That is why starting early matters."
+        },
+        {
+          "question": "Why does my child's number keep changing?",
+          "answer": "The eye is still growing. The clinic records the measurements over time so the doctor reads the pattern rather than a single visit."
+        },
+        {
+          "question": "Does time outdoors really help?",
+          "answer": "Daylight and distance viewing are understood to help, so outdoor time and regular breaks from close work are part of what the clinic advises."
+        },
+        {
+          "question": "What treatments are used besides glasses?",
+          "answer": "Specialised spectacle lenses, contact-lens options and prescribed eye drops are all used in myopia control. Which of them suits your child is decided after the assessment."
+        },
+        {
+          "question": "How often should the eyes be rechecked?",
+          "answer": "At the interval the doctor sets after examination, which is usually more frequent while the number is moving quickly."
+        },
+        {
+          "question": "Will my child be able to have LASIK later?",
+          "answer": "Laser correction is considered only once the number has been stable for a period in adulthood. Slowing the progression now keeps more options open later."
+        }
+      ],
+      "seo": {
+        "title": "Myopia Clinic | Aakash Eye Hospital",
+        "description": "Monitoring changing spectacle numbers in children and adolescents at Aakash Eye Hospital."
+      },
+      "causes": [
+        "The eye grows slightly too long, so distant light focuses short of the retina.",
+        "Long hours of near work and little time outdoors speed it up.",
+        "It usually starts in the school years and progresses while the eye is still growing."
+      ],
+      "symptoms": [
+        {
+          "text": "The spectacle number rises at every check",
+          "visual": "blur"
+        },
+        {
+          "text": "Screwing up the eyes to see the board",
+          "visual": "blur"
+        },
+        {
+          "text": "Distant writing looks blurred",
+          "visual": "haze"
+        }
+      ]
+    },
+    {
+      "id": "squint-services",
+      "slug": "squint-services",
+      "title": "Squint Services",
+      "category": "children",
+      "quickLabel": "Squint",
+      "shortDescription": "Assessment and treatment for eyes that are not properly aligned.",
+      "longDescription": [
+        "A squint is an eye that turns inward, outward, up or down instead of aligning with the other eye. It can appear in childhood or later in life.",
+        "Assessment establishes the type and the cause, and the doctor then discusses whether glasses, exercises or surgery are appropriate."
+      ],
+      "icon": "Eye",
+      "image": "/assets/media/gallery/facility-3.jpg",
+      "thumb": "/assets/media/services/squint-services-thumb.jpg",
+      "imageAlt": "Consulting room at Aakash Eye Hospital",
+      "featureBullets": [
+        "Alignment and eye movement assessment",
+        "Refraction, because glasses correct some squints",
+        "Lazy eye assessment alongside alignment",
+        "Surgical options discussed when advised by the specialist"
+      ],
+      "faq": [
+        {
+          "question": "Will my child grow out of a squint?",
+          "answer": "Some apparent squints are related to the shape of the face and some are real. An examination is what tells them apart, so it is worth checking rather than waiting."
+        },
+        {
+          "question": "Is a squint only a cosmetic problem?",
+          "answer": "No. In children an untreated squint can hold back the vision in one eye and affect depth perception, which is why it is treated as an eye problem first."
+        },
+        {
+          "question": "Can a squint be corrected with glasses alone?",
+          "answer": "Sometimes. Where an uncorrected number is driving the squint, glasses can do a great deal. The examination is what decides."
+        },
+        {
+          "question": "Is squint treatment only for children?",
+          "answer": "No. Squint appears in adults too, and a new squint in an adult should be examined promptly."
+        },
+        {
+          "question": "At what age is surgery done?",
+          "answer": "It depends on the type of squint and on the findings, not on age alone. The doctor explains the timing for your child's case."
+        },
+        {
+          "question": "Does the surgery need to be repeated?",
+          "answer": "Sometimes more than one procedure is needed to get the alignment right. The surgeon tells you if that is likely before you decide."
+        }
+      ],
+      "seo": {
+        "title": "Squint Services | Aakash Eye Hospital",
+        "description": "Squint assessment and treatment for children and adults at Aakash Eye Hospital, Gujarat."
+      },
+      "causes": [
+        "The muscles that aim the two eyes do not work together.",
+        "An uncorrected spectacle number is a common reason in children.",
+        "Nerve or muscle problems can cause it later in life."
+      ],
+      "symptoms": [
+        {
+          "text": "One eye turning inward or outward",
+          "visual": "double"
+        },
+        {
+          "text": "Seeing double",
+          "visual": "double"
+        },
+        {
+          "text": "Closing one eye in bright light",
+          "visual": "glare"
+        },
+        {
+          "text": "A head turn or tilt to look straight ahead",
+          "visual": "blur"
+        }
+      ]
+    },
+    {
+      "id": "comprehensive-eye-examination",
+      "slug": "comprehensive-eye-examination",
+      "title": "Comprehensive Eye Examination",
+      "shortDescription": "Sometimes the most important treatment begins with a thorough examination.",
       "longDescription": [
         "The OPD pathway helps patients start with a complete eye evaluation and move into the right service when more specialized care is needed.",
         "Aakash Eye Hospital also supports pediatric eye problems including pediatric cataract, pediatric squint, amblyopia management, allergic conjunctivitis and refraction in young children."
       ],
       "icon": "Stethoscope",
       "image": "/assets/media/stock/eye-exam-pexels-ai25studio-6749757.jpg",
-      "imageAlt": "Ophthalmology eye examination for OPD care",
+      "thumb": "/assets/media/services/comprehensive-eye-examination-thumb.jpg",
+      "imageAlt": "Comprehensive eye examination in progress",
       "featureBullets": [
-        "Routine eye examination and refraction",
-        "Follow-up care for old cases",
-        "Pediatric ophthalmology support",
-        "Referral into cataract, retina, glaucoma and laser services"
+        "Vision testing and refraction",
+        "Detailed examination of the front and back of the eye",
+        "Follow-up care for existing patients and old case files",
+        "Referral into the right specialist service where needed"
       ],
       "faq": [
         {
-          "question": "Should old patients bring their previous file?",
-          "answer": "Yes. The hospital promise asks old-case patients to bring the previous case file because old case files have no due date."
+          "question": "How long does a full examination take?",
+          "answer": "Allow longer than a quick sight test, especially if your eyes need to be dilated. The desk tells you what to plan for when you book."
         },
         {
-          "question": "Can I choose a branch before booking?",
-          "answer": "Yes. The appointment form lets you select Visnagar, Ahmedabad or Bharuch."
+          "question": "Will my eyes be dilated?",
+          "answer": "Often, because it is the only way to see the retina properly. Vision stays blurred and light-sensitive for a few hours, so bring sunglasses and someone to travel with you."
+        },
+        {
+          "question": "How often should I have my eyes examined?",
+          "answer": "At least every year or two for most adults, and more often if you have diabetes, a family history of eye disease or an existing condition."
+        },
+        {
+          "question": "What should I bring?",
+          "answer": "Your current glasses, any previous prescriptions, a list of the medicines you take and your old case file if you have one - old case files have no due date here."
+        },
+        {
+          "question": "Can an eye examination pick up other health problems?",
+          "answer": "Sometimes. The retina is the one place where blood vessels can be seen directly, so signs of diabetes and high blood pressure can show up there."
+        },
+        {
+          "question": "Do I need a referral to book?",
+          "answer": "No. You can book an appointment directly, and the team will guide you to the right clinic if a specialist is needed."
         }
       ],
       "seo": {
-        "title": "General Ophthalmology and OPD | Aakash Eye Hospital",
-        "description": "Routine eye checkups, refraction, OPD care and specialist referral pathways at Aakash Eye Hospital."
+        "title": "Comprehensive Eye Examination | Aakash Eye Hospital",
+        "description": "Complete eye examination, refraction and OPD care at every Aakash Eye Hospital branch."
       },
-      "quickLabel": "Eye Checkup"
+      "quickLabel": "Eye exam",
+      "category": "everyday",
+      "symptoms": [
+        {
+          "text": "No symptoms at all - many eye problems start silently",
+          "visual": "clear"
+        },
+        {
+          "text": "Tired eyes or headaches after reading",
+          "visual": "haze"
+        },
+        {
+          "text": "You have diabetes or a family history of eye disease",
+          "visual": "spots"
+        },
+        {
+          "text": "It has been more than a year since the last check",
+          "visual": "clear"
+        }
+      ]
+    },
+    {
+      "id": "optical-services",
+      "slug": "optical-services",
+      "title": "Optical Services",
+      "category": "everyday",
+      "quickLabel": "Spectacles",
+      "shortDescription": "Spectacles that begin with the right prescription.",
+      "longDescription": [
+        "A spectacle prescription is the result of an examination, not a separate purchase. The optical team works from the doctor's findings.",
+        "Frames and lens options are discussed once the prescription is confirmed."
+      ],
+      "icon": "Sparkles",
+      "image": "/assets/media/stock/vision-consult-pexels-ai25studio-6749756.jpg",
+      "thumb": "/assets/media/services/optical-services-thumb.jpg",
+      "imageAlt": "Discussing spectacles after an eye examination",
+      "featureBullets": [
+        "Dispensing based on the doctor's prescription",
+        "Frame and lens guidance",
+        "Support for children's spectacles",
+        "Re-checks when a prescription changes"
+      ],
+      "faq": [
+        {
+          "question": "Do I need an examination before new spectacles?",
+          "answer": "Yes. A current prescription comes from an eye examination, which also checks the health of the eye rather than only the power."
+        },
+        {
+          "question": "Can I use a prescription from somewhere else?",
+          "answer": "Bring it with you. The optical team checks how recent it is and whether it still matches what your eyes need."
+        },
+        {
+          "question": "How long will my glasses take?",
+          "answer": "It depends on the lens type and the frame. The optical team confirms the timing when the order is placed."
+        },
+        {
+          "question": "Why do my new glasses feel strange at first?",
+          "answer": "A short adjustment period is normal, particularly with a changed number or a new lens type. If it does not settle in a few days, come back and have them checked."
+        },
+        {
+          "question": "Do children need different frames?",
+          "answer": "Yes. Fit, weight and durability all matter more for a child, and a frame that slips down the nose undoes the correction."
+        },
+        {
+          "question": "Is optical service available at every hospital?",
+          "answer": "Availability varies between branches. The appointment desk can confirm before you travel."
+        }
+      ],
+      "seo": {
+        "title": "Optical Services | Aakash Eye Hospital",
+        "description": "Spectacle dispensing based on a confirmed prescription at Aakash Eye Hospital."
+      },
+      "symptoms": [
+        {
+          "text": "Blurred vision with your current glasses",
+          "visual": "blur"
+        },
+        {
+          "text": "Headaches or eye strain while reading",
+          "visual": "haze"
+        },
+        {
+          "text": "Your prescription is more than a year old",
+          "visual": "clear"
+        }
+      ]
+    },
+    {
+      "id": "emergency-eye-care",
+      "slug": "emergency-eye-care",
+      "title": "Emergency Eye Care",
+      "category": "urgent",
+      "quickLabel": "Emergency",
+      "shortDescription": "Some eye conditions require urgent evaluation.",
+      "longDescription": [
+        "Sudden loss of vision, injury, chemical exposure and severe pain are reasons to seek care immediately rather than waiting for a routine appointment.",
+        "Contact the hospital directly so the team can advise you on where to go and what to do on the way."
+      ],
+      "icon": "ShieldCheck",
+      "image": "/assets/media/gallery/facility-5.jpg",
+      "thumb": "/assets/media/services/emergency-eye-care-thumb.jpg",
+      "imageAlt": "Aakash Eye Hospital facility",
+      "featureBullets": [
+        "Urgent assessment for sudden vision loss or injury",
+        "Guidance by phone before you travel",
+        "Chemical exposure: begin irrigation immediately, then call",
+        "Post-operative concerns reviewed urgently"
+      ],
+      "faq": [
+        {
+          "question": "What should I do if a chemical enters the eye?",
+          "answer": "Begin flushing the eye immediately with plenty of clean water and keep going. Do not wait to call first - start the irrigation, then arrange to get here."
+        },
+        {
+          "question": "Should I wait for the OPD if my vision drops suddenly?",
+          "answer": "No. A sudden loss or reduction of vision needs to be assessed urgently. Call the helpline straight away."
+        },
+        {
+          "question": "Something hit my eye. What should I not do?",
+          "answer": "Do not rub the eye, do not press on it and do not try to remove anything that is stuck in it. Shield the eye if you can and come in."
+        },
+        {
+          "question": "Is a red eye always an emergency?",
+          "answer": "No. Redness with severe pain, reduced vision or after an injury is urgent. Redness on its own can usually wait for a routine appointment."
+        },
+        {
+          "question": "I had surgery recently and the eye is painful. What now?",
+          "answer": "Contact the hospital straight away. New pain or a drop in vision after eye surgery is always assessed urgently."
+        },
+        {
+          "question": "What should I bring in an emergency?",
+          "answer": "Whatever is to hand: your previous records, the drops or medicines you are using, and your spectacles. Do not delay coming in to look for them."
+        }
+      ],
+      "seo": {
+        "title": "Emergency Eye Care | Aakash Eye Hospital",
+        "description": "Urgent eye care guidance for sudden vision loss, injury, chemical exposure and severe eye pain."
+      },
+      "causes": [
+        "Injury, a chemical splash or a foreign body in the eye.",
+        "Sudden bleeding or a detachment inside the eye.",
+        "A sharp rise in eye pressure, or an infection after surgery."
+      ],
+      "symptoms": [
+        {
+          "text": "Sudden loss or reduction of vision",
+          "visual": "dark"
+        },
+        {
+          "text": "Severe eye pain, or a chemical splash",
+          "visual": "glare"
+        },
+        {
+          "text": "Many new floaters, flashes or a curtain across your sight",
+          "visual": "floaters"
+        },
+        {
+          "text": "An injury to the eye",
+          "visual": "dark"
+        }
+      ]
     }
   ]
 }

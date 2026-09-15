@@ -82,9 +82,12 @@
   border-top-color: var(--e-rule-dark);
 }
 
+/* --e-ink-2, not --e-ink-3: 0.72rem semibold uppercase needs 4.5:1, and
+   --e-ink-3 measures 2.9:1 on paper. Every section eyebrow on the site reads
+   this rule. */
 .e-label {
   display: block;
-  color: var(--e-ink-3);
+  color: var(--e-ink-2);
   font-family: var(--e-sans);
   font-size: 0.72rem;
   font-weight: 600;
@@ -183,7 +186,12 @@
 
 /* ---------- links and buttons ---------- */
 
+/* A text link is a 25px line, and every one of these is a route - to the
+   doctors, to a branch, to the contact page. The ::after halo makes it a 45px
+   target without changing how the underline sits; measure it with
+   elementFromPoint, not the element rect, which cannot see the halo. */
 .e-link {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 9px;
@@ -196,6 +204,12 @@
   border-bottom: 1px solid var(--e-rule-2);
   transition: border-color 200ms var(--e-ease), color 200ms var(--e-ease);
   white-space: nowrap;
+}
+
+.e-link::after {
+  content: "";
+  position: absolute;
+  inset: -10px 0;
 }
 
 .e-link svg {

@@ -147,6 +147,7 @@ export const aboutSchema = z
         description: z.string(),
         figures: z.array(z.object({ key: z.string(), label: z.string() })),
         ctaLabel: z.string(),
+        ctaLabelShort: z.string(),
       }),
     }),
     vision: z.object({
@@ -174,6 +175,7 @@ export const aboutSchema = z
         }),
       ),
       ctaLabel: z.string(),
+      ctaLabelShort: z.string(),
     }),
   })
   .passthrough();
@@ -190,6 +192,7 @@ export const servicesSchema = z
         longDescription: z.array(z.string()),
         icon: z.string(),
         image: z.string(),
+        thumb: z.string(),
         imageAlt: z.string(),
         featureBullets: z.array(z.string()),
         faq: z.array(faqItemSchema),
@@ -279,18 +282,4 @@ export const gallerySchema = z.object({
       alt: z.string(),
     }),
   ),
-});
-
-export const appointmentSchema = z.object({
-  name: z.string().min(2, "Please enter your full name."),
-  phone: z
-    .string()
-    .min(7, "Please enter a phone number.")
-    .regex(/^[0-9+\-()\s]+$/, "Use a valid phone number."),
-  email: z.string().email("Use a valid email address.").or(z.literal("")).optional(),
-  branch: z.string().min(1, "Choose a branch."),
-  service: z.string().min(1, "Choose a service or department."),
-  preferredDate: z.string().min(1, "Choose a preferred date."),
-  message: z.string().max(1000, "Keep the message under 1000 characters.").optional(),
-  botcheck: z.string().optional(),
 });

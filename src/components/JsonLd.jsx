@@ -1,4 +1,5 @@
 import { branches, site } from "../lib/coreData";
+import { buildBranchHref } from "../lib/contact";
 
 const siteUrl = site.defaultSeo.url.replace(/\/$/, "");
 
@@ -14,13 +15,15 @@ function allPhones() {
   return branches.items.flatMap((branch) => branchPhone(branch));
 }
 
+/* The same block the page's live open/closed pill reads, so the hours a search
+   engine is told can never drift from the hours a reader is shown. */
 function openingHours() {
   return [
     {
       "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-      opens: "09:00",
-      closes: "18:00",
+      dayOfWeek: site.openingHours.days,
+      opens: site.openingHours.opens,
+      closes: site.openingHours.closes,
     },
   ];
 }
@@ -74,13 +77,13 @@ export function MedicalClinicJsonLd({ services = [] }) {
   return <JsonLd data={organization} />;
 }
 
-export function BranchJsonLd() {
-  const graph = branches.items.map((branch) => ({
+function branchNode(branch) {
+  return {
     "@type": ["MedicalClinic", "LocalBusiness"],
     "@id": `${siteUrl}/branches#${branch.slug}`,
     name: `${site.brand.name} - ${branch.name}`,
-    url: `${siteUrl}/branches`,
-    image: absoluteUrl(site.defaultSeo.image),
+    url: absoluteUrl(buildBranchHref(branch)),
+    image: absoluteUrl(branch.page?.seo?.image ?? site.defaultSeo.image),
     address: {
       "@type": "PostalAddress",
       streetAddress: branch.address,
@@ -105,9 +108,18 @@ export function BranchJsonLd() {
       latitude: branch.coords.lat,
       longitude: branch.coords.lng,
     },
-  }));
+  };
+}
 
+export function BranchJsonLd() {
+  const graph = branches.items.map(branchNode);
   return <JsonLd data={{ "@context": "https://schema.org", "@graph": graph }} />;
+}
+
+/* One hospital's own page: the same node the index graph carries, on its own,
+   so the page describes exactly one place. */
+export function BranchPageJsonLd({ branch }) {
+  return <JsonLd data={{ "@context": "https://schema.org", ...branchNode(branch) }} />;
 }
 
 export function BreadcrumbJsonLd({ items }) {

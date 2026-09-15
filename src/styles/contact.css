@@ -1,0 +1,1110 @@
+/* =========================================================================
+   Contact
+   Namespace: .ct-*   |   loaded after hospitals.css
+   Built on the .e-* design system in system.css; nothing here restyles a
+   shared primitive.
+
+   One head, one instrument, one directory. The switchboard connects the
+   reader to the hospital they chose - a cable draws from its jack to the
+   readout and the OPD number rolls over - and the ledger under it carries
+   every desk number at every hospital. Booking lives on its own page.
+   ========================================================================= */
+
+.ct,
+.ct-dir {
+  /* WCAG 1.4.11 wants 3:1 on the boundary of a control, and --e-rule-2
+     measures 1.58:1 on paper. Same edge value the header, the cookie sheet
+     and the hospital pages use. Do not lighten it. */
+  --ct-edge: #7f8b96;
+  --ct-edge-light: rgba(255, 255, 255, 0.46);
+}
+
+/* ---------- the head ---------- */
+
+.ct {
+  background: linear-gradient(180deg, #faf8f4 0%, #ffffff 100%);
+  padding-block: clamp(22px, 2.8vw, 36px) clamp(56px, 6vw, 100px);
+}
+
+.ct-head {
+  display: grid;
+  justify-items: center;
+  margin-bottom: clamp(30px, 4.2vw, 56px);
+  text-align: center;
+}
+
+/* The hospitals index's title device: the serif with the promise in italic
+   accent on its own line. */
+.ct-head__title {
+  margin: 12px 0 0;
+  max-width: 18ch;
+  color: var(--e-ink);
+  font-family: var(--e-serif);
+  font-size: clamp(2.3rem, 6.2vw, 4.4rem);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.ct-head__title em {
+  display: block;
+  color: var(--e-accent);
+  font-style: italic;
+}
+
+.ct-head__lede {
+  max-width: 46ch;
+  margin: clamp(14px, 1.8vw, 22px) 0 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: clamp(1rem, 1.2vw, 1.14rem);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* The route to booking sits under the card, not in the head: it is the
+   least urgent thing on the page, and in the head it pushed the number and
+   the call button under a phone's fold. */
+.ct-book {
+  display: flex;
+  justify-content: center;
+  margin: clamp(22px, 3vw, 34px) 0 0;
+}
+
+/* ---------- the switchboard ---------- */
+
+.ct-desk {
+  --br-edge-light: var(--ct-edge-light);
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(40px, 6vw, 96px);
+  overflow: clip;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 22px;
+  background:
+    radial-gradient(120% 90% at 20% 10%, rgba(27, 107, 114, 0.35) 0%, rgba(27, 107, 114, 0) 55%),
+    linear-gradient(160deg, #123c61 0%, #0b2843 100%);
+  box-shadow: 0 30px 70px rgba(4, 12, 22, 0.35);
+  padding: clamp(22px, 3vw, 40px);
+  color: #fff;
+}
+
+/* The cable lives on a layer over the whole card, between the two columns'
+   content and the card's ground, and takes no pointer. */
+.ct-desk__wire {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.ct-desk__cable {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.55);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.ct-desk__pulse {
+  fill: #fff;
+  stroke: var(--e-accent);
+  stroke-width: 2.5;
+  opacity: 0;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.7));
+}
+
+.ct-pick,
+.ct-readout {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  align-content: start;
+}
+
+.ct-pick {
+  gap: 14px;
+}
+
+/* 0.7, not the 0.62 the patient wall uses: the teal glow in the card's top
+   left corner sits under these two labels, and 0.62 measured 4.71:1 there -
+   a pass with no margin for 0.72rem uppercase. */
+.ct-pick__label,
+.ct-readout__label .e-label {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.ct-pick__rail {
+  display: grid;
+  gap: 4px;
+}
+
+/* A hospital is a jack: its name, its street and a ring at the gutter edge
+   for the cable to leave from. The chosen one carries a travelling tint
+   (a layoutId element, the site's pill device) and a lit ring. */
+.ct-jack {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "name ring"
+    "where ring";
+  align-items: center;
+  column-gap: 14px;
+  row-gap: 3px;
+  width: 100%;
+  min-height: 62px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  padding: 12px 16px;
+  color: #fff;
+  font-family: var(--e-sans);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 200ms var(--e-ease);
+}
+
+.ct-jack:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ct-jack[data-checked]:hover {
+  background: transparent;
+}
+
+.ct-jack__bg {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.ct-jack__name,
+.ct-jack__where,
+.ct-jack__ring {
+  position: relative;
+}
+
+.ct-jack__name {
+  grid-area: name;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--e-serif);
+  font-size: 1.3rem;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.ct-jack__name em {
+  border: 1px solid var(--ct-edge-light);
+  border-radius: 999px;
+  padding: 3px 8px;
+  color: rgba(255, 255, 255, 0.88);
+  font-family: var(--e-sans);
+  font-size: 0.62rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.ct-jack__where {
+  grid-area: where;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.ct-jack__ring,
+.ct-readout__jack {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--ct-edge-light);
+  border-radius: 999px;
+  transition:
+    border-color 220ms var(--e-ease),
+    background-color 220ms var(--e-ease),
+    box-shadow 220ms var(--e-ease);
+}
+
+.ct-jack__ring {
+  grid-area: ring;
+}
+
+.ct-jack[data-checked] .ct-jack__ring,
+.ct-readout__jack {
+  border-color: #fff;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(184, 22, 87, 0.4);
+}
+
+/* The readout jack takes the hit as the pulse lands. */
+.ct-readout__jack.is-hit {
+  animation: ct-hit 700ms var(--e-ease);
+}
+
+@keyframes ct-hit {
+  0% {
+    box-shadow: 0 0 0 4px rgba(184, 22, 87, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 0 20px rgba(184, 22, 87, 0);
+  }
+}
+
+.ct-pick__hint {
+  margin: 4px 0 0;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+/* ---------- the readout ---------- */
+
+.ct-readout {
+  gap: 18px;
+}
+
+.ct-readout__label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+
+.ct-readout__label i {
+  margin-inline: 2px;
+}
+
+/* The number is the control: the whole line dials, and the halo makes a
+   31px line a 47px target - the .e-link device. */
+.ct-readout__number {
+  position: relative;
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0;
+  border-bottom: 1px solid transparent;
+  color: #fff;
+  font-family: var(--e-serif);
+  font-size: clamp(1.9rem, 4.2vw, 3.4rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums;
+  text-decoration: none;
+  transition: border-color 200ms var(--e-ease);
+}
+
+.ct-readout__number::after {
+  content: "";
+  position: absolute;
+  inset: -8px 0;
+}
+
+.ct-readout__number:hover {
+  border-bottom-color: rgba(255, 255, 255, 0.55);
+}
+
+/* The odometer: one column per digit over a strip of 0-9, shifted by exactly
+   one line per digit. Lines are 1em tall so a 10% shift of the strip is one
+   digit; tabular figures keep every column the same width. */
+.ct-odo {
+  display: inline-flex;
+  align-items: flex-start;
+  white-space: nowrap;
+}
+
+.ct-odo__col {
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+}
+
+.ct-odo__strip {
+  display: grid;
+}
+
+.ct-odo__strip span,
+.ct-odo__glyph {
+  display: block;
+  height: 1em;
+  line-height: 1;
+}
+
+.ct-odo__glyph {
+  display: inline-block;
+}
+
+.ct-readout__address {
+  max-width: 44ch;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.ct-acts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.ct-act {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 52px;
+  border: 1px solid var(--ct-edge-light);
+  border-radius: 3px;
+  background: transparent;
+  padding: 12px 14px;
+  color: #fff;
+  font-family: var(--e-sans);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 200ms var(--e-ease),
+    border-color 200ms var(--e-ease),
+    color 200ms var(--e-ease);
+}
+
+.ct-act svg {
+  flex: none;
+}
+
+.ct-act:hover {
+  border-color: #fff;
+}
+
+.ct-act[data-primary] {
+  border-color: #fff;
+  background: #fff;
+  color: var(--e-navy);
+}
+
+.ct-act[data-primary]:hover {
+  background: rgba(255, 255, 255, 0.86);
+}
+
+/* ---------- the directory ---------- */
+
+.ct-dir .e-h2 em {
+  color: var(--e-accent);
+  font-family: var(--e-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+/* The emergency line leads: the one number that belongs to no single
+   hospital, as one row the whole of which dials. */
+.ct-urgent {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "mark label number"
+    "mark note number";
+  align-items: center;
+  gap: 4px 20px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(184, 22, 87, 0.32);
+  border-left: 4px solid var(--e-accent);
+  border-radius: 12px;
+  background: #fff;
+  padding: 18px 24px 18px 20px;
+  color: var(--e-ink);
+  text-decoration: none;
+  transition: box-shadow 220ms var(--e-ease);
+}
+
+.ct-urgent:hover {
+  box-shadow: 0 14px 34px rgba(16, 22, 28, 0.09);
+}
+
+.ct-urgent__mark {
+  grid-area: mark;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: rgba(184, 22, 87, 0.1);
+  color: var(--e-accent);
+}
+
+/* The page's one continuously moving thing: a slow beacon on the glyph. */
+.ct-urgent__mark svg {
+  animation: ct-beacon 2.4s ease-in-out infinite;
+}
+
+@keyframes ct-beacon {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.ct-urgent__label {
+  grid-area: label;
+  display: block;
+  color: var(--e-accent);
+  font-family: var(--e-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.ct-urgent__note {
+  grid-area: note;
+  display: block;
+  color: var(--e-ink-2);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.ct-urgent__number {
+  grid-area: number;
+  color: var(--e-ink);
+  font-family: var(--e-serif);
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+  transition: color 200ms var(--e-ease);
+}
+
+.ct-urgent:hover .ct-urgent__number {
+  color: var(--e-accent);
+}
+
+/* The ledger: a hospital per row, its desks beside it, and the row's name
+   the way into its page. The accent draws across the row's top rule under
+   the pointer - the values ledger's device. */
+.ct-ledger {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--e-rule-2);
+}
+
+.ct-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+  gap: clamp(20px, 3vw, 48px);
+  border-bottom: 1px solid var(--e-rule-2);
+  padding-block: 24px;
+}
+
+.ct-row::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: var(--e-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 320ms var(--e-ease);
+}
+
+/* Lit under a real pointer or a keyboard focus ring, never a finger: a
+   tapped fold kept its row lit through `:focus-within` on a phone. */
+.ct-row:has(:focus-visible)::before {
+  transform: scaleX(1);
+}
+
+@media (hover: hover) {
+  .ct-row:hover::before {
+    transform: scaleX(1);
+  }
+}
+
+.ct-row__name {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  width: fit-content;
+  color: var(--e-ink);
+  text-decoration: none;
+}
+
+.ct-row__city {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--e-serif);
+  font-size: clamp(1.35rem, 1.8vw, 1.65rem);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  transition: color 200ms var(--e-ease);
+}
+
+.ct-row__city em {
+  border: 1px solid var(--e-rule-2);
+  border-radius: 999px;
+  padding: 3px 8px;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.62rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.ct-row__where {
+  color: var(--e-ink-2);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.ct-row__go {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: color 200ms var(--e-ease);
+}
+
+.ct-row__go svg {
+  transition: transform 240ms var(--e-ease);
+}
+
+@media (hover: hover) {
+  .ct-row__name:hover .ct-row__city,
+  .ct-row__name:hover .ct-row__go {
+    color: var(--e-accent);
+  }
+
+  .ct-row__name:hover .ct-row__go svg {
+    transform: translate(2px, -2px);
+  }
+}
+
+.ct-row__desks {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.ct-deskline {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.ct-deskline__label {
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.ct-deskline__numbers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ct-num {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  border: 1px solid var(--ct-edge);
+  border-radius: 999px;
+  background: #fff;
+  padding: 0 16px;
+  color: var(--e-navy);
+  font-family: var(--e-sans);
+  font-size: 0.92rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 200ms var(--e-ease),
+    border-color 200ms var(--e-ease),
+    color 200ms var(--e-ease);
+}
+
+.ct-num:hover,
+.ct-num:focus-visible {
+  border-color: var(--e-navy);
+  background: var(--e-navy);
+  color: #fff;
+}
+
+/* Stacked, a hospital is a fold: its name and street on the summary, and
+   its desks inside as uniform label / number lines - the shape of a phone's
+   own contacts list, not a cloud of pills. Native <details>: it opens
+   without JavaScript and the browser gives it keyboard behaviour for free.
+   The glide is `::details-content`, the FAQ's device; a browser without it
+   snaps. */
+.ct-fold {
+  interpolate-size: allow-keywords;
+}
+
+.ct-fold__summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 64px;
+  padding-block: 12px;
+  color: var(--e-ink);
+  cursor: pointer;
+  list-style: none;
+}
+
+.ct-fold__summary::-webkit-details-marker {
+  display: none;
+}
+
+.ct-fold__summary .ct-row__name {
+  width: auto;
+  gap: 3px;
+}
+
+.ct-fold__mark {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--ct-edge);
+  border-radius: 999px;
+  color: var(--e-navy);
+  transition:
+    transform 260ms var(--e-ease),
+    background-color 200ms var(--e-ease),
+    border-color 200ms var(--e-ease),
+    color 200ms var(--e-ease);
+}
+
+.ct-fold[open] .ct-fold__mark {
+  border-color: var(--e-navy);
+  background: var(--e-navy);
+  color: #fff;
+  transform: rotate(45deg);
+}
+
+.ct-fold::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition:
+    block-size 320ms var(--e-ease),
+    content-visibility 320ms allow-discrete;
+}
+
+.ct-fold[open]::details-content {
+  block-size: auto;
+}
+
+.ct-fold__body {
+  display: grid;
+  padding-bottom: 12px;
+}
+
+.ct-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 50px;
+  border-top: 1px solid var(--e-rule);
+  color: var(--e-navy);
+  font-family: var(--e-sans);
+  text-decoration: none;
+}
+
+.ct-line__label {
+  color: var(--e-ink-2);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.ct-line__number {
+  font-size: 1.02rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ct-line--go {
+  justify-content: flex-start;
+  gap: 6px;
+  color: var(--e-ink-2);
+}
+
+.ct-line--go .ct-line__label {
+  font-size: 0.8rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: inherit;
+}
+
+.ct-line--go svg {
+  transition: transform 240ms var(--e-ease);
+}
+
+.ct-line--go:hover {
+  color: var(--e-accent);
+}
+
+.ct-line--go:hover svg {
+  transform: translate(2px, -2px);
+}
+
+/* Email and hours close the list: both are the same at every hospital. */
+.ct-foot {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: clamp(28px, 3.5vw, 44px);
+}
+
+.ct-foot__cell {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  border: 1px solid var(--e-rule-2);
+  border-radius: 12px;
+  background: #fff;
+  padding: 22px 24px;
+}
+
+.ct-foot__mail {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  min-height: 26px;
+  color: var(--e-ink);
+  font-family: var(--e-tight);
+  font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+  transition: color 200ms var(--e-ease);
+}
+
+.ct-foot__mail::after {
+  content: "";
+  position: absolute;
+  inset: -8px 0;
+}
+
+.ct-foot__mail svg {
+  flex: none;
+  color: var(--e-ink-2);
+}
+
+.ct-foot__mail:hover {
+  color: var(--e-accent);
+}
+
+.ct-foot__note {
+  color: var(--e-ink-2);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.ct-hours {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.ct-hours div {
+  display: grid;
+  gap: 2px;
+}
+
+.ct-hours dt {
+  color: var(--e-ink-2);
+  font-size: 0.88rem;
+}
+
+.ct-hours dd {
+  margin: 0;
+  color: var(--e-ink);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 760px) {
+  .ct-dir {
+    padding-block: 44px 56px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .ct-deskline {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+}
+
+/* Stacked: the six hospitals are a two-column grid of chips, all visible
+   at once, and the cable runs down the gutter between the columns. */
+@media (max-width: 899px) {
+  .ct {
+    padding-bottom: 40px;
+  }
+
+  .ct-head {
+    margin-bottom: 22px;
+  }
+
+  .ct-desk {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    border-radius: 16px;
+    padding: 20px;
+  }
+
+  .ct-pick {
+    gap: 12px;
+  }
+
+  /* A 24px gutter so the cable has a lane of its own between the columns. */
+  .ct-pick__rail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 24px;
+  }
+
+  /* Each chip's ring faces the gutter: right on the left column, left on
+     the right, so the cable leaves every chip straight into its lane. */
+  .ct-jack {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "name ring";
+    column-gap: 8px;
+    min-height: 46px;
+    border: 1px solid var(--ct-edge-light);
+    border-radius: 999px;
+    padding: 0 12px 0 14px;
+    transition:
+      background-color 200ms var(--e-ease),
+      border-color 200ms var(--e-ease);
+  }
+
+  .ct-jack:nth-child(even) {
+    grid-template-areas: "ring name";
+    padding: 0 14px 0 12px;
+  }
+
+  .ct-jack[data-checked] {
+    border-color: #fff;
+  }
+
+  .ct-jack__bg {
+    border: 0;
+    border-radius: 999px;
+  }
+
+  /* One line per chip, always: the fold in the directory below carries the
+     `Head office` tag, so the chip does not have to. */
+  .ct-jack__name {
+    display: block;
+    overflow: hidden;
+    font-size: 0.98rem;
+    text-overflow: clip;
+    white-space: nowrap;
+  }
+
+  .ct-jack__name em {
+    display: none;
+  }
+
+  .ct-jack__ring {
+    width: 12px;
+    height: 12px;
+  }
+
+  .ct-jack__where {
+    display: none;
+  }
+
+  /* The cable's lane runs where the hint sat; the drawer carries the same
+     sentence beside its own picker. */
+  .ct-pick__hint {
+    display: none;
+  }
+
+  .ct-readout {
+    gap: 16px;
+  }
+
+  .ct-readout__address {
+    font-size: 0.9rem;
+  }
+
+  .ct-dir {
+    padding-block: 36px 56px;
+  }
+
+  .ct-dir .e-head {
+    margin-bottom: 26px;
+  }
+
+  .ct-row {
+    display: block;
+    padding-block: 0;
+  }
+
+  .ct-urgent {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "mark label"
+      "mark number"
+      "note note";
+    gap: 2px 14px;
+    padding: 16px 18px 16px 16px;
+  }
+
+  .ct-urgent__note {
+    margin-top: 10px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 640px) {
+  /* The head is the title and the route to booking; the lede's sentence is
+     what the card's own label says, and with it the number and the call
+     button sat below the fold. */
+  .ct-head__lede {
+    display: none;
+  }
+
+  .ct-acts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ct-foot {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 360px) {
+  .ct-desk {
+    padding: 16px;
+  }
+
+  .ct-act {
+    padding: 12px 10px;
+    font-size: 0.88rem;
+  }
+}
+
+/* Between 357 and 399px the chips give up padding and ring, never the
+   name: `Himmatnagar` measures 96px at 0.94rem and a chip here is 131-146px
+   wide. Below 357px two columns cannot hold it at a readable size, so the
+   chips stack in one column with every ring at the right, and the bus runs
+   down the card's right margin instead of a gutter. Check with scrollWidth
+   against clientWidth - a clipped name still reports one line. */
+@media (max-width: 399px) {
+  .ct-pick__rail {
+    column-gap: 20px;
+  }
+
+  .ct-jack {
+    column-gap: 4px;
+    padding: 0 8px 0 10px;
+  }
+
+  .ct-jack:nth-child(even) {
+    padding: 0 10px 0 8px;
+  }
+
+  .ct-jack__name {
+    font-size: 0.94rem;
+  }
+
+  .ct-jack__ring {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+@media (max-width: 356px) {
+  .ct-pick__rail {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .ct-jack:nth-child(even) {
+    grid-template-areas: "name ring";
+    padding: 0 8px 0 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-jack,
+  .ct-jack__ring,
+  .ct-readout__jack,
+  .ct-readout__number,
+  .ct-act,
+  .ct-urgent,
+  .ct-urgent__number,
+  .ct-row::before,
+  .ct-row__city,
+  .ct-row__go,
+  .ct-row__go svg,
+  .ct-num,
+  .ct-fold__mark,
+  .ct-fold::details-content,
+  .ct-line--go svg,
+  .ct-foot__mail {
+    transition: none;
+  }
+
+  .ct-readout__jack.is-hit,
+  .ct-urgent__mark svg {
+    animation: none;
+  }
+
+  .ct-row__name:hover .ct-row__go svg {
+    transform: none;
+  }
+}

@@ -1,0 +1,145 @@
+{
+  "seo": {
+    "title": "Book an Appointment | Aakash Eye Hospital",
+    "description": "Book an eye care visit at any Aakash Eye Hospital in Gujarat. Choose your hospital, the reason for your visit and a day that suits you - the request is sent on WhatsApp and the hospital confirms your slot."
+  },
+  "label": "Book an appointment",
+  "title": "Tell us when,",
+  "titleAccent": "we hold the slot.",
+  "lede": "Five short questions. We write the request for you; you send it on WhatsApp and the hospital replies to confirm.",
+  "stepOfLabel": "Step {step} of {total}",
+  "steps": {
+    "who": {
+      "label": "Who",
+      "title": "Who is the visit for?",
+      "lede": "The name the hospital will call out, and the number it will reply to."
+    },
+    "where": {
+      "label": "Where",
+      "title": "Which hospital suits you?",
+      "lede": "Every hospital books its own appointments and answers its own WhatsApp."
+    },
+    "what": {
+      "label": "What",
+      "title": "What brings you in?",
+      "lede": "Choose the closest match. If you are not sure, say so - the desk will guide you."
+    },
+    "when": {
+      "label": "When",
+      "title": "When would you like to come?",
+      "lede": "Optional. The hospital confirms the exact time with you."
+    },
+    "send": {
+      "label": "Send",
+      "title": "Anything the desk should know?",
+      "lede": "Optional. A line about your concern, an old case file number, or who is coming with you."
+    }
+  },
+  "fields": {
+    "name": {
+      "label": "Patient name",
+      "placeholder": "Full name",
+      "error": "Please enter the patient's full name."
+    },
+    "phone": {
+      "label": "Mobile number",
+      "prefix": "+91",
+      "placeholder": "10-digit mobile",
+      "hint": "The hospital replies on WhatsApp to this number.",
+      "error": "Enter a 10-digit mobile number."
+    },
+    "branch": {
+      "error": "Choose a hospital.",
+      "headOfficeTag": "Head office"
+    },
+    "service": {
+      "error": "Choose a reason for your visit.",
+      "unsureLabel": "Not sure yet",
+      "unsureHint": "Tell us the concern and the desk will route you",
+      "unsureValue": "Not sure yet - please advise"
+    },
+    "date": {
+      "label": "Preferred day",
+      "anyLabel": "Any day",
+      "todayLabel": "Today",
+      "tomorrowLabel": "Tomorrow",
+      "pickLabel": "Pick a date",
+      "closedNote": "Sunday is emergency and prior appointments only, so it is not offered here.",
+      "error": "Choose a Monday to Saturday, from today onwards."
+    },
+    "daypart": {
+      "label": "Preferred time",
+      "anyLabel": "Any time",
+      "options": [
+        {
+          "id": "morning",
+          "label": "Morning",
+          "range": "9 AM - 12 PM"
+        },
+        {
+          "id": "afternoon",
+          "label": "Afternoon",
+          "range": "12 - 3 PM"
+        },
+        {
+          "id": "evening",
+          "label": "Evening",
+          "range": "3 - 6 PM"
+        }
+      ]
+    },
+    "message": {
+      "label": "Short message",
+      "placeholder": "For example: cataract in the left eye, seen here in 2019.",
+      "maxLength": 300,
+      "error": "Keep the message under {max} characters."
+    }
+  },
+  "nav": {
+    "backLabel": "Back",
+    "continueLabel": "Continue",
+    "sendLabel": "Send on WhatsApp",
+    "editLabel": "Edit request",
+    "callLabel": "Prefer to talk? Call the {branch} OPD",
+    "reopenLabel": "Open WhatsApp again"
+  },
+  "slip": {
+    "kicker": "Appointment request",
+    "toLabel": "To",
+    "viaLabel": "WhatsApp",
+    "lines": {
+      "name": "Patient",
+      "phone": "Mobile",
+      "branch": "Hospital",
+      "service": "Reason",
+      "date": "Day",
+      "daypart": "Time",
+      "message": "Note"
+    },
+    "readyStamp": "Ready to send",
+    "sentStamp": "Sent",
+    "note": "This opens WhatsApp with the message written for you. Nothing is sent until you press send there.",
+    "reviewLabel": "Your request",
+    "sentNote": "Sent from your WhatsApp. The hospital replies to you there."
+  },
+  "after": {
+    "title": "Your request is in WhatsApp.",
+    "lede": "Press send there if you have not already. The {branch} desk replies during OPD hours to confirm your slot.",
+    "hoursLabel": "OPD hours",
+    "againLabel": "Book for someone else"
+  },
+  "message": {
+    "heading": "*Appointment request - Aakash Eye Hospital, {branch}*",
+    "lines": {
+      "name": "Patient: {value}",
+      "phone": "Mobile: {value}",
+      "service": "Reason: {value}",
+      "date": "Preferred day: {value}",
+      "daypart": "Preferred time: {value}",
+      "message": "Note: {value}"
+    },
+    "anyDay": "Any day",
+    "anyTime": "Any time",
+    "closing": "Please confirm a slot. Thank you."
+  }
+}

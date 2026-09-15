@@ -21,14 +21,6 @@
       "title": "Vision, Mission and Core Values | Aakash Eye Hospital",
       "description": "The mission, vision and core values behind Aakash Eye Hospital: affordable, technology-led ophthalmic care of international standards for all sections of society."
     },
-    "appointment": {
-      "title": "Book an Appointment | Aakash Eye Hospital",
-      "description": "Book an eye care appointment at Aakash Eye Hospital in Visnagar, Ahmedabad or Bharuch, or start a WhatsApp booking with the selected branch."
-    },
-    "contact": {
-      "title": "Contact Aakash Eye Hospital | Visnagar, Ahmedabad, Bharuch",
-      "description": "Find Aakash Eye Hospital branch addresses, OPD phone numbers, email and appointment contacts for Visnagar, Ahmedabad and Bharuch."
-    },
     "notFound": {
       "title": "Page Not Found | Aakash Eye Hospital",
       "description": "The page you are looking for could not be found.",
@@ -167,5 +159,19 @@
   "notes": [
     "Business hours are placeholder values and should be verified with the hospital.",
     "The years-of-service stat is modernized from the 1993 founding date; the legacy site also contains older 20+ and 24+ wording."
-  ]
+  ],
+  "openingHours": {
+    "timeZone": "Asia/Kolkata",
+    "days": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "opens": "09:00",
+    "closes": "20:00",
+    "closedNote": "Emergency and prior appointments only"
+  }
 }

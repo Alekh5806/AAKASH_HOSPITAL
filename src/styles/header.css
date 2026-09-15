@@ -1,9 +1,15 @@
 /* Site header. Namespaced under .hd so global.css never restyles it. */
 
-.hd {
-  --hd-city-h: 44px;
+/* The row heights live on :root so --hd-height can be derived from them and
+   read outside the header: the hero sizes itself to the first screen with it.
+   It is the header at rest - the collapsed, scrolled header is shorter. */
+:root {
   --hd-main-h: 76px;
   --hd-nav-h: 56px;
+  --hd-height: calc(var(--hd-main-h) + var(--hd-nav-h) + 1px);
+}
+
+.hd {
   --hd-navy: var(--color-brand-blue-strong);
   --hd-blue: var(--color-brand-blue);
   --hd-rule: rgba(12, 44, 73, 0.12);
@@ -50,66 +56,6 @@
   align-items: center;
   width: min(100% - 32px, 1240px);
   margin: 0 auto;
-}
-
-/* ---------- mobile city bar ---------- */
-
-.hd__citybar {
-  position: relative;
-  height: var(--hd-city-h);
-  background: var(--hd-navy);
-  color: #fff;
-  transition: height 220ms ease;
-}
-
-.hd--scrolled .hd__citybar {
-  height: 0;
-  overflow: hidden;
-}
-
-.hd__citybar .hd__container {
-  height: var(--hd-city-h);
-}
-
-.hd__citybar-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  height: 36px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.08);
-  padding: 0 12px;
-  color: #fff;
-  font-family: var(--font-heading);
-  font-size: 0.92rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  transition:
-    background-color 160ms ease,
-    border-color 160ms ease;
-}
-
-.hd__citybar-toggle:hover,
-.hd__citybar-toggle[aria-expanded="true"] {
-  border-color: rgba(255, 255, 255, 0.75);
-  background: rgba(255, 255, 255, 0.16);
-}
-
-/* "Your hospital" names what the city beside it is - the bar carried a lone
-   city name and no clue that it was a control that changes the OPD number. */
-.hd__pop-label {
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 0.78rem;
-  font-weight: 500;
-}
-
-.hd__citybar-toggle svg:last-child {
-  transition: transform 200ms ease;
-}
-
-.hd__citybar-toggle[aria-expanded="true"] svg:last-child {
-  transform: rotate(180deg);
 }
 
 /* ---------- brand row ---------- */
@@ -194,7 +140,6 @@
 }
 
 .hd__utils .hd__emergency-short,
-.hd__drawer-foot .hd__emergency-short,
 .hd__mobile-actions .hd__emergency-full {
   display: none;
 }
@@ -649,7 +594,7 @@
   width: 44px;
   height: 44px;
   place-items: center;
-  border: 1px solid var(--hd-rule);
+  border: 1px solid var(--hd-edge);
   border-radius: var(--radius-md);
   background: var(--color-surface);
   color: var(--hd-navy);
@@ -676,6 +621,13 @@
    Rows carry no chevron. Seven identical arrows pointing at seven links tell
    the reader nothing - the same reason the desktop hospitals menu dropped its
    six MapPin tiles. The magenta inset bar still means "the page you are on".
+
+   The head mirrors the header's brand row - logo, emergency line, and the
+   close button in the menu button's slot - so the sheet opens in place over
+   the row it came from. That is also what took the emergency line out of the
+   foot: three tiers there were 193px, a third of a 568px screen, and on the
+   short phones still common here the reader saw three of eight routes before
+   the actions. Two tiers are 145px.
 */
 
 .hd__drawer {
@@ -730,8 +682,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  min-height: var(--hd-main-h);
   border-bottom: 1px solid var(--hd-rule-soft);
-  padding: 13px 16px;
+  padding: 10px 16px;
 }
 
 .hd__drawer-head img {
@@ -739,22 +692,8 @@
   height: auto;
 }
 
-.hd__drawer-close {
-  display: inline-flex;
-  flex: 0 0 auto;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--hd-edge);
-  border-radius: var(--radius-pill);
-  background: var(--color-surface);
-  color: var(--hd-navy);
-  touch-action: manipulation;
-}
-
-.hd__drawer-close:hover {
-  background: var(--color-brand-blue-soft);
+.hd__drawer-head .hd__mobile-actions {
+  display: flex;
 }
 
 /* Only this strip scrolls, so the brand row above and the actions below stay
@@ -770,27 +709,30 @@
   padding: 10px 12px;
 }
 
-.hd__drawer-branch-toggle {
+/* One card, two controls. The hospital is a link to its own page and Change
+   is the toggle that opens the list; the tinted card is the thing the reader
+   sees, and the hairline between the two is what says there are two of them. */
+.hd__drawer-branch-summary {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  width: 100%;
+  align-items: stretch;
   min-height: 68px;
-  border: 0;
   border-radius: var(--radius-lg);
   background: var(--color-clinical);
-  padding: 11px 14px;
-  text-align: left;
+  overflow: hidden;
 }
 
-.hd__drawer-branch-text {
+.hd__drawer-branch-page {
   display: grid;
+  flex: 1 1 auto;
+  align-content: center;
   gap: 1px;
   min-width: 0;
+  padding: 11px 14px;
+  line-height: 1.3;
+  text-decoration: none;
 }
 
-.hd__drawer-branch-text small {
+.hd__drawer-branch-page small {
   color: var(--color-slate);
   font-size: 0.68rem;
   font-weight: 600;
@@ -798,7 +740,7 @@
   text-transform: uppercase;
 }
 
-.hd__drawer-branch-text strong {
+.hd__drawer-branch-page strong {
   display: flex;
   align-items: center;
   gap: 7px;
@@ -808,7 +750,18 @@
   font-weight: 600;
 }
 
-.hd__drawer-branch-text > span {
+/* The chevron after the name is what says the name is a route. It is the one
+   chevron in the drawer's nav column, so it still means something. */
+.hd__drawer-branch-page strong svg:last-child {
+  color: var(--color-accent-magenta);
+  transition: transform 200ms ease;
+}
+
+.hd__drawer-branch-page:hover strong svg:last-child {
+  transform: translateX(2px);
+}
+
+.hd__drawer-branch-page > span {
   overflow: hidden;
   color: var(--color-slate);
   font-size: 0.82rem;
@@ -816,22 +769,28 @@
   white-space: nowrap;
 }
 
-.hd__drawer-branch-cue {
+.hd__drawer-branch-toggle {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
   gap: 4px;
+  min-width: 44px;
+  border: 0;
+  border-left: 1px solid var(--hd-rule-soft);
+  border-radius: 0;
+  background: transparent;
+  padding: 0 14px 0 12px;
   color: var(--color-accent-magenta);
   font-family: var(--font-heading);
   font-size: 0.84rem;
   font-weight: 600;
 }
 
-.hd__drawer-branch-cue svg {
+.hd__drawer-branch-toggle svg {
   transition: transform 200ms ease;
 }
 
-.hd__drawer-branch-toggle[aria-expanded="true"] .hd__drawer-branch-cue svg {
+.hd__drawer-branch-toggle[aria-expanded="true"] svg {
   transform: rotate(180deg);
 }
 
@@ -849,31 +808,37 @@
 }
 
 /* Same row anatomy as the desktop menu - name, locality, and a check on the
-   branch the reader is already on - at a thumb-sized height. */
-.hd__drawer-branch-link,
+   chosen branch - at a thumb-sized height. Buttons, not links: a row sets the
+   hospital in place and the drawer's call actions follow it. */
+.hd__drawer-branch-option,
 .hd__drawer-sub-all {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  width: 100%;
   min-height: 52px;
+  border: 0;
   border-radius: var(--radius-md);
+  background: transparent;
   padding: 8px 12px;
   color: var(--color-ink);
+  font: inherit;
+  text-align: left;
 }
 
-.hd__drawer-branch-link span {
+.hd__drawer-branch-option > span {
   display: grid;
   gap: 2px;
   min-width: 0;
 }
 
-.hd__drawer-branch-link:hover,
-.hd__drawer-branch-link[data-current] {
+.hd__drawer-branch-option:hover,
+.hd__drawer-branch-option[aria-checked="true"] {
   background: var(--color-brand-blue-soft);
 }
 
-.hd__drawer-branch-link strong {
+.hd__drawer-branch-option strong {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -882,11 +847,11 @@
   font-weight: 600;
 }
 
-.hd__drawer-branch-link[data-current] strong {
+.hd__drawer-branch-option[aria-checked="true"] strong {
   color: var(--hd-blue);
 }
 
-.hd__drawer-branch-link small {
+.hd__drawer-branch-option small {
   overflow: hidden;
   color: var(--color-slate);
   font-size: 0.79rem;
@@ -895,7 +860,7 @@
   white-space: nowrap;
 }
 
-.hd__drawer-branch-link svg,
+.hd__drawer-branch-option svg,
 .hd__drawer-sub-all svg {
   flex: 0 0 auto;
   color: var(--hd-blue);
@@ -999,28 +964,45 @@
   background: var(--color-brand-blue-soft);
 }
 
-.hd__drawer-foot .hd__emergency {
-  justify-content: center;
-  min-height: 46px;
-  border: 1px solid rgba(165, 35, 27, 0.3);
-  border-radius: var(--radius-md);
-  background: #fdf3f2;
-  font-size: 0.95rem;
-}
-
 /* A 640px-tall phone cannot hold the whole menu at full size, so the frame
-   tightens - never the type, which older patients read. */
+   tightens - never the type, which older patients read. The summary row drops
+   its locality line (the city is the fact; the street is on the branches
+   page), the rows go to the 44px minimum, and the Menu label goes - the
+   hairline under the branch block already separates the two. Measured slack
+   in the scroll area: 0px at 360x640 and 375x667, 84px on a 320x568. */
 @media (max-height: 720px) {
-  .hd__drawer-branch-toggle {
-    min-height: 60px;
+  .hd__drawer-branch {
+    padding-block: 8px;
   }
 
-  .hd__drawer-label {
-    padding-top: 10px;
+  .hd__drawer-branch-summary {
+    min-height: 52px;
+  }
+
+  .hd__drawer-branch-page {
+    padding-block: 8px;
+  }
+
+  .hd__drawer-branch-page > span {
+    display: none;
+  }
+
+  .hd__drawer-nav > .hd__drawer-label {
+    display: none;
+  }
+
+  .hd__drawer-nav {
+    gap: 0;
+    padding-top: 8px;
   }
 
   .hd__drawer-link {
-    min-height: 48px;
+    min-height: 44px;
+  }
+
+  .hd__drawer-foot {
+    gap: 8px;
+    padding-block: 10px calc(10px + env(safe-area-inset-bottom));
   }
 
   .hd__drawer-foot .hd__cta {
@@ -1028,15 +1010,41 @@
   }
 
   .hd__ghost {
-    min-height: 54px;
+    min-height: 52px;
+  }
+}
+
+/* A phone held sideways has about 390px of height. Two tiers of actions left
+   two nav rows visible; as one four-up row, Book Appointment becomes a filled
+   tile beside the three ghosts and the list gets 57px back - five rows. */
+@media (max-height: 480px) {
+  .hd__drawer-foot {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .hd__drawer-trio {
+    display: contents;
+  }
+
+  .hd__drawer-foot .hd__cta {
+    flex-direction: column;
+    gap: 4px;
+    min-height: 52px;
+    padding: 6px;
+    font-size: 0.79rem;
+    line-height: 1.15;
+    text-align: center;
+    white-space: normal;
   }
 }
 
 /* ---------- responsive ---------- */
 
 @media (max-width: 1040px) {
-  .hd {
+  :root {
     --hd-main-h: 64px;
+    --hd-height: calc(var(--hd-main-h) + 1px);
   }
 
   .hd__utils,
@@ -1056,49 +1064,6 @@
     width: clamp(140px, 15vw, 178px);
   }
 
-  .hd__citybar .hd__pop {
-    position: static;
-  }
-
-  .hd__citybar .hd__panel {
-    top: 100%;
-    right: 0;
-    left: 0;
-    border-top: 0;
-    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-    padding: 6px;
-    box-shadow: 0 26px 50px rgba(12, 44, 73, 0.26);
-  }
-
-  /* The sheet drops over the page, so the page dims behind it. Without this it
-     read as a white block that had simply appeared in the layout. */
-  .hd__citybar:has(.hd__panel)::after {
-    content: "";
-    position: fixed;
-    z-index: 20;
-    inset: var(--hd-city-h) 0 0;
-    background: rgba(12, 44, 73, 0.34);
-    animation: hd-fade 180ms ease-out;
-  }
-
-  /* The bar collapses on scroll and clips its own overflow, which would take an
-     open sheet with it; while one is open the bar stays. */
-  .hd--scrolled .hd__citybar:has(.hd__panel) {
-    height: var(--hd-city-h);
-    overflow: visible;
-  }
-
-  .hd__branch-list {
-    width: auto;
-    max-height: min(62vh, 460px);
-  }
-}
-
-@media (min-width: 1041px) {
-  .hd__citybar {
-    display: none;
-  }
-}
 
 @media (max-width: 1199px) {
   .hd__brand-est {
@@ -1107,7 +1072,8 @@
 }
 
 @media (max-width: 560px) {
-  .hd__brand img {
+  .hd__brand img,
+  .hd__drawer-head img {
     width: 132px;
   }
 
@@ -1138,4 +1104,5 @@
     animation-iteration-count: 1 !important;
     transition-duration: 1ms !important;
   }
+}
 }

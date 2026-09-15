@@ -1,6 +1,6 @@
 # Aakash Eye Hospital
 
-Production-ready React/Vite website for Aakash Eye Hospital. Content is driven by JSON files in `src/data`, with reusable React sections, route-level code splitting, Framer Motion animation, SEO metadata, JSON-LD, and an appointment form wired through a Web3Forms transport abstraction.
+Production-ready React/Vite website for Aakash Eye Hospital. Content is driven by JSON files in `src/data`, with reusable React sections, route-level code splitting, Framer Motion animation, SEO metadata, JSON-LD, and an appointment flow that composes a WhatsApp booking request for the chosen hospital.
 
 ## Setup
 
@@ -19,13 +19,7 @@ npm run preview
 
 ## Environment
 
-Create `.env` from `.env.example`:
-
-```bash
-VITE_WEB3FORMS_ACCESS_KEY=replace_with_your_web3forms_access_key
-```
-
-The appointment form posts to Web3Forms through `src/lib/submitAppointment.js`. WhatsApp booking links are generated from the selected branch in `branches.json`.
+No environment variables are needed. The appointment page (`/appointment`) builds a WhatsApp message from the reader's answers (`src/lib/appointmentData.js`) and opens it against the chosen hospital's `whatsappNumber` in `branches.json`; nothing is posted to a server.
 
 ## Editing Content
 
@@ -53,8 +47,7 @@ Version 1 is English-only. The lightweight helper in `src/i18n/strings.js` keeps
 2. In Cloudflare Pages, create a project from the repo.
 3. Set the build command to `npm run build`.
 4. Set the output directory to `dist`.
-5. Add `VITE_WEB3FORMS_ACCESS_KEY` in Pages project environment variables.
-6. Deploy. Cloudflare Pages will serve `public/robots.txt`, `public/sitemap.xml`, and built assets from `dist`.
+5. Deploy. Cloudflare Pages will serve `public/robots.txt`, `public/sitemap.xml`, and built assets from `dist`.
 
 ## Dependency List
 
@@ -85,7 +78,6 @@ Development:
 
 ```text
 .
-├── .env.example
 ├── .gitignore
 ├── .prettierrc
 ├── README.md
@@ -133,8 +125,7 @@ Development:
 - Start `npm run dev` and check every route: `/`, `/about`, `/services`, `/services/:slug`, `/doctors`, `/branches`, `/gallery`, `/appointment`, `/contact`, and a missing route.
 - Test mobile menu open, focus movement, route click close, and Escape close.
 - Test route transitions and prefers-reduced-motion in browser dev tools.
-- Add a real `VITE_WEB3FORMS_ACCESS_KEY`, submit the appointment form, and confirm the inbox payload has subject and from name.
-- Fill the appointment form and click `Book on WhatsApp`; confirm the selected branch number and message are correct.
+- Walk the appointment flow to `Send on WhatsApp`; confirm the chosen hospital's number and the message text are correct.
 - Run Lighthouse mobile for Performance, Accessibility, Best Practices and SEO.
 
 ## Assumptions And TODOs

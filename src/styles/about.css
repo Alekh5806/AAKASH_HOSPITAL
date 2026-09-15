@@ -676,8 +676,12 @@
 
 .ab-stage[data-mode="static"] .ab-rail {
   position: sticky;
-  bottom: 14px;
-  padding-block: 10px 4px;
+  bottom: 0;
+  /* Above the stops: their photograph and copy carry z-index 1, and without
+     this the next stop's photograph painted straight over the jump nav - on a
+     reduced-motion phone the rail was there and entirely invisible. */
+  z-index: 2;
+  padding-block: 10px calc(10px + env(safe-area-inset-bottom));
   background: var(--e-navy);
   border-top: 1px solid var(--e-rule-dark);
 }
@@ -970,6 +974,10 @@
   text-align: center;
 }
 
+.ab-next__cta-short {
+  display: none;
+}
+
 /* ---------- responsive ---------- */
 
 /* One column below the laptop breakpoint: the stage keeps its full height, so
@@ -1037,6 +1045,23 @@
 @media (max-width: 760px) {
   .ab-top__title {
     max-width: none;
+  }
+
+  /* The panel is stacked here, so its one action takes the column, and it
+     carries the short label: the full one is 254px at this size against the
+     228px a 360px phone gives the button, and broke to two lines on the SE,
+     the 360 and the iPhone 8. */
+  .ab-next__cta {
+    width: 100%;
+    padding-inline: 20px;
+  }
+
+  .ab-next__cta-full {
+    display: none;
+  }
+
+  .ab-next__cta-short {
+    display: inline;
   }
 
   .ab-switch {

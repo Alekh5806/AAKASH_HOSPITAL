@@ -80,18 +80,7 @@
           "caption": "Patient visits per year",
           "startLabel": "1993",
           "endLabel": "2025",
-          "points": [
-            8,
-            14,
-            22,
-            31,
-            29,
-            44,
-            58,
-            71,
-            86,
-            100
-          ]
+          "points": [8, 14, 22, 31, 29, 44, 58, 71, 86, 100]
         }
       },
       {
@@ -139,19 +128,19 @@
         "quoteShort": "Once the lens limits daily activity, day-care surgery restores clarity.",
         "treatments": [
           {
-            "label": "Phaco cataract surgery",
-            "slug": "phaco-cataract-surgery"
+            "label": "Cataract",
+            "slug": "cataract-surgery"
           },
           {
-            "label": "Bladeless robotic laser",
-            "slug": "bladeless-robotic-laser-surgery"
+            "label": "LASIK",
+            "slug": "lasik-refractive-surgery"
           },
           {
-            "label": "General OPD and refraction",
-            "slug": "general-ophthalmology-opd"
+            "label": "Eye exam",
+            "slug": "comprehensive-eye-examination"
           }
         ],
-        "href": "/services/phaco-cataract-surgery"
+        "href": "/services/cataract-surgery"
       },
       {
         "id": "refractive-error",
@@ -164,19 +153,15 @@
         "quoteShort": "A careful refraction comes first, and only then do we discuss LASIK.",
         "treatments": [
           {
-            "label": "LASIK and excimer laser",
-            "slug": "lasik-excimer"
+            "label": "LASIK",
+            "slug": "lasik-refractive-surgery"
           },
           {
-            "label": "General OPD and refraction",
-            "slug": "general-ophthalmology-opd"
-          },
-          {
-            "label": "Bladeless robotic laser",
-            "slug": "bladeless-robotic-laser-surgery"
+            "label": "Eye exam",
+            "slug": "comprehensive-eye-examination"
           }
         ],
-        "href": "/services/lasik-excimer"
+        "href": "/services/lasik-refractive-surgery"
       },
       {
         "id": "bladeless",
@@ -189,19 +174,15 @@
         "quoteShort": "The laser cuts to a planned depth every time, which aids recovery.",
         "treatments": [
           {
-            "label": "Bladeless robotic laser",
-            "slug": "bladeless-robotic-laser-surgery"
+            "label": "LASIK",
+            "slug": "lasik-refractive-surgery"
           },
           {
-            "label": "Phaco cataract surgery",
-            "slug": "phaco-cataract-surgery"
-          },
-          {
-            "label": "LASIK and excimer laser",
-            "slug": "lasik-excimer"
+            "label": "Cataract",
+            "slug": "cataract-surgery"
           }
         ],
-        "href": "/services/bladeless-robotic-laser-surgery"
+        "href": "/services/lasik-refractive-surgery"
       },
       {
         "id": "retina",
@@ -214,19 +195,19 @@
         "quoteShort": "Every patient with diabetes needs a dilated retina check each year.",
         "treatments": [
           {
-            "label": "Medical retina care",
-            "slug": "medical-retina"
+            "label": "Retina",
+            "slug": "retina-services"
           },
           {
-            "label": "General OPD and refraction",
-            "slug": "general-ophthalmology-opd"
+            "label": "Eye exam",
+            "slug": "comprehensive-eye-examination"
           },
           {
-            "label": "Glaucoma care",
+            "label": "Glaucoma",
             "slug": "glaucoma-care"
           }
         ],
-        "href": "/services/medical-retina"
+        "href": "/services/retina-services"
       },
       {
         "id": "glaucoma",
@@ -239,16 +220,16 @@
         "quoteShort": "Sight lost to glaucoma never returns, so screening is the whole battle.",
         "treatments": [
           {
-            "label": "Glaucoma care",
+            "label": "Glaucoma",
             "slug": "glaucoma-care"
           },
           {
-            "label": "General OPD and refraction",
-            "slug": "general-ophthalmology-opd"
+            "label": "Eye exam",
+            "slug": "comprehensive-eye-examination"
           },
           {
-            "label": "Medical retina care",
-            "slug": "medical-retina"
+            "label": "Retina",
+            "slug": "retina-services"
           }
         ],
         "href": "/services/glaucoma-care"
@@ -264,19 +245,19 @@
         "quoteShort": "Bring a child for a check before school starts, not after.",
         "treatments": [
           {
-            "label": "General OPD and refraction",
-            "slug": "general-ophthalmology-opd"
+            "label": "Eye exam",
+            "slug": "comprehensive-eye-examination"
           },
           {
-            "label": "LASIK and excimer laser",
-            "slug": "lasik-excimer"
+            "label": "LASIK",
+            "slug": "lasik-refractive-surgery"
           },
           {
-            "label": "Phaco cataract surgery",
-            "slug": "phaco-cataract-surgery"
+            "label": "Cataract",
+            "slug": "cataract-surgery"
           }
         ],
-        "href": "/services/general-ophthalmology-opd"
+        "href": "/services/comprehensive-eye-examination"
       }
     ]
   },
@@ -345,21 +326,9 @@
         "meta": "Protocol-led safety"
       }
     ],
-    "filesYears": [
-      "1998",
-      "2011",
-      "2025"
-    ],
-    "explainSteps": [
-      "We explain",
-      "You ask",
-      "You decide"
-    ],
-    "checklist": [
-      "Pre-op checks",
-      "Sterile protocol",
-      "Follow-up review"
-    ]
+    "filesYears": ["1998", "2011", "2025"],
+    "explainSteps": ["We explain", "You ask", "You decide"],
+    "checklist": ["Pre-op checks", "Sterile protocol", "Follow-up review"]
   },
   "doctorHighlights": {
     "eyebrow": "Our specialists",
