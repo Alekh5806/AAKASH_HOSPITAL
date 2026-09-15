@@ -1,7 +1,13 @@
+import { readFileSync } from "node:fs";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import site from "./src/data/site.json" with { type: "json" };
 import { splitTagline } from "./src/lib/brand.js";
+
+// Read rather than `import ... with { type: "json" }`: wrangler parses this
+// file before a deploy and its parser rejects import attributes.
+const site = JSON.parse(
+  readFileSync(new URL("./src/data/site.json", import.meta.url), "utf8"),
+);
 
 /* The opening curtain's static first frame in index.html carries the wordmark
    and the tagline before any script runs; they come from site.json here so
