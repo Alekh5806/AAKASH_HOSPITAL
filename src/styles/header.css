@@ -10,8 +10,13 @@
 }
 
 .hd {
-  --hd-navy: var(--color-brand-blue-strong);
-  --hd-blue: var(--color-brand-blue);
+  /* The design system's own navy pair, so the header can never drift from the
+     pages and the footer, which read the same tokens. It used to read the
+     legacy --color-* pair, which a stray second :root in global.css re-declared
+     to a brighter blue; only ThemeTokens overwriting them at mount kept the
+     header on the site's palette. */
+  --hd-navy: var(--e-navy);
+  --hd-blue: var(--e-navy-2);
   --hd-rule: rgba(12, 44, 73, 0.12);
   --hd-rule-soft: rgba(12, 44, 73, 0.07);
   /* WCAG 1.4.11 wants 3:1 on the boundary of a control, and --hd-rule is a
@@ -89,29 +94,51 @@
   width: clamp(126px, 12vw, 144px);
 }
 
+/* The footer's masthead lockup, at the other end of the page: the tracked
+   micro word beside the year in the serif italic accent, over the one-line
+   note. As "Since 1993" in bold navy it was the only place the header and the
+   footer set the same fact two different ways, and it left the header as the
+   one surface on the site with no trace of the serif accent every page opens
+   with. Decorative, so it hides below 1200px rather than squeezing the
+   contact details. */
 .hd__brand-est {
   display: grid;
   align-content: center;
-  gap: 1px;
+  gap: 3px;
   min-height: 42px;
   border-left: 1px solid var(--hd-rule);
   padding-left: 14px;
-  color: var(--hd-blue);
-  font-family: var(--font-heading);
-  line-height: 1.15;
+  line-height: 1;
 }
 
-.hd__brand-est strong {
-  font-size: 1.02rem;
-  font-weight: 600;
+.hd__brand-since {
+  display: flex;
+  align-items: baseline;
+  gap: 0.42em;
 }
 
-.hd__brand-est span {
+.hd__brand-since-word,
+.hd__brand-note {
   color: var(--color-slate);
+  font-family: var(--e-tight);
   font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.hd__brand-since-year {
+  color: var(--color-accent-magenta);
+  font-family: var(--e-serif);
+  font-size: 1.32rem;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+.hd__brand-note {
   font-weight: 500;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
 /* ---------- desktop utilities ---------- */
@@ -173,7 +200,7 @@
   background: var(--hd-navy);
   padding: 0 20px;
   color: #fff;
-  font-family: var(--font-heading);
+  font-family: var(--e-sans);
   font-size: 0.95rem;
   font-weight: 600;
   white-space: nowrap;
@@ -200,7 +227,7 @@
   background: transparent;
   padding: 0 12px;
   color: var(--color-ink);
-  font-family: var(--font-heading);
+  font-family: var(--e-sans);
   font-size: 0.95rem;
   font-weight: 600;
   white-space: nowrap;
@@ -432,10 +459,6 @@
   padding: 8px;
   animation: hd-mega 160ms ease-out;
 
-  /* A short laptop window must still reach the last city and the foot link. */
-  max-height: calc(100vh - var(--hd-main-h) - var(--hd-nav-h) - 28px);
-  overflow-y: auto;
-  overscroll-behavior: contain;
 }
 
 /* The 10px gap above the panel would drop the hover and close the menu
@@ -491,9 +514,18 @@
   font-size: 0.75rem;
 }
 
+/* A short laptop window must still reach the last city and the foot link, so
+   the list is capped to what the viewport leaves under the header, less the
+   panel's own head, foot and padding (125px). The list scrolls, never the
+   panel: overflow on the panel clipped its own caret and the transparent strip
+   that bridges the gap to the trigger, so the caret was never seen and a
+   pointer resting in the gap closed the menu. */
 .hd__mega-list {
   display: grid;
   gap: 2px;
+  max-height: calc(100vh - var(--hd-main-h) - var(--hd-nav-h) - 28px - 125px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .hd__mega-item {
@@ -676,19 +708,23 @@
   outline: none;
 }
 
+/* Exactly the header row's height and logo size, so the close button lands
+   on the menu button's slot at every width. As min-height plus padding the
+   head was 70px against the header's 65px between 561 and 1040px, and the
+   close button sat 3px lower than the button that opened it. */
 .hd__drawer-head {
   display: flex;
   flex: 0 0 auto;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  min-height: var(--hd-main-h);
+  height: calc(var(--hd-main-h) + 1px);
   border-bottom: 1px solid var(--hd-rule-soft);
-  padding: 10px 16px;
+  padding: 0 16px;
 }
 
 .hd__drawer-head img {
-  width: 148px;
+  width: clamp(140px, 15vw, 168px);
   height: auto;
 }
 
@@ -781,7 +817,7 @@
   background: transparent;
   padding: 0 14px 0 12px;
   color: var(--color-accent-magenta);
-  font-family: var(--font-heading);
+  font-family: var(--e-sans);
   font-size: 0.84rem;
   font-weight: 600;
 }
@@ -954,7 +990,7 @@
   border-radius: var(--radius-md);
   background: var(--color-surface);
   color: var(--hd-navy);
-  font-family: var(--font-heading);
+  font-family: var(--e-sans);
   font-size: 0.79rem;
   font-weight: 600;
   text-align: center;
@@ -1063,7 +1099,7 @@
   .hd--scrolled .hd__brand img {
     width: clamp(140px, 15vw, 178px);
   }
-
+}
 
 @media (max-width: 1199px) {
   .hd__brand-est {
@@ -1104,5 +1140,4 @@
     animation-iteration-count: 1 !important;
     transition-duration: 1ms !important;
   }
-}
 }

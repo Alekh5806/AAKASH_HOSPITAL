@@ -36,11 +36,6 @@
       "label": "Step one",
       "title": "Find your service",
       "lede": "Three ways into the same list. Pick whichever feels natural - the list below narrows as you choose.",
-      "restingTitle": "Not sure what to pick?",
-      "restingText": "A comprehensive eye examination is the right starting point for any concern. The doctor examines your eyes and guides you to the correct service from there.",
-      "restingCtaLabel": "Go to eye examination",
-      "resultLabel": "Usually handled by",
-      "fallbackService": "comprehensive-eye-examination",
       "note": "These suggestions are a starting point, not a diagnosis. The right assessment is decided by your doctor after examination.",
       "concerns": [
         {
@@ -141,8 +136,6 @@
         }
       ],
       "partsLede": "Point at the part of the eye you are asking about.",
-      "partsHint": "Tap a part of the diagram, or pick from the list.",
-      "partsResultLabel": "Care for this part",
       "parts": [
         {
           "id": "front",
@@ -187,7 +180,6 @@
           "services": ["myopia-clinic", "optical-services"]
         }
       ],
-      "kindLede": "Choose the kind of care you are looking for.",
       "status": {
         "all": "Showing all {total} services",
         "filtered": "Showing {count} of {total}",
@@ -222,10 +214,8 @@
       "label": "All services",
       "title": "What we treat",
       "lede": "Open a service for what it involves, what to expect and the questions patients ask most.",
-      "filterLabel": "Filter by kind of care",
       "allLabel": "All",
-      "openLabel": "Open",
-      "emptyLabel": "No services in this group."
+      "openLabel": "Open"
     },
     "detail": {
       "backLabel": "All services",
@@ -326,7 +316,6 @@
         "Foreign-body or penetrating injury"
       ],
       "ctaLabel": "Call now",
-      "ctaHref": "/contact",
       "serviceSlug": "emergency-eye-care",
       "secondaryLabel": "More about emergency eye care",
       "lede": "If any of these apply, contact the hospital now rather than waiting for an appointment.",
@@ -387,7 +376,6 @@
         "title": "Cataract Surgery | Aakash Eye Hospital",
         "description": "Phacoemulsification cataract surgery with intraocular lens implantation at Aakash Eye Hospital, Gujarat."
       },
-      "quickLabel": "Cataract",
       "category": "surgical",
       "causes": [
         "Ageing is the most common reason the natural lens turns cloudy.",
@@ -466,7 +454,6 @@
         "title": "LASIK & Refractive Surgery | Aakash Eye Hospital",
         "description": "LASIK, bladeless robotic laser and refractive surgery options at Aakash Eye Hospital for suitable patients."
       },
-      "quickLabel": "LASIK",
       "category": "surgical",
       "causes": [
         "The eye focuses light in front of or behind the retina instead of on it.",
@@ -537,7 +524,6 @@
         "title": "Retina Services | Aakash Eye Hospital",
         "description": "Medical retina care with OCT, FFA and laser support at Aakash Eye Hospital, Gujarat."
       },
-      "quickLabel": "Retina",
       "category": "specialty",
       "causes": [
         "Diabetes damages the small blood vessels of the retina over time.",
@@ -616,7 +602,6 @@
         "title": "Comprehensive Glaucoma Care | Aakash Eye Hospital",
         "description": "Glaucoma screening, pressure monitoring, perimetry and long-term care at Aakash Eye Hospital."
       },
-      "quickLabel": "Glaucoma",
       "category": "specialty",
       "causes": [
         "Pressure inside the eye damages the optic nerve, usually very slowly.",
@@ -647,7 +632,6 @@
       "slug": "oculoplasty",
       "title": "Oculoplasty",
       "category": "specialty",
-      "quickLabel": "Oculoplasty",
       "shortDescription": "Specialist care for eyelids, tear passages and structures around the eye.",
       "longDescription": [
         "Oculoplasty covers the eyelids, the tear drainage passages, the orbit and the tissues surrounding the eye. Problems here can affect comfort, vision and appearance.",
@@ -718,7 +702,6 @@
       "slug": "pediatric-eye-care",
       "title": "Pediatric Eye Care",
       "category": "children",
-      "quickLabel": "Child care",
       "shortDescription": "Healthy vision plays an important role in a child's learning and development.",
       "longDescription": [
         "Children rarely say that their vision is blurred, so many eye problems are first noticed by a parent or a teacher rather than by the child.",
@@ -793,7 +776,6 @@
       "slug": "myopia-clinic",
       "title": "Myopia Clinic",
       "category": "children",
-      "quickLabel": "Myopia",
       "shortDescription": "Monitoring increasing spectacle numbers during childhood and adolescence.",
       "longDescription": [
         "Short sight often begins in childhood and can change over several years. Tracking that change is what tells the team whether a plan is working.",
@@ -864,7 +846,6 @@
       "slug": "squint-services",
       "title": "Squint Services",
       "category": "children",
-      "quickLabel": "Squint",
       "shortDescription": "Assessment and treatment for eyes that are not properly aligned.",
       "longDescription": [
         "A squint is an eye that turns inward, outward, up or down instead of aligning with the other eye. It can appear in childhood or later in life.",
@@ -983,7 +964,6 @@
         "title": "Comprehensive Eye Examination | Aakash Eye Hospital",
         "description": "Complete eye examination, refraction and OPD care at every Aakash Eye Hospital branch."
       },
-      "quickLabel": "Eye exam",
       "category": "everyday",
       "symptoms": [
         {
@@ -1009,7 +989,6 @@
       "slug": "optical-services",
       "title": "Optical Services",
       "category": "everyday",
-      "quickLabel": "Spectacles",
       "shortDescription": "Spectacles that begin with the right prescription.",
       "longDescription": [
         "A spectacle prescription is the result of an examination, not a separate purchase. The optical team works from the doctor's findings.",
@@ -1075,7 +1054,6 @@
       "slug": "emergency-eye-care",
       "title": "Emergency Eye Care",
       "category": "urgent",
-      "quickLabel": "Emergency",
       "shortDescription": "Some eye conditions require urgent evaluation.",
       "longDescription": [
         "Sudden loss of vision, injury, chemical exposure and severe pain are reasons to seek care immediately rather than waiting for a routine appointment.",

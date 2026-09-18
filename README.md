@@ -25,13 +25,16 @@ No environment variables are needed. The appointment page (`/appointment`) build
 
 All editable site content lives in `src/data`:
 
-- `site.json`: brand, logo, global CTAs, SEO defaults, footer, business hours
-- `navigation.json`: header and footer navigation
+- `site.json`: brand, logo, global CTAs, SEO defaults, business hours, footer and cookie consent copy
+- `navigation.json`: header navigation and the footer's two page-link columns
 - `theme.json`: colors, fonts, radius and shadows
-- `home.json`: hero, stats, timeline, mission/vision and homepage CTA
-- `services.json`: service cards, service detail pages and FAQs
+- `home.json`: hero, impact numbers, conditions rail, trust tiles, doctor highlights and patient voices
+- `about.json`: the journey timeline and the vision, mission and core values
+- `services.json`: the services index, the eleven services and their detail pages
 - `doctors.json`: doctor and optometry team profiles
-- `branches.json`: addresses, phone groups, email, maps and WhatsApp numbers
+- `branches.json`: addresses, phone groups, email, maps, WhatsApp numbers and each hospital's own page
+- `contact.json`: the contact page's copy (every number on it comes from `branches.json`)
+- `appointment.json`: the booking flow's steps, fields, slip and WhatsApp message templates
 - `testimonials.json`: patient quotes
 - `gallery.json`: facility and social activity media
 
@@ -39,7 +42,7 @@ See `src/data/README.md` for editor-friendly examples.
 
 ## Language Support
 
-Version 1 is English-only. The lightweight helper in `src/i18n/strings.js` keeps shared text centralized so a future locale dictionary can be added without restructuring page components. Future translated JSON can follow the same shapes currently validated in `src/lib/schemas.js`.
+Version 1 is English-only. Every visible string lives in `src/data`, so a second language would be a second set of JSON files rather than a change to any component.
 
 ## Cloudflare Pages Deployment
 
@@ -48,6 +51,8 @@ Version 1 is English-only. The lightweight helper in `src/i18n/strings.js` keeps
 3. Set the build command to `npm run build`.
 4. Set the output directory to `dist`.
 5. Deploy. Cloudflare Pages will serve `public/robots.txt`, `public/sitemap.xml`, and built assets from `dist`.
+
+`wrangler.jsonc` describes the same deployment for the Wrangler CLI: it serves `dist` as a single-page app, so every route falls back to `index.html`.
 
 ## Dependency List
 
@@ -80,49 +85,47 @@ Development:
 .
 ├── .gitignore
 ├── .prettierrc
+├── CLAUDE.md
 ├── README.md
 ├── eslint.config.js
 ├── index.html
 ├── package-lock.json
 ├── package.json
+├── vite.config.js
+├── wrangler.jsonc
 ├── public
 │   ├── assets
 │   │   ├── logo.png
 │   │   └── media
+│   │       ├── branches
+│   │       ├── conditions
 │   │       ├── doctors
 │   │       ├── gallery
-│   │       └── heroes
+│   │       ├── heroes
+│   │       ├── journey
+│   │       ├── page-headers
+│   │       ├── services
+│   │       └── stock
 │   ├── robots.txt
 │   └── sitemap.xml
-├── src
-│   ├── components
-│   ├── data
-│   │   ├── README.md
-│   │   ├── branches.json
-│   │   ├── doctors.json
-│   │   ├── gallery.json
-│   │   ├── home.json
-│   │   ├── navigation.json
-│   │   ├── services.json
-│   │   ├── site.json
-│   │   ├── testimonials.json
-│   │   └── theme.json
-│   ├── i18n
-│   ├── lib
-│   ├── main.jsx
-│   ├── pages
-│   ├── router.jsx
-│   ├── sections
-│   ├── styles
-│   └── types
-└── vite.config.js
+└── src
+    ├── components   shared UI primitives and layout
+    ├── data         all editable content (see data/README.md)
+    ├── lib          data access, validation and link helpers
+    ├── pages        one file per route, lazy-loaded from router.jsx
+    ├── sections     page sections composed by the pages
+    ├── styles       global.css, system.css and one namespaced sheet per surface
+    ├── main.jsx
+    └── router.jsx
 ```
+
+`CLAUDE.md` carries the full file-by-file tree and the reasoning behind every section.
 
 ## Testing Checklist
 
 - Run `npm run lint`.
 - Run `npm run build`.
-- Start `npm run dev` and check every route: `/`, `/about`, `/services`, `/services/:slug`, `/doctors`, `/branches`, `/gallery`, `/appointment`, `/contact`, and a missing route.
+- Start `npm run dev` and check every route: `/`, `/about/journey`, `/about/vision`, `/services`, `/services/:slug`, `/doctors`, `/branches`, `/branches/:slug`, `/gallery`, `/appointment`, `/contact`, and a missing route.
 - Test mobile menu open, focus movement, route click close, and Escape close.
 - Test route transitions and prefers-reduced-motion in browser dev tools.
 - Walk the appointment flow to `Send on WhatsApp`; confirm the chosen hospital's number and the message text are correct.

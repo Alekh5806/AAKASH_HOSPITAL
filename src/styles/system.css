@@ -55,17 +55,6 @@
   padding-block: clamp(48px, 5.5vw, 80px);
 }
 
-.e-rule {
-  height: 1px;
-  border: 0;
-  margin: 0;
-  background: var(--e-rule);
-}
-
-.e-sec--dark .e-rule {
-  background: var(--e-rule-dark);
-}
-
 /* section head: label column + content column */
 
 .e-head {
@@ -226,16 +215,6 @@
   transform: translateX(4px);
 }
 
-.e-link--light {
-  color: #fff;
-  border-bottom-color: rgba(255, 255, 255, 0.4);
-}
-
-.e-link--light:hover {
-  color: #fff;
-  border-bottom-color: #fff;
-}
-
 .e-btn {
   display: inline-flex;
   align-items: center;
@@ -288,22 +267,6 @@
   border-color: var(--e-ink);
   background: transparent;
   color: var(--e-ink);
-}
-
-.e-btn--outline-light {
-  border-color: rgba(255, 255, 255, 0.42);
-  background: transparent;
-  color: #fff;
-}
-
-.e-btn--outline-light:hover {
-  border-color: #fff;
-  background: transparent;
-  color: #fff;
-}
-
-.e-btn--block {
-  width: 100%;
 }
 
 /* ---------- figures / numerals ---------- */

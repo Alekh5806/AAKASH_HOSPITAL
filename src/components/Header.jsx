@@ -13,6 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { Link, NavLink, useLocation } from "react-router-dom";
+import { splitEstablished } from "../lib/brand";
 import { branches, navigation, site } from "../lib/coreData";
 import {
   BRANCH_STORAGE_KEY,
@@ -27,6 +28,7 @@ import {
 } from "../lib/contact";
 
 const { emergency, branchPicker, establishedLabel } = site.header;
+const established = splitEstablished(establishedLabel);
 
 function readStoredBranch() {
   try {
@@ -187,7 +189,11 @@ function NavDropdown({
         aria-expanded={isOpen}
         aria-controls={panelId}
         aria-haspopup="true"
-        onClick={() => onToggle(!isOpen)}
+        /* A fine pointer has already opened the menu by hovering the trigger,
+           so a click there keeps it open rather than closing what the hover
+           just showed; the menu leaves with the pointer. Touch and keyboard
+           have no hover, so for them the click is the toggle. */
+        onClick={() => onToggle(canHover.current ? true : !isOpen)}
         onKeyDown={onTriggerKeyDown}
       >
         <span>{label}</span>
@@ -537,8 +543,11 @@ export default function Header() {
           <Link className="hd__brand" to="/" aria-label={`${site.brand.name} home`}>
             <img src={site.brand.logo} alt={site.brand.logoAlt} width="178" height="48" />
             <span className="hd__brand-est" aria-hidden="true">
-              <strong>{establishedLabel}</strong>
-              <span>Trusted eye care</span>
+              <span className="hd__brand-since">
+                <span className="hd__brand-since-word">{established.word}</span>
+                <span className="hd__brand-since-year">{established.year}</span>
+              </span>
+              <span className="hd__brand-note">Trusted eye care</span>
             </span>
           </Link>
 

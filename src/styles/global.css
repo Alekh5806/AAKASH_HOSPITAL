@@ -131,12 +131,6 @@ iframe {
   margin-bottom: 30px;
 }
 
-.section-heading--sticky {
-  position: sticky;
-  top: 120px;
-  align-self: start;
-}
-
 .eyebrow {
   display: inline-flex;
   align-items: center;
@@ -226,14 +220,6 @@ p {
   transform: none;
 }
 
-.text-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  color: var(--color-brand-blue);
-  font-weight: 850;
-}
-
 .card-hover {
   transition:
     transform 220ms ease,
@@ -241,23 +227,8 @@ p {
     border-color 220ms ease;
 }
 
-@keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
 .doctor-card,
-.gallery-card,
-.faq-item {
+.gallery-card {
   border: 1px solid rgba(27, 58, 139, 0.11);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
@@ -291,32 +262,6 @@ p {
 
 .doctor-card__body {
   padding: 22px;
-}
-
-@keyframes timeline-flow {
-  0%,
-  100% {
-    opacity: 0.58;
-    transform: scaleX(0.94);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scaleX(1);
-  }
-}
-
-@keyframes timeline-pulse {
-  0%,
-  100% {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1);
-  }
 }
 
 .doctor-section {
@@ -664,19 +609,11 @@ p {
   display: block;
 }
 
-.section-heading__title-line {
-  display: block;
-}
-
 .page-header--image p {
   max-width: 680px;
   color: rgba(255, 255, 255, 0.86);
   font-size: clamp(1rem, 1.45vw, 1.16rem);
   font-weight: 650;
-}
-
-.page-header--services {
-  background-position: center 44%;
 }
 
 .page-header--doctors {
@@ -714,61 +651,13 @@ p {
     background-position: center;
   }
 
-  .page-header--services,
   .page-header--gallery {
     background-position: center 36%;
   }
 }
 
-.faq-section__inner {
-  display: grid;
-  grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.3fr);
-  gap: 30px;
-}
-
-.faq-list {
-  display: grid;
-  gap: 12px;
-}
-
-.faq-item {
-  padding: 0;
-  overflow: hidden;
-}
-
-.faq-item summary {
-  cursor: pointer;
-  color: var(--color-brand-blue-strong);
-  font-weight: 900;
-  list-style: none;
-  padding: 18px 20px;
-}
-
-.faq-item summary::-webkit-details-marker {
-  display: none;
-}
-
-.faq-item p {
-  margin: 0;
-  padding: 0 20px 18px;
-}
-
-@keyframes care-pulse {
-  0%,
-  100% {
-    transform: scale(0.92);
-    opacity: 0.82;
-  }
-
-  50% {
-    transform: scale(1.05);
-    opacity: 1;
-  }
-}
-
 .doctor-card,
-.gallery-card,
-.faq-item {
+.gallery-card {
   position: relative;
 }
 
@@ -814,14 +703,6 @@ p {
 
   h2 {
     font-size: 2.25rem;
-  }
-
-  .faq-section__inner {
-    grid-template-columns: 1fr;
-  }
-
-  .section-heading--sticky {
-    position: static;
   }
 
   .doctor-grid,
@@ -883,25 +764,6 @@ p {
 }
 
 /* Professional hospital theme and responsive polish */
-
-:root {
-  --color-brand-blue: #1556a6;
-  --color-brand-blue-strong: #073b78;
-  --color-brand-blue-soft: #eaf3ff;
-  --color-accent-magenta: #d91c7a;
-  --color-accent-magenta-soft: #fdeaf4;
-  --color-ink: #142033;
-  --color-slate: #5c6878;
-  --color-muted: #dde7f0;
-  --color-surface-alt: #f7fafc;
-  --color-clinical: #f1f7fb;
-  --color-teal: #168a9a;
-  --color-gold: #c99a2e;
-  --radius-lg: 16px;
-  --shadow-sm: 0 8px 22px rgba(7, 59, 120, 0.08);
-  --shadow-md: 0 18px 42px rgba(7, 59, 120, 0.12);
-  --shadow-lg: 0 28px 68px rgba(7, 59, 120, 0.16);
-}
 
 body {
   background:
@@ -973,8 +835,7 @@ p {
 }
 
 .doctor-card,
-.gallery-card,
-.faq-item {
+.gallery-card {
   border-color: rgba(7, 59, 120, 0.1);
   border-radius: 14px;
   background: #ffffff;
@@ -1526,35 +1387,6 @@ p {
 }
 
 /* Final tap-target polish for launch QA */
-
-.faq-section__inner {
-  align-items: start;
-}
-
-.faq-item {
-  border-radius: 14px;
-  background: #ffffff;
-  box-shadow: 0 12px 30px rgba(7, 59, 120, 0.06);
-}
-
-.faq-item summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.faq-item summary::after {
-  flex: 0 0 auto;
-  color: var(--color-accent-magenta);
-  content: "+";
-  font-size: 1.3rem;
-  line-height: 1;
-}
-
-.faq-item[open] summary::after {
-  content: "-";
-}
 
 @media (max-width: 1040px) {
   .gallery-section .gallery-grid {

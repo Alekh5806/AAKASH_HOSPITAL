@@ -26,7 +26,6 @@
      the services index use: 3.48:1 on white. Do not lighten it, and do not put
      --e-rule-2 on a control here. */
   --sd-edge: #7f8b96;
-  --sd-edge-light: rgba(255, 255, 255, 0.46);
 }
 
 .sd-sec {

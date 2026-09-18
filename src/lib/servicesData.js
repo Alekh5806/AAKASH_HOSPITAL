@@ -14,12 +14,6 @@ export function getServicesByIds(ids) {
   return ids.map((id) => services.items.find((service) => service.id === id)).filter(Boolean);
 }
 
-/* The finder's concern list is the only place patient-language symptoms are
-   written, so anything else that needs them reads them back out of it. */
-export function getConcernsForService(slug) {
-  return servicePage.finder.concerns.filter((concern) => concern.service === slug);
-}
-
 export function getCategoryLabel(id) {
   return servicePage.categories.find((category) => category.id === id)?.label ?? "";
 }
@@ -70,10 +64,6 @@ export function splitServiceTitle(title = "") {
   const words = title.trim().split(/\s+/);
   if (words.length < 2) return { lead: title, accent: "" };
   return { lead: words.slice(0, -1).join(" "), accent: words[words.length - 1] };
-}
-
-export function getServicePosition(slug) {
-  return getNumberedServices().find((service) => service.slug === slug)?.position ?? "";
 }
 
 /* Same kind of care first, then the rest of the list in source order. The

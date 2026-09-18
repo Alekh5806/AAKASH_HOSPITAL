@@ -2,6 +2,9 @@
    Site footer - Editorial Clinical
    Follows the Function Health footer: one rounded card lifted off a warmer
    ground, with the fine print left outside the card on the ground itself.
+   The controls are not the reference's pills: every button here is the
+   header's 4px rectangle, so the Book Appointment a reader sees at the top of
+   the page and the one at the bottom are the same object (--ft-radius).
    ========================================================================= */
 
 .ft {
@@ -13,6 +16,11 @@
      --ft-line is 1.3:1 on the card; this is 3.01:1. Do not reuse --ft-line on
      a button, and do not lighten this to match the rules. */
   --ft-edge: #948f83;
+  /* One control radius, shared with the header's buttons (--radius-md). The
+     site's button is the small-radius rectangle - .e-btn, the cookie sheet,
+     the header - and the footer's pills were the one surface disagreeing
+     with the button directly above them on every page. */
+  --ft-radius: 4px;
   background: var(--ft-ground);
   color: var(--e-ink-2);
   font-family: var(--e-sans);
@@ -108,6 +116,9 @@
   font-weight: 400;
   letter-spacing: -0.015em;
   line-height: 1.16;
+  /* Balanced lines keep "check-up" whole: ragged, the phone column broke the
+     headline at the hyphen and left "up or a" opening the second line. */
+  text-wrap: balance;
 }
 
 .ft__actTitle em {
@@ -137,7 +148,7 @@
   justify-content: center;
   gap: 9px;
   border: 1px solid var(--e-navy);
-  border-radius: 999px;
+  border-radius: var(--ft-radius);
   background: var(--e-navy);
   padding: 0 26px;
   min-height: 52px;
@@ -229,6 +240,13 @@
   font-weight: 500;
   letter-spacing: -0.015em;
   line-height: 1.35;
+}
+
+/* The time range and a hyphenated word in the headline stay whole, so a narrow
+   column breaks after the weekday span rather than stranding "PM" on a line of
+   its own, and never inside "check-up". */
+.ft__nobr {
+  white-space: nowrap;
 }
 
 /* The phone and the email are the two things an older patient actually taps
@@ -327,7 +345,7 @@
   align-items: center;
   gap: 7px;
   border: 1px solid var(--ft-edge);
-  border-radius: 999px;
+  border-radius: var(--ft-radius);
   background: transparent;
   padding: 0 16px;
   min-height: 42px;
@@ -344,14 +362,16 @@
   color: var(--e-navy);
 }
 
-/* Icon circles, as the reference has them. The label is carried by aria-label
-   on the link, because three labelled pills took the whole utility row. */
+/* Icon squares on the header's menu-button shape rather than the reference's
+   circles, so the utility row and the header share one control language. The
+   label is carried by aria-label on the link, because three labelled buttons
+   took the whole utility row. */
 .ft__social a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border: 1px solid var(--ft-edge);
-  border-radius: 50%;
+  border-radius: var(--ft-radius);
   width: 42px;
   height: 42px;
   color: var(--e-ink-2);

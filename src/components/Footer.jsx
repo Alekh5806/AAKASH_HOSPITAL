@@ -1,5 +1,6 @@
 import { ArrowRight, ArrowUp, Clock, Mail, MessageCircle, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
+import { splitEstablished } from "../lib/brand";
 import { branches, navigation, site } from "../lib/coreData";
 import { buildBranchHref, buildWhatsApp, cleanTel, getPrimaryBranch } from "../lib/contact";
 
@@ -27,12 +28,19 @@ function columnId(title) {
   return `ft-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 }
 
-/* "Since 1993" is set as two typographic parts: a tracked micro word and the
-   year in the serif italic accent the rest of the footer uses. The year is
-   read off the end of the label so the JSON stays a single plain string. */
-function splitEstablished(label) {
-  const match = /^(.*?)\s*(\d{4})\s*$/.exec(label);
-  return match ? { word: match[1], year: match[2] } : { word: label, year: "" };
+/* A hyphenated word such as "check-up" is one word to the reader, so it never
+   breaks at its hyphen: the phone column set "Need an eye check-" over "up or
+   a second opinion?" until this kept the compound whole. */
+function keepCompounds(text) {
+  return text.split(/(\S+-\S+)/).map((part, index) =>
+    index % 2 === 1 ? (
+      <span className="ft__nobr" key={index}>
+        {part}
+      </span>
+    ) : (
+      part
+    ),
+  );
 }
 
 export default function Footer() {
@@ -87,7 +95,7 @@ export default function Footer() {
                 <div>
                   <span>{contactLabels.hours}</span>
                   <strong>
-                    {hours.label}, {hours.value}
+                    {hours.label}, <span className="ft__nobr">{hours.value}</span>
                   </strong>
                 </div>
               </li>
@@ -98,7 +106,7 @@ export default function Footer() {
           <div className="ft__body">
             <section className="ft__act" aria-labelledby="ft-act-title">
               <h2 className="ft__actTitle" id="ft-act-title">
-                {cta.title} <em>{cta.titleAccent}</em>
+                {keepCompounds(cta.title)} <em>{keepCompounds(cta.titleAccent)}</em>
               </h2>
               <p className="ft__actLede">{cta.lede}</p>
 

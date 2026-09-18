@@ -51,16 +51,20 @@ Deployment target:
 
 ```text
 .
-|-- claude.md
+|-- .gitignore
+|-- .prettierrc
+|-- CLAUDE.md
+|-- README.md
 |-- eslint.config.js
 |-- index.html
 |-- package.json
-|-- README.md
 |-- vite.config.js
+|-- wrangler.jsonc               (Cloudflare: serves dist as a single-page app)
 |-- public
 |   |-- robots.txt
 |   |-- sitemap.xml
 |   `-- assets
+|       |-- logo.png
 |       `-- media
 |           |-- branches
 |           |   `-- visnagar
@@ -75,37 +79,37 @@ Deployment target:
 `-- src
     |-- main.jsx
     |-- router.jsx
-    |-- assets
-    |   `-- images
     |-- components
     |   |-- AppPreloader.jsx
+    |   |-- BookingSlip.jsx
     |   |-- BranchActionBar.jsx
     |   |-- BranchActions.jsx
     |   |-- BranchMap.jsx
     |   |-- BranchStatus.jsx
-    |   |-- BookingSlip.jsx
-    |   |-- ChoiceGroup.jsx
-    |   |-- HospitalMap.jsx
     |   |-- ButtonLink.jsx
+    |   |-- ChoiceGroup.jsx
     |   |-- CookieConsent.jsx
     |   |-- CountUp.jsx
+    |   |-- EyeDiagram.jsx
     |   |-- Footer.jsx
     |   |-- Header.jsx
+    |   |-- HospitalMap.jsx
     |   |-- HydrateFallback.jsx
     |   |-- IntroMark.jsx
+    |   |-- IrisMark.jsx
     |   |-- JsonLd.jsx
     |   |-- LazyMapFrame.jsx
-    |   |-- PageHeader.jsx
+    |   |-- PageHeader.jsx          (doctors, gallery and not-found pages only)
     |   |-- Reveal.jsx
+    |   |-- RootLayout.jsx          (header, footer, cookie consent, route scroll)
     |   |-- SEO.jsx
-    |   |-- EyeDiagram.jsx
-    |   |-- SymptomScene.jsx
-    |   |-- IrisMark.jsx
     |   |-- ServiceActionBar.jsx
     |   |-- ServiceActions.jsx
     |   |-- SmartImage.jsx
+    |   |-- SymptomScene.jsx
     |   `-- ThemeTokens.jsx
     |-- data
+    |   |-- README.md
     |   |-- about.json
     |   |-- appointment.json
     |   |-- branches.json
@@ -114,13 +118,10 @@ Deployment target:
     |   |-- gallery.json
     |   |-- home.json
     |   |-- navigation.json
-    |   |-- README.md
     |   |-- services.json
     |   |-- site.json
     |   |-- testimonials.json
     |   `-- theme.json
-    |-- i18n
-    |   `-- strings.js
     |-- lib
     |   |-- aboutData.js
     |   |-- appointmentData.js
@@ -129,14 +130,12 @@ Deployment target:
     |   |-- contact.js
     |   |-- contactData.js
     |   |-- coreData.js
-    |   |-- data.js
     |   |-- doctorsData.js
     |   |-- galleryData.js
     |   |-- homeData.js
     |   |-- icons.js
     |   |-- intro.js
     |   |-- motion.js
-    |   |-- schemas.js
     |   |-- servicesData.js
     |   `-- testimonialsData.js
     |-- pages
@@ -153,56 +152,57 @@ Deployment target:
     |   |-- ServiceDetailPage.jsx
     |   `-- ServicesPage.jsx
     |-- sections
+    |   |-- AboutNext.jsx            (both about pages)
     |   |-- AboutSwitch.jsx          (both about pages)
-    |   |-- HospitalFinder.jsx       (hospitals index)
-    |   |-- BranchHero.jsx           (one hospital's page)
-    |   |-- BranchLocate.jsx         (one hospital's page)
-    |   |-- BranchTeam.jsx           (one hospital's page)
     |   |-- BookingFlow.jsx          (appointment page)
     |   |-- BookingSteps.jsx         (appointment page)
     |   |-- BranchCare.jsx           (one hospital's page)
+    |   |-- BranchHero.jsx           (one hospital's page)
     |   |-- BranchInside.jsx         (one hospital's page)
+    |   |-- BranchLocate.jsx         (one hospital's page)
     |   |-- BranchOthers.jsx         (one hospital's page)
+    |   |-- BranchTeam.jsx           (one hospital's page)
     |   |-- ConditionsCarousel.jsx   (home)
     |   |-- ContactDesk.jsx          (contact page)
     |   |-- ContactDirectory.jsx     (contact page)
-    |   |-- CTASection.jsx
+    |   |-- CTASection.jsx           (doctors page)
     |   |-- DoctorGrid.jsx           (doctors page)
     |   |-- DoctorHighlights.jsx     (home)
-    |   |-- Gallery.jsx
+    |   |-- Gallery.jsx              (gallery page)
     |   |-- Hero.jsx                 (home)
-    |   |-- AboutNext.jsx            (both about pages)
+    |   |-- HospitalFinder.jsx       (hospitals index)
     |   |-- ImpactStats.jsx          (home)
     |   |-- JourneyTimeline.jsx      (about journey page)
     |   |-- PatientStories.jsx       (home)
-    |   |-- VisionStatements.jsx     (about vision page)
-    |   |-- VisionValues.jsx         (about vision page)
-    |   |-- ServiceExplorer.jsx      (services page)
-    |   |-- ServicePathway.jsx       (services page)
     |   |-- ServiceEmergency.jsx     (services page, and the emergency service page)
     |   |-- ServiceExplore.jsx       (service detail page)
-    |   |-- ServiceVisit.jsx         (service detail page)
+    |   |-- ServiceExplorer.jsx      (services page)
     |   |-- ServiceFaq.jsx           (service detail page)
+    |   |-- ServiceHero.jsx          (service detail page)
+    |   |-- ServicePathway.jsx       (services page)
     |   |-- ServiceRelated.jsx       (service detail page)
+    |   |-- ServiceVisit.jsx         (service detail page)
+    |   |-- VisionStatements.jsx     (about vision page)
+    |   |-- VisionValues.jsx         (about vision page)
     |   `-- WhyChooseUs.jsx          (home)
-    |-- styles
-    |   |-- global.css
-    |   |-- system.css
-    |   |-- preloader.css
-    |   |-- header.css
-    |   |-- landing.css
-    |   |-- about.css
-    |   |-- services.css
-    |   |-- service-detail.css
-    |   |-- branch.css
-    |   |-- hospitals.css
-    |   |-- contact.css
-    |   |-- appointment.css
-    |   |-- footer.css
-    |   `-- cookie.css
-    `-- types
-        `-- types.js
+    `-- styles
+        |-- global.css
+        |-- system.css
+        |-- preloader.css
+        |-- header.css
+        |-- landing.css
+        |-- about.css
+        |-- services.css
+        |-- service-detail.css
+        |-- branch.css
+        |-- hospitals.css
+        |-- contact.css
+        |-- appointment.css
+        |-- footer.css
+        `-- cookie.css
 ```
+
+Every file above is reachable from `src/main.jsx` through the import graph, and every file under `public/assets/media` is referenced from a data file, a component or `index.html`. That is checked, not assumed: an import-graph walk found `src/i18n/strings.js`, `src/lib/data.js` (a barrel nobody imported), `src/lib/schemas.js` (zod schemas describing data shapes the site no longer has - `home.hero.slides`, `site.pageSeo`, `vision.values[].icon`) and `src/types/types.js` with no importer, and all four were deleted with their directories. Validation now lives where it is used - `appointmentSchema` in `src/lib/appointmentData.js` is the one zod schema left, and it validates a form, not a data file. **When a file is removed, re-run that walk** rather than trusting the tree above; the tree is a description, not a manifest.
 
 ## Architecture Rules
 
@@ -779,7 +779,7 @@ Same shape, two changes: the hero leads with the helpline, and `ServiceEmergency
   - **A wrapper with a styled child cannot be sampled.** Making `.sd-visit__note span` transparent left its `<strong>` painted, and the sampler read 1.7:1 off the glyphs it had not hidden. The note's text now has its own element; measure leaf elements only.
   - **A `display: none` element returns no client rects**, and its zero box samples the top-left of the page - which reported the action bar as 1.06:1 at desktop width, where it is correctly hidden. Skip elements with no rects.
   - **Translucent type must be composited against the pixel behind it** before the ratio is computed. Reading `rgba(255,255,255,0.5)` and measuring only its RGB reported every figure on a navy ground as 14.27:1, including several that are not.
-- **Control boundaries need `--sd-edge` (`#7f8b96`)** on light grounds and `--sd-edge-light` (`rgba(255,255,255,0.46)`) on the navy, the same value the header, the cookie sheet and the services index use: 3.48:1 on white against the 3:1 WCAG 1.4.11 wants. `--e-rule-2` is 1.58:1 and belongs between bands only.
+- **Control boundaries need `--sd-edge` (`#7f8b96`)**, the same value the header, the cookie sheet and the services index use: 3.48:1 on white against the 3:1 WCAG 1.4.11 wants. `--e-rule-2` is 1.58:1 and belongs between bands only. There is no navy control on this page any more - the `--sd-edge-light` token the navy-hero build carried for one was never read and has been removed; if a control ever sits on a dark ground here, reintroduce it at `rgba(255,255,255,0.46)` and measure.
 - Measured with **no page overflow and no target under 24px** at 320, 360, 390, 414, 768, 820, 1024, 1180, 1280, 1440, 1920 and 2560px, across **all eleven services** and the not-found state, in both motion modes, with no console errors on any route. Re-measured for the phone pass at 320x568, 360x640, 375x667, 390x844, 412x915, 430x932 and 360x780 across the index and all eleven services: no overflow anywhere, no tab label or row title wrapping, the hero's `Book appointment` at 282-371px from the top on every service and size, and no target under 44px other than the visit dots, whose 48px ring the element rect cannot see. Under `prefers-reduced-motion` the card height snaps instead of sliding, every panel renders at full opacity, and the chain steps are simply there.
 
 
@@ -1023,9 +1023,15 @@ Pixel-sampled worst cell, 1440 and 390px: head label 7.3:1, accent 5.7:1, rail l
 - Mobile (<= 1040px): **one 65px row** - logo, the emergency link and the menu button - and the nav row is replaced by a right-side drawer. **There is no branch bar on a phone.** Two builds had one above the brand row, navy and then white, and both were wrong for the same reason: a 44px band across the top of every phone screen spent on one control, sitting directly under a browser toolbar whose colour the page does not control (`theme-color` where honoured; near-black on Chrome for Android in dark mode, which ignores `theme-color` entirely - tested, and an open Chromium issue). Every big multi-branch hospital keeps a location control; none gives it its own band on a phone. **The phone's selector is the drawer's branch block**, which sits directly above the Call OPD / WhatsApp / Directions actions it changes - see the drawer section. Desktop keeps its picker in the brand row, where there is room.
 - **Do not add a first-visit "choose your hospital" prompt.** A first visit already has the opening curtain (about 2s on the home page) and the consent sheet that follows it; a third interruption before the page is what makes people close the tab. Most first-time visitors do not yet know which branch they want, so the answer would be a guess, and a guessed branch is worse than the head-office default. It would also fight the consent sheet for the same z-index and thumb zone. The drawer's first-open expansion (below) is the non-blocking version of the same idea.
 - `index.html` sets `theme-color` to white so the toolbar merges with the white header on iOS Safari and light-mode Chrome, and declares `color-scheme: light`. Do not set it back to navy: nothing at the top of the page is navy any more.
+- **`--hd-navy` and `--hd-blue` read `--e-navy` / `--e-navy-2`, the design system's own pair.** They used to read the legacy `--color-brand-blue*` tokens, and `global.css` carried a stray second `:root` (a leftover "professional theme" block) that re-declared those to a brighter `#1556a6` / `#d91c7a` with a 16px radius; the header only rendered in the site's navy because `ThemeTokens.jsx` overwrote the tokens inline at mount. That block is deleted and the header reads the same tokens as the footer and every page, so the three can no longer drift. The remaining `--color-*` reads in `header.css` (slate, clinical tint, radii) resolve from the one `:root` at the top of `global.css`, which matches `theme.json`.
+- **The header's buttons - `.hd__cta`, the branch picker, `.hd__ghost` and the drawer's `Change` toggle - are set in `--e-sans`, the face `.e-btn`, the cookie sheet and the footer's buttons use.** Names, the nav row and the drawer rows stay in `--font-heading` (Inter Tight), the way the footer sets its column heads in `--e-tight` and its links in `--e-sans`: wayfinding is set in the heading face, controls in the UI face.
+- **The `Since 1993` lockup is the footer's masthead lockup, set once.** `splitEstablished()` lives in `src/lib/brand.js` beside `splitTagline()` and both `Header` and `Footer` read it: the tracked micro word, the year in the serif italic accent, and (in the header only) the `Trusted eye care` note beneath. As `Since 1993` in bold navy Inter Tight it was the one fact the two ends of the page set two different ways, and it left the header as the only surface on the site with no trace of the serif accent every page opens on. The row is unchanged at 76px; the lockup still hides below 1200px.
 - **The row heights live on `:root`, not on `.hd`**, so `--hd-height` can be derived from them and read outside the header - it is the header at rest (brand row + border on phones and tablets, 65px; brand row + nav row + border on desktop, 133px), and the landing hero sizes itself to the first screen with it. On phones the compact state is the same height, so scrolling never changes the header's height there; on desktop it shrinks the brand row by 12px.
 - The header keeps a selected branch in `localStorage` (`aakash_selected_branch`). It drives the displayed OPD number, the Book Appointment query string and the drawer call/WhatsApp/directions actions, and it adopts the branch whenever a page is opened for a specific one - `?branch=<slug>` on the index, or the `/branches/<slug>` path of a hospital's own page - so the number at the top of a hospital page is always that hospital's.
 - Nav items come from `navigation.header`. An item carrying a `dropdown` key renders a menu instead of a link - `"branches"` for the hospitals menu and `"about"` for the two About pages - and its label comes from that JSON entry rather than being written into the component. Header labels and the emergency number live in `site.header`.
+- **`header.css` ends with five sibling media blocks - `1040px`, `1199px`, `560px`, `370px` and `prefers-reduced-motion` - and each must close before the next opens.** The `1040px` block lost its closing brace when the city-bar rules were cut out of it, and the four blocks after it silently nested inside: the `Since 1993` lockup stopped hiding between 1041 and 1199px, and the header's reduced-motion rule only applied on phones. The file still parsed, so nothing failed loudly. Count braces (`{` minus `}` must be 0) after deleting a rule near the end of the file.
+- **A fine pointer's click on a menu trigger keeps the menu open; it never toggles.** Hover has already opened it, so a plain toggle made a click on `About` close what the hover just showed, and the menu would not come back until the pointer left and returned. `NavDropdown` reads `canHover` and passes `true` on click there; touch and keyboard, which have no hover, still toggle.
+- **The dropdown panel never scrolls - its list does.** `overflow-y: auto` on `.hd__mega` clipped the panel's own caret and the transparent `::before` strip that bridges the 10px gap to the trigger, so the caret was never seen and a pointer resting in the gap closed the menu. `.hd__mega-list` carries the viewport cap (less 125px for the panel's head, foot and padding) and the scrolling; measured on a 1280x600 window the six cities scroll under a pinned `View all hospitals`. Do not put overflow back on the panel.
 - Both menus are the same component, `NavDropdown`, which owns the `.hd__mega*` rules: one narrow column, hover-open gated on a fine pointer, a close timer over the gap, and roving `ArrowDown`/`ArrowUp`/`Home`/`End` focus with `Escape` returning focus to its trigger. It takes rows and an optional footer link, so the hospitals menu keeps `View all hospitals` and the About menu has no footer. Triggers are held in one `dropdownTriggers` map keyed by the dropdown name, which is what lets `Escape` focus the right one. Do not fork it for a third menu - add rows.
 
 ### Hospitals menu
@@ -1053,7 +1059,7 @@ The hospitals menu is `NavDropdown` fed by `branches.json`; the drawer renders t
 The drawer is the `.hd__drawer*` rules in `header.css`, and it is a navigation menu first: the reader opened it to go somewhere.
 
 - **Order is nav, then actions.** The panel is a fixed head, a scrolling middle, and a footer pinned in the thumb zone (Book Appointment, then Call OPD / WhatsApp / Directions as a three-up). Before this the CTA, two ghost buttons and a four-line address block sat *above* the links, so a 390x844 phone showed three of the routes and the reader had to scroll a menu to reach Gallery or Contact.
-- **The head is the header's own brand row**: logo, the emergency line, and the close button (`.hd__iconbtn`, the same 44px square as the menu button) in the slot the menu button had, at the header's 64px. The sheet opens in place over the row it came from, so the open and closed states line up and the reader learns nothing new. That is also what took the emergency line out of the foot: three tiers there measured 193px, a third of a 568px screen, and on the short phones still common here the reader saw three of eight routes before the actions - the failure this drawer was rebuilt to fix, still live on the SE and the 360x640. Two tiers are 145px. The emergency line is never more than one glance away: it is at the top of the header when the drawer is closed and at the top of the sheet when it is open.
+- **The head is the header's own brand row**: logo, the emergency line, and the close button (`.hd__iconbtn`, the same 44px square as the menu button) in the slot the menu button had, at the header's 64px. **It is exactly that row - `height: calc(var(--hd-main-h) + 1px)` and the logo at the header's own `clamp(140px, 15vw, 168px)`** - not `min-height` plus padding around a fixed 148px logo, which made the head 70px on tablets and put the close button 3px below the button that opened it. Measured: the close button's rect equals the menu button's at 390, 560, 561, 768, 1024 and 1040px. The sheet opens in place over the row it came from, so the open and closed states line up and the reader learns nothing new. That is also what took the emergency line out of the foot: three tiers there measured 193px, a third of a 568px screen, and on the short phones still common here the reader saw three of eight routes before the actions - the failure this drawer was rebuilt to fix, still live on the SE and the 360x640. Two tiers are 145px. The emergency line is never more than one glance away: it is at the top of the header when the drawer is closed and at the top of the sheet when it is open.
 - **Tapping the dimmed page closes the drawer** (`onClick` on `.hd__drawer` guarded by `target === currentTarget`, so a tap inside the sheet does nothing), and closing by any route returns focus to the menu button - the effect cleanup holds the opener in a local rather than reading the ref late. Verified with a real touch on the backdrop, with Escape, and by tapping inside the sheet.
 - **A parent with `children` is replaced by its children, not by an accordion.** `drawerNavItems` flattens `navigation.header`, so the drawer lists `Our journey` and `Vision and mission` as ordinary rows instead of an `About` row the reader has to expand. That is why the drawer has eight rows where the header nav has seven items.
 - All eight rows and every action fit with nothing to scroll when the branch block is collapsed at 360x640, 375x667, 360x780, 390x844, 412x915, 430x932 and 768x1024 (measured: `scrollHeight - clientHeight` on `.hd__drawer-scroll` is 0 at every one of them). The eighth row was paid for out of the frame and never out of the type: rows are 48px rather than 52px (still clear of the 44px minimum; measured smallest target is 46px) and the branch block, the `Menu` label and the nav padding each gave up a few pixels. If a ninth row is ever added, re-measure - there is no slack left at 390x844.
@@ -1077,6 +1083,7 @@ The drawer is the `.hd__drawer*` rules in `header.css`, and it is a navigation m
 - The shape is the reference's: **one rounded card inset on a warmer ground**, with the fine print left outside the card on the ground itself. The card is `--ft-card` `#f8f7f3` and the ground `--ft-ground` `#e6e3db`; both are local to `.ft` rather than global tokens, because nothing else on the site uses this pair.
 - It is **light, not the navy it used to be**. Three reasons, in order: `PatientStories` ends the home page on `--e-navy`, and two adjacent dark bands in slightly different navies read as a mistake rather than as a footer; the logo is a magenta-on-transparent wordmark that needed a white pill to survive on navy, which looked like a patch stuck to the page; and this is the densest block of small text on the site, where dark-on-light is the easier read for the older patients the site is built for.
 - The inset above the card is `padding-top` on `.ft`, never `margin-top` on `.ft__card`. As a margin it collapsed straight out of the footer's box and the page background showed through as a white strip between the navy section above and the footer ground - visible on every page.
+- **Every control in the footer is the header's 4px rectangle (`--ft-radius`), not the reference's pill.** The site's button is the small-radius rectangle - `.e-btn` is 3px, the cookie sheet 3px, the header 4px - and the footer's pills (primary, ghost, the two utility buttons and the social circles) were the one surface disagreeing with the button directly above them on every page: `Book Appointment` at the top of the page and `Book an appointment` at the bottom were two different shapes. The social marks are 42px squares on the shape of the header's menu button rather than circles for the same reason. The card keeps its 18-26px radius - it is a container, not a control. The landing hero's phone pill is the deliberate exception and is documented under Hero.
 - The reference's app QR and store badges are dropped: there is no app. Its newsletter block is dropped too - there is no list to subscribe anyone to, and a form that posts nowhere is worse than no form. The action block that replaces it keeps that slot's position and typography (serif headline, italic accent from `--e-accent`, one line of support, then the buttons).
 - The masthead is the wordmark plus a `Since 1993` tag, nothing else. A 25-word summary paragraph used to sit beside the logo and was removed; the tag keeps that row from reading as an empty band, and everything the paragraph said is on the page above it.
 - The `Since 1993` tag is set in two parts, not one label: `SINCE` stays the tracked 0.72rem micro word the footer uses for contact labels, and the year is the serif italic accent (`--e-serif`, `--e-accent`), baseline-aligned beside it behind the hairline divider. As one uppercase micro string it read as a caption stuck to the logo; the serif year makes the pair a lockup and repeats the serif/italic pairing of the action headline and the hero accent. `splitEstablished()` reads the year off the end of `site.header.establishedLabel`, so the JSON stays one plain string and a label with no trailing year still renders whole. Measured with no overflow and one line at 320, 390 and 1440px.
@@ -1098,6 +1105,7 @@ The drawer is the `.hd__drawer*` rules in `header.css`, and it is a navigation m
 
 **Typography.** The column headings are sentence case at 0.98rem in `--e-tight`, not the 0.72rem tracked uppercase micro-label the rest of the site uses for section labels. Uppercase made them the smallest type in the footer, sitting directly above the links they title, so each column read as one undifferentiated block; at 0.98rem a reader can land on a heading. The micro uppercase style stays on the contact labels, where it labels a value rather than titling a list. Link rows are 0.98rem, contact values 1.12rem, and the fine print 0.84rem capped at `108ch` - it ran the full 1240px shell before, at about 150 characters a line.
 
+- **Two things in the footer never break inside themselves**, both through `.ft__nobr`: the hours value (`9:00 AM - 6:00 PM`), which stranded `PM` alone on a line at 320-390 and 768px and split the range at 1024px, so the line now breaks after `Monday to Saturday,`; and any hyphenated word in the action headline, which `keepCompounds()` wraps so `check-up` never sets as `check-` / `up`. The headline also carries `text-wrap: balance`. Measured line by line with a per-character `Range` walk at 320-1920px.
 - `.ft__fine p` carries that `108ch` cap, and `.ft__copy` is a `p` inside `.ft__fine`, so the copyright rule needs `.ft__fine .ft__copy` to beat it. Written as a bare `.ft__copy` the cap won on specificity and the rule above the copyright stopped two thirds of the way across the page.
 - Footer link labels are written to fit the two-column phone layout: `Bladeless laser`, `Eye check-up`, `Book appointment`. Measured with `Range.getClientRects()`, no footer link wraps at 320, 360, 390, 414, 480, 600 or 768px. If a label is lengthened, re-measure - a wrapped label knocks the two columns out of alignment row for row, which is what the shortening fixed.
 
