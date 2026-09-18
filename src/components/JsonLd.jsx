@@ -1,5 +1,6 @@
 import { branches, site } from "../lib/coreData";
-import { buildBranchHref } from "../lib/contact";
+import { buildBranchHref, getPrimaryBranch } from "../lib/contact";
+import { getBranchHours, toOpeningHoursSpecification } from "../lib/hours";
 
 const siteUrl = site.defaultSeo.url.replace(/\/$/, "");
 
@@ -16,16 +17,10 @@ function allPhones() {
 }
 
 /* The same block the page's live open/closed pill reads, so the hours a search
-   engine is told can never drift from the hours a reader is shown. */
-function openingHours() {
-  return [
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: site.openingHours.days,
-      opens: site.openingHours.opens,
-      closes: site.openingHours.closes,
-    },
-  ];
+   engine is told can never drift from the hours a reader is shown. Each
+   hospital's node carries its own; the organisation carries the head office's. */
+function openingHours(branch) {
+  return toOpeningHoursSpecification(getBranchHours(branch));
 }
 
 export default function JsonLd({ data }) {
@@ -66,7 +61,7 @@ export function MedicalClinicJsonLd({ services = [] }) {
       addressRegion: "Gujarat",
       addressCountry: "IN",
     })),
-    openingHoursSpecification: openingHours(),
+    openingHoursSpecification: openingHours(getPrimaryBranch(branches.items)),
     availableService: services.map((service) => ({
       "@type": "MedicalProcedure",
       name: service.title,
@@ -102,7 +97,7 @@ function branchNode(branch) {
       "@type": "AdministrativeArea",
       name: "Gujarat",
     },
-    openingHoursSpecification: openingHours(),
+    openingHoursSpecification: openingHours(branch),
     geo: {
       "@type": "GeoCoordinates",
       latitude: branch.coords.lat,

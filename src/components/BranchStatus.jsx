@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
-import { site } from "../lib/coreData";
 import { branchPage } from "../lib/branchData";
+import { formatTime, getBranchHours, getOpenState } from "../lib/hours";
 import { fillTemplate } from "../lib/servicesData";
 
 const { status } = branchPage.locate;
-const hours = site.openingHours;
 const TICK_MS = 60000;
 
-/* Whether the OPD is open, right now.
+/* Whether this hospital's OPD is open, right now.
  *
  * It replaced a sentence explaining the map, which said nothing a reader could
  * act on. This is the one fact on the page that changes through the day, and it
@@ -15,62 +14,41 @@ const TICK_MS = 60000;
  * thing here that is genuinely alive: it re-reads the clock every minute and
  * the dot breathes while the doors are open.
  *
- * The clock is the hospital's, not the reader's. A patient in Gujarat and a son
- * in Toronto must be told the same thing, so the weekday and the time are read
- * in `site.openingHours.timeZone` rather than from the device. */
-function hospitalNow() {
-  const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone: hours.timeZone,
-    weekday: "long",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(new Date());
-  const value = (type) => parts.find((part) => part.type === type)?.value ?? "";
-  return {
-    weekday: value("weekday"),
-    minutes: Number(value("hour")) * 60 + Number(value("minute")),
-  };
-}
-
-function toMinutes(time) {
-  const [hour, minute] = time.split(":").map(Number);
-  return hour * 60 + minute;
-}
-
-function toLabel(time) {
-  const [hour, minute] = time.split(":").map(Number);
-  return `${hour % 12 || 12}:${String(minute).padStart(2, "0")} ${hour >= 12 ? "PM" : "AM"}`;
-}
-
-function resolve() {
-  const { weekday, minutes } = hospitalNow();
-  if (!hours.days.includes(weekday)) {
+ * It reads the hospital's own `hours` block, so two hospitals with different
+ * days or times get different answers, and the clock is the hospital's rather
+ * than the reader's (see `hospitalNow` in lib/hours.js). The state is resolved
+ * in render rather than held: the branch can change under the pill (the
+ * switchboard, the slip and the index map all move it) and a held value would
+ * go on describing the old hospital until the next tick. */
+function resolve(branch) {
+  const hours = getBranchHours(branch);
+  const state = getOpenState(hours);
+  if (state.closedToday) {
     return { open: false, label: status.closedTodayLabel, detail: hours.closedNote };
   }
-  const opens = toMinutes(hours.opens);
-  const closes = toMinutes(hours.closes);
-  if (minutes >= opens && minutes < closes) {
+  if (state.open) {
     return {
       open: true,
       label: status.openLabel,
-      detail: fillTemplate(status.closesAt, { time: toLabel(hours.closes) }),
+      detail: fillTemplate(status.closesAt, { time: formatTime(state.closes) }),
     };
   }
   return {
     open: false,
     label: status.closedLabel,
-    detail: fillTemplate(status.opensAt, { time: toLabel(hours.opens) }),
+    detail: fillTemplate(status.opensAt, { time: formatTime(state.opens) }),
   };
 }
 
-export default function BranchStatus() {
-  const [now, setNow] = useState(() => resolve());
+export default function BranchStatus({ branch }) {
+  const [, setTick] = useState(0);
 
   useEffect(() => {
-    const timer = window.setInterval(() => setNow(resolve()), TICK_MS);
+    const timer = window.setInterval(() => setTick((tick) => tick + 1), TICK_MS);
     return () => window.clearInterval(timer);
   }, []);
+
+  const now = resolve(branch);
 
   return (
     /* The state is a pill and the detail is a line under it. Both inside one

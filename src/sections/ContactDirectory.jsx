@@ -11,6 +11,8 @@ import {
   getStoredBranch,
 } from "../lib/contact";
 import { contactPage, mergeDesks } from "../lib/contactData";
+import { getBranchHours, getHoursRows } from "../lib/hours";
+import { fillTemplate } from "../lib/servicesData";
 
 /* Every number, every hospital, as one ruled ledger.
  *
@@ -70,13 +72,18 @@ export default function ContactDirectory() {
   const items = branches.items;
   const emergency = site.header.emergency;
   const email = getPrimaryBranch(items).email;
-  const [openSlugs, setOpenSlugs] = useState(() => new Set([getStoredBranch(items).slug]));
+  const [chosen, setChosen] = useState(() => getStoredBranch(items));
+  const [openSlugs, setOpenSlugs] = useState(() => new Set([chosen.slug]));
 
-  /* The hospital chosen in the switchboard opens its fold here too. */
+  /* The hospital chosen in the switchboard opens its fold here too, and the
+     hours at the foot are its own - the six can differ, so the foot names the
+     hospital it is describing rather than stating one figure for all. */
   useEffect(() => {
     const follow = (event) => {
-      if (!items.some((item) => item.slug === event.detail)) return;
-      setOpenSlugs((open) => (open.has(event.detail) ? open : new Set([...open, event.detail])));
+      const next = items.find((item) => item.slug === event.detail);
+      if (!next) return;
+      setChosen(next);
+      setOpenSlugs((open) => (open.has(next.slug) ? open : new Set([...open, next.slug])));
     };
     window.addEventListener(BRANCH_CHANGE_EVENT, follow);
     return () => window.removeEventListener(BRANCH_CHANGE_EVENT, follow);
@@ -191,15 +198,20 @@ export default function ContactDirectory() {
             <span className="ct-foot__note">{directory.emailNote}</span>
           </div>
           <div className="ct-foot__cell">
-            <span className="e-label">{directory.hoursLabel}</span>
+            <span className="e-label">
+              {directory.hoursLabel} <i aria-hidden="true">·</i> {chosen.name}
+            </span>
             <dl className="ct-hours">
-              {site.businessHours.map((entry) => (
+              {getHoursRows(getBranchHours(chosen)).map((entry) => (
                 <div key={entry.label}>
                   <dt>{entry.label}</dt>
                   <dd>{entry.value}</dd>
                 </div>
               ))}
             </dl>
+            <span className="ct-foot__note">
+              {fillTemplate(directory.hoursNote, { branch: chosen.name })}
+            </span>
           </div>
         </motion.div>
       </div>

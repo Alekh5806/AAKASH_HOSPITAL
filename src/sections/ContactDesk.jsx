@@ -384,7 +384,7 @@ export default function ContactDesk() {
           <NumberRoll value={phone} />
         </a>
 
-        <BranchStatus />
+        <BranchStatus branch={branch} />
 
         <motion.p
           className="ct-readout__address"

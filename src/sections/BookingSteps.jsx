@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { CalendarDays, HelpCircle } from "lucide-react";
 import ChoiceGroup from "../components/ChoiceGroup";
 import { appointmentPage, todayIso, UNSURE_SERVICE } from "../lib/appointmentData";
+import { describeDays, getBranchHours } from "../lib/hours";
+import { fillTemplate } from "../lib/servicesData";
 
 const { steps, fields } = appointmentPage;
 const EASE = [0.22, 1, 0.36, 1];
@@ -199,8 +201,23 @@ export function WhatStep({ groups, value, onChange, error, still }) {
 const ANY = "any";
 const PICK = "pick";
 
-export function WhenStep({ days, date, onDate, daypart, onDaypart, error, still }) {
+/* Why a day is missing from the rail is the chosen hospital's own fact - its
+   closed days and what it does on them - so the note under the rail is built
+   from its `hours` block, and a hospital open every day gets no note. */
+function closedDaysNote(branch) {
+  const hours = getBranchHours(branch);
+  if (!hours.closedDays.length || !hours.closedNote) return "";
+  const note = hours.closedNote.charAt(0).toLowerCase() + hours.closedNote.slice(1);
+  return fillTemplate(fields.date.closedNote, {
+    closed: describeDays(hours.closedDays),
+    branch: branch.name,
+    closedNote: note,
+  });
+}
+
+export function WhenStep({ branch, days, date, onDate, daypart, onDaypart, error, still }) {
   const group = useGroup(still);
+  const closedNote = closedDaysNote(branch);
   const listed = days.some((day) => day.iso === date);
   const [picking, setPicking] = useState(Boolean(date) && !listed);
   const custom = picking || (Boolean(date) && !listed);
@@ -243,7 +260,7 @@ export function WhenStep({ days, date, onDate, daypart, onDaypart, error, still 
           groups={[{ options: dayOptions }]}
           value={chosen}
           onChange={chooseDay}
-          describedBy={error ? "ap-date-error" : "ap-date-note"}
+          describedBy={error ? "ap-date-error" : closedNote ? "ap-date-note" : undefined}
           renderOption={(option) =>
             option.any || option.pick ? (
               <span className="ap-tile ap-tile--word">
@@ -284,9 +301,11 @@ export function WhenStep({ days, date, onDate, daypart, onDaypart, error, still 
           </motion.div>
         ) : null}
         <FieldError id="ap-date-error" message={error} />
-        <p className="ap-field__hint" id="ap-date-note">
-          {fields.date.closedNote}
-        </p>
+        {closedNote ? (
+          <p className="ap-field__hint" id="ap-date-note">
+            {closedNote}
+          </p>
+        ) : null}
       </motion.div>
 
       <motion.div variants={group}>

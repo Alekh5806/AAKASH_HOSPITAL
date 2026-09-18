@@ -31,6 +31,7 @@
     "headOfficeTag": "Head office",
     "emailLabel": "Write to us",
     "emailNote": "One address reaches every hospital.",
-    "hoursLabel": "OPD hours"
+    "hoursLabel": "OPD hours",
+    "hoursNote": "For {branch}, the hospital chosen above. Each hospital keeps its own hours."
   }
 }

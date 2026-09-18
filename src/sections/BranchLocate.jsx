@@ -5,9 +5,9 @@ import BranchMap from "../components/BranchMap";
 import BranchStatus from "../components/BranchStatus";
 import LazyMapFrame from "../components/LazyMapFrame";
 import Reveal from "../components/Reveal";
-import { site } from "../lib/coreData";
 import { buildMapLink, cleanTel } from "../lib/contact";
 import { branchPage } from "../lib/branchData";
+import { getBranchHours, getHoursRows } from "../lib/hours";
 
 const { locate } = branchPage;
 const COPIED_MS = 2200;
@@ -135,21 +135,22 @@ export default function BranchLocate({ branch }) {
     </>
   );
 
+  const hours = getBranchHours(branch);
   const hoursPanel = (
     <>
       <span className="br-details__label">{locate.hoursLabel}</span>
       <ul className="br-hours">
-        {site.businessHours.map((slot) => (
-          <li key={slot.label}>
+        {getHoursRows(hours).map((row) => (
+          <li key={row.label}>
             <Clock size={14} aria-hidden="true" />
             <span>
-              <strong>{slot.label}</strong>
-              {slot.value}
+              <strong>{row.label}</strong>
+              {row.value}
             </span>
           </li>
         ))}
       </ul>
-      <p className="br-details__note">{branch.hoursLabel}</p>
+      {hours.note ? <p className="br-details__note">{hours.note}</p> : null}
     </>
   );
 
@@ -193,7 +194,7 @@ export default function BranchLocate({ branch }) {
             <h2 className="e-h2" id="br-locate-title">
               {locate.title} <em>{locate.titleAccent}</em>
             </h2>
-            <BranchStatus />
+            <BranchStatus branch={branch} />
           </div>
         </Reveal>
 

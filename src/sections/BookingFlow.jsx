@@ -26,7 +26,8 @@ import {
   getStoredBranch,
   storeBranch,
 } from "../lib/contact";
-import { branches, site } from "../lib/coreData";
+import { branches } from "../lib/coreData";
+import { getBranchHours, getHoursRows } from "../lib/hours";
 import { fillTemplate, servicePage, services } from "../lib/servicesData";
 import { SendStep, WhatStep, WhenStep, WhereStep, WhoStep } from "./BookingSteps";
 
@@ -93,8 +94,6 @@ export default function BookingFlow() {
     () => window.matchMedia(STACKED_QUERY).matches,
     () => false,
   );
-  const days = useMemo(() => getOpenDays(), []);
-
   const requestedBranch = searchParams.get("branch");
   const requestedService = searchParams.get("service");
   const initialBranch = findBranch(requestedBranch) ?? getStoredBranch(branches.items);
@@ -149,6 +148,10 @@ export default function BookingFlow() {
   const hitTimer = useRef(0);
 
   const branch = findBranch(values.branch) ?? initialBranch;
+  /* The day rail is the chosen hospital's: its own closed days are skipped and
+     today drops out at its own closing time, so the rail is rebuilt when the
+     hospital changes. */
+  const days = useMemo(() => getOpenDays(branch), [branch]);
   const service = services.items.find((item) => item.id === values.service);
   const stepId = STEP_IDS[step];
   const ready = appointmentSchema.safeParse(values).success;
@@ -467,6 +470,7 @@ export default function BookingFlow() {
                 ) : null}
                 {!sent && stepId === "when" ? (
                   <WhenStep
+                    branch={branch}
                     days={days}
                     date={values.preferredDate ?? ""}
                     onDate={(iso) => setValue("preferredDate", iso, { shouldValidate: true })}
@@ -580,7 +584,7 @@ function DonePanel({ branch, waHref, onEdit, onAgain, still, slip }) {
       <p className="ap-step__lede">{fillTemplate(after.lede, { branch: branch.name })}</p>
       <dl className="ap-done__hours">
         <dt className="e-label">{after.hoursLabel}</dt>
-        {site.businessHours.map((row) => (
+        {getHoursRows(getBranchHours(branch)).map((row) => (
           <dd key={row.label}>
             <span>{row.label}</span>
             <strong>{row.value}</strong>

@@ -64,6 +64,7 @@ export default function HospitalFinder({ items, copy }) {
   );
   const [previewSlug, setPreviewSlug] = useState(null);
   const activeSlug = previewSlug ?? selectedSlug;
+  const activeBranch = items.find((item) => item.slug === activeSlug) ?? items[0];
 
   const mapRef = useRef(null);
   const listRef = useRef(null);
@@ -153,8 +154,11 @@ export default function HospitalFinder({ items, copy }) {
           onChoose={choose}
           ghost={copy.mapGhost}
         />
+        {/* The lit hospital's own hours: the six can differ, so the pill over
+            the map is the readout for whichever row is lit, not a network
+            figure said once. */}
         <div className="hs-map__stamp">
-          <BranchStatus />
+          <BranchStatus branch={activeBranch} />
         </div>
       </div>
 

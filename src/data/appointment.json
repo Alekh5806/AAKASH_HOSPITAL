@@ -64,8 +64,8 @@
       "todayLabel": "Today",
       "tomorrowLabel": "Tomorrow",
       "pickLabel": "Pick a date",
-      "closedNote": "Sunday is emergency and prior appointments only, so it is not offered here.",
-      "error": "Choose a Monday to Saturday, from today onwards."
+      "closedNote": "{closed} is not offered here: the {branch} OPD is {closedNote}.",
+      "error": "Choose an open day ({days}), from today onwards."
     },
     "daypart": {
       "label": "Preferred time",

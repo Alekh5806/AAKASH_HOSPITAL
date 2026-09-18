@@ -92,7 +92,7 @@ export default function BookingSlip({ branch, rows, ready, sent, compact, active
             {slip.viaLabel} <b>{number}</b>
           </span>
         </p>
-        <BranchStatus />
+        <BranchStatus branch={branch} />
       </div>
 
       <div className="ap-slip__tear" aria-hidden="true" />

@@ -326,57 +326,47 @@ export default function Header() {
      no bottom bar to fall back on, so the reveal has to be instant - the
      header is the only route back to the drawer's call actions and Book
      Appointment once the reader has scrolled past the hero.
-     DELTA ignores the jitter of a trackpad or an iOS rubber-band bounce.
+
+     Direction is read from travel, not from one frame's delta. Movement is
+     summed while it keeps its sign and reset the moment it turns, and the
+     header changes state once the sum passes TRAVEL. A per-frame threshold
+     (6px) was what it replaced, and it failed two ways: a slow reading scroll
+     of 3-4px a frame never crossed it in either direction, and a 120Hz phone
+     halves every frame's delta, so ordinary flicks read as jitter there too.
+     Summing catches both, and a reset on every reversal is what still filters
+     trackpad jitter and an iOS rubber-band bounce.
 
      Compacting takes height out of the flow above every section (the desktop
-     brand row shrinks; phones no longer compact anything now that the city
-     bar is gone), so the browser's scroll anchoring shifts the offset to
+     brand row shrinks by 12px; phones no longer compact anything now that the
+     city bar is gone), so the browser's scroll anchoring shifts the offset to
      compensate. With a single threshold that shift dropped the offset back
      under it, the header re-expanded, the offset shifted again, and it
      flickered in place at one scroll position. COMPACT_ON and COMPACT_OFF are
      spread wider than that shift so the compensation can never cross back over
-     the threshold, and SETTLE_MS stops the induced jump from being read as the
-     reader scrolling.
-
-     The settle window needs a fallback, because this handler only ever runs on
-     a scroll event. A flick that crosses COMPACT_ON and then stops inside the
-     window fires nothing further, so the direction it was travelling is never
-     applied and the header stays put for good - it reads as a header that
-     simply does not hide. resolveSettle() is that fallback and it is
-     deliberately narrow: it runs once when the window closes, only if no scroll
-     event resolved the direction in the meantime, and only on net movement
-     larger than SETTLE_NET. That floor sits clear of any height the header
-     gives up, so the anchoring jump the window exists to ignore can never
-     satisfy it. */
+     the threshold, and for SETTLE_MS after a toggle any frame that moved no
+     more than SETTLE_NOISE is ignored - that is the size of the anchoring
+     adjustment, and a real flick moves far more than that in a frame, so a
+     flick that crosses the threshold still applies at once. The window used to
+     defer everything to a timer, and a scroll event under HIDE_AFTER disarmed
+     that timer: a flick from the top of the page that stopped inside the
+     window never applied its direction, and the header simply did not hide
+     until the reader flicked a second time. Nothing is deferred now. */
   useEffect(() => {
     const HIDE_AFTER = 160;
-    const DELTA = 6;
+    const TRAVEL = 12;
     const COMPACT_ON = 96;
     const COMPACT_OFF = 16;
     const SETTLE_MS = 350;
-    const SETTLE_NET = 64;
+    const SETTLE_NOISE = 16;
     let frame = 0;
-    let timer = 0;
     let lastY = window.scrollY;
     let compact = lastY > COMPACT_ON;
     let settleUntil = 0;
-    let settleFromY = lastY;
-    let settledByScroll = true;
+    let travelled = 0;
 
     function canHide(y) {
       const atBottom = window.innerHeight + y >= document.documentElement.scrollHeight - 2;
       return !menusOpenRef.current && y > HIDE_AFTER && !atBottom;
-    }
-
-    function resolveSettle() {
-      timer = 0;
-      if (settledByScroll) return;
-      const y = Math.max(window.scrollY, 0);
-      const net = y - settleFromY;
-      if (!canHide(y) || Math.abs(net) <= SETTLE_NET) return;
-      settledByScroll = true;
-      setIsHidden(net > 0);
-      lastY = y;
     }
 
     function update() {
@@ -384,26 +374,27 @@ export default function Header() {
       const y = Math.max(window.scrollY, 0);
       const delta = y - lastY;
       const nextCompact = compact ? y > COMPACT_OFF : y > COMPACT_ON;
+      lastY = y;
 
       if (nextCompact !== compact) {
         compact = nextCompact;
         settleUntil = performance.now() + SETTLE_MS;
-        settleFromY = lastY;
-        settledByScroll = false;
-        if (timer) window.clearTimeout(timer);
-        timer = window.setTimeout(resolveSettle, SETTLE_MS + 20);
         setIsScrolled(nextCompact);
       }
 
       if (!canHide(y)) {
-        settledByScroll = true;
+        travelled = 0;
         setIsHidden(false);
-      } else if (performance.now() >= settleUntil && Math.abs(delta) > DELTA) {
-        settledByScroll = true;
-        setIsHidden(delta > 0);
+        return;
       }
 
-      lastY = y;
+      if (delta === 0 || (performance.now() < settleUntil && Math.abs(delta) <= SETTLE_NOISE)) {
+        return;
+      }
+
+      if (Math.sign(delta) !== Math.sign(travelled)) travelled = 0;
+      travelled += delta;
+      if (Math.abs(travelled) > TRAVEL) setIsHidden(travelled > 0);
     }
 
     function onScroll() {
@@ -416,7 +407,6 @@ export default function Header() {
     return () => {
       window.removeEventListener("scroll", onScroll);
       if (frame) window.cancelAnimationFrame(frame);
-      if (timer) window.clearTimeout(timer);
     };
   }, []);
 

@@ -64,11 +64,33 @@ Open `branches.json`, find the branch in `items`, and edit contact details:
     }
   ],
   "whatsappNumber": "917600082710",
-  "mapEmbed": "https://www.google.com/maps?q=Aakash%20Eye%20Hospital%20Visnagar&output=embed"
+  "mapEmbed": "https://www.google.com/maps?q=Aakash%20Eye%20Hospital%20Visnagar&output=embed",
+  "hours": {
+    "schedule": [
+      {
+        "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        "opens": "09:00",
+        "closes": "18:00"
+      }
+    ],
+    "closedNote": "Emergency and prior appointments only",
+    "note": "Call branch for today's OPD schedule"
+  }
 }
 ```
 
 For WhatsApp, use digits only with the country code, without `+`, spaces or hyphens.
+
+### A Branch's Hours
+
+Every hospital keeps its own OPD hours in its `hours` block, and everything that shows or uses hours reads that block: the printed `Monday to Saturday, 9:00 AM - 6:00 PM` lines, the live `OPD open now` pill, the days the appointment flow offers, the note under its day rail, and the hours search engines are told. Edit the block and all of them change together - nothing is written twice.
+
+- **`schedule`** is a list of slots. Each slot is a set of `days` with one `opens` and one `closes` time, written as 24-hour `HH:MM`. A day that is not in any slot is a closed day.
+- A Saturday half day is a second slot: `{ "days": ["Saturday"], "opens": "09:00", "closes": "14:00" }`. A lunch break is two slots on the same days. The printed rows group them (`Saturday: 9:00 AM - 2:00 PM, 4:00 PM - 7:00 PM`).
+- **`closedNote`** is what the hospital does on its closed days (`Emergency and prior appointments only`, or simply `Closed`). It prints beside the closed days and under the pill on those days.
+- **`note`** is the one-line hedge under the hours on the hospital's page. Leave it out to print none.
+
+A hospital with no `hours` block at all inherits the network default in `site.json` under `openingHours`, which also holds the time zone every hospital's clock runs on. Set the block on every hospital anyway: the default is a safety net, not a place to keep real hours.
 
 ### A Branch Page
 

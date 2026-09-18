@@ -58,7 +58,17 @@
         "side": "left"
       },
       "mapEmbed": "https://www.google.com/maps?q=Aakash%20Eye%20Hospital%20Visnagar&output=embed",
-      "hoursLabel": "Call branch for today's OPD schedule",
+      "hours": {
+        "schedule": [
+          {
+            "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            "opens": "09:00",
+            "closes": "18:00"
+          }
+        ],
+        "closedNote": "Emergency and prior appointments only",
+        "note": "Call branch for today's OPD schedule"
+      },
       "page": {
         "seo": {
           "title": "Aakash Eye Hospital Visnagar | Head Office, M.N. College Road",
@@ -149,7 +159,17 @@
         "side": "right"
       },
       "mapEmbed": "https://www.google.com/maps?q=Aakash%20Eye%20Hospital%20Odhav%20Ahmedabad&output=embed",
-      "hoursLabel": "Call branch for today's OPD schedule",
+      "hours": {
+        "schedule": [
+          {
+            "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            "opens": "09:00",
+            "closes": "18:00"
+          }
+        ],
+        "closedNote": "Emergency and prior appointments only",
+        "note": "Call branch for today's OPD schedule"
+      },
       "page": {
         "seo": {
           "title": "Aakash Eye Hospital Ahmedabad | Odhav Circle, S.P. Ring Road",
@@ -238,7 +258,17 @@
         "side": "right"
       },
       "mapEmbed": "https://www.google.com/maps?q=Aakash%20Eye%20Hospital%20Bharuch&output=embed",
-      "hoursLabel": "Call branch for today's OPD schedule",
+      "hours": {
+        "schedule": [
+          {
+            "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            "opens": "09:00",
+            "closes": "18:00"
+          }
+        ],
+        "closedNote": "Emergency and prior appointments only",
+        "note": "Call branch for today's OPD schedule"
+      },
       "page": {
         "seo": {
           "title": "Aakash Eye Hospital Bharuch | R K Casta, Opp. Navi Vasahat",
@@ -317,7 +347,17 @@
         "side": "left"
       },
       "mapEmbed": "https://www.google.com/maps?q=Aakash%20Eye%20Hospital%20Gota%20Ahmedabad&output=embed",
-      "hoursLabel": "Call branch for today's OPD schedule",
+      "hours": {
+        "schedule": [
+          {
+            "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            "opens": "09:00",
+            "closes": "18:00"
+          }
+        ],
+        "closedNote": "Emergency and prior appointments only",
+        "note": "Call branch for today's OPD schedule"
+      },
       "page": {
         "seo": {
           "title": "Aakash Eye Hospital Gota | Ananta Space, Ahmedabad",
@@ -397,7 +437,17 @@
         "side": "right"
       },
       "mapEmbed": "https://www.google.com/maps?q=Aakash%20Eye%20Hospital%20Himmatnagar&output=embed",
-      "hoursLabel": "Call branch for today's OPD schedule",
+      "hours": {
+        "schedule": [
+          {
+            "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            "opens": "09:00",
+            "closes": "18:00"
+          }
+        ],
+        "closedNote": "Emergency and prior appointments only",
+        "note": "Call branch for today's OPD schedule"
+      },
       "page": {
         "seo": {
           "title": "Aakash Eye Hospital Himmatnagar | Sahakari Jin Road, NH-48",
@@ -481,7 +531,17 @@
         "side": "left"
       },
       "mapEmbed": "https://www.google.com/maps?q=Aakash%20Eye%20Hospital%20Juhapura%20Ahmedabad&output=embed",
-      "hoursLabel": "Call branch for today's OPD schedule",
+      "hours": {
+        "schedule": [
+          {
+            "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            "opens": "09:00",
+            "closes": "18:00"
+          }
+        ],
+        "closedNote": "Emergency and prior appointments only",
+        "note": "Call branch for today's OPD schedule"
+      },
       "page": {
         "seo": {
           "title": "Aakash Eye Hospital Juhapura | Blue Water Complex, Vasna Road",

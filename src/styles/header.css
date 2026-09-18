@@ -38,8 +38,13 @@
   transform: translateY(-100%);
 }
 
-/* Tabbing into the header must always bring it back. */
-.hd:focus-within {
+/* Tabbing into the header must always bring it back - but only a focus the
+   reader can see. Closing the drawer returns focus to the menu button, and on
+   a phone nothing ever blurs it again (a scroll gesture is not a tap), so
+   `:focus-within` held the header on screen through every scroll-down until
+   the page was reloaded. Programmatic focus after a tap does not match
+   `:focus-visible`; Escape from a keyboard still does. */
+.hd:has(:focus-visible) {
   transform: none;
 }
 

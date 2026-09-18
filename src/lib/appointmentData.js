@@ -1,12 +1,19 @@
 import { z } from "zod";
 import appointmentRaw from "../data/appointment.json";
-import { site } from "./coreData";
+import { branches, site } from "./coreData";
+import {
+  closesOn,
+  describeDays,
+  getBranchHours,
+  hospitalNow,
+  isOpenOn,
+  toMinutes,
+} from "./hours";
 import { fillTemplate } from "./servicesData";
 
 export const appointmentPage = appointmentRaw;
 
 const { fields, message: messageCopy } = appointmentRaw;
-const hours = site.openingHours;
 
 export const STEP_IDS = ["who", "where", "what", "when", "send"];
 export const UNSURE_SERVICE = "unsure";
@@ -34,23 +41,39 @@ export function parseMobile(raw = "") {
 
 /* ---------- validation ---------- */
 
-export const appointmentSchema = z.object({
-  name: z.string().trim().min(2, fields.name.error),
-  phone: z.string().refine((value) => parseMobile(value).valid, fields.phone.error),
-  branch: z.string().min(1, fields.branch.error),
-  service: z.string().min(1, fields.service.error),
-  preferredDate: z
-    .string()
-    .refine(
-      (value) => value === "" || (value >= todayIso() && isOpenDay(value)),
-      fields.date.error,
-    ),
-  daypart: z.string(),
-  message: z
-    .string()
-    .trim()
-    .max(fields.message.maxLength, fillTemplate(fields.message.error, { max: fields.message.maxLength })),
-});
+/* The preferred day is checked against the chosen hospital's own days, so it
+   is an object-level refinement rather than a field one: a Saturday is a fine
+   answer for a hospital open on Saturdays and a closed day for one that is
+   not, and only the whole form knows which hospital was chosen. */
+export const appointmentSchema = z
+  .object({
+    name: z.string().trim().min(2, fields.name.error),
+    phone: z.string().refine((value) => parseMobile(value).valid, fields.phone.error),
+    branch: z.string().min(1, fields.branch.error),
+    service: z.string().min(1, fields.service.error),
+    preferredDate: z.string(),
+    daypart: z.string(),
+    message: z
+      .string()
+      .trim()
+      .max(
+        fields.message.maxLength,
+        fillTemplate(fields.message.error, { max: fields.message.maxLength }),
+      ),
+  })
+  .superRefine((values, ctx) => {
+    const date = values.preferredDate;
+    if (!date) return;
+    const branch = findBranch(values.branch);
+    if (date >= todayIso() && isOpenDay(date, branch)) return;
+    ctx.addIssue({
+      code: "custom",
+      path: ["preferredDate"],
+      message: fillTemplate(fields.date.error, {
+        days: describeDays(getBranchHours(branch).openDays),
+      }),
+    });
+  });
 
 /* Which fields each step owns, so a step can be validated on its own before
    the reader moves on, and the rail can say which steps are complete. */
@@ -62,39 +85,24 @@ export const STEP_FIELDS = {
   send: ["message"],
 };
 
+/* One parse of the whole form, read for this step's fields only. `pick()`
+   would drop the object-level day check above, and the step that owns the
+   date is exactly the one that needs it. */
 export function isStepComplete(stepId, values) {
-  const shape = appointmentSchema.pick(
-    Object.fromEntries(STEP_FIELDS[stepId].map((field) => [field, true])),
-  );
-  return shape.safeParse(values).success;
+  const result = appointmentSchema.safeParse(values);
+  if (result.success) return true;
+  const owned = STEP_FIELDS[stepId];
+  return !result.error.issues.some((issue) => owned.includes(issue.path[0]));
 }
 
 /* ---------- days, on the hospital's clock ---------- */
 
-function hospitalParts() {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: hours.timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(new Date());
-  const value = (type) => parts.find((part) => part.type === type)?.value ?? "";
-  return {
-    iso: `${value("year")}-${value("month")}-${value("day")}`,
-    minutes: Number(value("hour")) * 60 + Number(value("minute")),
-  };
-}
-
-function toMinutes(time) {
-  const [hour, minute] = time.split(":").map(Number);
-  return hour * 60 + minute;
+export function findBranch(slug) {
+  return branches.items.find((branch) => branch.slug === slug) ?? null;
 }
 
 export function todayIso() {
-  return hospitalParts().iso;
+  return hospitalNow(site.openingHours.timeZone).iso;
 }
 
 /* Dates are handled as ISO strings at UTC noon, so adding days and reading the
@@ -113,8 +121,8 @@ function weekdayOf(iso) {
   return new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", weekday: "long" }).format(dateAt(iso));
 }
 
-export function isOpenDay(iso) {
-  return hours.days.includes(weekdayOf(iso));
+export function isOpenDay(iso, branch) {
+  return isOpenOn(getBranchHours(branch), weekdayOf(iso));
 }
 
 export function formatDayShort(iso) {
@@ -135,17 +143,19 @@ export function formatDayLong(iso) {
   }).format(dateAt(iso));
 }
 
-/* The next open days from today, on the hospital's clock. Sundays are
-   skipped because the OPD is closed, and today drops out once the OPD has
-   closed for the day - a reader at 7 PM must not be offered a slot that has
-   already passed. */
-export function getOpenDays(count = OPEN_DAYS_SHOWN) {
-  const { iso: today, minutes } = hospitalParts();
+/* The next open days from today for one hospital, on its own clock. Its
+   closed days are skipped, and today drops out once its OPD has closed for
+   the day - a reader at 7 PM must not be offered a slot that has already
+   passed. */
+export function getOpenDays(branch, count = OPEN_DAYS_SHOWN) {
+  const hours = getBranchHours(branch);
+  const { iso: today, weekday, minutes } = hospitalNow(hours.timeZone);
+  const closes = closesOn(hours, weekday);
   const days = [];
-  let offset = minutes >= toMinutes(hours.closes) ? 1 : 0;
+  let offset = closes && minutes >= toMinutes(closes) ? 1 : 0;
   while (days.length < count && offset < count * 3) {
     const iso = shiftIso(today, offset);
-    if (isOpenDay(iso)) {
+    if (isOpenDay(iso, branch)) {
       days.push({
         iso,
         offset,

@@ -221,7 +221,9 @@
   color: var(--e-navy);
 }
 
-.ft__contact span {
+/* The label is the div's own span; the value's inner spans (the hours lines
+   and the unbreakable range) must not be caught by this rule. */
+.ft__contact div > span {
   display: block;
   margin-bottom: 4px;
   color: var(--e-ink-2);
@@ -247,6 +249,12 @@
    its own, and never inside "check-up". */
 .ft__nobr {
   white-space: nowrap;
+}
+
+/* One line per day set, so a hospital with a Saturday half day reads as two
+   lines rather than one run-on sentence. */
+.ft__hours {
+  display: block;
 }
 
 /* The phone and the email are the two things an older patient actually taps

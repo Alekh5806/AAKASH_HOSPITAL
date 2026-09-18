@@ -27,16 +27,6 @@
       "robots": "noindex, follow"
     }
   },
-  "businessHours": [
-    {
-      "label": "Monday to Saturday",
-      "value": "9:00 AM - 6:00 PM"
-    },
-    {
-      "label": "Sunday",
-      "value": "Emergency and prior appointments only"
-    }
-  ],
   "globalCtas": {
     "primary": {
       "label": "Book Appointment",
@@ -162,16 +152,14 @@
   ],
   "openingHours": {
     "timeZone": "Asia/Kolkata",
-    "days": [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday"
+    "schedule": [
+      {
+        "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        "opens": "09:00",
+        "closes": "18:00"
+      }
     ],
-    "opens": "09:00",
-    "closes": "20:00",
-    "closedNote": "Emergency and prior appointments only"
+    "closedNote": "Emergency and prior appointments only",
+    "note": "Call branch for today's OPD schedule"
   }
 }

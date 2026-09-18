@@ -1,8 +1,17 @@
+import { useSyncExternalStore } from "react";
 import { ArrowRight, ArrowUp, Clock, Mail, MessageCircle, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { splitEstablished } from "../lib/brand";
 import { branches, navigation, site } from "../lib/coreData";
-import { buildBranchHref, buildWhatsApp, cleanTel, getPrimaryBranch } from "../lib/contact";
+import {
+  BRANCH_CHANGE_EVENT,
+  buildBranchHref,
+  buildWhatsApp,
+  cleanTel,
+  getPrimaryBranch,
+  getStoredBranch,
+} from "../lib/contact";
+import { getBranchHours, getHoursRows } from "../lib/hours";
 
 /* lucide-react 1.x dropped its brand icons, so the three marks the hospital
    actually links to are inlined here and keyed by `icon` in site.json. */
@@ -13,6 +22,25 @@ const socialMarks = {
     "M12 4.16c2.54 0 2.85.01 3.85.06.93.04 1.44.2 1.77.33.45.17.77.38 1.1.71.34.34.55.65.72 1.1.13.34.29.85.33 1.78.05 1 .06 1.31.06 3.86s-.01 2.85-.06 3.85c-.04.93-.2 1.44-.33 1.78-.17.45-.38.76-.72 1.1-.33.33-.65.54-1.1.71-.33.13-.84.29-1.77.34-1 .04-1.31.05-3.85.05s-2.85-.01-3.85-.05c-.93-.05-1.44-.21-1.78-.34-.45-.17-.76-.38-1.1-.71-.33-.34-.54-.65-.71-1.1-.13-.34-.29-.85-.34-1.78-.04-1-.05-1.3-.05-3.85s.01-2.86.05-3.86c.05-.93.21-1.44.34-1.78.17-.45.38-.76.71-1.1.34-.33.65-.54 1.1-.71.34-.13.85-.29 1.78-.33 1-.05 1.31-.06 3.85-.06zm0-1.72c-2.59 0-2.91.01-3.93.06-1.01.04-1.7.21-2.31.44-.62.25-1.15.57-1.68 1.1-.52.52-.85 1.05-1.09 1.67-.24.61-.4 1.3-.45 2.31-.04 1.02-.06 1.34-.06 3.93s.02 2.91.06 3.93c.05 1.01.21 1.7.45 2.31.24.62.57 1.15 1.09 1.67.53.53 1.06.85 1.68 1.1.61.23 1.3.4 2.31.44 1.02.05 1.34.06 3.93.06s2.91-.01 3.93-.06c1.01-.04 1.7-.21 2.31-.44.62-.25 1.15-.57 1.67-1.1.53-.52.85-1.05 1.1-1.67.23-.61.4-1.3.44-2.31.05-1.02.06-1.34.06-3.93s-.01-2.91-.06-3.93c-.04-1.01-.21-1.7-.44-2.31a4.66 4.66 0 0 0-1.1-1.67 4.66 4.66 0 0 0-1.67-1.1c-.61-.23-1.3-.4-2.31-.44-1.02-.05-1.34-.06-3.93-.06zm0 4.64a4.92 4.92 0 1 0 0 9.84 4.92 4.92 0 0 0 0-9.84zm0 8.12a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4zm6.27-8.31a1.15 1.15 0 1 1-2.3 0 1.15 1.15 0 0 1 2.3 0z",
   x: "M17.53 3h2.82l-6.16 7.04L21.44 21h-5.68l-4.44-5.81L6.23 21H3.4l6.59-7.53L2.83 3h5.82l4.02 5.31zm-.99 16.31h1.56L7.53 4.61H5.85z",
 };
+
+/* The reader's hospital, as the header stored it. `useSyncExternalStore`
+   rather than state plus a listener: the header adopts a hospital page's own
+   hospital in its mount effect, which runs before this component's effects
+   would subscribe, and a listener added after that dispatch misses it - the
+   footer then named Visnagar on the Bharuch page. The store hook re-reads the
+   snapshot when it subscribes, so a change dispatched in between is seen. */
+function subscribeToBranch(callback) {
+  window.addEventListener(BRANCH_CHANGE_EVENT, callback);
+  return () => window.removeEventListener(BRANCH_CHANGE_EVENT, callback);
+}
+
+function readStoredSlug() {
+  return getStoredBranch(branches.items).slug;
+}
+
+function readDefaultSlug() {
+  return getPrimaryBranch(branches.items).slug;
+}
 
 function SocialMark({ name }) {
   const path = socialMarks[name];
@@ -47,8 +75,16 @@ export default function Footer() {
   const primaryBranch = getPrimaryBranch(branches.items);
   const helpline = site.header.emergency.phone;
   const email = primaryBranch.email;
-  const hours = site.businessHours[0];
   const { cta, contactLabels } = site.footer;
+
+  /* The hours are the reader's hospital's - the one the header stored - and
+     the row names it, because the six can differ and a figure for "the OPD"
+     with no hospital attached would be somebody else's on five pages out of
+     six. It follows the header while the reader is still on the page, the
+     way every other number on the site does. */
+  const hoursSlug = useSyncExternalStore(subscribeToBranch, readStoredSlug, readDefaultSlug);
+  const hoursBranch = branches.items.find((branch) => branch.slug === hoursSlug) ?? primaryBranch;
+  const hoursRows = getHoursRows(getBranchHours(hoursBranch)).filter((row) => row.open);
   const { word: sinceWord, year: sinceYear } = splitEstablished(site.header.establishedLabel);
 
   function openCookiePreferences() {
@@ -93,9 +129,15 @@ export default function Footer() {
               <li>
                 <Clock size={17} aria-hidden="true" />
                 <div>
-                  <span>{contactLabels.hours}</span>
+                  <span>
+                    {contactLabels.hours} · {hoursBranch.name}
+                  </span>
                   <strong>
-                    {hours.label}, <span className="ft__nobr">{hours.value}</span>
+                    {hoursRows.map((row) => (
+                      <span className="ft__hours" key={row.label}>
+                        {row.label}, <span className="ft__nobr">{row.value}</span>
+                      </span>
+                    ))}
                   </strong>
                 </div>
               </li>
