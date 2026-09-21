@@ -20,11 +20,13 @@ const { inside } = branchPage;
  * instrument and only its measurements change: one large photograph, the four
  * thumbnails under it, and the full-screen viewer a tap away.
  *
- * **The stage fills with the photograph.** All four are the hospital's own 4:3
- * frames, so one crop ratio suits every one of them. It was contained over a
- * blurred copy of itself while the set mixed portrait and landscape; if a
- * portrait photograph is ever added back, that treatment has to come back with
- * it rather than the photograph being cropped.
+ * **The stage fills with a landscape photograph and contains a portrait one.**
+ * Every landscape frame - 4:3 from the Visnagar shoot, 20:9 from the Odhav
+ * phone - is cropped to the stage by `cover`, which loses an edge and never a
+ * subject. A portrait frame cannot be: cropped to a landscape stage it keeps a
+ * third of itself, so a photo marked `portrait` in the JSON is contained over
+ * a blurred copy of itself instead (`.br-gallery__fill`). Juhapura's decorated
+ * entrance, its reception and its consulting-room corridor are those frames.
  *
  * The stage is a native scroll-snap rail, so a phone swipes it with the
  * browser's own momentum and direction lock. Scroll position is the single
@@ -128,7 +130,10 @@ export default function BranchInside({ branch }) {
             <h2 className="e-h2" id="br-inside-title">
               {inside.title} <em>{branch.name}</em>
             </h2>
-            <p className="e-lede">{inside.lede}</p>
+            {/* The shared lede names the Visnagar set, which three hospitals still
+                borrow; a hospital photographed on its own says what its own
+                set shows. */}
+            <p className="e-lede">{branch.page.insideLede ?? inside.lede}</p>
           </div>
         </Reveal>
 
@@ -152,7 +157,11 @@ export default function BranchInside({ branch }) {
                 tabIndex={position === index ? 0 : -1}
                 onClick={(event) => open(position, event)}
                 aria-label={`${inside.openLabel}: ${photo.caption}`}
+                data-portrait={photo.portrait ? "true" : undefined}
               >
+                {photo.portrait ? (
+                  <img className="br-gallery__fill" src={photo.src} alt="" loading="lazy" />
+                ) : null}
                 <SmartImage
                   className="br-gallery__img"
                   src={photo.src}

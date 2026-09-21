@@ -55,7 +55,7 @@ export default function BranchHero({ branch, actionsRef }) {
           {/* Two sentences on paper is the right opening on a laptop and four
               lines of preamble before the first action on a phone, so the phone
               gets the hospital's own shorter line. Authored, never truncated -
-              the conditions rail's quoteShort device. */}
+              the cookie sheet's bodyShort device. */}
           <motion.p className="br-hero__lede" variants={rise}>
             <span className="br-full">{page.lede}</span>
             <span className="br-short">{page.ledeShort ?? page.lede}</span>

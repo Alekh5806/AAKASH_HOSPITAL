@@ -610,7 +610,12 @@ export default function Header() {
                     triggerRef={(node) => {
                       dropdownTriggers.current[item.dropdown] = node;
                     }}
-                    onClose={() => setOpenMenu(null)}
+                    onClose={() =>
+                      /* A menu's close timer can fire after the pointer has
+                         already opened the other menu; it must only close
+                         itself, never whichever menu is open by then. */
+                      setOpenMenu((current) => (current === item.dropdown ? null : current))
+                    }
                     onToggle={(next) => setOpenMenu(next ? item.dropdown : null)}
                   />
                 );

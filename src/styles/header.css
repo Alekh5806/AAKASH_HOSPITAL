@@ -1112,8 +1112,12 @@
   }
 }
 
+/* The compact rule in the 1040px block outranks a bare .hd__brand img on
+   specificity, so without its own scrolled rule the logo grew from 132px to
+   140px the moment a phone reader scrolled past the compact threshold. */
 @media (max-width: 560px) {
   .hd__brand img,
+  .hd--scrolled .hd__brand img,
   .hd__drawer-head img {
     width: 132px;
   }

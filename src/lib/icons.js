@@ -1,39 +1,30 @@
 import {
-  Activity,
-  CalendarCheck2,
   CircleHelp,
   Eye,
   FolderHeart,
   Gauge,
   Goal,
-  GraduationCap,
-  HandCoins,
   HeartHandshake,
   MapPinned,
   ScanEye,
   ShieldCheck,
-  Sparkles,
   Stethoscope,
-  Users,
 } from "lucide-react";
 
+/* Every glyph a data file can name: the trust tiles (home.json), the two
+   statements (about.json) and the cookie categories (site.json). Register a
+   name here when a JSON entry starts using it; an unregistered name renders
+   the fallback rather than nothing. */
 const icons = {
-  Activity,
-  CalendarCheck2,
-  CircleHelp,
   Eye,
   FolderHeart,
   Gauge,
   Goal,
-  GraduationCap,
-  HandCoins,
   HeartHandshake,
   MapPinned,
   ScanEye,
   ShieldCheck,
-  Sparkles,
   Stethoscope,
-  Users,
 };
 
 export function getIcon(name) {

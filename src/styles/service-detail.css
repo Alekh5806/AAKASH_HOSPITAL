@@ -281,7 +281,7 @@
 
 /* Four chips share the row from 901px up. Below that they are a scroll-snap
    rail with the next one peeking, which is what says it can be swiped - the
-   same mechanism the conditions rail uses, and the browser's direction lock is
+   same mechanism the doctor rail uses, and the browser's direction lock is
    what keeps a horizontal swipe out of the page's vertical scroll. */
 .sd-chips {
   display: grid;

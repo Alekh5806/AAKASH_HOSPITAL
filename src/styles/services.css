@@ -328,8 +328,8 @@
   box-shadow:
     0 1px 2px rgba(16, 22, 28, 0.04),
     0 18px 44px rgba(16, 22, 28, 0.07);
-  /* clip, not hidden: hidden makes the card a scroll container, which traps
-     the phone's sticky chart strip inside the card's top edge. */
+  /* clip, not hidden: hidden would make the card a scroll container, and a
+     scroll container swallows the scroll-margin of the rails inside it. */
   overflow: clip;
 }
 
@@ -346,7 +346,11 @@
 }
 
 .sv-console__body {
-  padding: clamp(18px, 2.4vw, 28px);
+  /* A token, not a value: the phone's rails bleed into this padding on both
+     sides so a chip can scroll under the card's edge, and they need the same
+     figure to put the first chip back on the content edge. */
+  --sv-pad: clamp(18px, 2.4vw, 28px);
+  padding: var(--sv-pad);
 }
 
 .sv-console__note {
@@ -419,141 +423,43 @@
   z-index: 1;
 }
 
-/* Both labels are rendered and CSS picks one, the same way the conditions rail
-   carries quoteFull / quoteShort. Three full labels cannot share a phone row. */
+/* Both labels are rendered and CSS picks one, the same way the cookie sheet
+   carries body / bodyShort. Three full labels cannot share a phone row. */
 .sv-mode__label--short {
   display: none;
 }
 
-/* ---------- the symptom rows ---------- */
+/* ---------- the symptom chips ---------- */
 
-/* A row is a thumbnail of the symptom on the chart, its label, and a mark.
-   The thumbnail is what makes thirteen rows a gallery to recognise oneself in
-   rather than a list to read; on a phone it is the whole preview. */
+/* Thirteen descriptions as the console's own chips, wrapping under their
+   group heading beside the chart. They used to be boxed rows, each carrying
+   its own 60px thumbnail of the chart, a label and a ring at the far edge -
+   fourteen charts on one screen, and at 60px blur, haze, glare and clear all
+   read as the same fuzzy E. The one chart beside them is the preview; the
+   chips are its legend, and they are the same control the eye route uses. */
 .sv-symptoms {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
-/* Beside the big chart the rows have room for two columns, which halves the
-   height of the route without shrinking a single thumbnail. Not below 1180px:
-   at 1024px each column was 305px, the label had 175px, and six of the
-   thirteen wrapped to three lines. */
-@media (min-width: 1180px) {
-  .sv-symptoms {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.sv-chip--symptom {
+  font-size: 0.95rem;
 }
 
-.sv-symptom {
-  display: grid;
-  grid-template-columns: 60px minmax(0, 1fr) 22px;
-  align-items: center;
-  gap: 14px;
-  width: 100%;
-  min-height: 72px;
-  border: 1px solid var(--sv-edge);
-  border-radius: 12px;
-  background: var(--e-paper);
-  padding: 6px 14px 6px 6px;
-  color: var(--e-ink);
-  text-align: left;
-  cursor: pointer;
-  transition:
-    border-color 200ms var(--e-ease),
-    background-color 200ms var(--e-ease),
-    color 200ms var(--e-ease),
-    transform 200ms var(--e-ease),
-    box-shadow 200ms var(--e-ease);
+/* Both labels are rendered and CSS picks one, the mode tabs' device: the
+   sentence beside the chart on a wide screen, the short form in the phone's
+   rail, where a sentence is a chip wider than the screen. */
+.sv-chip__label--short {
+  display: none;
 }
 
-.sv-symptom:hover,
-.sv-symptom[data-preview] {
+/* Keyboard focus previews the chart the way hover does, and the chip says so
+   the way a hovered chip does. */
+.sv-chip--symptom[data-preview] {
   border-color: var(--e-ink);
   transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(16, 22, 28, 0.08);
-}
-
-.sv-symptom__thumb {
-  display: block;
-  width: 60px;
-  height: 60px;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #fbfbf9;
-}
-
-.sv-symptom__label {
-  font-family: var(--e-sans);
-  font-size: 0.95rem;
-  font-weight: 500;
-  line-height: 1.35;
-}
-
-/* The mark is a ring that fills and draws a check when chosen: an unambiguous
-   "this one" beside a label a reader may have only skimmed. */
-.sv-symptom__mark {
-  position: relative;
-  width: 22px;
-  height: 22px;
-  border: 1.5px solid var(--sv-edge);
-  border-radius: 999px;
-  transition:
-    border-color 200ms var(--e-ease),
-    background-color 200ms var(--e-ease);
-}
-
-.sv-symptom__mark::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 5px;
-  height: 9px;
-  border: solid #fff;
-  border-width: 0 2px 2px 0;
-  transform: translate(-50%, -60%) rotate(45deg) scale(0);
-  opacity: 0;
-  transition:
-    transform 240ms var(--e-ease) 60ms,
-    opacity 160ms var(--e-ease) 60ms;
-}
-
-.sv-symptom[data-on] {
-  border-color: var(--e-navy);
-  background: var(--e-navy);
-  color: #fff;
-  transform: none;
-  box-shadow: none;
-}
-
-.sv-symptom[data-on] .sv-symptom__thumb {
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
-}
-
-.sv-symptom[data-on] .sv-symptom__mark {
-  border-color: var(--e-accent);
-  background: var(--e-accent);
-}
-
-.sv-symptom[data-on] .sv-symptom__mark::after {
-  transform: translate(-50%, -60%) rotate(45deg) scale(1);
-  opacity: 1;
-}
-
-/* On the narrowest phones the frame gives a little so the label keeps two
-   lines: a smaller thumbnail and tighter gaps, never smaller type. */
-@media (max-width: 360px) {
-  .sv-symptom {
-    grid-template-columns: 52px minmax(0, 1fr) 20px;
-    gap: 10px;
-    padding: 6px 10px 6px 6px;
-  }
-
-  .sv-symptom__thumb {
-    width: 52px;
-    height: 52px;
-  }
+  box-shadow: 0 6px 16px rgba(16, 22, 28, 0.08);
 }
 
 /* ---------- the kind-of-care cards ---------- */
@@ -789,7 +695,7 @@
 
 /* The chart sits beside the chips on a wide screen and above them on a phone,
    the same arrangement as the eye and its parts. It is the reason thirteen
-   chips no longer read as a wall of text: the chart is what the reader looks
+   chips do not read as a wall of text: the chart is what the reader looks
    at, and the chips become its legend. */
 .sv-notice {
   display: grid;
@@ -803,12 +709,12 @@
 
 .sv-notice__groups {
   display: grid;
-  gap: 16px;
+  gap: 18px;
 }
 
 .sv-notice__group {
   display: grid;
-  gap: 8px;
+  gap: 9px;
 }
 
 .sv-notice__group-label {
@@ -821,33 +727,9 @@
   text-transform: uppercase;
 }
 
-.sv-notice__hint {
-  margin: 4px 0 0;
-  color: var(--e-ink-2);
-  font-family: var(--e-sans);
-  font-size: 0.85rem;
-  line-height: 1.5;
-}
-
-/* Keyed on the pointer, not the width: a tablet with a mouse hovers and a
-   phone never does, whatever their widths. */
-.sv-notice__hint-touch {
-  display: none;
-}
-
-@media (hover: none) {
-  .sv-notice__hint-full {
-    display: none;
-  }
-
-  .sv-notice__hint-touch {
-    display: inline;
-  }
-}
-
 .sv-scene {
-  /* Effect strengths, in one place. The thumbnail overrides them: a 2.6px blur
-     that reads as "hazy" on a 340px chart reads as "gone" on a 60px one. */
+  /* Effect strengths, in one place. The detail page's readout reads the same
+     chart at a smaller size and overrides what it needs. */
   --sv-blur: 2.6px;
   --sv-blur-haze: 1.6px;
   --sv-blur-glare: 1.2px;
@@ -862,43 +744,62 @@
   top: 140px;
 }
 
-.sv-scene--compact {
-  --sv-blur: 1.1px;
-  --sv-blur-haze: 0.7px;
-  --sv-blur-glare: 0.5px;
-  --sv-blur-spots: 0.25px;
-  --sv-blur-dark: 0.8px;
-  --sv-blur-droop: 0.35px;
-  --sv-shift-x: 3px;
-  --sv-shift-y: 1.5px;
-  position: static;
+/* The finder's chart is a readout: the chart and its caption on the same well
+   the eye diagram sits in, so the two visual routes read as one instrument
+   with two displays. It is the one chart on the route, and it is the same
+   object on a phone, laid out landscape and pinned under the header. */
+.sv-notice > .sv-scene {
   gap: 0;
-  width: 100%;
-  height: 100%;
+  border: 1px solid var(--e-rule);
+  border-radius: 12px;
+  background: linear-gradient(180deg, #f3f6f9 0%, var(--color-clinical) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+  padding: 10px;
 }
 
-.sv-scene--compact .sv-scene__frame {
-  aspect-ratio: 1;
-  width: 100%;
-  height: 100%;
+.sv-notice > .sv-scene .sv-scene__frame {
   border-radius: 8px;
-  box-shadow: inset 0 0 0 1px var(--e-rule);
 }
 
-.sv-scene--compact .sv-scene__chart,
-.sv-scene--compact .sv-scene__haze,
-.sv-scene--compact .sv-scene__glare,
-.sv-scene--compact .sv-scene__floater,
-.sv-scene--compact .sv-scene__spots,
-.sv-scene--compact .sv-scene__vignette,
-.sv-scene--compact .sv-scene__lid {
-  /* thumbnails render their state, they do not animate into it */
-  transition: none;
+.sv-notice > .sv-scene .sv-scene__caption {
+  /* Room for the idle eyebrow, "Clear vision" and a two-line hint, or a
+     two-line name, so the well never resizes as the pointer moves across the
+     chips. Measured 603px at rest and on every symptom at 320px of chart. */
+  min-height: 102px;
+  padding: 12px 6px 4px;
 }
 
-.sv-scene--compact .sv-scene__glare--c,
-.sv-scene--compact .sv-scene__floater--c {
+/* What to do, said once, where the eye is: on the readout while nothing is
+   shown, and out of the layout the moment a symptom is, so a two-line name
+   never stacks on the hint's lines and grows the well. */
+.sv-scene__hint {
+  margin: 2px 0 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.sv-scene:not([data-idle]) .sv-scene__hint {
   display: none;
+}
+
+/* Keyed on the pointer, not the width: a tablet with a mouse hovers and a
+   phone never does, whatever their widths. */
+.sv-scene__hint-touch {
+  display: none;
+}
+
+@media (hover: none) {
+  .sv-scene__hint-full {
+    display: none;
+  }
+
+  .sv-scene__hint-touch {
+    display: inline;
+  }
 }
 
 .sv-scene__frame {
@@ -1716,6 +1617,381 @@
   line-height: 1.6;
 }
 
+/* ---------- the phone grid ---------- */
+
+/* The phone's list: eleven cards, three across, all on one screen, after the
+   card-grid reference. It only renders below 641px (see the component), so
+   these rules need no media query of their own. A card is a coloured edge for
+   the kind of care, the service's number, its short name and "Learn more" at
+   the foot; the whole card is the link. The last card takes the columns its
+   row leaves empty and lays out sideways with its sentence, so the grid
+   closes on a full row and every row is the same height. */
+.sv-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sv-tile {
+  min-width: 0;
+}
+
+.sv-tile[data-wide="2"] {
+  grid-column: span 2;
+}
+
+.sv-tile[data-wide="3"],
+.sv-tile[data-single] {
+  grid-column: 1 / -1;
+}
+
+/* The edge's colour is the kind of care, from the service's category, and the
+   care-type route's cards carry the same colours on a phone, so the colour is
+   something a reader can learn rather than decoration: navy for surgery,
+   teal for the clinics and everyday care, the accent for the children's
+   services, and the danger colour on a tint for the urgent card alone. */
+.sv-tile__link,
+.sv-kind {
+  --sv-tone: var(--e-navy);
+  --sv-tint: rgba(12, 44, 73, 0.06);
+}
+
+.sv-tile[data-tone="specialty"] .sv-tile__link,
+.sv-tile[data-tone="everyday"] .sv-tile__link,
+.sv-kind[data-tone="specialty"],
+.sv-kind[data-tone="everyday"] {
+  --sv-tone: var(--color-teal);
+  --sv-tint: rgba(27, 107, 114, 0.07);
+}
+
+.sv-tile[data-tone="children"] .sv-tile__link,
+.sv-kind[data-tone="children"] {
+  --sv-tone: var(--e-accent);
+  --sv-tint: rgba(184, 22, 87, 0.06);
+}
+
+.sv-tile[data-tone="urgent"] .sv-tile__link,
+.sv-kind[data-tone="urgent"] {
+  --sv-tone: var(--color-danger);
+  --sv-tint: rgba(165, 35, 27, 0.08);
+}
+
+/* Full height so every card in a row shares the row's height and the feet
+   line up across it, whether a name takes one line or two. The card is out of
+   sight until the grid has been seen once (data-in, from the component), then
+   rises on its own delay - the entrance lives on the link, not the list item,
+   because framer owns the item's opacity for the filter choreography. */
+.sv-tile__link {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+  min-height: 124px;
+  border: 1px solid var(--e-rule);
+  border-radius: 14px;
+  background: var(--e-paper);
+  padding: 12px 8px 10px 14px;
+  color: var(--e-ink);
+  text-align: left;
+  overflow: clip;
+  opacity: 0;
+  translate: 0 14px;
+  box-shadow:
+    0 1px 2px rgba(16, 22, 28, 0.04),
+    0 10px 24px rgba(16, 22, 28, 0.05);
+}
+
+.sv-grid[data-in] .sv-tile__link {
+  opacity: 1;
+  translate: 0 0;
+  transition:
+    opacity 480ms var(--e-ease) calc(var(--i, 0) * 40ms),
+    translate 480ms var(--e-ease) calc(var(--i, 0) * 40ms),
+    transform 180ms var(--e-ease),
+    border-color 220ms var(--e-ease),
+    background-color 220ms var(--e-ease),
+    box-shadow 220ms var(--e-ease);
+}
+
+/* The coloured edge, clipped to the card's own corners. It draws down behind
+   its card a beat after the card lands, and widens under a press. */
+.sv-tile__link::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: var(--sv-tone);
+  transform-origin: top;
+  scale: 1 0;
+  transition: width 180ms var(--e-ease);
+}
+
+.sv-grid[data-in] .sv-tile__link::before {
+  scale: 1 1;
+  transition:
+    scale 420ms var(--e-ease) calc(var(--i, 0) * 40ms + 200ms),
+    width 180ms var(--e-ease);
+}
+
+.sv-tile__link:active {
+  transform: scale(0.97);
+  background: var(--sv-tint);
+}
+
+.sv-tile__link:active::before {
+  width: 8px;
+}
+
+.sv-tile__link:focus-visible {
+  outline: 2px solid var(--e-accent);
+  outline-offset: 2px;
+}
+
+.sv-tile[data-tone="urgent"] .sv-tile__link {
+  border-color: rgba(165, 35, 27, 0.22);
+  background: #fbefed;
+}
+
+.sv-tile[data-tone="urgent"] .sv-tile__link:active {
+  background: #f6dfdc;
+}
+
+/* The number is the ledger's: "07" is the Myopia Clinic whether the reader is
+   looking at all eleven or at three, and it turns accent on a narrowed list,
+   which is what marks the cards as the answers rather than the catalogue. */
+.sv-tile__num {
+  color: var(--e-ink-2);
+  font-family: var(--e-serif);
+  font-size: 0.94rem;
+  font-variant-numeric: tabular-nums lining-nums;
+  line-height: 1;
+  transition: color 240ms var(--e-ease);
+}
+
+.sv-tile[data-match] .sv-tile__num {
+  color: var(--e-accent);
+}
+
+.sv-tile[data-tone="urgent"] .sv-tile__num {
+  color: var(--color-danger);
+}
+
+/* The name's size follows the viewport rather than stepping at a breakpoint,
+   because the card does: a third of a phone less the gaps and the padding is
+   w / 3 - 41px of text, and "examination" - the widest single word - is
+   85.5px at 1rem. The formula keeps at least 2px of slack from 341px up;
+   below 341px the padding closes a step for the same reason. Measured with
+   Range rects at every width from 320 to 430px: no word clips, no name takes
+   three lines. */
+.sv-tile__name {
+  margin-top: auto;
+  color: var(--e-ink);
+  font-family: var(--e-tight);
+  font-size: clamp(0.78rem, 6.24vw - 8.2px, 1rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.sv-tile[data-tone="urgent"] .sv-tile__name {
+  color: var(--color-danger);
+}
+
+/* The sentence shows only where a card is wide enough to carry it: the wide
+   card, the answer card, and every card from 560px, where a third of the
+   shell is 165px or more. */
+.sv-tile__text {
+  display: none;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.sv-tile[data-wide] .sv-tile__text,
+.sv-tile[data-single] .sv-tile__text {
+  display: block;
+}
+
+/* "Learn more" is 80px at this size and a card's text column only reaches
+   that at 364px; below 371px the short form takes its place. */
+.sv-tile__more {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-end;
+  gap: 4px;
+  margin-top: 6px;
+  color: var(--color-teal);
+  font-family: var(--e-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.sv-tile__more svg {
+  transition: translate 200ms var(--e-ease);
+}
+
+.sv-tile__moreShort {
+  display: none;
+}
+
+.sv-tile[data-tone="urgent"] .sv-tile__more {
+  color: var(--color-danger);
+}
+
+/* The wide card - the last one, on the row's spare columns - reads as one
+   ledger line: the number in the margin, the name and the sentence beside
+   it, the way in at the foot. Sideways, the sentence costs the row no height,
+   so every row of the grid stays level. */
+.sv-tile[data-wide] .sv-tile__link {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: 10px;
+  row-gap: 4px;
+}
+
+.sv-tile[data-wide] .sv-tile__num {
+  grid-row: 1 / -1;
+  padding-top: 3px;
+}
+
+.sv-tile[data-wide] .sv-tile__name {
+  grid-column: 2;
+  margin-top: 0;
+}
+
+.sv-tile[data-wide] .sv-tile__text {
+  grid-column: 2;
+}
+
+.sv-tile[data-wide] .sv-tile__more {
+  grid-column: 2;
+  align-self: end;
+  justify-self: end;
+  margin-top: 2px;
+}
+
+/* One answer is a card, not a lone tile in a row of three: the photograph,
+   the full name, the sentence and the arrow, left to right. */
+.sv-tile[data-single] .sv-tile__link {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) auto;
+  grid-template-areas:
+    "photo name arrow"
+    "photo text arrow";
+  justify-items: start;
+  align-items: center;
+  gap: 4px 16px;
+  min-height: 0;
+  padding: 12px 14px 12px 16px;
+}
+
+.sv-tile__photo {
+  grid-area: photo;
+  display: block;
+  width: 92px;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--color-clinical);
+}
+
+.sv-tile__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sv-tile[data-single] .sv-tile__name {
+  grid-area: name;
+  align-self: end;
+  margin-top: 0;
+  font-family: var(--e-serif);
+  font-size: 1.18rem;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.sv-tile[data-single] .sv-tile__text {
+  grid-area: text;
+  align-self: start;
+  font-size: 0.86rem;
+}
+
+.sv-tile__arrow {
+  grid-area: arrow;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  background: var(--e-navy);
+  color: #fff;
+}
+
+@media (min-width: 560px) {
+  .sv-tile__text {
+    display: block;
+  }
+  .sv-tile__name {
+    margin-top: 8px;
+  }
+  .sv-tile__more {
+    margin-top: auto;
+    padding-top: 6px;
+  }
+}
+
+@media (hover: hover) {
+  .sv-tile__link:hover {
+    transform: translateY(-3px);
+    border-color: var(--e-rule-2);
+    box-shadow:
+      0 1px 2px rgba(16, 22, 28, 0.04),
+      0 18px 36px rgba(16, 22, 28, 0.1);
+  }
+  .sv-tile__link:hover .sv-tile__more svg {
+    translate: 3px 0;
+  }
+}
+
+@media (max-width: 370px) {
+  .sv-tile__moreLong {
+    display: none;
+  }
+  .sv-tile__moreShort {
+    display: inline;
+  }
+}
+
+/* A card is 91px wide at 320px: the frame closes a step so the name keeps
+   its 2px of slack at the formula's floor, and the cards sit closer. */
+@media (max-width: 340px) {
+  .sv-grid {
+    gap: 8px;
+  }
+  .sv-tile__link {
+    padding: 11px 6px 9px 12px;
+  }
+  .sv-tile[data-single] .sv-tile__link {
+    padding: 12px 12px 12px 14px;
+  }
+}
+
 /* ---------- the pathway ---------- */
 
 .sv-path__title {
@@ -2142,14 +2418,32 @@
   }
 
   /* The mark leads on a phone: it is the one thing on this page that says "eye
-     hospital" before a word is read. It is capped so it never eats the fold. */
+     hospital" before a word is read. It is capped so it never eats the fold -
+     at 200px it took a quarter of the first screen before the headline. */
   .sv-top__mark {
     order: -1;
     justify-items: start;
   }
 
   .sv-iris {
-    width: min(52vw, 200px);
+    width: min(34vw, 136px);
+  }
+
+  .sv-top__title {
+    margin-top: 12px;
+  }
+
+  /* The two figures on one line beside their label: a three-line block was
+     a screen's worth of stamp for two numbers the count line repeats. */
+  .sv-top__stamp {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 14px;
+  }
+
+  .sv-top__stamp strong {
+    font-size: 1.08rem;
   }
 }
 
@@ -2231,7 +2525,7 @@
 
 @media (max-width: 420px) {
   .sv-console__body {
-    padding: 14px;
+    --sv-pad: 14px;
   }
 
   .sv-console__note {
@@ -2244,40 +2538,22 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  /* The large chart stays on a phone, as a pinned readout under the header:
-     a landscape cut of the chart's top rows on the left and the symptom's
-     name on the right, full width on the well tint. The two earlier shapes
-     both failed - a full chart above the rows had scrolled away by the tenth
-     row, and a 250px box centred in a full-width bar read as a stranded
-     thumbnail. The rows' own thumbnails do the comparing; this shows the one
-     the reader is on, large. */
+  /* The chart stays on a phone as a readout above the rail: a landscape cut
+     of the chart's top rows on the left and the symptom's name on the right,
+     on the same well. It is the one preview here - a tap on a chip shows the
+     symptom on it, large. It used to be pinned under the header because
+     thirteen full-width rows scrolled beneath it; the rail sits directly
+     under it now and nothing is tall enough to scroll away from, so it is
+     static, and the card's overflow no longer has to accommodate a sticky
+     child. */
   .sv-notice > .sv-scene {
     --sv-readout-w: clamp(104px, 32vw, 150px);
     --sv-readout-h: clamp(100px, 25.5vw, 118px);
-    position: sticky;
-    top: 72px;
-    z-index: 2;
-    display: grid;
+    position: static;
     grid-template-columns: var(--sv-readout-w) minmax(0, 1fr);
     align-items: center;
     gap: 12px;
-    width: 100%;
-    max-width: none;
     margin: 0 0 4px;
-    padding: 10px;
-    border: 1px solid var(--e-rule);
-    border-radius: 12px;
-    background: linear-gradient(180deg, #f3f6f9 0%, var(--color-clinical) 100%);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.9),
-      0 10px 24px rgba(16, 22, 28, 0.08);
-    transition: top 160ms var(--e-ease);
-  }
-
-  /* The header hides on scroll-down, which is exactly when a reader is
-     working through the rows; the readout follows it up. */
-  body:has(.hd--hidden) .sv-notice > .sv-scene {
-    top: 0;
   }
 
   /* The chart's width follows the viewport instead of stepping at a
@@ -2287,12 +2563,13 @@
     aspect-ratio: auto;
     width: var(--sv-readout-w);
     height: var(--sv-readout-h);
-    border-radius: 8px;
   }
 
   .sv-notice > .sv-scene .sv-scene__caption {
-    text-align: left;
+    min-height: 0;
+    padding: 0;
     gap: 4px;
+    text-align: left;
   }
 
   .sv-notice > .sv-scene .sv-scene__label {
@@ -2301,13 +2578,126 @@
     line-height: 1.3;
   }
 
+  /* No room beside the chart for a name and the hint, so while nothing is
+     shown the hint takes the name's line: a phone has no hover, and "tap a
+     description" is worth more than "Clear vision" under letters that are
+     plainly clear. The moment a symptom is shown its name has the line. */
+  .sv-notice > .sv-scene[data-idle] .sv-scene__label {
+    display: none;
+  }
+
+  .sv-notice > .sv-scene .sv-scene__hint {
+    margin: 0;
+    font-size: 0.88rem;
+  }
+
   .sv-notice > .sv-scene .sv-scene__glare--c,
   .sv-notice > .sv-scene .sv-scene__floater--c {
     display: none;
   }
+
+  /* The thirteen descriptions are a rail, not a column. As full-width rows
+     they were 880px of card - a wall the reader had to scroll past to find
+     out what their tap had done to the list a screen below. Laid out as a
+     two-row horizontal rail, grouped under their headings the way a music
+     app rails its genres, the whole route is 130px tall and the list it
+     narrows is on the same screen as the chip that narrowed it. The groups
+     are the rail's columns; inside each, the chips flow down then across, so
+     a group of four is two columns of two and the reading order is unchanged.
+     The rail bleeds into the card's padding on both sides, so the peeking
+     chip at the right edge is what says there is more. */
+  .sv-notice__groups {
+    /* The fade at the right edge, and the room the last column keeps clear
+       of it: a chip that ends inside the fade would be dimmed at the end of
+       the rail, so the rail's own end padding is the fade's width. */
+    --sv-fade: 36px;
+    display: flex;
+    gap: 0 16px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    margin-inline: calc(var(--sv-pad) * -1);
+    padding-inline: var(--sv-pad) var(--sv-fade);
+    scroll-padding-inline: var(--sv-pad) var(--sv-fade);
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0,
+      #000 calc(var(--sv-pad) * 0.6),
+      #000 calc(100% - var(--sv-fade)),
+      transparent 100%
+    );
+  }
+
+  .sv-notice__groups::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sv-notice__group {
+    flex: none;
+    scroll-snap-align: start;
+    align-content: start;
+  }
+
+  /* Every cell is the same width - the rail is a grid that happens to
+     scroll, and a grid of equal cells is what reads as designed. The width
+     is computed from the rail's own box (the shell less the card's border,
+     less the rail's two paddings and one gap, halved) so that two columns
+     fill the screen exactly and the third begins inside the fade: enough to
+     say there is more, and never a chip cut mid-word at the card's border.
+     A label that needs two lines takes them, and the row grows for the pair. */
+  .sv-symptoms {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(2, auto);
+    grid-auto-columns: var(--sv-cell);
+    gap: 8px;
+  }
+
+  .sv-notice__groups {
+    --sv-rail: calc(100vw - 50px - var(--sv-pad) - var(--sv-fade));
+    /* Capped so a tablet shows three and a half columns of chips rather
+       than two bloated ones. */
+    --sv-cell: min(200px, calc((var(--sv-rail) - 8px) / 2));
+  }
+
+  /* The check sits at the right end over reserved padding rather than
+     pushing the text 14px along as it does on a wide screen: in a fixed
+     cell that push re-wrapped a two-line label to three when chosen. */
+  .sv-notice .sv-chip--symptom {
+    min-height: 46px;
+    padding: 6px 30px 6px 14px;
+    font-size: 0.84rem;
+    line-height: 1.25;
+    white-space: normal;
+  }
+
+  .sv-notice .sv-chip--symptom[data-on] {
+    padding-left: 14px;
+  }
+
+  .sv-notice .sv-chip--symptom::before {
+    left: auto;
+    right: 13px;
+  }
+
+  .sv-chip__label--full {
+    display: none;
+  }
+
+  .sv-chip__label--short {
+    display: inline;
+  }
 }
 
 @media (max-width: 720px) {
+  /* The shell's side padding drops to 16px here, and the rail's cell is
+     computed from the shell. */
+  .sv-notice__groups {
+    --sv-rail: calc(100vw - 34px - var(--sv-pad) - var(--sv-fade));
+  }
+
   /* Three full labels stacked one per row cost most of the first screen before
      a single chip is visible. The short labels fit three across in one row. */
   .sv-modes {
@@ -2412,52 +2802,76 @@
     align-items: flex-start;
   }
 
-  /* On a phone a row is a picture, a name and an arrow - one line each.
-     Eleven rows carrying a number, a category, a three-line sentence and an
-     "Open" label ran to 1929px of text under the finder, and the sentence is
-     the first line of the page the row opens. The number rides the corner of
-     the picture, sharing its grid cell rather than being placed by hand. */
-  .sv-row__link {
-    grid-template-columns: 64px minmax(0, 1fr) auto;
-    grid-template-areas: "thumb title open";
-    align-items: center;
-    gap: 0 14px;
-    padding: 10px 10px;
-  }
-
-  .sv-row__title {
-    align-self: center;
-  }
-
-  .sv-row__num {
-    grid-area: thumb;
-    z-index: 1;
-    align-self: end;
-    justify-self: start;
-    margin: 0 0 4px 4px;
-    padding: 3px 6px;
-    border-radius: 4px;
-    background: rgba(255, 255, 255, 0.94);
-    color: var(--e-navy);
-    font-size: 0.66rem;
-    line-height: 1;
-  }
-
-  .sv-row__text,
-  .sv-row__open-label {
+  /* The head's sentence is what the tabs and the readout's hint already say,
+     and on a phone it stood between the heading and the instrument. */
+  .sv-explorer .e-head .e-lede {
     display: none;
   }
 
-  .sv-row__title {
-    font-size: 1.12rem;
+  /* The count and Clear share the first line and the criterion takes the
+     second, so the readout is two lines on a phone rather than three stacked
+     rows, which pushed a symptom's single answer under the fold. */
+  .sv-status {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 0 12px;
   }
 
-  .sv-row__link {
-    scroll-margin-top: 140px;
+  .sv-status__count {
+    gap: 8px 12px;
+    padding-top: 9px;
   }
 
-  .sv-group__head {
-    padding: 0 10px 8px;
+  .sv-status__clear {
+    justify-self: end;
+  }
+
+  /* The five kind-of-care cards are a rail, one card and the edge of the
+     next in view. Stacked they were 650px of card before the list; railed
+     the route is one card tall, and the members each card lists are still
+     what tells a reader what "Specialty clinics" holds before the tap. */
+  .sv-kinds {
+    --sv-fade: 40px;
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: min(72vw, 300px);
+    gap: 10px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    margin-inline: calc(var(--sv-pad) * -1);
+    padding-inline: var(--sv-pad) var(--sv-fade);
+    scroll-padding-inline: var(--sv-pad) var(--sv-fade);
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0,
+      #000 calc(var(--sv-pad) * 0.6),
+      #000 calc(100% - var(--sv-fade)),
+      transparent 100%
+    );
+  }
+
+  .sv-kinds::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* The card carries the edge colour its services carry in the grid below,
+     so the colour is a legend the reader can read back. */
+  .sv-kind {
+    position: relative;
+    scroll-snap-align: start;
+    overflow: clip;
+  }
+
+  .sv-kind::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    background: var(--sv-tone);
   }
 }
 
@@ -2467,33 +2881,43 @@
   }
 }
 
-/* Sits after the phone row rules above so it wins on the shared properties. */
-@media (max-width: 360px) {
-  /* Beside a 64px picture the name had about 140px at 320px and the longest
-     titles broke into three lines; a smaller picture keeps them to two. */
-  .sv-row__link {
-    grid-template-columns: 56px minmax(0, 1fr) auto;
-    gap: 0 10px;
-    padding: 10px 6px;
-  }
-
-  .sv-row__thumb {
-    width: 56px;
-    height: 56px;
-  }
-
-  .sv-row__title {
-    font-size: 1.02rem;
-  }
-
-  .sv-group__head {
-    padding-inline: 6px;
+/* Below 381px two cells cannot both hold a label at a readable size, so the
+   rail shows one column and most of the next - the cell is 70% of the rail,
+   which keeps every label to two lines down to 320px. */
+@media (max-width: 380px) {
+  .sv-notice__groups {
+    --sv-cell: calc((var(--sv-rail) - 8px) * 0.7);
   }
 }
 
 /* ---------- reduced motion ---------- */
 
 @media (prefers-reduced-motion: reduce) {
+  /* The phone grid is simply there: no entrance, no edge draw, no press
+     scale. The component also sets data-in at once under reduced motion. */
+  .sv-tile__link,
+  .sv-grid[data-in] .sv-tile__link {
+    opacity: 1;
+    translate: none;
+    transition: none;
+  }
+
+  .sv-tile__link::before,
+  .sv-grid[data-in] .sv-tile__link::before {
+    scale: none;
+    transition: none;
+  }
+
+  .sv-tile__link:active,
+  .sv-tile__link:hover {
+    transform: none;
+  }
+
+  .sv-tile__num,
+  .sv-tile__more svg {
+    transition: none;
+  }
+
   .sv-row__link,
   .sv-row__num,
   .sv-row__arrow,

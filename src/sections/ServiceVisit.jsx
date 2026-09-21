@@ -17,7 +17,7 @@ const { pathway } = servicePage;
  *
  * The steps are a native scroll-snap rail - swipe on a touch screen, dots on a
  * pointer, and a plain horizontal scroller if the JavaScript never arrives. It
- * is the same mechanism the conditions rail and the doctor rail use, and for
+ * is the same mechanism the landing page's doctor rail uses, and for
  * the same reason: the browser gives momentum, snapping and - the part that
  * matters most here - the direction lock, so a horizontal swipe never fights the
  * page's vertical scroll. Do not replace it with a drag handler.

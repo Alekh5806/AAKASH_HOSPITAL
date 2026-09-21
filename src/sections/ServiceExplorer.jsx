@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Check, RotateCcw } from "lucide-react";
@@ -15,6 +22,18 @@ import {
 const { finder, index } = servicePage;
 const EASE = [0.22, 1, 0.36, 1];
 
+/* Below this the list is the phone grid rather than the ledger. Decided in
+   JS, not CSS, because the two are different markup: the ledger is five
+   labelled sections and the grid is one list, and a section that is
+   `display: contents` on a phone is a landmark with no box. */
+const PHONE_QUERY = "(max-width: 640px)";
+
+function subscribeToPhone(callback) {
+  const query = window.matchMedia(PHONE_QUERY);
+  query.addEventListener("change", callback);
+  return () => query.removeEventListener("change", callback);
+}
+
 /* One instrument, not two. The finder and the list used to be separate
    sections that each rendered their own answer card, so a reader met the same
    object twice and had to work out which one was the answer.
@@ -28,6 +47,8 @@ export default function ServiceExplorer() {
   const shouldReduceMotion = useReducedMotion();
   const listRef = useRef(null);
   const resultsRef = useRef(null);
+  const gridRef = useRef(null);
+  const [gridSeen, setGridSeen] = useState(false);
 
   const [mode, setMode] = useState("notice");
   const [direction, setDirection] = useState(1);
@@ -44,6 +65,34 @@ export default function ServiceExplorer() {
   const [previewPart, setPreviewPart] = useState(null);
   const [kind, setKind] = useState(null);
   const [activeSlug, setActiveSlug] = useState(null);
+  const phone = useSyncExternalStore(
+    subscribeToPhone,
+    () => window.matchMedia(PHONE_QUERY).matches,
+    () => false,
+  );
+
+  /* The phone grid's cards arrive the first time the grid is on screen, and
+     the trigger is re-armed whenever the grid mounts: framer's useInView
+     watches the node a ref held when the effect ran, and a page opened wide
+     and narrowed later would have handed it the ledger's node and left every
+     card at opacity 0. */
+  useEffect(() => {
+    if (!phone || gridSeen) return undefined;
+    const node = gridRef.current;
+    if (!node || typeof IntersectionObserver === "undefined") return undefined;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        setGridSeen(true);
+        observer.disconnect();
+      },
+      { threshold: 0.08 },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [phone, gridSeen]);
+  const gridShown =
+    gridSeen || shouldReduceMotion || typeof IntersectionObserver === "undefined";
 
   const all = useMemo(() => getNumberedServices(), []);
   const categories = useMemo(() => getCategoryFilters(), []);
@@ -106,6 +155,7 @@ export default function ServiceExplorer() {
     if (!list || typeof IntersectionObserver === "undefined") return undefined;
     const rows = Array.from(list.querySelectorAll(".sv-row"));
     if (!rows.length) return undefined;
+    /* On the phone grid nothing follows the reader; the tiles answer taps. */
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -116,7 +166,7 @@ export default function ServiceExplorer() {
     );
     rows.forEach((row) => observer.observe(row));
     return () => observer.disconnect();
-  }, [shown.length]);
+  }, [shown.length, phone]);
 
   /* Where the results sit beside the controls there is nothing to do. Stacked
      on a phone they land below the whole control card, so a reader chooses and
@@ -156,6 +206,19 @@ export default function ServiceExplorer() {
     setPart(id);
     setPreviewPart(null);
     revealResults();
+  };
+
+  /* On a phone the chips and the kind cards are rails, and a rail shows the
+     edge of the next item on purpose. Chrome only scrolls a focused element
+     into view when none of it is visible, so a keyboard reader tabbing along
+     the rail landed on a chip half under the card's edge. Nearest on both
+     axes brings it in without moving the page. */
+  const revealInRail = (node) => {
+    node.scrollIntoView({
+      inline: "nearest",
+      block: "nearest",
+      behavior: shouldReduceMotion ? "auto" : "smooth",
+    });
   };
 
   /* The route content slides in the direction the tab pill travelled, so a
@@ -235,10 +298,22 @@ export default function ServiceExplorer() {
                   exit="exit"
                   transition={fade}
                 >
+                  {/* One chart is the whole preview: hover on a pointer, the
+                      pinned readout on a phone. Its hint carries two strings
+                      and CSS picks one on the pointer - a phone has no hover,
+                      and a hint that offers one reads as written for a
+                      different device. */}
                   <SymptomScene
                     visual={shownConcern?.visual ?? "clear"}
                     heading={finder.sceneLabel}
                     label={shownConcern ? shownConcern.label : finder.sceneClear}
+                    idle={!shownConcern}
+                    hint={
+                      <>
+                        <span className="sv-scene__hint-full">{finder.sceneHint}</span>
+                        <span className="sv-scene__hint-touch">{finder.sceneHintTouch}</span>
+                      </>
+                    }
                   />
 
                   <div className="sv-notice__groups">
@@ -248,12 +323,14 @@ export default function ServiceExplorer() {
                       return (
                         <div className="sv-notice__group" key={group.id}>
                           <span className="sv-notice__group-label">{group.label}</span>
+                          {/* The same chips the eye route uses, so the two
+                              visual routes are one control vocabulary. */}
                           <div className="sv-symptoms">
                             {members.map((entry, position) => {
                               const on = concern?.label === entry.label;
                               return (
                                 <motion.button
-                                  className="sv-symptom"
+                                  className="sv-chip sv-chip--symptom"
                                   key={entry.label}
                                   type="button"
                                   initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
@@ -272,7 +349,10 @@ export default function ServiceExplorer() {
                                       : undefined
                                   }
                                   onMouseEnter={() => setPreviewConcern(entry)}
-                                  onFocus={() => setPreviewConcern(entry)}
+                                  onFocus={(event) => {
+                                    setPreviewConcern(entry);
+                                    revealInRail(event.currentTarget);
+                                  }}
                                   onBlur={() => setPreviewConcern(null)}
                                   onClick={() => {
                                     setConcern(on ? null : entry);
@@ -280,15 +360,17 @@ export default function ServiceExplorer() {
                                     if (!on) revealResults();
                                   }}
                                 >
-                                  {/* Every row shows its own symptom on the
-                                      chart, so a reader compares all thirteen
-                                      at a glance. On a phone this thumbnail is
-                                      the whole preview. */}
-                                  <span className="sv-symptom__thumb">
-                                    <SymptomScene visual={entry.visual} compact />
+                                  {/* Two labels, CSS picks one: the sentence
+                                      beside the chart on a wide screen, the
+                                      short form in the phone's rail. The
+                                      readout and the status line always
+                                      print the full sentence. */}
+                                  <span className="sv-chip__label sv-chip__label--full">
+                                    {entry.label}
                                   </span>
-                                  <span className="sv-symptom__label">{entry.label}</span>
-                                  <span className="sv-symptom__mark" aria-hidden="true" />
+                                  <span className="sv-chip__label sv-chip__label--short">
+                                    {entry.shortLabel ?? entry.label}
+                                  </span>
                                 </motion.button>
                               );
                             })}
@@ -296,13 +378,6 @@ export default function ServiceExplorer() {
                         </div>
                       );
                     })}
-                    {/* Two hints, CSS picks one on the pointer: a phone has
-                        no hover, and a hint that offers one reads as written
-                        for a different device. */}
-                    <p className="sv-notice__hint">
-                      <span className="sv-notice__hint-full">{finder.sceneHint}</span>
-                      <span className="sv-notice__hint-touch">{finder.sceneHintTouch}</span>
-                    </p>
                   </div>
                 </motion.div>
               ) : mode === "kind" ? (
@@ -324,6 +399,7 @@ export default function ServiceExplorer() {
                         className="sv-kind"
                         key={entry.id}
                         type="button"
+                        data-tone={entry.id}
                         initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{
@@ -334,6 +410,7 @@ export default function ServiceExplorer() {
                         whileTap={shouldReduceMotion ? undefined : { scale: 0.985 }}
                         aria-pressed={on}
                         data-on={on ? "true" : undefined}
+                        onFocus={(event) => revealInRail(event.currentTarget)}
                         onClick={() => {
                           setKind(on ? null : entry.id);
                           if (!on) revealResults();
@@ -510,75 +587,173 @@ export default function ServiceExplorer() {
           </aside>
 
           <div className="sv-results">
-            <div className="sv-list" ref={listRef}>
-              <AnimatePresence initial={false} mode="popLayout">
-                {groups.map((group) => (
-                  <motion.section
-                    className="sv-group"
-                    key={group.id}
-                    aria-labelledby={`sv-group-${group.id}`}
-                    layout={shouldReduceMotion ? false : "position"}
-                    initial={shouldReduceMotion ? false : { opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
-                    transition={{ duration: shouldReduceMotion ? 0 : 0.36, ease: EASE }}
-                  >
-                    <h3 className="sv-group__head" id={`sv-group-${group.id}`}>
-                      <span className="sv-group__label">{group.label}</span>
-                      <span className="sv-group__count">{group.services.length}</span>
-                    </h3>
-                    <ol className="sv-group__list">
-                      <AnimatePresence initial={false} mode="popLayout">
-                        {group.services.map((service, position) => (
-                          <motion.li
-                            className="sv-row"
-                            key={service.slug}
-                            id={`service-${service.slug}`}
-                            data-slug={service.slug}
-                            data-on={service.slug === active?.slug ? "true" : undefined}
-                            onMouseEnter={() => setActiveSlug(service.slug)}
-                            onFocus={() => setActiveSlug(service.slug)}
-                            layout={shouldReduceMotion ? false : "position"}
-                            initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
-                            transition={{
-                              duration: shouldReduceMotion ? 0 : 0.4,
-                              ease: EASE,
-                              delay: shouldReduceMotion ? 0 : Math.min(position, 6) * 0.035,
-                            }}
-                          >
-                            <Link className="sv-row__link" to={`/services/${service.slug}`}>
-                              <span className="sv-row__num" aria-hidden="true">
-                                {service.position}
-                              </span>
-                              {/* Decorative: the row's name is the label, and on a
-                                  wide screen the pane shows the same picture large. */}
-                              <span className="sv-row__thumb" aria-hidden="true">
-                                <SmartImage
-                                  src={service.thumb}
-                                  alt=""
-                                  className="sv-row__img"
-                                  sizes="72px"
-                                />
-                              </span>
-                              <span className="sv-row__title">{service.title}</span>
-                              <span className="sv-row__text">{service.shortDescription}</span>
-                              <span className="sv-row__open">
-                                <span className="sv-row__open-label">{index.openLabel}</span>
-                                <span className="sv-row__arrow" aria-hidden="true">
-                                  <ArrowRight size={16} />
+            {phone ? (
+              /* The phone's list is a grid of cards, three across, all eleven
+                 on one screen, after the card-grid reference: a coloured edge
+                 for the kind of care, the service's number, its short name
+                 and a way in. No glyphs - eleven of them read as clutter, and
+                 a name is faster on its own. The runs are dropped here: the
+                 care-type route is the grouping, live, and its cards carry
+                 the same edge colours, so the colour is learnable.
+
+                 The last card takes whatever columns its row leaves empty and
+                 lays out sideways with its sentence (the span is computed
+                 here, not with :nth-child - popLayout keeps exiting cards in
+                 the DOM while they leave, and a CSS count would land on one).
+                 One answer is a card with the service's photograph, its full
+                 name and its sentence: an answer deserves more than a tile. */
+              <ol
+                className="sv-grid"
+                data-in={gridShown ? "true" : undefined}
+                aria-label={index.label}
+                ref={(node) => {
+                  listRef.current = node;
+                  gridRef.current = node;
+                }}
+              >
+                <AnimatePresence initial={false} mode="popLayout">
+                  {shown.map((service, position) => {
+                    const single = shown.length === 1;
+                    const spare = single ? 0 : (3 - (shown.length % 3)) % 3;
+                    const wide = !single && spare > 0 && position === shown.length - 1;
+                    const urgent = service.category === "urgent";
+                    return (
+                      <motion.li
+                        className="sv-tile"
+                        key={service.slug}
+                        data-tone={service.category}
+                        data-single={single ? "true" : undefined}
+                        data-wide={wide ? String(spare + 1) : undefined}
+                        data-match={filter ? "true" : undefined}
+                        style={{ "--i": position }}
+                        layout={shouldReduceMotion ? false : "position"}
+                        initial={shouldReduceMotion ? false : { opacity: 0, y: 14, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={
+                          shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6, scale: 0.9 }
+                        }
+                        transition={{
+                          duration: shouldReduceMotion ? 0 : 0.38,
+                          ease: EASE,
+                          delay: shouldReduceMotion ? 0 : Math.min(position, 8) * 0.03,
+                          layout: { duration: shouldReduceMotion ? 0 : 0.42, ease: EASE },
+                        }}
+                      >
+                        <Link className="sv-tile__link" to={`/services/${service.slug}`}>
+                          {single ? (
+                            <span className="sv-tile__photo" aria-hidden="true">
+                              <SmartImage
+                                src={service.thumb}
+                                alt=""
+                                className="sv-tile__img"
+                                sizes="96px"
+                              />
+                            </span>
+                          ) : (
+                            <span className="sv-tile__num" aria-hidden="true">
+                              {service.position}
+                            </span>
+                          )}
+                          <span className="sv-tile__name">
+                            {single ? service.title : (service.shortTitle ?? service.title)}
+                          </span>
+                          <span className="sv-tile__text">{service.shortDescription}</span>
+                          {single ? (
+                            <span className="sv-tile__arrow" aria-hidden="true">
+                              <ArrowRight size={16} />
+                            </span>
+                          ) : (
+                            <span className="sv-tile__more" aria-hidden="true">
+                              {urgent ? (
+                                index.urgentLabel
+                              ) : (
+                                <>
+                                  <span className="sv-tile__moreLong">{index.cardLabel}</span>
+                                  <span className="sv-tile__moreShort">
+                                    {index.cardLabelShort}
+                                  </span>
+                                </>
+                              )}
+                              <ArrowRight size={14} />
+                            </span>
+                          )}
+                        </Link>
+                      </motion.li>
+                    );
+                  })}
+                </AnimatePresence>
+              </ol>
+            ) : (
+              <div className="sv-list" ref={listRef}>
+                <AnimatePresence initial={false} mode="popLayout">
+                  {groups.map((group) => (
+                    <motion.section
+                      className="sv-group"
+                      key={group.id}
+                      aria-labelledby={`sv-group-${group.id}`}
+                      layout={shouldReduceMotion ? false : "position"}
+                      initial={shouldReduceMotion ? false : { opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
+                      transition={{ duration: shouldReduceMotion ? 0 : 0.36, ease: EASE }}
+                    >
+                      <h3 className="sv-group__head" id={`sv-group-${group.id}`}>
+                        <span className="sv-group__label">{group.label}</span>
+                        <span className="sv-group__count">{group.services.length}</span>
+                      </h3>
+                      <ol className="sv-group__list">
+                        <AnimatePresence initial={false} mode="popLayout">
+                          {group.services.map((service, position) => (
+                            <motion.li
+                              className="sv-row"
+                              key={service.slug}
+                              id={`service-${service.slug}`}
+                              data-slug={service.slug}
+                              data-on={service.slug === active?.slug ? "true" : undefined}
+                              onMouseEnter={() => setActiveSlug(service.slug)}
+                              onFocus={() => setActiveSlug(service.slug)}
+                              layout={shouldReduceMotion ? false : "position"}
+                              initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
+                              transition={{
+                                duration: shouldReduceMotion ? 0 : 0.4,
+                                ease: EASE,
+                                delay: shouldReduceMotion ? 0 : Math.min(position, 6) * 0.035,
+                              }}
+                            >
+                              <Link className="sv-row__link" to={`/services/${service.slug}`}>
+                                <span className="sv-row__num" aria-hidden="true">
+                                  {service.position}
                                 </span>
-                              </span>
-                            </Link>
-                          </motion.li>
-                        ))}
-                      </AnimatePresence>
-                    </ol>
-                  </motion.section>
-                ))}
-              </AnimatePresence>
-            </div>
+                                {/* Decorative: the row's name is the label, and on a
+                                  wide screen the pane shows the same picture large. */}
+                                <span className="sv-row__thumb" aria-hidden="true">
+                                  <SmartImage
+                                    src={service.thumb}
+                                    alt=""
+                                    className="sv-row__img"
+                                    sizes="72px"
+                                  />
+                                </span>
+                                <span className="sv-row__title">{service.title}</span>
+                                <span className="sv-row__text">{service.shortDescription}</span>
+                                <span className="sv-row__open">
+                                  <span className="sv-row__open-label">{index.openLabel}</span>
+                                  <span className="sv-row__arrow" aria-hidden="true">
+                                    <ArrowRight size={16} />
+                                  </span>
+                                </span>
+                              </Link>
+                            </motion.li>
+                          ))}
+                        </AnimatePresence>
+                      </ol>
+                    </motion.section>
+                  ))}
+                </AnimatePresence>
+              </div>
+            )}
 
             {shown.length === 0 ? (
               <div className="sv-empty">

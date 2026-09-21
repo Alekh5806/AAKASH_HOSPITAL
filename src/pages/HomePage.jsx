@@ -2,7 +2,7 @@ import SEO from "../components/SEO";
 import { BranchJsonLd, MedicalClinicJsonLd } from "../components/JsonLd";
 import { branches } from "../lib/coreData";
 import { doctors } from "../lib/doctorsData";
-import { home } from "../lib/homeData";
+import { getTreatedConditions, home } from "../lib/homeData";
 import { services } from "../lib/servicesData";
 import { testimonials } from "../lib/testimonialsData";
 import ConditionsCarousel from "../sections/ConditionsCarousel";
@@ -20,7 +20,7 @@ export default function HomePage() {
       <BranchJsonLd />
       <Hero hero={home.hero} />
       <ImpactStats impact={home.impact} branches={branches.items} doctors={doctors.items} />
-      <ConditionsCarousel conditions={home.conditions} doctors={doctors.items} />
+      <ConditionsCarousel conditions={home.conditions} items={getTreatedConditions()} />
       <WhyChooseUs trust={home.trust} doctors={doctors.items} branches={branches.items} />
       <DoctorHighlights doctorHighlights={home.doctorHighlights} doctors={doctors.items} />
       <PatientStories testimonials={testimonials.items} voices={home.voices} />

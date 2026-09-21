@@ -62,8 +62,8 @@
         "schedule": [
           {
             "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-            "opens": "09:00",
-            "closes": "18:00"
+            "opens": "08:00",
+            "closes": "20:00"
           }
         ],
         "closedNote": "Emergency and prior appointments only",
@@ -164,7 +164,7 @@
           {
             "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
             "opens": "09:00",
-            "closes": "18:00"
+            "closes": "20:00"
           }
         ],
         "closedNote": "Emergency and prior appointments only",
@@ -174,7 +174,7 @@
         "seo": {
           "title": "Aakash Eye Hospital Ahmedabad | Odhav Circle, S.P. Ring Road",
           "description": "Aakash Eye Hospital in Ahmedabad at Odhav Circle on the 200 ft S.P. Ring Road: OPD, operation and LASIK desk numbers, consultants, directions and appointments.",
-          "image": "/assets/media/branches/visnagar/waiting-hall-1000.jpg"
+          "image": "/assets/media/branches/ahmedabad/facade-1000.jpg"
         },
         "establishedYear": 2014,
         "lede": "Aakash's Ahmedabad hospital, open since 2014 at Odhav Circle on the 200 ft S.P. Ring Road. Retina, cataract and general eye surgery, with its own OPD, operation and LASIK desks.",
@@ -200,24 +200,30 @@
           }
         ],
         "postcode": "382410",
-        "image": "/assets/media/branches/visnagar/waiting-hall-2000.jpg",
-        "imageSmall": "/assets/media/branches/visnagar/waiting-hall-1000.jpg",
-        "imageAlt": "The double-height waiting hall at an Aakash Eye Hospital",
+        "image": "/assets/media/branches/ahmedabad/facade-1280.jpg",
+        "imageSmall": "/assets/media/branches/ahmedabad/facade-1000.jpg",
+        "imageAlt": "The Aakash Eye Hospital signboard on Siddhi Vinayak Arcade at Odhav Circle, above the HDFC Bank branch",
+        "insideLede": "The reception you check in at, the waiting area, a consulting room and the retina imaging suite, so nothing about the first visit is unfamiliar.",
         "gallery": [
           {
-            "src": "/assets/media/branches/visnagar/atrium.jpg",
-            "caption": "The atrium",
-            "alt": "The atrium at an Aakash Eye Hospital, seen from the first floor"
+            "src": "/assets/media/branches/ahmedabad/reception.jpg",
+            "caption": "Reception",
+            "alt": "Patients at the reception counter of Aakash Eye Hospital Ahmedabad"
           },
           {
-            "src": "/assets/media/branches/visnagar/first-floor.jpg",
-            "caption": "The first floor",
-            "alt": "The first-floor walkway over the atrium at an Aakash Eye Hospital"
+            "src": "/assets/media/branches/ahmedabad/waiting-area.jpg",
+            "caption": "Waiting area",
+            "alt": "Rows of chairs in the waiting area at Aakash Eye Hospital Ahmedabad"
           },
           {
-            "src": "/assets/media/branches/visnagar/reception.jpg",
-            "caption": "OPD entrance",
-            "alt": "The OPD doors and the patient notice board at an Aakash Eye Hospital"
+            "src": "/assets/media/branches/ahmedabad/consulting-room.jpg",
+            "caption": "Consulting room",
+            "alt": "A consulting room at Aakash Eye Hospital Ahmedabad, with the slit lamp and the doctor's desk"
+          },
+          {
+            "src": "/assets/media/branches/ahmedabad/retina-imaging.jpg",
+            "caption": "Retina imaging",
+            "alt": "The retina imaging equipment at Aakash Eye Hospital Ahmedabad, with a scan on the screen"
           }
         ]
       }
@@ -263,7 +269,7 @@
           {
             "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
             "opens": "09:00",
-            "closes": "18:00"
+            "closes": "19:00"
           }
         ],
         "closedNote": "Emergency and prior appointments only",
@@ -441,8 +447,8 @@
         "schedule": [
           {
             "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-            "opens": "09:00",
-            "closes": "18:00"
+            "opens": "10:00",
+            "closes": "20:00"
           }
         ],
         "closedNote": "Emergency and prior appointments only",
@@ -546,7 +552,7 @@
         "seo": {
           "title": "Aakash Eye Hospital Juhapura | Blue Water Complex, Vasna Road",
           "description": "Aakash Eye Hospital at Amber Tower, Blue Water Complex on Vasna Road, Sarkhej, Ahmedabad: OPD, operation and LASIK numbers, directions and appointments.",
-          "image": "/assets/media/branches/visnagar/waiting-hall-1000.jpg"
+          "image": "/assets/media/branches/juhapura/facade-1000.jpg"
         },
         "lede": "Aakash Eye Hospital at Amber Tower in the Blue Water Complex on Vasna Road, Sarkhej, with its own OPD, operation and LASIK desks.",
         "ledeShort": "At Blue Water Complex on Vasna Road, Sarkhej, with its own OPD, operation and LASIK desks.",
@@ -571,24 +577,39 @@
           }
         ],
         "postcode": "380055",
-        "image": "/assets/media/branches/visnagar/waiting-hall-2000.jpg",
-        "imageSmall": "/assets/media/branches/visnagar/waiting-hall-1000.jpg",
-        "imageAlt": "The double-height waiting hall at an Aakash Eye Hospital",
+        "image": "/assets/media/branches/juhapura/facade-1600.jpg",
+        "imageSmall": "/assets/media/branches/juhapura/facade-1000.jpg",
+        "imageAlt": "The Aakash Eye Hospital signboard on the corner of Amber Tower at Blue Water Complex, Sarkhej",
+        "insideLede": "The door you come in by, the reception you check in at, the hall you wait in and the corridor to the consulting rooms, so nothing about the first visit is unfamiliar.",
         "gallery": [
           {
-            "src": "/assets/media/branches/visnagar/atrium.jpg",
-            "caption": "The atrium",
-            "alt": "The atrium at an Aakash Eye Hospital, seen from the first floor"
+            "src": "/assets/media/branches/juhapura/entrance.jpg",
+            "caption": "The entrance",
+            "alt": "The entrance door of Aakash Eye Hospital Juhapura, with the signboard over it",
+            "portrait": true
+          },
+           {
+            "src": "/assets/media/branches/juhapura/spectacles.jpeg",
+            "caption": "The entrance",
+            "alt": "The entrance door of Aakash Eye Hospital Juhapura, with the signboard over it",
+            "portrait": true
           },
           {
-            "src": "/assets/media/branches/visnagar/first-floor.jpg",
-            "caption": "The first floor",
-            "alt": "The first-floor walkway over the atrium at an Aakash Eye Hospital"
+            "src": "/assets/media/branches/juhapura/reception.jpg",
+            "caption": "Reception",
+            "alt": "The reception counter at Aakash Eye Hospital Juhapura, under the lit Aakash Eye Hospital emblem",
+            "portrait": true
           },
           {
-            "src": "/assets/media/branches/visnagar/reception.jpg",
-            "caption": "OPD entrance",
-            "alt": "The OPD doors and the patient notice board at an Aakash Eye Hospital"
+            "src": "/assets/media/branches/juhapura/waiting-hall.jpg",
+            "caption": "Waiting hall",
+            "alt": "Rows of chairs in the waiting hall at Aakash Eye Hospital Juhapura"
+          },
+          {
+            "src": "/assets/media/branches/juhapura/consulting-rooms.jpg",
+            "caption": "Consulting rooms",
+            "alt": "The corridor of glass-fronted consulting rooms at Aakash Eye Hospital Juhapura",
+            "portrait": true
           }
         ]
       }
@@ -600,7 +621,8 @@
     "Business hours should be confirmed by the hospital team.",
     "Gota, Himmatnagar and Juhapura contact numbers are temporary placeholders and must be replaced with real branch numbers before launch.",
     "Every hospital page's lede, four facts and SEO text are drafted from the address and the network's own data, not confirmed by the hospital.",
-    "Only Visnagar's photographs are its own. Every other hospital page borrows them - the hero is deliberately the waiting hall rather than the Visnagar facade, so no page claims a building it cannot show. Replace per hospital as photography arrives.",
+    "Visnagar, Ahmedabad (Odhav) and Juhapura (Sarkhej) carry their own photographs; Bharuch, Gota and Himmatnagar still borrow Visnagar's - their hero is deliberately the waiting hall rather than the Visnagar facade, so no page claims a building it cannot show. Replace per hospital as photography arrives.",
+    "The Odhav and Sarkhej photographs arrived as WhatsApp forwards (1280-1600px), so their heroes have no 2000px encode; ask for the camera originals to re-encode them. Juhapura has no interior photographs yet - its gallery is the building and the entrance.",
     "No hospital names the services it actually offers yet, so every page lists all eleven. Add a `page.services` array of slugs to a branch to narrow it.",
     "Bharuch and Gota addresses name no road, so their drawn maps carry an unlabelled road. Ask the hospital for the road name."
   ],

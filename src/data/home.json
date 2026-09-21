@@ -116,148 +116,54 @@
   "conditions": {
     "eyebrow": "What we treat",
     "title": "Conditions we treat",
-    "slides": [
+    "tagline": "Specialist eye care since 1993, across six hospitals",
+    "ctaLabel": "Know more",
+    "previousLabel": "Previous service",
+    "nextLabel": "Next service",
+    "items": [
       {
-        "id": "cataract",
-        "category": "Cataract",
-        "headline": "A cataract clouds the natural lens of the eye, turning sharp vision hazy and making night driving and reading harder.",
-        "image": "/assets/media/conditions/cataract-slit-lamp-pexels-6749706.jpg",
-        "imageAlt": "An ophthalmologist examining a patient at a slit lamp microscope",
-        "doctor": "Dr. Vishnu S. Patel",
-        "quote": "Cataract surgery is not something to postpone until vision is gone. Once the lens starts limiting daily activity, day-care phaco surgery restores clarity in a single sitting.",
-        "quoteShort": "Once the lens limits daily activity, day-care surgery restores clarity.",
-        "treatments": [
-          {
-            "label": "Cataract",
-            "slug": "cataract-surgery"
-          },
-          {
-            "label": "LASIK",
-            "slug": "lasik-refractive-surgery"
-          },
-          {
-            "label": "Eye exam",
-            "slug": "comprehensive-eye-examination"
-          }
-        ],
-        "href": "/services/cataract-surgery"
+        "service": "cataract-surgery",
+        "headline": "Day-care phaco surgery with a lens implant"
       },
       {
-        "id": "refractive-error",
-        "category": "Refractive error",
-        "headline": "Short sight, long sight and astigmatism blur the image the eye forms, and glasses are only one of the ways to correct it.",
-        "image": "/assets/media/conditions/refraction-trial-frame-pexels-6749734.jpg",
-        "imageAlt": "An optometrist checking a patient using a trial frame with test lenses",
-        "doctor": "Dr. Saurabh Kapoor",
-        "quote": "A careful refraction comes first. Only after we confirm corneal thickness and a stable prescription do we discuss LASIK as an option for a patient.",
-        "quoteShort": "A careful refraction comes first, and only then do we discuss LASIK.",
-        "treatments": [
-          {
-            "label": "LASIK",
-            "slug": "lasik-refractive-surgery"
-          },
-          {
-            "label": "Eye exam",
-            "slug": "comprehensive-eye-examination"
-          }
-        ],
-        "href": "/services/lasik-refractive-surgery"
+        "service": "lasik-refractive-surgery",
+        "headline": "Laser vision correction after a careful work-up"
       },
       {
-        "id": "bladeless",
-        "category": "Bladeless surgery",
-        "headline": "Bladeless femtosecond laser replaces the manual blade in cataract and LASIK steps, adding precision where it matters most.",
-        "image": "/assets/media/heroes/bladeless-robotic-laser-surgery.jpg",
-        "imageAlt": "Bladeless robotic laser surgery suite at Aakash Eye Hospital",
-        "doctor": "Dr. Sanjay B. Patel",
-        "quote": "The laser performs the incision and lens fragmentation to a planned depth. That consistency is what supports a smoother recovery for the patient.",
-        "quoteShort": "The laser cuts to a planned depth every time, which aids recovery.",
-        "treatments": [
-          {
-            "label": "LASIK",
-            "slug": "lasik-refractive-surgery"
-          },
-          {
-            "label": "Cataract",
-            "slug": "cataract-surgery"
-          }
-        ],
-        "href": "/services/lasik-refractive-surgery"
+        "service": "retina-services",
+        "headline": "OCT-guided care for diabetic and age-related retina disease"
       },
       {
-        "id": "retina",
-        "category": "Retina",
-        "headline": "Diabetes and ageing can damage the retina quietly, which is why imaging often finds a problem before a patient notices one.",
-        "image": "/assets/media/conditions/retina-imaging-pexels-5765827.jpg",
-        "imageAlt": "A retinal imaging device displaying a scan of a patient eye",
-        "doctor": "Dr. Dhaivat Vasavada",
-        "quote": "Every patient with diabetes should have a dilated retina check each year. OCT and FFA let us see change early, while treatment still protects vision.",
-        "quoteShort": "Every patient with diabetes needs a dilated retina check each year.",
-        "treatments": [
-          {
-            "label": "Retina",
-            "slug": "retina-services"
-          },
-          {
-            "label": "Eye exam",
-            "slug": "comprehensive-eye-examination"
-          },
-          {
-            "label": "Glaucoma",
-            "slug": "glaucoma-care"
-          }
-        ],
-        "href": "/services/retina-services"
+        "service": "glaucoma-care",
+        "headline": "Early detection and lifelong pressure control"
       },
       {
-        "id": "glaucoma",
-        "category": "Glaucoma",
-        "headline": "Glaucoma damages the optic nerve, usually with raised eye pressure and usually without symptoms until side vision is already lost.",
-        "image": "/assets/media/conditions/glaucoma-screening-pexels-5766215.jpg",
-        "imageAlt": "A patient having eye pressure checked on a diagnostic machine with a clinician",
-        "doctor": "Dr. Asesh B. Patel",
-        "quote": "Vision lost to glaucoma does not come back, so screening is the whole battle. A pressure check and a field test take minutes at any of our branches.",
-        "quoteShort": "Sight lost to glaucoma never returns, so screening is the whole battle.",
-        "treatments": [
-          {
-            "label": "Glaucoma",
-            "slug": "glaucoma-care"
-          },
-          {
-            "label": "Eye exam",
-            "slug": "comprehensive-eye-examination"
-          },
-          {
-            "label": "Retina",
-            "slug": "retina-services"
-          }
-        ],
-        "href": "/services/glaucoma-care"
+        "service": "oculoplasty",
+        "headline": "Eyelid, tear-duct and orbit surgery"
       },
       {
-        "id": "family-eye-care",
-        "category": "Family eye care",
-        "headline": "Children rarely say their vision is blurred, so school-age eye checks catch squint, lazy eye and glasses needs while they are still treatable.",
-        "image": "/assets/media/conditions/child-vision-test-pexels-5996608.jpg",
-        "imageAlt": "A child covering one eye during a vision test at an eye clinic",
-        "doctor": "Dr. Mahendra M. Patel",
-        "quote": "Bring a child for a check before school starts, not after a teacher notices. Early correction is what protects a young eye from lasting weakness.",
-        "quoteShort": "Bring a child for a check before school starts, not after.",
-        "treatments": [
-          {
-            "label": "Eye exam",
-            "slug": "comprehensive-eye-examination"
-          },
-          {
-            "label": "LASIK",
-            "slug": "lasik-refractive-surgery"
-          },
-          {
-            "label": "Cataract",
-            "slug": "cataract-surgery"
-          }
-        ],
-        "href": "/services/comprehensive-eye-examination"
+        "service": "pediatric-eye-care",
+        "headline": "Eye care built around children"
+      },
+      {
+        "service": "myopia-clinic",
+        "headline": "Slowing the rise of a child's spectacle number"
+      },
+      {
+        "service": "squint-services",
+        "headline": "Straightening misaligned eyes at any age"
+      },
+      {
+        "service": "comprehensive-eye-examination",
+        "headline": "A full check of your vision and eye health"
+      },
+      {
+        "service": "optical-services",
+        "headline": "Spectacles made to your exact prescription"
+      },
+      {
+        "service": "emergency-eye-care",
+        "headline": "Urgent care for injury and sudden vision loss"
       }
     ]
   },
@@ -326,9 +232,21 @@
         "meta": "Protocol-led safety"
       }
     ],
-    "filesYears": ["1998", "2011", "2025"],
-    "explainSteps": ["We explain", "You ask", "You decide"],
-    "checklist": ["Pre-op checks", "Sterile protocol", "Follow-up review"]
+    "filesYears": [
+      "1998",
+      "2011",
+      "2025"
+    ],
+    "explainSteps": [
+      "We explain",
+      "You ask",
+      "You decide"
+    ],
+    "checklist": [
+      "Pre-op checks",
+      "Sterile protocol",
+      "Follow-up review"
+    ]
   },
   "doctorHighlights": {
     "eyebrow": "Our specialists",

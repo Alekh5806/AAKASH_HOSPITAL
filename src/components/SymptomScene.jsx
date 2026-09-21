@@ -18,20 +18,17 @@ const ROWS = [
    tightening as the letters shrink. */
 const BASELINES = [72, 140, 194, 240, 280, 314, 343, 368];
 
-/* The full chart, or a square cut around the big E for a thumbnail. */
-const FULL_VIEW = "0 0 260 392";
-const E_VIEW = "48 -26 140 140";
+const VIEW = "0 0 260 392";
 
-function Chart({ ghost = false, compact = false }) {
-  const rows = compact ? ROWS.slice(0, 1) : ROWS;
+function Chart({ ghost = false }) {
   return (
     <svg
       className={`sv-scene__chart${ghost ? " sv-scene__chart--ghost" : ""}`}
-      viewBox={compact ? E_VIEW : FULL_VIEW}
-      preserveAspectRatio={compact ? "xMidYMid meet" : "xMidYMin slice"}
+      viewBox={VIEW}
+      preserveAspectRatio="xMidYMin slice"
       focusable="false"
     >
-      {rows.map((row, index) => (
+      {ROWS.map((row, index) => (
         <g key={row.acuity}>
           <text
             className="sv-scene__row"
@@ -42,16 +39,14 @@ function Chart({ ghost = false, compact = false }) {
           >
             {row.letters}
           </text>
-          {compact ? null : (
-            <text
-              className="sv-scene__acuity"
-              x="248"
-              y={BASELINES[index] - row.size * 0.32}
-              textAnchor="end"
-            >
-              {row.acuity}
-            </text>
-          )}
+          <text
+            className="sv-scene__acuity"
+            x="248"
+            y={BASELINES[index] - row.size * 0.32}
+            textAnchor="end"
+          >
+            {row.acuity}
+          </text>
         </g>
       ))}
     </svg>
@@ -67,30 +62,32 @@ function Chart({ ghost = false, compact = false }) {
    eight lines of text describe exactly.
  *
  * `visual` names the effect and CSS draws it, so a new concern needs a word
-   in the JSON and nothing here. `compact` renders the same effect on a square
-   cut around the big E, for the thumbnail every symptom row carries - that is
-   what lets a reader compare thirteen symptoms at a glance without hovering,
-   and it is the whole of the route on a phone.
+   in the JSON and nothing here. There is one chart per route, never one per
+   option: a 60px thumbnail beside every symptom was tried, and at that size
+   blur, haze, glare and clear all read as the same fuzzy E - thirteen of them
+   were noise, not a comparison. `idle` says no symptom is being shown, which
+   is when the caption offers its `hint`.
  *
  * The effects are how patients commonly describe their sight, not clinical
    findings - the note under the console says so, and nothing in this frame
    should ever read as a diagnosis. The chart is aria-hidden: the buttons carry
    the words. Under prefers-reduced-motion the floaters hold still rather than
    drift, and every effect still renders in its finished state. */
-export default function SymptomScene({ visual = "clear", label, heading, compact = false }) {
+export default function SymptomScene({ visual = "clear", label, heading, hint, idle = false }) {
   const shouldReduceMotion = useReducedMotion();
 
   return (
     <div
-      className={`sv-scene${compact ? " sv-scene--compact" : ""}`}
+      className="sv-scene"
       data-visual={visual}
+      data-idle={idle ? "true" : undefined}
       data-still={shouldReduceMotion ? "true" : undefined}
       aria-hidden="true"
     >
       <div className="sv-scene__frame">
         {/* drawn twice so "double" can offset a ghost of it */}
-        <Chart compact={compact} />
-        <Chart compact={compact} ghost />
+        <Chart />
+        <Chart ghost />
 
         {/* effect layers - each one only shows for the visual that owns it */}
         <span className="sv-scene__haze" />
@@ -105,10 +102,11 @@ export default function SymptomScene({ visual = "clear", label, heading, compact
         <span className="sv-scene__lid" />
       </div>
 
-      {!compact && (heading || label) ? (
+      {heading || label || hint ? (
         <div className="sv-scene__caption">
           {heading ? <span className="sv-scene__eyebrow">{heading}</span> : null}
           {label ? <p className="sv-scene__label">{label}</p> : null}
+          {hint ? <p className="sv-scene__hint">{hint}</p> : null}
         </div>
       ) : null}
     </div>

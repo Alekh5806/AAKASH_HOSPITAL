@@ -26,7 +26,7 @@
   --br-edge-light: rgba(255, 255, 255, 0.46);
 }
 
-/* Two labels in the markup and CSS picks one - the conditions rail's quoteShort
+/* Two labels in the markup and CSS picks one - the cookie sheet's bodyShort
    device. Every short form is authored copy, never a truncation. */
 .br-short {
   display: none;
@@ -1186,16 +1186,32 @@
   scroll-snap-align: start;
 }
 
-/* The photographs are the hospital's own and all four are the same 4:3 frame, so
-   the stage fills. It was `contain` over a blurred copy of itself while the set
-   mixed portrait and landscape - any single crop ratio butchered half of them.
-   If a portrait photograph is ever added back, that treatment has to come with
-   it; do not crop one. */
+/* A landscape photograph fills the stage: every frame is the hospital's own and
+   `cover` loses an edge, never a subject, whether the frame is Visnagar's 4:3 or
+   Odhav's 20:9. A portrait one is contained over a blurred copy of itself
+   (`[data-portrait]`, from the JSON) rather than cropped - cropped to a
+   landscape stage it would keep a third of itself. The fill is the same file
+   the slide shows, so it costs no bytes. */
 .br-gallery__img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.br-gallery__fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.12);
+  filter: blur(22px) saturate(1.15) brightness(0.72);
+}
+
+.br-gallery__slide[data-portrait] .br-gallery__img {
+  position: relative;
+  object-fit: contain;
 }
 
 .br-gallery__zoom {

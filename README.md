@@ -28,7 +28,7 @@ All editable site content lives in `src/data`:
 - `site.json`: brand, logo, global CTAs, SEO defaults, business hours, footer and cookie consent copy
 - `navigation.json`: header navigation and the footer's two page-link columns
 - `theme.json`: colors, fonts, radius and shadows
-- `home.json`: hero, impact numbers, conditions rail, trust tiles, doctor highlights and patient voices
+- `home.json`: hero, impact numbers, conditions picker, trust tiles, doctor highlights and patient voices
 - `about.json`: the journey timeline and the vision, mission and core values
 - `services.json`: the services index, the eleven services and their detail pages
 - `doctors.json`: doctor and optometry team profiles

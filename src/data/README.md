@@ -28,11 +28,13 @@ Open `services.json`, find the service in `items`, and edit copy, bullets or FAQ
 {
   "id": "glaucoma-care",
   "slug": "glaucoma-care",
-  "title": "Glaucoma Care",
+  "title": "Comprehensive Glaucoma Care",
+  "shortTitle": "Glaucoma care",
+  "category": "specialty",
   "shortDescription": "Short card text shown on service grids.",
   "longDescription": ["Paragraph one.", "Paragraph two."],
-  "icon": "Gauge",
   "image": "/assets/media/gallery/facility-4.jpg",
+  "thumb": "/assets/media/services/glaucoma-care-thumb.jpg",
   "imageAlt": "Diagnostic care area for glaucoma evaluation",
   "featureBullets": ["Pressure and optic nerve evaluation"],
   "faq": [
@@ -44,7 +46,7 @@ Open `services.json`, find the service in `items`, and edit copy, bullets or FAQ
 }
 ```
 
-The `slug` controls the page URL. Changing it changes the route.
+The `slug` controls the page URL. Changing it changes the route. `shortTitle` is the name the phone's card grid shows and `category` (one of the ids in `page.categories`) sets the card's edge colour and which run of the ledger the service sits in.
 
 ## Update A Branch
 
@@ -114,15 +116,19 @@ Every branch has a page at `/branches/<slug>`, driven entirely by its `page` blo
 
   "establishedYear": 1993,
   "postcode": "384315",
-  "services": ["cataract-surgery", "lasik-refractive-surgery"]
+  "services": ["cataract-surgery", "lasik-refractive-surgery"],
+  "insideLede": "What this hospital's own gallery shows, in one sentence."
 }
 ```
 
-The last three are optional and the page adapts to what is there:
+The last four are optional and the page adapts to what is there:
 
 - **`establishedYear`** - leave it out and the hero shows no `Since` tag. Do not estimate a year.
 - **`postcode`** - leave it out and the map shows no PIN stamp.
 - **`services`** - leave it out and the page lists all eleven. Add the slugs a hospital actually runs to narrow it.
+- **`insideLede`** - leave it out and the gallery uses the shared `page.inside.lede`, which names the Visnagar set. Write one when the hospital has its own photographs, so the sentence says what is actually in them.
+
+A `gallery` entry is landscape unless it carries `"portrait": true`; a portrait photograph is shown whole over a blurred copy of itself rather than cropped to the landscape stage. Keep to four entries at most - a fifth thumbnail drops under the 44px tap target on a 320px phone.
 
 `landmarks` wants one `road` and two `landmark` entries; the drawn map puts the hospital on that road between those two. An address that names no road still works - the map draws the road unlabelled.
 

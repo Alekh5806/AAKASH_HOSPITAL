@@ -40,78 +40,91 @@
       "concerns": [
         {
           "label": "My vision is blurred or hazy",
+          "shortLabel": "Blurred or hazy vision",
           "service": "cataract-surgery",
           "visual": "haze",
           "group": "see"
         },
         {
           "label": "Glare or halos around lights",
+          "shortLabel": "Glare or halos",
           "service": "cataract-surgery",
           "visual": "glare",
           "group": "see"
         },
         {
           "label": "I want to reduce my dependence on glasses",
+          "shortLabel": "Freedom from glasses",
           "service": "lasik-refractive-surgery",
           "visual": "blur",
           "group": "see"
         },
         {
           "label": "I have diabetes",
+          "shortLabel": "I have diabetes",
           "service": "retina-services",
           "visual": "spots",
           "group": "health"
         },
         {
           "label": "Flashes, floaters or a shadow in my vision",
+          "shortLabel": "Flashes or floaters",
           "service": "retina-services",
           "visual": "floaters",
           "group": "see"
         },
         {
           "label": "Someone in my family has glaucoma",
+          "shortLabel": "Glaucoma in the family",
           "service": "glaucoma-care",
           "visual": "tunnel",
           "group": "health"
         },
         {
           "label": "Watering, drooping or a lump on my eyelid",
+          "shortLabel": "Eyelid droop or lump",
           "service": "oculoplasty",
           "visual": "droop",
           "group": "health"
         },
         {
           "label": "My child needs an eye check",
+          "shortLabel": "Child's eye check",
           "service": "pediatric-eye-care",
           "visual": "clear",
           "group": "child"
         },
         {
           "label": "My child's spectacle number keeps rising",
+          "shortLabel": "Rising eye number",
           "service": "myopia-clinic",
           "visual": "blur",
           "group": "child"
         },
         {
           "label": "My child's eye turns inward or outward",
+          "shortLabel": "Eye turns in or out",
           "service": "squint-services",
           "visual": "double",
           "group": "child"
         },
         {
           "label": "I just want a routine check-up",
+          "shortLabel": "Routine check-up",
           "service": "comprehensive-eye-examination",
           "visual": "clear",
           "group": "everyday"
         },
         {
           "label": "I need new spectacles",
+          "shortLabel": "New spectacles",
           "service": "optical-services",
           "visual": "blur",
           "group": "everyday"
         },
         {
           "label": "Sudden pain, injury or loss of vision",
+          "shortLabel": "Sudden pain or injury",
           "service": "emergency-eye-care",
           "visual": "dark",
           "group": "health"
@@ -215,7 +228,10 @@
       "title": "What we treat",
       "lede": "Open a service for what it involves, what to expect and the questions patients ask most.",
       "allLabel": "All",
-      "openLabel": "Open"
+      "openLabel": "Open",
+      "cardLabel": "Learn more",
+      "cardLabelShort": "More",
+      "urgentLabel": "Do not wait"
     },
     "detail": {
       "backLabel": "All services",
@@ -327,12 +343,12 @@
       "id": "cataract-surgery",
       "slug": "cataract-surgery",
       "title": "Cataract Surgery",
+      "shortTitle": "Cataract surgery",
       "shortDescription": "Clearer vision begins with the right diagnosis, the right lens plan, and the right surgery for you.",
       "longDescription": [
         "Cataract is the clouding of the natural crystalline lens, commonly associated with ageing. Surgery is the only known effective treatment for cataract removal.",
         "At Aakash Eye Hospital, cataract surgery is focused on removing the cloudy natural lens and replacing it with an intraocular lens. Phacoemulsification with IOL implantation is the core technique used at the center."
       ],
-      "icon": "Eye",
       "image": "/assets/media/conditions/cataract-slit-lamp-pexels-6749706.jpg",
       "thumb": "/assets/media/services/cataract-surgery-thumb.jpg",
       "imageAlt": "Slit lamp examination for cataract assessment",
@@ -405,12 +421,12 @@
       "id": "lasik-refractive-surgery",
       "slug": "lasik-refractive-surgery",
       "title": "LASIK & Refractive Surgery",
+      "shortTitle": "LASIK & refractive",
       "shortDescription": "Freedom from glasses begins with finding out which procedure - if any - is right for your eyes.",
       "longDescription": [
         "LASIK is a surgical procedure for permanent removal or reduction of dependence on glasses and contact lenses.",
         "The legacy site describes the I Look Laser Vision Center at Aakash Eye Hospital as equipped with VISX STAR S4 IR technology, Wavescan aberrometer, pachymeter and topography support."
       ],
-      "icon": "Sparkles",
       "image": "/assets/media/gallery/bladeless-facility.jpg",
       "thumb": "/assets/media/services/lasik-refractive-surgery-thumb.jpg",
       "imageAlt": "Laser surgery suite at Aakash Eye Hospital",
@@ -479,12 +495,12 @@
       "id": "retina-services",
       "slug": "retina-services",
       "title": "Retina Services",
+      "shortTitle": "Retina care",
       "shortDescription": "Specialist care for diseases affecting the retina, macula and vitreous.",
       "longDescription": [
         "Aakash Eye Hospital expanded medical retina capabilities in 2011 with OCT, Green Laser and FFA.",
         "The service supports diagnosis and care planning for retina conditions requiring imaging and laser-based treatment pathways."
       ],
-      "icon": "Activity",
       "image": "/assets/media/conditions/retina-imaging-pexels-5765827.jpg",
       "thumb": "/assets/media/services/retina-services-thumb.jpg",
       "imageAlt": "Retinal imaging during an eye examination",
@@ -553,12 +569,12 @@
       "id": "glaucoma-care",
       "slug": "glaucoma-care",
       "title": "Comprehensive Glaucoma Care",
+      "shortTitle": "Glaucoma care",
       "shortDescription": "Protecting vision through early detection and long-term monitoring.",
       "longDescription": [
         "Glaucoma is a disease where pressure inside the eye can damage the nerve fibers forming the optic nerve.",
         "Aakash Eye Hospital's legacy glaucoma content describes detailed investigation with applanation tonometry, perimetry, GCC and RNFL analysis with OCT, optic disc photography and fundus camera support."
       ],
-      "icon": "Gauge",
       "image": "/assets/media/conditions/glaucoma-screening-pexels-5766215.jpg",
       "thumb": "/assets/media/services/glaucoma-care-thumb.jpg",
       "imageAlt": "Eye pressure screening for glaucoma",
@@ -631,13 +647,13 @@
       "id": "oculoplasty",
       "slug": "oculoplasty",
       "title": "Oculoplasty",
+      "shortTitle": "Oculoplasty",
       "category": "specialty",
       "shortDescription": "Specialist care for eyelids, tear passages and structures around the eye.",
       "longDescription": [
         "Oculoplasty covers the eyelids, the tear drainage passages, the orbit and the tissues surrounding the eye. Problems here can affect comfort, vision and appearance.",
         "The team assesses the cause first and then discusses which medical or surgical options are appropriate for you."
       ],
-      "icon": "Eye",
       "image": "/assets/media/stock/closeup-eye-pexels-andrea-bova-2953811.jpg",
       "thumb": "/assets/media/services/oculoplasty-thumb.jpg",
       "imageAlt": "Close-up of the eye and eyelid",
@@ -701,13 +717,13 @@
       "id": "pediatric-eye-care",
       "slug": "pediatric-eye-care",
       "title": "Pediatric Eye Care",
+      "shortTitle": "Children's eye care",
       "category": "children",
       "shortDescription": "Healthy vision plays an important role in a child's learning and development.",
       "longDescription": [
         "Children rarely say that their vision is blurred, so many eye problems are first noticed by a parent or a teacher rather than by the child.",
         "Examinations are adapted to a child's age and attention span, and findings are explained to the parent along with what happens next."
       ],
-      "icon": "Users",
       "image": "/assets/media/conditions/child-vision-test-pexels-5996608.jpg",
       "thumb": "/assets/media/services/pediatric-eye-care-thumb.jpg",
       "imageAlt": "Child having a vision test",
@@ -775,13 +791,13 @@
       "id": "myopia-clinic",
       "slug": "myopia-clinic",
       "title": "Myopia Clinic",
+      "shortTitle": "Myopia clinic",
       "category": "children",
       "shortDescription": "Monitoring increasing spectacle numbers during childhood and adolescence.",
       "longDescription": [
         "Short sight often begins in childhood and can change over several years. Tracking that change is what tells the team whether a plan is working.",
         "The clinic records the measurements over time and discusses the options with the family at each review."
       ],
-      "icon": "Gauge",
       "image": "/assets/media/conditions/refraction-trial-frame-pexels-6749734.jpg",
       "thumb": "/assets/media/services/myopia-clinic-thumb.jpg",
       "imageAlt": "Trial frame refraction to measure spectacle power",
@@ -845,13 +861,13 @@
       "id": "squint-services",
       "slug": "squint-services",
       "title": "Squint Services",
+      "shortTitle": "Squint care",
       "category": "children",
       "shortDescription": "Assessment and treatment for eyes that are not properly aligned.",
       "longDescription": [
         "A squint is an eye that turns inward, outward, up or down instead of aligning with the other eye. It can appear in childhood or later in life.",
         "Assessment establishes the type and the cause, and the doctor then discusses whether glasses, exercises or surgery are appropriate."
       ],
-      "icon": "Eye",
       "image": "/assets/media/gallery/facility-3.jpg",
       "thumb": "/assets/media/services/squint-services-thumb.jpg",
       "imageAlt": "Consulting room at Aakash Eye Hospital",
@@ -919,12 +935,12 @@
       "id": "comprehensive-eye-examination",
       "slug": "comprehensive-eye-examination",
       "title": "Comprehensive Eye Examination",
+      "shortTitle": "Eye examination",
       "shortDescription": "Sometimes the most important treatment begins with a thorough examination.",
       "longDescription": [
         "The OPD pathway helps patients start with a complete eye evaluation and move into the right service when more specialized care is needed.",
         "Aakash Eye Hospital also supports pediatric eye problems including pediatric cataract, pediatric squint, amblyopia management, allergic conjunctivitis and refraction in young children."
       ],
-      "icon": "Stethoscope",
       "image": "/assets/media/stock/eye-exam-pexels-ai25studio-6749757.jpg",
       "thumb": "/assets/media/services/comprehensive-eye-examination-thumb.jpg",
       "imageAlt": "Comprehensive eye examination in progress",
@@ -988,13 +1004,13 @@
       "id": "optical-services",
       "slug": "optical-services",
       "title": "Optical Services",
+      "shortTitle": "Optical services",
       "category": "everyday",
       "shortDescription": "Spectacles that begin with the right prescription.",
       "longDescription": [
         "A spectacle prescription is the result of an examination, not a separate purchase. The optical team works from the doctor's findings.",
         "Frames and lens options are discussed once the prescription is confirmed."
       ],
-      "icon": "Sparkles",
       "image": "/assets/media/stock/vision-consult-pexels-ai25studio-6749756.jpg",
       "thumb": "/assets/media/services/optical-services-thumb.jpg",
       "imageAlt": "Discussing spectacles after an eye examination",
@@ -1053,13 +1069,13 @@
       "id": "emergency-eye-care",
       "slug": "emergency-eye-care",
       "title": "Emergency Eye Care",
+      "shortTitle": "Emergency care",
       "category": "urgent",
       "shortDescription": "Some eye conditions require urgent evaluation.",
       "longDescription": [
         "Sudden loss of vision, injury, chemical exposure and severe pain are reasons to seek care immediately rather than waiting for a routine appointment.",
         "Contact the hospital directly so the team can advise you on where to go and what to do on the way."
       ],
-      "icon": "ShieldCheck",
       "image": "/assets/media/gallery/facility-5.jpg",
       "thumb": "/assets/media/services/emergency-eye-care-thumb.jpg",
       "imageAlt": "Aakash Eye Hospital facility",

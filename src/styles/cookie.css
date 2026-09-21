@@ -53,7 +53,7 @@
 }
 
 /* The phone gets a shorter sentence rather than a clamped one, the same way
-   the conditions rail carries quoteShort: a consent notice has to stay
+   the hospital page carries ledeShort: a consent notice has to stay
    readable, so the height comes out of authored copy, never out of truncation. */
 .ck__text--short {
   display: none;
