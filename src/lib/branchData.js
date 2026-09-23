@@ -1,5 +1,5 @@
 import { branches } from "./coreData";
-import { doctors } from "./doctorsData";
+import { doctors, isOptometrist } from "./doctorsData";
 import { getServiceBySlug, services } from "./servicesData";
 
 export const branchPage = branches.page;
@@ -15,10 +15,9 @@ export function getOtherBranches(slug) {
 /* doctors.json names branches by their display name, not their slug. */
 export function getBranchTeam(branch) {
   const team = doctors.items.filter((doctor) => doctor.branches.includes(branch.name));
-  const isOptometry = (doctor) => /optometr/i.test(doctor.specialty);
   return {
-    doctors: team.filter((doctor) => !isOptometry(doctor)),
-    optometrists: team.filter(isOptometry),
+    doctors: team.filter((doctor) => !isOptometrist(doctor)),
+    optometrists: team.filter(isOptometrist),
   };
 }
 

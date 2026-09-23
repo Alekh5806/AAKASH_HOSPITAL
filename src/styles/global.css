@@ -226,28 +226,20 @@ p {
     box-shadow 220ms ease,
     border-color 220ms ease;
 }
-
-.doctor-card,
 .gallery-card {
   border: 1px solid rgba(27, 58, 139, 0.11);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
   box-shadow: var(--shadow-sm);
 }
-
-.doctor-grid,
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
 }
-
-.doctor-card,
 .gallery-card {
   overflow: hidden;
 }
-
-.doctor-card:hover,
 .gallery-card:hover {
   border-color: rgba(229, 0, 125, 0.24);
   box-shadow: var(--shadow-md);
@@ -258,147 +250,6 @@ p {
   aspect-ratio: 16 / 10;
   object-fit: cover;
   background: var(--color-brand-blue-soft);
-}
-
-.doctor-card__body {
-  padding: 22px;
-}
-
-.doctor-section {
-  position: relative;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 10% 18%, rgba(229, 0, 125, 0.08), transparent 28%),
-    radial-gradient(circle at 90% 24%, rgba(10, 143, 149, 0.11), transparent 30%),
-    linear-gradient(180deg, white, rgba(244, 248, 251, 0.82));
-}
-
-.doctor-section__head {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 22px;
-  margin-bottom: 30px;
-}
-
-.doctor-section__head .section-heading {
-  margin-bottom: 0;
-}
-
-.doctor-section__all {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  flex: 0 0 auto;
-  border: 1px solid rgba(27, 58, 139, 0.12);
-  border-radius: var(--radius-pill);
-  background: white;
-  color: var(--color-brand-blue);
-  font-weight: 900;
-  padding: 10px 14px;
-  box-shadow: var(--shadow-sm);
-}
-
-.doctor-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.doctor-card {
-  overflow: hidden;
-  background: linear-gradient(180deg, white, rgba(244, 248, 251, 0.88)), var(--color-surface);
-}
-
-.doctor-card__media {
-  position: relative;
-  overflow: hidden;
-}
-
-.doctor-card__media::after {
-  position: absolute;
-  inset: auto 0 0;
-  height: 42%;
-  background: linear-gradient(180deg, transparent, rgba(17, 42, 106, 0.68));
-  content: "";
-}
-
-.doctor-card__media > span {
-  position: absolute;
-  left: 14px;
-  bottom: 14px;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--color-accent-magenta);
-  font-size: 0.72rem;
-  font-weight: 950;
-  padding: 7px 10px;
-  text-transform: uppercase;
-  backdrop-filter: blur(12px);
-}
-
-.doctor-card__photo {
-  width: 100%;
-  aspect-ratio: 1 / 1.04;
-  object-fit: cover;
-  object-position: top center;
-  background: var(--color-brand-blue-soft);
-}
-
-.doctor-card__qualification {
-  display: inline-flex;
-  width: fit-content;
-  border-radius: var(--radius-pill);
-  background: var(--color-brand-blue-soft);
-  color: var(--color-brand-blue);
-  font-weight: 900;
-  margin-bottom: 12px;
-  padding: 5px 9px;
-}
-
-.doctor-card__body p:not(.doctor-card__qualification) {
-  font-size: 0.94rem;
-}
-
-.doctor-card__branches {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 14px;
-}
-
-.doctor-card__branches span {
-  border-radius: var(--radius-pill);
-  background: var(--color-brand-blue-soft);
-  color: var(--color-brand-blue);
-  font-size: 0.8rem;
-  font-weight: 850;
-  padding: 4px 9px;
-}
-
-.doctor-card__cta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.doctor-card__cta {
-  align-items: center;
-  border-radius: var(--radius-pill);
-  background: var(--color-brand-blue);
-  color: white;
-  font-size: 0.86rem;
-  font-weight: 900;
-  line-height: 1.1;
-  padding: 9px 12px;
-}
-
-.doctor-card__cta {
-  display: inline-flex;
-  margin-top: 16px;
-  box-shadow: 0 10px 22px rgba(27, 58, 139, 0.14);
 }
 
 .lazy-map-frame {
@@ -481,42 +332,6 @@ p {
 .gallery-card figcaption span {
   color: var(--color-slate);
   font-size: 0.93rem;
-}
-
-.cta-section {
-  padding-top: 36px;
-}
-
-.cta-panel {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  border-radius: var(--radius-sm);
-  background:
-    linear-gradient(135deg, rgba(27, 58, 139, 0.94), rgba(17, 42, 106, 0.94)),
-    var(--color-brand-blue);
-  color: white;
-  padding: 34px;
-  box-shadow: var(--shadow-md);
-}
-
-.cta-panel h2,
-.cta-panel p {
-  color: white;
-}
-
-.cta-panel p {
-  max-width: 620px;
-  margin-bottom: 0;
-  opacity: 0.88;
-}
-
-.cta-panel__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  flex: 0 0 auto;
 }
 
 .page-header {
@@ -616,10 +431,6 @@ p {
   font-weight: 650;
 }
 
-.page-header--doctors {
-  background-position: center 44%;
-}
-
 .page-header--gallery {
   background-position: center 40%;
 }
@@ -647,53 +458,23 @@ p {
     overflow-wrap: break-word;
   }
 
-  .page-header--doctors {
-    background-position: center;
-  }
-
   .page-header--gallery {
     background-position: center 36%;
   }
 }
-
-.doctor-card,
 .gallery-card {
   position: relative;
 }
 
-.gallery-card__image,
-.doctor-card__photo {
+.gallery-card__image {
   transition:
     transform 420ms ease,
     filter 420ms ease;
 }
 
-.gallery-card:hover .gallery-card__image,
-.doctor-card:hover .doctor-card__photo {
+.gallery-card:hover .gallery-card__image {
   filter: saturate(1.08) contrast(1.04);
   transform: scale(1.045);
-}
-
-.doctor-card__body {
-  background: linear-gradient(180deg, white, rgba(244, 248, 251, 0.76));
-}
-
-.cta-panel {
-  position: relative;
-  overflow: hidden;
-}
-
-.cta-panel::after {
-  position: absolute;
-  inset: auto 0 0;
-  height: 4px;
-  background: linear-gradient(
-    90deg,
-    var(--color-gold),
-    var(--color-accent-magenta),
-    var(--color-teal)
-  );
-  content: "";
 }
 
 @media (max-width: 1040px) {
@@ -704,8 +485,6 @@ p {
   h2 {
     font-size: 2.25rem;
   }
-
-  .doctor-grid,
   .gallery-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -727,28 +506,8 @@ p {
   .section {
     padding: 56px 0;
   }
-
-  .doctor-grid,
   .gallery-grid {
     grid-template-columns: 1fr;
-  }
-
-  .doctor-section__head {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .cta-panel {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .cta-panel {
-    padding: 24px;
-  }
-
-  .cta-panel__actions .button-link {
-    width: 100%;
   }
 }
 
@@ -793,8 +552,7 @@ p {
   padding: clamp(56px, 7vw, 84px) 0;
 }
 
-.section-band:not(.page-header--image),
-.doctor-section {
+.section-band:not(.page-header--image) {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 250, 252, 0.94)),
     var(--color-surface-alt);
@@ -819,40 +577,16 @@ p {
   background: rgba(255, 255, 255, 0.96);
   color: var(--color-brand-blue-strong);
 }
-
-.cta-panel::after {
-  display: none;
-}
-
-.doctor-section__all,
-.doctor-card__qualification,
-.doctor-card__branches span {
-  border-radius: 10px;
-}
-
-.cta-panel {
-  background: linear-gradient(135deg, var(--color-brand-blue-strong), var(--color-brand-blue));
-}
-
-.doctor-card,
 .gallery-card {
   border-color: rgba(7, 59, 120, 0.1);
   border-radius: 14px;
   background: #ffffff;
   box-shadow: var(--shadow-sm);
 }
-
-.doctor-card {
-  background: #ffffff;
-}
-
-.doctor-card:hover,
 .gallery-card:hover {
   border-color: rgba(21, 86, 166, 0.22);
   box-shadow: var(--shadow-md);
 }
-
-.doctor-grid,
 .gallery-grid {
   gap: clamp(14px, 2vw, 20px);
 }
@@ -1054,18 +788,7 @@ p {
   line-height: 1.55;
 }
 
-.doctor-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-@media (max-width: 1180px) {
-  .doctor-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
 @media (max-width: 1040px) {
-  .doctor-grid,
   .gallery-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1079,23 +802,8 @@ p {
   .section {
     padding: 54px 0;
   }
-
-  .cta-panel__actions {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-
-  .cta-panel__actions .button-link {
-    width: 100%;
-  }
-
-  .doctor-grid,
   .gallery-grid {
     grid-template-columns: 1fr;
-  }
-
-  .cta-panel {
-    padding: 22px;
   }
 }
 
@@ -1178,213 +886,6 @@ p {
 }
 
 /* Specialists and patient feedback */
-
-.doctor-section {
-  position: relative;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 12% 18%, rgba(217, 28, 122, 0.06), transparent 24%),
-    radial-gradient(circle at 88% 18%, rgba(22, 138, 154, 0.1), transparent 28%),
-    linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
-}
-
-.doctor-section__head {
-  align-items: flex-end;
-  gap: clamp(18px, 3vw, 34px);
-  margin-bottom: clamp(26px, 4vw, 42px);
-}
-
-.doctor-section__head .section-heading {
-  max-width: 760px;
-}
-
-.doctor-section__head .section-heading h2 {
-  color: var(--color-brand-blue-strong);
-  font-size: clamp(2.05rem, 4vw, 3.65rem);
-  line-height: 1.03;
-}
-
-.doctor-section__head .section-heading p {
-  max-width: 720px;
-  color: var(--color-slate);
-  font-size: clamp(1rem, 1.28vw, 1.14rem);
-  font-weight: 620;
-}
-
-.doctor-section__all {
-  min-height: 48px;
-  justify-content: center;
-  border: 1px solid rgba(7, 59, 120, 0.12);
-  border-radius: 12px;
-  background: #ffffff;
-  color: var(--color-brand-blue-strong);
-  box-shadow: 0 12px 28px rgba(7, 59, 120, 0.08);
-  padding: 0 18px;
-}
-
-.doctor-section__all:hover {
-  border-color: rgba(7, 59, 120, 0.26);
-  box-shadow: 0 18px 38px rgba(7, 59, 120, 0.12);
-  transform: translateY(-2px);
-}
-
-.doctor-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(14px, 2vw, 20px);
-}
-
-.doctor-card {
-  position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(7, 59, 120, 0.1);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 16px 38px rgba(7, 59, 120, 0.08);
-  transition:
-    border-color 180ms ease,
-    box-shadow 180ms ease,
-    transform 180ms ease;
-}
-
-.doctor-card:hover {
-  border-color: rgba(7, 59, 120, 0.22);
-  box-shadow: 0 26px 58px rgba(7, 59, 120, 0.14);
-}
-
-.doctor-card__media {
-  background:
-    linear-gradient(135deg, rgba(234, 246, 255, 0.96), rgba(226, 247, 249, 0.88)),
-    var(--color-brand-blue-soft);
-}
-
-.doctor-card__media::after {
-  height: 48%;
-  background: linear-gradient(180deg, transparent, rgba(5, 29, 64, 0.68));
-}
-
-.doctor-card__photo {
-  aspect-ratio: 1 / 1.08;
-  filter: saturate(0.98) contrast(1.02);
-  transition: transform 520ms ease;
-}
-
-.doctor-card:hover .doctor-card__photo {
-  transform: scale(1.035);
-}
-
-.doctor-card__number {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  z-index: 1;
-  display: inline-flex;
-  min-height: 32px;
-  align-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--color-brand-blue-strong);
-  box-shadow: 0 10px 24px rgba(7, 59, 120, 0.1);
-  font-size: 0.78rem;
-  font-weight: 950;
-  line-height: 1;
-  padding: 0 10px;
-  backdrop-filter: blur(12px);
-}
-
-.doctor-card__media > span {
-  left: 14px;
-  right: 14px;
-  bottom: 14px;
-  width: fit-content;
-  max-width: calc(100% - 28px);
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.94);
-  color: var(--color-brand-blue-strong);
-  line-height: 1.2;
-  text-transform: none;
-}
-
-.doctor-card__body {
-  display: grid;
-  align-content: start;
-  padding: 20px;
-}
-
-.doctor-card__body h3 {
-  margin: 0 0 8px;
-  color: var(--color-brand-blue-strong);
-  font-size: 1.2rem;
-  line-height: 1.16;
-}
-
-.doctor-card__qualification {
-  border-radius: 10px;
-  background: var(--color-brand-blue-soft);
-  color: var(--color-brand-blue-strong);
-  font-size: 0.82rem;
-  line-height: 1.2;
-  margin-bottom: 12px;
-  padding: 6px 9px;
-}
-
-.doctor-card__body p:not(.doctor-card__qualification) {
-  color: var(--color-slate);
-  font-size: 0.92rem;
-  font-weight: 600;
-  line-height: 1.52;
-}
-
-.doctor-card__branches {
-  gap: 8px;
-}
-
-.doctor-card__branches span {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  border-radius: 10px;
-  background: #f8fbff;
-  color: var(--color-brand-blue-strong);
-  font-size: 0.78rem;
-  line-height: 1;
-  padding: 7px 9px;
-}
-
-.doctor-card__cta {
-  width: 100%;
-  min-height: 42px;
-  justify-content: center;
-  border-radius: 10px;
-  background: var(--color-brand-blue-strong);
-  box-shadow: 0 12px 24px rgba(7, 59, 120, 0.14);
-}
-
-.doctor-card__cta:hover {
-  background: var(--color-brand-blue);
-}
-
-@media (max-width: 1180px) {
-  .doctor-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 720px) {
-  .doctor-section__head {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .doctor-section__all {
-    width: 100%;
-  }
-
-  .doctor-grid {
-    grid-template-columns: 1fr;
-  }
-}
 
 /* Final tap-target polish for launch QA */
 

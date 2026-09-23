@@ -80,7 +80,18 @@
           "caption": "Patient visits per year",
           "startLabel": "1993",
           "endLabel": "2025",
-          "points": [8, 14, 22, 31, 29, 44, 58, 71, 86, 100]
+          "points": [
+            8,
+            14,
+            22,
+            31,
+            29,
+            44,
+            58,
+            71,
+            86,
+            100
+          ]
         }
       },
       {
@@ -166,18 +177,6 @@
         "headline": "Urgent care for injury and sudden vision loss"
       }
     ]
-  },
-  "cta": {
-    "title": "Plan your visit",
-    "description": "Choose the hospital nearest to you, tell us what you need, and our team will confirm a time that works. Walk-in OPD is available at every branch.",
-    "primary": {
-      "label": "Book Appointment",
-      "href": "/appointment"
-    },
-    "secondary": {
-      "label": "View Branches",
-      "href": "/branches"
-    }
   },
   "trust": {
     "eyebrow": "Why choose us",

@@ -10,6 +10,7 @@ import "./styles/landing.css";
 import "./styles/about.css";
 import "./styles/services.css";
 import "./styles/service-detail.css";
+import "./styles/doctors.css";
 import "./styles/branch.css";
 import "./styles/hospitals.css";
 import "./styles/contact.css";

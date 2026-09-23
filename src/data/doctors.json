@@ -3,6 +3,31 @@
     "title": "Eye Specialists | Aakash Eye Hospital",
     "description": "Meet the doctors and optometry team at Aakash Eye Hospital across Visnagar, Ahmedabad and Bharuch."
   },
+  "page": {
+    "label": "Our team",
+    "title": "Meet the people",
+    "titleAccent": "who will see you.",
+    "lede": "Ophthalmic surgeons, clinicians and optometrists across our hospitals. Choose a hospital to see who you would meet there.",
+    "filterLabel": "Choose a hospital",
+    "allLabel": "All hospitals",
+    "statusAll": "Showing all {total}, across every hospital",
+    "statusFiltered": "Showing {count} of {total}, at {branch}",
+    "groups": [
+      {
+        "id": "doctors",
+        "label": "Doctors and surgeons"
+      },
+      {
+        "id": "optometry",
+        "label": "Optometry team"
+      }
+    ],
+    "foot": {
+      "text": "Not sure who to see? Book an appointment and the OPD will place you with the right clinic.",
+      "ctaLabel": "Book an appointment",
+      "contactLabel": "Ask us directly"
+    }
+  },
   "items": [
     {
       "name": "Dr. Vishnu S. Patel",
@@ -12,7 +37,9 @@
       "photo": "/assets/media/doctors/vishnu-patel.jpg",
       "photoAlt": "Dr. Vishnu S. Patel",
       "bio": "Senior ophthalmologist associated with Aakash Eye Hospital's long-standing surgical care.",
-      "branches": ["Visnagar"]
+      "branches": [
+        "Visnagar"
+      ]
     },
     {
       "name": "Dr. Sanjay B. Patel",
@@ -22,7 +49,10 @@
       "photo": "/assets/media/doctors/sanjay-patel.jpg",
       "photoAlt": "Dr. Sanjay B. Patel",
       "bio": "Ophthalmic surgeon supporting surgical and clinical care pathways.",
-      "branches": ["Visnagar", "Ahmedabad"]
+      "branches": [
+        "Visnagar",
+        "Ahmedabad"
+      ]
     },
     {
       "name": "Dr. Saurabh Kapoor",
@@ -32,7 +62,9 @@
       "photo": "/assets/media/doctors/saurabh-kapoor.jpg",
       "photoAlt": "Dr. Saurabh Kapoor",
       "bio": "Specialist ophthalmologist with clinical and surgical credentials.",
-      "branches": ["Ahmedabad"]
+      "branches": [
+        "Ahmedabad"
+      ]
     },
     {
       "name": "Dr. Asesh B. Patel",
@@ -42,7 +74,9 @@
       "photo": "/assets/media/doctors/asesh-patel.jpg",
       "photoAlt": "Dr. Asesh B. Patel",
       "bio": "Ophthalmology clinician supporting diagnosis, treatment planning and patient care.",
-      "branches": ["Visnagar"]
+      "branches": [
+        "Visnagar"
+      ]
     },
     {
       "name": "Dr. Dhaivat Vasavada",
@@ -52,7 +86,9 @@
       "photo": "/assets/media/doctors/dhaivat-vasavada.jpg",
       "photoAlt": "Dr. Dhaivat Vasavada",
       "bio": "Vitreoretina-focused ophthalmologist supporting advanced retina care.",
-      "branches": ["Ahmedabad"]
+      "branches": [
+        "Ahmedabad"
+      ]
     },
     {
       "name": "Kashyap M. Patel",
@@ -62,7 +98,9 @@
       "photo": "/assets/media/doctors/kashyap-patel.jpg",
       "photoAlt": "Kashyap M. Patel",
       "bio": "Optometry team member supporting refraction and patient evaluation.",
-      "branches": ["Visnagar"]
+      "branches": [
+        "Visnagar"
+      ]
     },
     {
       "name": "Bhavika R. Patel",
@@ -72,7 +110,9 @@
       "photo": "/assets/media/doctors/bhavika-patel.jpg",
       "photoAlt": "Bhavika R. Patel",
       "bio": "Optometrist supporting everyday eye examinations and refraction care.",
-      "branches": ["Visnagar"]
+      "branches": [
+        "Visnagar"
+      ]
     },
     {
       "name": "A. K. Patel",
@@ -82,7 +122,9 @@
       "photo": "/assets/media/doctors/ak-patel.jpg",
       "photoAlt": "A. K. Patel",
       "bio": "Senior optometrist supporting clinical diagnostics and patient evaluation.",
-      "branches": ["Visnagar"]
+      "branches": [
+        "Visnagar"
+      ]
     },
     {
       "name": "Dr. Mahendra M. Patel",
@@ -92,7 +134,9 @@
       "photo": "/assets/media/doctors/mahendra-patel.jpg",
       "photoAlt": "Dr. Mahendra M. Patel",
       "bio": "Medical officer supporting patient care and clinical workflows.",
-      "branches": ["Bharuch"]
+      "branches": [
+        "Bharuch"
+      ]
     }
   ],
   "notes": [

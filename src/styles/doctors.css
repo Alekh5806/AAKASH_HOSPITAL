@@ -1,0 +1,394 @@
+/* =========================================================================
+   Doctors
+   Namespace: .dr-*   |   loaded after service-detail.css
+   Built on the .e-* design system in system.css; nothing here restyles a
+   shared primitive.
+
+   One head and one roster. The team is the page, so the only control is the
+   question a patient actually asks - which hospital - and the answer is read
+   in two runs, the consultants and then the optometry team.
+   ========================================================================= */
+
+.dr {
+  /* WCAG 1.4.11 wants 3:1 on the boundary of a control, and --e-rule-2
+     measures 1.58:1 on paper. The header's edge value; do not lighten it. */
+  --dr-edge: #7f8b96;
+  background: linear-gradient(180deg, #faf8f4 0%, #ffffff 100%);
+  padding-block: clamp(22px, 2.8vw, 36px) clamp(56px, 6vw, 100px);
+}
+
+/* ---------- the head ---------- */
+
+.dr-head {
+  display: grid;
+  justify-items: center;
+  margin-bottom: clamp(28px, 3.8vw, 52px);
+  text-align: center;
+}
+
+/* The contact page's title device: the serif with the promise in italic
+   accent on its own line. */
+.dr-head__title {
+  margin: 12px 0 0;
+  max-width: 17ch;
+  color: var(--e-ink);
+  font-family: var(--e-serif);
+  font-size: clamp(2.3rem, 6.2vw, 4.4rem);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.dr-head__title em {
+  display: block;
+  color: var(--e-accent);
+  font-style: italic;
+}
+
+.dr-head__lede {
+  max-width: 50ch;
+  margin: clamp(14px, 1.8vw, 22px) 0 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: clamp(1rem, 1.2vw, 1.14rem);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* ---------- the filter bar ---------- */
+
+.dr-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 32px;
+  border-top: 1px solid var(--e-rule);
+  padding-top: 20px;
+}
+
+.dr-bar__read {
+  display: grid;
+  gap: 6px;
+}
+
+/* A narrowed list with nothing saying so just looks like a short list - the
+   lesson the services explorer paid for. This is a live region, so a reader
+   who cannot see the grid reflow is told what changed. */
+.dr-status {
+  margin: 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.dr-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dr-chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid var(--dr-edge);
+  border-radius: 999px;
+  background: var(--e-paper);
+  padding: 10px 18px;
+  min-height: 44px;
+  color: var(--e-ink);
+  font-family: var(--e-sans);
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.2;
+  transition:
+    border-color 200ms var(--e-ease),
+    color 200ms var(--e-ease);
+}
+
+/* The chosen chip's fill is one element that travels between chips, the
+   site's pill device, rather than a background blinking off one and on to
+   the next. */
+.dr-chip__bg {
+  position: absolute;
+  inset: -1px;
+  z-index: 0;
+  border-radius: 999px;
+  background: var(--e-navy);
+}
+
+.dr-chip__label,
+.dr-chip__count {
+  position: relative;
+  z-index: 1;
+}
+
+.dr-chip__count {
+  color: var(--e-ink-2);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.dr-chip[data-on] {
+  border-color: var(--e-navy);
+  color: #fff;
+}
+
+.dr-chip[data-on] .dr-chip__count {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dr-chip:not([data-on]):hover {
+    border-color: var(--e-ink);
+  }
+}
+
+/* ---------- the runs ---------- */
+
+.dr-run {
+  margin-top: clamp(26px, 3.4vw, 40px);
+}
+
+.dr-run__head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0 0 clamp(14px, 1.8vw, 20px);
+  color: var(--e-ink);
+  font-family: var(--e-tight);
+  font-size: clamp(1.12rem, 1.5vw, 1.32rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.dr-run__count {
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.88rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.dr-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 24px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ---------- a card ---------- */
+
+.dr-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--e-rule);
+  border-radius: 16px;
+  background: var(--e-paper);
+  padding: 14px 14px 16px;
+  transition:
+    border-color 240ms var(--e-ease),
+    box-shadow 240ms var(--e-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dr-card:hover {
+    border-color: var(--e-rule-2);
+    box-shadow: 0 18px 44px rgba(16, 22, 28, 0.1);
+  }
+}
+
+/* Square, like the landing rail and a hospital's team: the hospital's files
+   are 270x260, so a square box is very nearly a 1:1 render of the source
+   rather than an upscale. */
+.dr-card__media {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--color-clinical);
+}
+
+.dr-card__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 16%;
+  transition: transform 600ms var(--e-ease);
+}
+
+.dr-card:hover .dr-card__img {
+  transform: scale(1.04);
+}
+
+.dr-card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+
+.dr-card__specialty {
+  margin-top: 16px;
+  color: var(--e-accent);
+  font-family: var(--e-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.dr-card__name {
+  margin: 8px 0 0;
+  color: var(--e-ink);
+  font-family: var(--e-tight);
+  font-size: clamp(1.02rem, 1.2vw, 1.12rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+/* The post-nominals take their own line at every width. Run inline they
+   wrapped on four of the nine cards at 1440px and on eight at 1024px, and
+   `Dr. Vishnu S.` / `Patel, MBBS, MS` reads as neither the name nor the
+   qualifications. */
+.dr-card__quals {
+  display: block;
+  margin-top: 2px;
+  color: var(--e-ink-2);
+  font-weight: 400;
+}
+
+.dr-card__text {
+  margin: 8px 0 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+/* ---------- the foot ---------- */
+
+.dr-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+  border-top: 1px solid var(--e-rule);
+  margin-top: clamp(32px, 4vw, 52px);
+  padding-top: clamp(18px, 2.2vw, 26px);
+}
+
+.dr-foot__text {
+  max-width: 54ch;
+  margin: 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* 22px between the rows, not 14: every .e-link carries a 10px halo above and
+   below, so at 320px - where the two links stack - a 14px gap overlapped the
+   two halos and a tap in the space between them opened the lower link. */
+.dr-foot__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px 28px;
+}
+
+/* ---------- widths ---------- */
+
+/* Three columns all the way down to the phone rows, never two. The hospital's
+   portrait files are 270x260, so a two-column card on a tablet renders a
+   320px square from a 270px source and the upscale shows; three keeps the
+   card between 190px and 310px rather than the 362px a 1180px window gave
+   it. */
+@media (max-width: 1023px) {
+  .dr-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  /* The lede's sentence is what the filter row says next to it, and on a
+     phone it stood between the heading and the control. */
+  .dr-head__lede {
+    display: none;
+  }
+
+  .dr-bar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  /* A doctor is a row on a phone, portrait left and words right - the shape a
+     hospital's own team section takes at this width. Two columns of cards put
+     a 12-word sentence in a 150px column; a row keeps every card's sentence
+     and still fits three consultants on one screen. */
+  .dr-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .dr-card {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    align-items: start;
+    column-gap: 14px;
+    padding: 12px;
+  }
+
+  .dr-card__specialty {
+    margin-top: 2px;
+  }
+
+  .dr-card__name {
+    margin-top: 4px;
+    font-size: 1rem;
+  }
+
+  .dr-card__quals {
+    font-size: 0.9rem;
+  }
+
+  .dr-card__text {
+    margin-top: 6px;
+    font-size: 0.88rem;
+  }
+
+  .dr-foot {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* The frame gives way, never the type: at 320px a 96px portrait left the
+   words 154px and `OPHTHALMIC SURGEON` broke across two lines. The portrait
+   loses 12px and the label reads on one. */
+@media (max-width: 360px) {
+  .dr-card {
+    grid-template-columns: 84px minmax(0, 1fr);
+    column-gap: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dr-card__img,
+  .dr-card,
+  .dr-chip {
+    transition: none;
+  }
+
+  .dr-card:hover .dr-card__img {
+    transform: none;
+  }
+}
