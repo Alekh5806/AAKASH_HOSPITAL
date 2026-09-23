@@ -4,9 +4,11 @@
     "description": "Aakash Eye Hospital provides advanced cataract, LASIK, retina, glaucoma and OPD eye care across six branches in Gujarat: Visnagar, Ahmedabad, Bharuch, Gota, Himmatnagar and Juhapura."
   },
   "hero": {
-    "title": "Advanced eye care,",
-    "titleAccent": "close to home.",
-    "subtitle": "Cataract, LASIK, retina and glaucoma care from a team that has served Gujarat since 1993 - now in six cities.",
+    "eyebrow": "Appointments on WhatsApp",
+    "title": "Advanced",
+    "titleAccent": "eye care.",
+    "subtitle": "Cataract, LASIK, retina and glaucoma care across Gujarat since 1993.",
+    "ctaLabel": "Book appointment",
     "stats": [
       {
         "value": "1993",

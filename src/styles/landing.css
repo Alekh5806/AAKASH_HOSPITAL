@@ -21,10 +21,13 @@
      on a 390x844 phone, 79px on a 1080p monitor - and a blank strip of paper
      under a navy band is not a "peek", it is a gap. svh is the viewport with
      the browser's own bars showing, which is the screen a reader lands on; vh
-     is the fallback for browsers without it. --hd-height comes from
-     header.css. */
-  min-height: calc(100vh - var(--hd-height));
-  min-height: calc(100svh - var(--hd-height));
+     is the fallback for browsers without it.
+
+     The header's glass capsule floats on the film (`.hd[data-over]` pulls
+     the hero up under it), so the hero is the whole screen less only the
+     desktop strip above it - --hd-strip-h from header.css, 0 on phones. */
+  min-height: calc(100vh - var(--hd-strip-h));
+  min-height: calc(100svh - var(--hd-strip-h));
   overflow: hidden;
   background: var(--e-navy);
   color: #fff;
@@ -51,7 +54,16 @@
 .e-hero__scrim {
   position: absolute;
   inset: 0;
+  /* The first layer is the header's: a shade across the top of the film, so
+     the capsule's white links keep their contrast over the skylight and the
+     exam-room ceiling, which are the brightest frames in the loop. */
   background:
+    linear-gradient(
+      180deg,
+      rgba(5, 18, 31, 0.62) 0,
+      rgba(5, 18, 31, 0.3) calc(var(--hd-height) + 10px),
+      rgba(5, 18, 31, 0) calc(var(--hd-height) + 90px)
+    ),
     linear-gradient(
       96deg,
       rgba(5, 18, 31, 0.95) 0%,
@@ -103,63 +115,109 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: clamp(28px, 5vw, 72px);
-  padding-block: clamp(76px, 10vw, 132px) clamp(34px, 4vw, 56px);
+  padding-block:
+    max(clamp(76px, 10vw, 132px), calc(var(--hd-height) + 32px))
+    clamp(34px, 4vw, 56px);
 }
 
 .e-hero__copy {
   min-width: 0;
 }
 
+/* The copy is set the way the Function Health hero sets it, and each choice
+   is what makes type read crisp on moving footage:
+
+   - a display serif at a light weight, not a heavy grotesk. The build before
+     this was Inter Tight 600 squeezed to -0.035em, and at 82px on a film the
+     letters ran into each other and read as a soft white mass;
+   - normal spacing, so every stroke has air round it;
+   - a warm off-white rather than pure white, which is less harsh against
+     the film's own highlights;
+   - a two-layer shadow - tight and soft - that lifts the edge of each glyph
+     off whatever frame is behind it, the reference's exact device. */
+.e-hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 clamp(18px, 2vw, 26px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  /* Dark glass, as the reference's chip is. A white tint lightens the ground
+     under white type: at 320px the chip sits high in the bright part of the
+     film and measured 1.99:1 on it. */
+  background: rgba(7, 20, 33, 0.5);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
+  padding: 8px 15px 8px 13px;
+  color: #fff;
+  font-family: var(--e-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.e-hero__eyebrow svg {
+  flex: 0 0 auto;
+  color: #7ee2a8;
+}
+
 .e-hero h1 {
   margin: 0;
-  max-width: 13ch;
-  color: #fff;
-  font-family: var(--e-tight);
-  font-size: clamp(2.6rem, 6.2vw, 5.1rem);
-  font-weight: 600;
-  letter-spacing: -0.035em;
-  line-height: 0.98;
+  max-width: 17ch;
+  color: #fbf7ef;
+  font-family: var(--e-serif);
+  /* The reference's 80px at 1440. At 5.6rem the first line needed 670px of a
+     664px column and broke after "Advanced" - three lines where the
+     reference has one. */
+  font-size: clamp(3rem, 5.6vw, 5.2rem);
+  font-weight: 350;
+  letter-spacing: -0.012em;
+  line-height: 0.96;
+  text-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.16),
+    0 10px 30px rgba(0, 0, 0, 0.22);
   text-wrap: balance;
 }
 
+/* On the same line as the roman word: the headline is one line, as the
+   reference's is. */
 .e-hero__accent {
-  display: block;
-  font-family: var(--e-serif);
   font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.012em;
 }
 
 .e-hero__lede {
   margin: clamp(20px, 2.2vw, 28px) 0 0;
   max-width: 44ch;
-  color: rgba(255, 255, 255, 0.88);
-  font-size: clamp(1rem, 1.1vw, 1.12rem);
-  line-height: 1.62;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: clamp(1.08rem, 1.4vw, 1.3rem);
+  line-height: 1.5;
+  text-wrap: balance;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .e-hero__actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 14px 24px;
-  margin-top: clamp(26px, 3vw, 40px);
+  gap: 14px 28px;
+  margin-top: clamp(28px, 3vw, 40px);
 }
 
-.e-hero__call {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  min-height: 48px;
-  color: #fff;
-  font-family: var(--e-tight);
-  font-size: 1rem;
-  font-weight: 600;
+/* The reference's cream pill, at every width - the square white box it
+   replaced was the one hard edge in a hero of soft type and film. */
+.e-hero .e-hero__cta {
+  min-height: 56px;
+  border: 0;
+  border-radius: 999px;
+  background: #fbf7ef;
+  padding-inline: 30px 26px;
+  color: var(--e-navy);
+  font-size: 1.02rem;
+  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.55);
 }
 
-.e-hero__call:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
+.e-hero .e-hero__cta:hover {
+  background: #fff;
 }
 
 .e-hero__stats {
@@ -212,7 +270,7 @@
   }
 
   .e-hero__toggle {
-    top: clamp(16px, 2.4vw, 30px);
+    top: calc(var(--hd-height) + 14px);
     bottom: auto;
   }
 }
@@ -272,16 +330,23 @@
      a film you cannot see is not worth shipping. This one grounds the last
      third and leaves the rest of the frame open. */
   .e-hero__scrim {
-    background: linear-gradient(
-      0deg,
-      rgba(5, 18, 31, 0.9) 0%,
-      rgba(5, 18, 31, 0.82) 18%,
-      rgba(5, 18, 31, 0.66) 34%,
-      rgba(5, 18, 31, 0.42) 50%,
-      rgba(5, 18, 31, 0.2) 68%,
-      rgba(5, 18, 31, 0.07) 86%,
-      rgba(5, 18, 31, 0.04) 100%
-    );
+    background:
+      linear-gradient(
+        180deg,
+        rgba(5, 18, 31, 0.55) 0,
+        rgba(5, 18, 31, 0.22) calc(var(--hd-height) + 8px),
+        rgba(5, 18, 31, 0) calc(var(--hd-height) + 70px)
+      ),
+      linear-gradient(
+        0deg,
+        rgba(5, 18, 31, 0.9) 0%,
+        rgba(5, 18, 31, 0.82) 18%,
+        rgba(5, 18, 31, 0.66) 34%,
+        rgba(5, 18, 31, 0.42) 50%,
+        rgba(5, 18, 31, 0.2) 68%,
+        rgba(5, 18, 31, 0.07) 86%,
+        rgba(5, 18, 31, 0.04) 100%
+      );
   }
 
   .e-hero__copy {
@@ -295,19 +360,29 @@
     padding-bottom: 62px;
   }
 
+  /* No measure cap, and a size the first line fits: the serif's optical-size
+     axis draws it wider at phone sizes, so "Advanced eye care," is 345px at
+     390 in a 358px column. The phone gets the laptop's two lines from 360px up
+     instead of a stack of three; the 320px SE balances onto three. */
   .e-hero h1 {
-    max-width: 13ch;
-    font-size: clamp(2.4rem, 11vw, 3.3rem);
+    max-width: none;
+    font-size: clamp(2.5rem, 11.3vw, 3.5rem);
     line-height: 0.96;
   }
 
-  /* The phone hero carries the headline and one action, following the
-     reference. The supporting sentence and the call link are dropped rather
-     than shrunk: the film needs the room, and neither is lost to the reader -
-     the same sentence opens the next section and the header keeps a branch
-     phone number and the emergency line one tap away at the top of the screen. */
+  .e-hero__eyebrow {
+    margin-bottom: 16px;
+    font-size: 0.84rem;
+  }
+
+  /* The phone keeps the sentence now that it is one sentence of two lines
+     and the headline is one line - the reference's phone hero is chip,
+     headline, sentence, button. It was dropped when the headline took three
+     lines and the sentence another four. */
   .e-hero__lede {
-    display: none;
+    margin-top: 14px;
+    font-size: 1.02rem;
+    line-height: 1.45;
   }
 
   /* A pill that hugs its label, not a full-bleed bar. The bar read as a slab
@@ -319,20 +394,15 @@
   .e-hero__actions {
     display: flex;
     justify-content: flex-start;
-    margin-top: 26px;
+    margin-top: 22px;
   }
 
-  .e-hero__actions .e-btn {
+  .e-hero .e-hero__cta {
     width: auto;
     justify-content: center;
     min-height: 54px;
-    border-radius: 999px;
     padding-inline: 30px;
     font-size: 1rem;
-  }
-
-  .e-hero__call {
-    display: none;
   }
 
   /* Back to the bottom-right corner of the film, which on a phone is the
@@ -385,6 +455,32 @@
   }
 }
 
+/* The 320px SE is the one phone where the headline wraps onto a second line,
+   which lifts the copy into a brighter band of the film: there it measured
+   2.79:1 against the 3:1 a display line needs. The scrim deepens only here,
+   so every wider phone keeps its lighter film. */
+@media (max-width: 359px) {
+  .e-hero__scrim {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(5, 18, 31, 0.55) 0,
+        rgba(5, 18, 31, 0.22) calc(var(--hd-height) + 8px),
+        rgba(5, 18, 31, 0) calc(var(--hd-height) + 70px)
+      ),
+      linear-gradient(
+        0deg,
+        rgba(5, 18, 31, 0.92) 0%,
+        rgba(5, 18, 31, 0.86) 18%,
+        rgba(5, 18, 31, 0.76) 34%,
+        rgba(5, 18, 31, 0.6) 50%,
+        rgba(5, 18, 31, 0.36) 68%,
+        rgba(5, 18, 31, 0.12) 86%,
+        rgba(5, 18, 31, 0.04) 100%
+      );
+  }
+}
+
 /* Short handsets and landscape phones. Height comes out of the frame and the
    spacing, never out of the type - older patients read this site. */
 @media (max-width: 760px) and (max-height: 700px) {
@@ -398,6 +494,35 @@
 
   .e-hero__stats {
     padding-block: 14px 16px;
+  }
+}
+
+/* A phone held sideways: about 360px of height for the header's capsule, the
+   copy and the figures band. The chip and the sentence are dropped rather
+   than the type shrunk - the headline and the one button are what the first
+   screen is for - and the copy reserves the capsule's height at its top, so
+   it grows the hero downward instead of sliding up under the glass. Before
+   this, at 740x360 the chip was hidden under the capsule and the headline was
+   cut by it. */
+@media (max-width: 1179px) and (max-height: 520px) {
+  .e-hero__eyebrow,
+  .e-hero__lede {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) and (max-height: 520px) {
+  .e-hero {
+    grid-template-rows: auto auto;
+  }
+
+  .e-hero__copy {
+    padding-top: calc(var(--hd-height) + 14px);
+    padding-bottom: 22px;
+  }
+
+  .e-hero__actions {
+    margin-top: 16px;
   }
 }
 

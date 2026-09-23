@@ -13,7 +13,6 @@ import {
   X,
 } from "lucide-react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { splitEstablished } from "../lib/brand";
 import { branches, navigation, site } from "../lib/coreData";
 import {
   BRANCH_STORAGE_KEY,
@@ -27,8 +26,7 @@ import {
   BRANCH_CHANGE_EVENT,
 } from "../lib/contact";
 
-const { emergency, branchPicker, establishedLabel } = site.header;
-const established = splitEstablished(establishedLabel);
+const { emergency, branchPicker, bookLabel, bookShortLabel, menuLabel, opdLabel } = site.header;
 
 function readStoredBranch() {
   try {
@@ -55,9 +53,10 @@ function BranchPicker({ branch, isOpen, onSelect, onToggle }) {
         aria-haspopup="true"
         onClick={onToggle}
       >
-        <MapPin size={16} aria-hidden="true" />
+        <MapPin size={15} aria-hidden="true" />
+        <span className="hd__pop-label">{branchPicker.label}</span>
         <span className="hd__pop-value">{branch.name}</span>
-        <ChevronDown size={15} aria-hidden="true" />
+        <ChevronDown size={14} aria-hidden="true" />
       </button>
       {isOpen ? (
         <div className="hd__panel" id={listId}>
@@ -246,6 +245,8 @@ export default function Header() {
   const locationKey = `${location.pathname}${location.search}`;
   const headerRef = useRef(null);
   const drawerRef = useRef(null);
+  const navRef = useRef(null);
+  const stripRef = useRef(null);
   const menuButtonRef = useRef(null);
   const dropdownTriggers = useRef({});
 
@@ -258,6 +259,9 @@ export default function Header() {
   const [drawerBranchOpen, setDrawerBranchOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
+  /* On the home page the header floats on the film until the film has gone
+     past it; everywhere else it is on paper from the first frame. */
+  const [overFilm, setOverFilm] = useState(true);
   const menusOpenRef = useRef(false);
   /* True until a branch has been stored for this reader. The drawer is the
      only place a phone chooses a hospital, so on a fresh visit its branch
@@ -268,6 +272,10 @@ export default function Header() {
 
   const aboutNavItem = navigation.header.find((item) => item.dropdown === "about");
   const drawerNavItems = navigation.header.flatMap((item) => item.children ?? [item]);
+  /* The logo is the way home, as it is on the reference, so the capsule does
+     not spend a link on it. The drawer keeps Home: a menu the reader opened to
+     go somewhere should list everywhere they can go. */
+  const desktopNavItems = navigation.header.filter((item) => item.href !== "/");
   const selectedBranch = findBranch(selectedSlug) ?? getPrimaryBranch(branches.items);
   const selectedPhone = getPrimaryPhone(selectedBranch);
   /* A page opened for one hospital names it either way: the index carries it
@@ -276,6 +284,8 @@ export default function Header() {
   const urlBranchSlug = new URLSearchParams(location.search).get("branch") ?? pathBranchSlug;
   const isHospitalsSection = location.pathname.startsWith("/branches");
   const isAboutSection = location.pathname.startsWith("/about");
+  const isHome = location.pathname === "/";
+  const tone = isHome && overFilm ? "film" : "paper";
 
   const closeAll = useCallback(() => {
     setOpenMenu(null);
@@ -296,6 +306,7 @@ export default function Header() {
     setDrawerOpen(false);
     setDrawerBranchOpen(false);
     setIsHidden(false);
+    setOverFilm(true);
     if (urlBranchSlug && findBranch(urlBranchSlug)) setSelectedSlug(urlBranchSlug);
   }
 
@@ -321,11 +332,10 @@ export default function Header() {
     menusOpenRef.current = Boolean(openMenu) || drawerOpen;
   }, [openMenu, drawerOpen]);
 
-  /* Compact past COMPACT_ON, and give the header back to the page while the
-     reader is moving down, returning it the moment they scroll up. There is
-     no bottom bar to fall back on, so the reveal has to be instant - the
-     header is the only route back to the drawer's call actions and Book
-     Appointment once the reader has scrolled past the hero.
+  /* Give the header back to the page while the reader is moving down, and
+     return it the moment they scroll up. There is no bottom bar to fall back
+     on, so the reveal has to be instant - the header is the only route back to
+     the drawer's call actions and Book Appointment past the hero.
 
      Direction is read from travel, not from one frame's delta. Movement is
      summed while it keeps its sign and reset the moment it turns, and the
@@ -333,35 +343,17 @@ export default function Header() {
      (6px) was what it replaced, and it failed two ways: a slow reading scroll
      of 3-4px a frame never crossed it in either direction, and a 120Hz phone
      halves every frame's delta, so ordinary flicks read as jitter there too.
-     Summing catches both, and a reset on every reversal is what still filters
-     trackpad jitter and an iOS rubber-band bounce.
 
-     Compacting takes height out of the flow above every section (the desktop
-     brand row shrinks by 12px; phones no longer compact anything now that the
-     city bar is gone), so the browser's scroll anchoring shifts the offset to
-     compensate. With a single threshold that shift dropped the offset back
-     under it, the header re-expanded, the offset shifted again, and it
-     flickered in place at one scroll position. COMPACT_ON and COMPACT_OFF are
-     spread wider than that shift so the compensation can never cross back over
-     the threshold, and for SETTLE_MS after a toggle any frame that moved no
-     more than SETTLE_NOISE is ignored - that is the size of the anchoring
-     adjustment, and a real flick moves far more than that in a frame, so a
-     flick that crosses the threshold still applies at once. The window used to
-     defer everything to a timer, and a scroll event under HIDE_AFTER disarmed
-     that timer: a flick from the top of the page that stopped inside the
-     window never applied its direction, and the header simply did not hide
-     until the reader flicked a second time. Nothing is deferred now. */
+     Nothing here changes the header's height. `isScrolled` only gives the
+     paper band its hairline and shadow, and the film/paper change of shape
+     happens inside a box whose size never moves, so no scroll position can
+     make the document reflow under the reader - which is what the old
+     compacting header needed a pair of thresholds and a settle window for. */
   useEffect(() => {
     const HIDE_AFTER = 160;
     const TRAVEL = 12;
-    const COMPACT_ON = 96;
-    const COMPACT_OFF = 16;
-    const SETTLE_MS = 350;
-    const SETTLE_NOISE = 16;
     let frame = 0;
     let lastY = window.scrollY;
-    let compact = lastY > COMPACT_ON;
-    let settleUntil = 0;
     let travelled = 0;
 
     function canHide(y) {
@@ -373,14 +365,8 @@ export default function Header() {
       frame = 0;
       const y = Math.max(window.scrollY, 0);
       const delta = y - lastY;
-      const nextCompact = compact ? y > COMPACT_OFF : y > COMPACT_ON;
       lastY = y;
-
-      if (nextCompact !== compact) {
-        compact = nextCompact;
-        settleUntil = performance.now() + SETTLE_MS;
-        setIsScrolled(nextCompact);
-      }
+      setIsScrolled(y > 4);
 
       if (!canHide(y)) {
         travelled = 0;
@@ -388,9 +374,7 @@ export default function Header() {
         return;
       }
 
-      if (delta === 0 || (performance.now() < settleUntil && Math.abs(delta) <= SETTLE_NOISE)) {
-        return;
-      }
+      if (delta === 0) return;
 
       if (Math.sign(delta) !== Math.sign(travelled)) travelled = 0;
       travelled += delta;
@@ -410,11 +394,86 @@ export default function Header() {
     };
   }, []);
 
+  /* The home page's tone: film while the hero is still under the capsule,
+     paper once its bottom edge has gone above the header's own. The hero is a
+     lazy route module and may not exist when this subscribes, so until it does
+     the header stays on film, which is what the first screen of `/` is. */
+  useEffect(() => {
+    if (!isHome) return undefined;
+    let frame = 0;
+
+    function check() {
+      frame = 0;
+      const hero = document.querySelector(".e-hero");
+      const header = headerRef.current;
+      if (!hero || !header) return;
+      const strip = stripRef.current?.offsetHeight ?? 0;
+      const cut = Math.max(strip - window.scrollY, 0) + header.offsetHeight;
+      setOverFilm(hero.getBoundingClientRect().bottom > cut + 1);
+    }
+
+    function onChange() {
+      if (!frame) frame = window.requestAnimationFrame(check);
+    }
+
+    window.addEventListener("scroll", onChange, { passive: true });
+    window.addEventListener("resize", onChange);
+    return () => {
+      window.removeEventListener("scroll", onChange);
+      window.removeEventListener("resize", onChange);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, [isHome]);
+
+  /* One indicator travels between sections rather than a border blinking off
+     one link and on to the next - the device every narrowing control on this
+     site uses, written here as two custom properties on the nav rather than a
+     framer layoutId, because the header sits in the root bundle and a 2px bar
+     is not worth pulling framer-motion into every first load.
+
+     The first placement must not slide in from the left edge, so the nav opens
+     with its transition off and rAF turns it on once the bar has been painted
+     where it belongs. A ResizeObserver re-places it when the row reflows,
+     which is also what catches the web fonts landing and changing every
+     label's width. */
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return undefined;
+
+    function place() {
+      const active = nav.querySelector(".hd__nav-link--active");
+      if (!active) {
+        nav.style.setProperty("--hd-ink-o", "0");
+        return;
+      }
+      const inset = parseFloat(getComputedStyle(active).paddingLeft) || 0;
+      const box = active.getBoundingClientRect();
+      const frame = nav.getBoundingClientRect();
+      nav.style.setProperty("--hd-ink-x", `${box.left - frame.left + inset}px`);
+      nav.style.setProperty("--hd-ink-w", `${box.width - inset * 2}px`);
+      nav.style.setProperty("--hd-ink-o", "1");
+    }
+
+    place();
+    const frame = window.requestAnimationFrame(() => {
+      nav.setAttribute("data-ready", "true");
+    });
+
+    const observer = new ResizeObserver(place);
+    observer.observe(nav);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [locationKey]);
+
   useEffect(() => {
     if (!openMenu) return undefined;
 
     function onPointerDown(event) {
-      if (!headerRef.current?.contains(event.target)) setOpenMenu(null);
+      const inside =
+        headerRef.current?.contains(event.target) || stripRef.current?.contains(event.target);
+      if (!inside) setOpenMenu(null);
     }
 
     function onKeyDown(event) {
@@ -509,48 +568,55 @@ export default function Header() {
   };
 
   const bookHref = `/appointment?branch=${selectedBranch.slug}`;
-  const emergencyLink = (
+  /* Visnagar answers its OPD on the emergency line. Printing the same digits
+     twice under two labels reads as a fault, so the strip merges them into one
+     labelled number - the rule the footer already applies to the same pair. */
+  const emergencyTel = cleanTel(emergency.phone);
+  const sharesEmergencyLine = cleanTel(selectedPhone) === emergencyTel;
+  const urgentLink = (
     <a
-      className="hd__emergency"
-      href={`tel:${cleanTel(emergency.phone)}`}
+      className="hd__urgent"
+      href={`tel:${emergencyTel}`}
       aria-label={`${emergency.label} ${emergency.phone}`}
     >
-      <Siren size={18} aria-hidden="true" />
-      <span className="hd__emergency-full">{emergency.label}</span>
-      <span className="hd__emergency-short">{emergency.shortLabel}</span>
+      <Siren size={17} aria-hidden="true" />
+      <span>{emergency.shortLabel}</span>
     </a>
   );
 
   return (
-    <header
-      ref={headerRef}
-      className={`hd ${isScrolled ? "hd--scrolled" : ""} ${
-        isHidden && !openMenu && !drawerOpen ? "hd--hidden" : ""
-      } ${drawerOpen ? "hd--drawer-open" : ""}`}
-    >
-      <div className="hd__main">
-        <div className="hd__container">
-          <Link className="hd__brand" to="/" aria-label={`${site.brand.name} home`}>
-            <img src={site.brand.logo} alt={site.brand.logoAlt} width="178" height="48" />
-            <span className="hd__brand-est" aria-hidden="true">
-              <span className="hd__brand-since">
-                <span className="hd__brand-since-word">{established.word}</span>
-                <span className="hd__brand-since-year">{established.year}</span>
-              </span>
-              <span className="hd__brand-note">Trusted eye care</span>
-            </span>
-          </Link>
+    <>
+      {/* The reference's promo band, carrying what a hospital's should: the
+          emergency line, and the chosen hospital with its own OPD number. It
+          is not sticky - it scrolls away and the capsule stays. */}
+      <div className="hd__strip" ref={stripRef}>
+        <div className="hd__strip-in">
+          <a
+            className="hd__strip-item"
+            href={`tel:${emergencyTel}`}
+            aria-label={`${emergency.label} ${emergency.phone}`}
+          >
+            <span className="hd__strip-dot" aria-hidden="true" />
+            <span>{sharesEmergencyLine ? emergency.combinedLabel : emergency.label}</span>
+            <strong>{emergency.phone}</strong>
+          </a>
 
-          <div className="hd__utils">
-            {emergencyLink}
-            <a
-              className="hd__phone"
-              href={`tel:${cleanTel(selectedPhone)}`}
-              aria-label={`Call ${selectedBranch.name} OPD on ${selectedPhone}`}
-            >
-              <Phone size={18} aria-hidden="true" />
-              <strong>{selectedPhone}</strong>
-            </a>
+          <div className="hd__strip-right">
+            {sharesEmergencyLine ? null : (
+              <>
+                <a
+                  className="hd__strip-item"
+                  href={`tel:${cleanTel(selectedPhone)}`}
+                  aria-label={`Call ${selectedBranch.name} ${opdLabel} on ${selectedPhone}`}
+                >
+                  <span>
+                    {selectedBranch.name} {opdLabel}
+                  </span>
+                  <strong>{selectedPhone}</strong>
+                </a>
+                <span className="hd__strip-sep" aria-hidden="true" />
+              </>
+            )}
             <BranchPicker
               branch={selectedBranch}
               isOpen={openMenu === "branch-desktop"}
@@ -559,40 +625,43 @@ export default function Header() {
                 setOpenMenu((current) => (current === "branch-desktop" ? null : "branch-desktop"))
               }
             />
-            <Link className="hd__cta" to={bookHref}>
-              <CalendarDays size={18} aria-hidden="true" />
-              <span>Book Appointment</span>
-            </Link>
-          </div>
-
-          <div className="hd__mobile-actions">
-            {emergencyLink}
-            <button
-              ref={menuButtonRef}
-              className="hd__iconbtn"
-              type="button"
-              aria-label="Open menu"
-              aria-expanded={drawerOpen}
-              aria-controls="hd-drawer"
-              onClick={() => {
-                setOpenMenu(null);
-                setDrawerOpen(true);
-                if (freshVisitRef.current) {
-                  freshVisitRef.current = false;
-                  setDrawerBranchOpen(true);
-                }
-              }}
-            >
-              <Menu size={22} aria-hidden="true" />
-            </button>
           </div>
         </div>
       </div>
 
-      <div className="hd__navbar">
-        <div className="hd__container">
-          <nav className="hd__nav" aria-label="Primary">
-            {navigation.header.map((item) => {
+      <header
+        ref={headerRef}
+        className={`hd ${isScrolled ? "hd--scrolled" : ""} ${
+          isHidden && !openMenu && !drawerOpen ? "hd--hidden" : ""
+        } ${drawerOpen ? "hd--drawer-open" : ""}`}
+        data-tone={tone}
+        data-over={isHome ? "" : undefined}
+      >
+        {/* One capsule, two shapes: an inset glass pill on the home film, a
+            flat frosted band on paper. The logo, the nav and the action sit in
+            the same place in both, so only the frame around them moves. */}
+        <div className="hd__cap">
+          <Link className="hd__brand" to="/" aria-label={`${site.brand.name} home`}>
+            {isHome ? (
+              <img
+                className="hd__logo hd__logo--light"
+                src={site.brand.logoLight}
+                alt=""
+                width="207"
+                height="50"
+              />
+            ) : null}
+            <img
+              className="hd__logo hd__logo--ink"
+              src={site.brand.logo}
+              alt={site.brand.logoAlt}
+              width="207"
+              height="50"
+            />
+          </Link>
+
+          <nav className="hd__nav" ref={navRef} data-ready="false" aria-label="Primary">
+            {desktopNavItems.map((item) => {
               if (item.dropdown) {
                 const menu = dropdownMenus[item.dropdown];
 
@@ -612,8 +681,8 @@ export default function Header() {
                     }}
                     onClose={() =>
                       /* A menu's close timer can fire after the pointer has
-                         already opened the other menu; it must only close
-                         itself, never whichever menu is open by then. */
+                           already opened the other menu; it must only close
+                           itself, never whichever menu is open by then. */
                       setOpenMenu((current) => (current === item.dropdown ? null : current))
                     }
                     onToggle={(next) => setOpenMenu(next ? item.dropdown : null)}
@@ -635,174 +704,214 @@ export default function Header() {
               );
             })}
           </nav>
-        </div>
-      </div>
 
-      {drawerOpen ? (
-        <div
-          className="hd__drawer"
-          id="hd-drawer"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Site menu"
-          onClick={(event) => {
-            if (event.target === event.currentTarget) closeAll();
-          }}
-        >
-          <div ref={drawerRef} className="hd__drawer-panel" tabIndex={-1}>
-            {/* The head is the header's own brand row: logo, the emergency
+          <div className="hd__actions">
+            <Link className="hd__cta" to={bookHref}>
+              <span>{bookLabel}</span>
+            </Link>
+          </div>
+
+          {/* The phone's one action is a compact booking pill, on every screen.
+              The emergency line is the first thing in the drawer's head. */}
+          <div className="hd__mobile-actions">
+            <Link
+              className="hd__cta hd__mobile-cta"
+              to={bookHref}
+              aria-label={bookLabel}
+            >
+              <CalendarDays size={16} aria-hidden="true" />
+              <span className="hd__cta-full">{bookLabel}</span>
+              <span className="hd__cta-short" aria-hidden="true">
+                {bookShortLabel}
+              </span>
+            </Link>
+            <button
+              ref={menuButtonRef}
+              className="hd__iconbtn"
+              type="button"
+              aria-label={`Open ${menuLabel.toLowerCase()}`}
+              aria-expanded={drawerOpen}
+              aria-controls="hd-drawer"
+              onClick={() => {
+                setOpenMenu(null);
+                setDrawerOpen(true);
+                if (freshVisitRef.current) {
+                  freshVisitRef.current = false;
+                  setDrawerBranchOpen(true);
+                }
+              }}
+            >
+              <Menu size={22} aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+
+        {drawerOpen ? (
+          <div
+            className="hd__drawer"
+            id="hd-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site menu"
+            onClick={(event) => {
+              if (event.target === event.currentTarget) closeAll();
+            }}
+          >
+            <div ref={drawerRef} className="hd__drawer-panel" tabIndex={-1}>
+              {/* The head is the header's own brand row: logo, the emergency
                 line, and the close button in the slot the menu button had. The
                 open and closed states line up, and the emergency line stays
                 where the reader just saw it instead of moving to the foot. */}
-            <div className="hd__drawer-head">
-              <img src={site.brand.logo} alt={site.brand.logoAlt} width="148" height="40" />
-              <div className="hd__mobile-actions">
-                {emergencyLink}
-                <button
-                  className="hd__iconbtn"
-                  type="button"
-                  aria-label="Close menu"
-                  onClick={closeAll}
-                >
-                  <X size={22} aria-hidden="true" />
-                </button>
+              <div className="hd__drawer-head">
+                <img src={site.brand.logo} alt={site.brand.logoAlt} width="207" height="50" />
+                <div className="hd__mobile-actions">
+                  {urgentLink}
+                  <button
+                    className="hd__iconbtn"
+                    type="button"
+                    aria-label="Close menu"
+                    onClick={closeAll}
+                  >
+                    <X size={22} aria-hidden="true" />
+                  </button>
+                </div>
               </div>
-            </div>
 
-            <div className="hd__drawer-scroll">
-              <div className="hd__drawer-branch">
-                {/* Two controls in one card. The hospital itself is the link
+              <div className="hd__drawer-scroll">
+                <div className="hd__drawer-branch">
+                  {/* Two controls in one card. The hospital itself is the link
                     to its own page - on a phone there is no hospitals dropdown,
                     so this row is the one place the drawer names a hospital and
                     has to be the way to it as well. Change is the toggle that
                     opens the list; the two are siblings because a link cannot
                     sit inside a button. */}
-                <div className="hd__drawer-branch-summary">
-                  <Link
-                    className="hd__drawer-branch-page"
-                    to={buildBranchHref(selectedBranch)}
-                    onClick={closeAll}
-                  >
-                    <small>{branchPicker.label}</small>
-                    <strong>
-                      <MapPin size={17} aria-hidden="true" />
-                      {selectedBranch.name}
-                      <ChevronRight size={16} aria-hidden="true" />
-                    </strong>
-                    <span>{selectedBranch.locality}</span>
-                  </Link>
-                  <button
-                    className="hd__drawer-branch-toggle"
-                    type="button"
-                    aria-label="Change your hospital"
-                    aria-expanded={drawerBranchOpen}
-                    aria-controls="hd-drawer-hospitals"
-                    onClick={() => setDrawerBranchOpen((current) => !current)}
-                  >
-                    <span>Change</span>
-                    <ChevronDown size={16} aria-hidden="true" />
-                  </button>
-                </div>
+                  <div className="hd__drawer-branch-summary">
+                    <Link
+                      className="hd__drawer-branch-page"
+                      to={buildBranchHref(selectedBranch)}
+                      onClick={closeAll}
+                    >
+                      <small>{branchPicker.label}</small>
+                      <strong>
+                        <MapPin size={17} aria-hidden="true" />
+                        {selectedBranch.name}
+                        <ChevronRight size={16} aria-hidden="true" />
+                      </strong>
+                      <span>{selectedBranch.locality}</span>
+                    </Link>
+                    <button
+                      className="hd__drawer-branch-toggle"
+                      type="button"
+                      aria-label="Change your hospital"
+                      aria-expanded={drawerBranchOpen}
+                      aria-controls="hd-drawer-hospitals"
+                      onClick={() => setDrawerBranchOpen((current) => !current)}
+                    >
+                      <span>{branchPicker.changeLabel}</span>
+                      <ChevronDown size={16} aria-hidden="true" />
+                    </button>
+                  </div>
 
-                {drawerBranchOpen ? (
-                  <div className="hd__drawer-sub" id="hd-drawer-hospitals">
-                    <p className="hd__drawer-label" id="hd-drawer-hospitals-title">
-                      {branchPicker.menuTitle}
-                    </p>
-                    {/* Choosing sets the branch in place and folds the list, so
+                  {drawerBranchOpen ? (
+                    <div className="hd__drawer-sub" id="hd-drawer-hospitals">
+                      <p className="hd__drawer-label" id="hd-drawer-hospitals-title">
+                        {branchPicker.menuTitle}
+                      </p>
+                      {/* Choosing sets the branch in place and folds the list, so
                         the reader stays on the page they were on with Call OPD
                         and WhatsApp below now pointing at that hospital. The
                         rows used to be links to /branches; a selector that
                         navigates away is a detour. View all hospitals is the
                         way to that page. */}
-                    <div role="radiogroup" aria-labelledby="hd-drawer-hospitals-title">
-                      {branches.items.map((branch) => (
-                        <button
-                          key={branch.slug}
-                          className="hd__drawer-branch-option"
-                          type="button"
-                          role="radio"
-                          aria-checked={branch.slug === selectedSlug}
-                          onClick={() => {
-                            selectBranch(branch.slug);
-                            setDrawerBranchOpen(false);
-                          }}
-                        >
-                          <span>
-                            <strong>
-                              {branch.name}
-                              {branch.isHeadquarters ? (
-                                <span className="hd__tag">Head Office</span>
-                              ) : null}
-                            </strong>
-                            <small>{branch.locality}</small>
-                          </span>
-                          {branch.slug === selectedSlug ? (
-                            <Check size={17} aria-hidden="true" />
-                          ) : null}
-                        </button>
-                      ))}
+                      <div role="radiogroup" aria-labelledby="hd-drawer-hospitals-title">
+                        {branches.items.map((branch) => (
+                          <button
+                            key={branch.slug}
+                            className="hd__drawer-branch-option"
+                            type="button"
+                            role="radio"
+                            aria-checked={branch.slug === selectedSlug}
+                            onClick={() => {
+                              selectBranch(branch.slug);
+                              setDrawerBranchOpen(false);
+                            }}
+                          >
+                            <span>
+                              <strong>
+                                {branch.name}
+                                {branch.isHeadquarters ? (
+                                  <span className="hd__tag">Head Office</span>
+                                ) : null}
+                              </strong>
+                              <small>{branch.locality}</small>
+                            </span>
+                            {branch.slug === selectedSlug ? (
+                              <Check size={17} aria-hidden="true" />
+                            ) : null}
+                          </button>
+                        ))}
+                      </div>
+                      <Link className="hd__drawer-sub-all" to="/branches" onClick={closeAll}>
+                        <span>{branchPicker.allLabel}</span>
+                        <ChevronRight size={16} aria-hidden="true" />
+                      </Link>
                     </div>
-                    <Link className="hd__drawer-sub-all" to="/branches" onClick={closeAll}>
-                      <span>{branchPicker.allLabel}</span>
-                      <ChevronRight size={16} aria-hidden="true" />
-                    </Link>
-                  </div>
-                ) : null}
+                  ) : null}
+                </div>
+
+                <nav className="hd__drawer-nav" aria-label="Mobile">
+                  <p className="hd__drawer-label">{menuLabel}</p>
+                  {drawerNavItems.map((item, index) => (
+                    <NavLink
+                      key={item.href}
+                      className={({ isActive }) =>
+                        `hd__drawer-link ${isActive ? "hd__drawer-link--active" : ""}`
+                      }
+                      style={{ "--hd-i": index }}
+                      to={item.href}
+                      end={item.href === "/"}
+                      onClick={closeAll}
+                    >
+                      {item.label}
+                    </NavLink>
+                  ))}
+                </nav>
               </div>
 
-              <nav className="hd__drawer-nav" aria-label="Mobile">
-                <p className="hd__drawer-label">Menu</p>
-                {drawerNavItems.map((item, index) => (
-                  <NavLink
-                    key={item.href}
-                    className={({ isActive }) =>
-                      `hd__drawer-link ${isActive ? "hd__drawer-link--active" : ""}`
-                    }
-                    style={{ "--hd-i": index }}
-                    to={item.href}
-                    end={item.href === "/"}
-                    onClick={closeAll}
+              <div className="hd__drawer-foot">
+                <Link className="hd__cta" to={bookHref} onClick={closeAll}>
+                  <CalendarDays size={18} aria-hidden="true" />
+                  <span>{bookLabel}</span>
+                </Link>
+                <div className="hd__drawer-trio">
+                  <a className="hd__ghost" href={`tel:${cleanTel(selectedPhone)}`}>
+                    <Phone size={18} aria-hidden="true" />
+                    <span>Call OPD</span>
+                  </a>
+                  <a
+                    className="hd__ghost"
+                    href={buildWhatsApp(selectedBranch)}
+                    target="_blank"
+                    rel="noreferrer"
                   >
-                    {item.label}
-                  </NavLink>
-                ))}
-              </nav>
-            </div>
-
-            <div className="hd__drawer-foot">
-              <Link className="hd__cta" to={bookHref} onClick={closeAll}>
-                <CalendarDays size={18} aria-hidden="true" />
-                <span>Book Appointment</span>
-              </Link>
-              <div className="hd__drawer-trio">
-                <a className="hd__ghost" href={`tel:${cleanTel(selectedPhone)}`}>
-                  <Phone size={18} aria-hidden="true" />
-                  <span>Call OPD</span>
-                </a>
-                <a
-                  className="hd__ghost"
-                  href={buildWhatsApp(selectedBranch)}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <MessageCircle size={18} aria-hidden="true" />
-                  <span>WhatsApp</span>
-                </a>
-                <a
-                  className="hd__ghost"
-                  href={buildMapLink(selectedBranch)}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Navigation size={18} aria-hidden="true" />
-                  <span>Directions</span>
-                </a>
+                    <MessageCircle size={18} aria-hidden="true" />
+                    <span>WhatsApp</span>
+                  </a>
+                  <a
+                    className="hd__ghost"
+                    href={buildMapLink(selectedBranch)}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Navigation size={18} aria-hidden="true" />
+                    <span>Directions</span>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      ) : null}
-    </header>
+        ) : null}
+      </header>
+    </>
   );
 }

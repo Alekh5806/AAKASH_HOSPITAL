@@ -57,7 +57,7 @@
         text-align: center;
       }
       #app-intro img {
-        width: clamp(124px, 32vw, 152px);
+        width: clamp(148px, 36vw, 196px);
         height: auto;
         opacity: 0;
       }
@@ -111,7 +111,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&family=Noto+Serif+Gujarati:wght@500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&family=Noto+Serif+Gujarati:wght@500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..600;1,8..60,300..400&display=swap"
     />
     <!-- The hero poster is the LCP element and the film paints over it, so it is
          fetched at high priority; the phone gets the portrait cut. -->
@@ -154,7 +154,7 @@
         <circle cx="200" cy="200" r="12" fill="#06182a" />
       </svg>
       <div>
-        <img src="%BRAND_LOGO%" alt="" width="210" height="70" />
+        <img src="%BRAND_LOGO%" alt="" width="207" height="50" />
         <p>%BRAND_TAGLINE_LEAD% <em>%BRAND_TAGLINE_SINCE%</em></p>
       </div>
       <!-- The wordmark and the line rise together once the image has decoded
@@ -169,7 +169,7 @@
             done = true;
             html.style.setProperty(
               "--pl-ready-at",
-              Math.round(performance.now() - window.__aakashIntroStart) + "ms"
+              Math.round(performance.now() - window.__aakashIntroStart) + "ms",
             );
             html.classList.add("pl-ready");
           }
@@ -181,7 +181,7 @@
               Promise.all([
                 document.fonts.load('400 1em "Source Serif 4"'),
                 document.fonts.load('italic 400 1em "Source Serif 4"'),
-              ]).catch(function () {})
+              ]).catch(function () {}),
             );
           }
           Promise.all(waits).then(ready, ready);

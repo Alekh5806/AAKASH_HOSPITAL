@@ -36,7 +36,7 @@ export function MedicalClinicJsonLd({ services = [] }) {
     "@id": `${siteUrl}/#medical-clinic`,
     name: site.brand.name,
     url: site.defaultSeo.url,
-    logo: absoluteUrl(site.brand.logo),
+    logo: absoluteUrl(site.brand.logoRaster),
     image: absoluteUrl(site.defaultSeo.image),
     foundingDate: site.brand.establishedDate,
     medicalSpecialty: "Ophthalmology",

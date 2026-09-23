@@ -13,7 +13,8 @@
   /* WCAG 1.4.11 wants 3:1 on the boundary of a control, and --e-rule-2
      measures 1.58:1 on paper. The header's edge value; do not lighten it. */
   --dr-edge: #7f8b96;
-  background: linear-gradient(180deg, #faf8f4 0%, #ffffff 100%);
+  --dr-ground: #faf8f4;
+  background: linear-gradient(180deg, var(--dr-ground) 0%, #ffffff 100%);
   padding-block: clamp(22px, 2.8vw, 36px) clamp(56px, 6vw, 100px);
 }
 
@@ -193,6 +194,11 @@
   border-radius: 16px;
   background: var(--e-paper);
   padding: 14px 14px 16px;
+  /* A resting lift, because a phone has no hover: a bordered white card on a
+     flat ground otherwise sits dead flat for the whole visit. */
+  box-shadow:
+    0 1px 2px rgba(16, 22, 28, 0.04),
+    0 10px 26px rgba(16, 22, 28, 0.05);
   transition:
     border-color 240ms var(--e-ease),
     box-shadow 240ms var(--e-ease);
@@ -319,15 +325,106 @@
 }
 
 @media (max-width: 640px) {
+  /* Flat, not the gradient: the filter rail sticks over this ground, and an
+     opaque bar sliding across a gradient shows its own seam. */
+  .dr {
+    background: var(--dr-ground);
+    padding-block: 18px 44px;
+  }
+
   /* The lede's sentence is what the filter row says next to it, and on a
      phone it stood between the heading and the control. */
   .dr-head__lede {
     display: none;
   }
 
+  .dr-head {
+    margin-bottom: 22px;
+  }
+
+  /* The bar's box is dissolved so the rail can stick against the roster's
+     whole height: a sticky element is confined to its own parent's box, and
+     the bar is only as tall as its own two rows. It is a plain div, so
+     dissolving it costs nothing semantically. */
   .dr-bar {
-    align-items: flex-start;
-    flex-direction: column;
+    display: contents;
+  }
+
+  .dr-bar__read {
+    border-top: 1px solid var(--e-rule);
+    padding-top: 16px;
+  }
+
+  /* The four chips are one rail, never a wrap. Wrapped they set two ragged
+     rows of two - the shape that reads as a form rather than as a control -
+     and cost 52px more of the first screen. The rail bleeds to both screen
+     edges and pads itself back to the shell, so the first chip lines up with
+     the heading above it and the last one runs off the edge, which is what
+     says it scrolls. */
+  .dr-filter {
+    position: sticky;
+    top: var(--hd-height);
+    z-index: 5;
+    flex-wrap: nowrap;
+    margin: 10px calc(50% - 50vw) 0;
+    border-bottom: 1px solid var(--e-rule);
+    background: var(--dr-ground);
+    padding: 10px 40px 11px 16px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    /* Must always match padding-inline: a snap aligns to the scrollport
+       edge, which sits inside the padding. */
+    scroll-padding-inline: 16px;
+    scrollbar-width: none;
+  }
+
+  .dr-filter::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* The end padding is the fade's width, the services rail's rule, so the
+     last chip stops before the fade rather than under it. Every stop is
+     positive: Safari mishandles a gradient whose stops all sit at or below
+     zero, which is why there is no base rule with a 0px fade. */
+  .dr-filter[data-start="true"] {
+    mask-image: linear-gradient(to right, transparent 0, #000 30px);
+  }
+
+  .dr-filter[data-end="true"] {
+    mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent 100%);
+  }
+
+  .dr-filter[data-start="true"][data-end="true"] {
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 30px,
+      #000 calc(100% - 36px),
+      transparent 100%
+    );
+  }
+
+  /* The header hides on the way down and the rail takes its place, the
+     device the hospitals index's map and the symptoms readout both use. */
+  body:has(.hd--hidden) .dr-filter {
+    top: 0;
+  }
+
+  .dr-chip {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+
+  .dr-run {
+    margin-top: 22px;
+  }
+
+  /* Only between the runs: under the rail's own hairline a second rule on
+     the first run read as a double line. */
+  .dr-run + .dr-run {
+    border-top: 1px solid var(--e-rule);
+    padding-top: 20px;
   }
 
   /* A doctor is a row on a phone, portrait left and words right - the shape a
@@ -341,7 +438,7 @@
 
   .dr-card {
     display: grid;
-    grid-template-columns: 96px minmax(0, 1fr);
+    grid-template-columns: 104px minmax(0, 1fr);
     align-items: start;
     column-gap: 14px;
     padding: 12px;
@@ -371,10 +468,10 @@
   }
 }
 
-/* The frame gives way, never the type: at 320px a 96px portrait left the
-   words 154px and `OPHTHALMIC SURGEON` broke across two lines. The portrait
-   loses 12px and the label reads on one. */
-@media (max-width: 360px) {
+/* The frame gives way, never the type: at 320px a portrait this size left
+   the words 154px and `OPHTHALMIC SURGEON` broke across two lines. The
+   portrait gives up 20px and the label reads on one. */
+@media (max-width: 380px) {
   .dr-card {
     grid-template-columns: 84px minmax(0, 1fr);
     column-gap: 12px;

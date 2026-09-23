@@ -1,20 +1,34 @@
-/* Site header. Namespaced under .hd so global.css never restyles it. */
+/* Site header. Namespaced under .hd so global.css never restyles it.
 
-/* The row heights live on :root so --hd-height can be derived from them and
-   read outside the header: the hero sizes itself to the first screen with it.
-   It is the header at rest - the collapsed, scrolled header is shorter. */
+   Built to the Function Health header, whose whole trick is that it is not a
+   bar sitting on top of the page but part of whatever it is over:
+
+   1. Over the home film it is a floating glass capsule - inset from the
+      window, rounded, the film blurred through it, white logo and links, a
+      light pill for the one action. It reads as part of the hero.
+   2. Over paper - every other page, and the home page once the film has
+      scrolled away - the capsule opens out into a flat, frosted band the
+      width of the window, with the brand-coloured logo and a filled pill.
+      The logo does not move between the two; only the frame around it does.
+   3. Above it, on desktop, a navy strip carries the phone lines and the
+      hospital picker, and simply scrolls away with the page.
+
+   The build before this was a white bar with a second row under it: six
+   objects on one line, nothing primary, and no relationship to the film under
+   it - the page's most expensive asset began below a slab of white. */
+
+/* --hd-height is the sticky box: the capsule and the air above and below it.
+   The paper band fills exactly that box, so the two tones are the same height
+   and changing tone never reflows the page. The strip is outside the sticky
+   box and scrolls away, so it is its own token; the home hero subtracts it. */
 :root {
-  --hd-main-h: 76px;
-  --hd-nav-h: 56px;
-  --hd-height: calc(var(--hd-main-h) + var(--hd-nav-h) + 1px);
+  --hd-strip-h: 44px;
+  --hd-cap-h: 68px;
+  --hd-cap-gap: 10px;
+  --hd-height: calc(var(--hd-cap-h) + var(--hd-cap-gap) * 2);
 }
 
 .hd {
-  /* The design system's own navy pair, so the header can never drift from the
-     pages and the footer, which read the same tokens. It used to read the
-     legacy --color-* pair, which a stray second :root in global.css re-declared
-     to a brighter blue; only ThemeTokens overwriting them at mount kept the
-     header on the site's palette. */
   --hd-navy: var(--e-navy);
   --hd-blue: var(--e-navy-2);
   --hd-rule: rgba(12, 44, 73, 0.12);
@@ -23,17 +37,30 @@
      decorative hairline at 1.2:1. Do not put --hd-rule on a button. */
   --hd-edge: #7f8b96;
   --hd-emergency: var(--color-danger);
+  --hd-emergency-soft: #fbeeed;
+  --hd-ease: cubic-bezier(0.32, 0.72, 0, 1);
 
   position: sticky;
   top: 0;
   z-index: 60;
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--hd-rule-soft);
-  transition: transform 260ms ease, box-shadow 220ms ease;
+  /* flow-root, because the film capsule's margin-top otherwise collapses
+     through this box and moves the whole header down - which opened a white
+     strip between the navy band and the film on every width. */
+  display: flow-root;
+  height: var(--hd-height);
+  /* The box is air around the capsule; only the capsule and the drawer take
+     the pointer, so the film under the gaps is never covered by a dead box. */
+  pointer-events: none;
+  transition: transform 300ms var(--hd-ease);
 }
 
-/* Every screen hands the header back to the page while the reader moves down,
-   and gets it back on the first scroll up. */
+/* On the home page the hero runs up under the header, so the film is what the
+   glass capsule floats on. A constant per route, never toggled by scroll, so
+   it never moves the document while the reader is moving through it. */
+.hd[data-over] {
+  margin-bottom: calc(var(--hd-height) * -1);
+}
+
 .hd--hidden {
   transform: translateY(-100%);
 }
@@ -42,9 +69,10 @@
    reader can see. Closing the drawer returns focus to the menu button, and on
    a phone nothing ever blurs it again (a scroll gesture is not a tap), so
    `:focus-within` held the header on screen through every scroll-down until
-   the page was reloaded. Programmatic focus after a tap does not match
-   `:focus-visible`; Escape from a keyboard still does. */
-.hd:has(:focus-visible) {
+   the page was reloaded. */
+.hd:has(:focus-visible),
+.hd--drawer-open,
+.hd--drawer-open.hd--hidden {
   transform: none;
 }
 
@@ -52,172 +80,427 @@
   z-index: 200;
 }
 
-.hd--scrolled {
-  box-shadow: 0 6px 22px rgba(12, 44, 73, 0.09);
-}
+/* ---------- the capsule ---------- */
 
-.hd--drawer-open,
-.hd--drawer-open.hd--hidden {
-  transform: none;
-}
-
-.hd__container {
-  display: flex;
-  align-items: center;
-  width: min(100% - 32px, 1240px);
-  margin: 0 auto;
-}
-
-/* ---------- brand row ---------- */
-
-.hd__main .hd__container {
-  height: var(--hd-main-h);
-  justify-content: space-between;
-  gap: 20px;
-  transition: height 220ms ease;
-}
-
-.hd--scrolled .hd__main .hd__container {
-  height: 64px;
-}
-
-.hd__brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  min-width: 0;
-  flex: 0 0 auto;
-}
-
-.hd__brand img {
-  width: clamp(140px, 15vw, 168px);
-  height: auto;
-  transition: width 220ms ease;
-}
-
-.hd--scrolled .hd__brand img {
-  width: clamp(126px, 12vw, 144px);
-}
-
-/* The footer's masthead lockup, at the other end of the page: the tracked
-   micro word beside the year in the serif italic accent, over the one-line
-   note. As "Since 1993" in bold navy it was the only place the header and the
-   footer set the same fact two different ways, and it left the header as the
-   one surface on the site with no trace of the serif accent every page opens
-   with. Decorative, so it hides below 1200px rather than squeezing the
-   contact details. */
-.hd__brand-est {
+/* One element, two shapes. Paper: the full width of the window and the full
+   height of the box, padded so its content sits exactly on the page's shell.
+   Film: inset, rounded and shorter, padded 32px so the logo still lands on
+   the shell at every width the shell is capped. Every property that differs
+   is transitioned, so crossing the bottom of the film is one continuous move
+   rather than a swap. */
+.hd__cap {
+  position: relative;
   display: grid;
-  align-content: center;
-  gap: 3px;
-  min-height: 42px;
-  border-left: 1px solid var(--hd-rule);
-  padding-left: 14px;
-  line-height: 1;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  height: var(--hd-height);
+  margin: 0 auto;
+  padding-inline: calc((100% - var(--e-shell)) / 2);
+  border: 1px solid transparent;
+  border-width: 0 0 1px;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.92);
+  -webkit-backdrop-filter: saturate(160%) blur(18px);
+  backdrop-filter: saturate(160%) blur(18px);
+  color: var(--e-ink);
+  pointer-events: auto;
+  transition:
+    width 460ms var(--hd-ease),
+    height 460ms var(--hd-ease),
+    margin 460ms var(--hd-ease),
+    padding 460ms var(--hd-ease),
+    border-radius 460ms var(--hd-ease),
+    background-color 360ms ease,
+    border-color 360ms ease,
+    box-shadow 360ms ease;
 }
 
-.hd__brand-since {
-  display: flex;
-  align-items: baseline;
-  gap: 0.42em;
+.hd--scrolled .hd__cap {
+  border-color: var(--hd-rule);
+  box-shadow: 0 10px 30px -18px rgba(12, 44, 73, 0.35);
 }
 
-.hd__brand-since-word,
-.hd__brand-note {
-  color: var(--color-slate);
-  font-family: var(--e-tight);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+.hd[data-tone="film"] .hd__cap {
+  width: min(100% - 32px, var(--e-shell) + 64px);
+  height: var(--hd-cap-h);
+  margin-top: var(--hd-cap-gap);
+  padding-inline: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  background: rgba(7, 20, 33, 0.2);
+  box-shadow: none;
+  color: #fff;
 }
 
-.hd__brand-since-year {
-  color: var(--color-accent-magenta);
-  font-family: var(--e-serif);
-  font-size: 1.32rem;
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: 0.01em;
+/* ---------- brand ---------- */
+
+/* Two files of one lockup, stacked: the brand colours for paper, the white
+   wordmark for the film (logo-light.svg - the emblem keeps its own blue square).
+   They cross-fade with the capsule, so the mark never jumps. */
+.hd__brand {
+  display: inline-grid;
+  height: 100%;
+  align-items: center;
+  justify-self: start;
+  min-width: 0;
 }
 
-.hd__brand-note {
-  font-weight: 500;
-  letter-spacing: 0.08em;
+.hd__logo {
+  grid-area: 1 / 1;
+  display: block;
+  width: clamp(168px, 14vw, 186px);
+  height: auto;
+  flex: 0 0 auto;
+  transition: opacity 360ms ease;
 }
 
-/* ---------- desktop utilities ---------- */
+.hd__logo--light,
+.hd[data-tone="film"] .hd__logo--ink {
+  opacity: 0;
+}
 
-.hd__utils {
+.hd[data-tone="film"] .hd__logo--light {
+  opacity: 1;
+}
+
+/* ---------- nav ---------- */
+
+.hd__nav {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: clamp(18px, 2vw, 30px);
+  justify-self: center;
+  /* The links' own 10px padding is the spacing, so the hover plates sit 2px
+     apart. That is what keeps the row narrow enough to stay truly centred with
+     the logo on one side and the actions on the other: measured, each side
+     column needs 317px at 1440 and the row leaves 339. */
+  gap: 2px;
+  height: 100%;
 }
 
-.hd__emergency {
+/* One indicator that travels between sections rather than a border that blinks
+   off one link and on to the next - the layoutId pill every other narrowing
+   control on this site uses, done here in custom properties written straight
+   to the DOM so the root bundle does not carry framer-motion for one bar. */
+.hd__nav::after {
+  content: "";
+  position: absolute;
+  bottom: calc(50% - 20px);
+  left: 0;
+  width: var(--hd-ink-w, 0);
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-accent-magenta);
+  opacity: var(--hd-ink-o, 0);
+  translate: var(--hd-ink-x, 0) 0;
+  transition:
+    translate 340ms var(--hd-ease),
+    width 340ms var(--hd-ease),
+    opacity 200ms ease,
+    background-color 360ms ease;
+}
+
+.hd[data-tone="film"] .hd__nav::after {
+  background: #fff;
+}
+
+.hd__nav[data-ready="false"]::after {
+  transition: none;
+}
+
+/* Each link carries 7px of side padding and a soft hover plate, the way the
+   reference's links respond: the plate is the target (48px+ wide for Home),
+   and it gives the reader something back before the click. */
+.hd__nav-link,
+.hd__nav-trigger {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  color: var(--hd-emergency);
-  font-family: var(--font-heading);
+  gap: 5px;
+  height: 44px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  padding: 0 10px;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 500;
+  letter-spacing: -0.005em;
   white-space: nowrap;
+  transition:
+    color 200ms ease,
+    background-color 200ms ease;
 }
 
-.hd__emergency:hover span {
-  text-decoration: underline;
-  text-underline-offset: 3px;
+.hd__nav-link:hover,
+.hd__nav-trigger:hover,
+.hd__nav-trigger[aria-expanded="true"] {
+  background: rgba(12, 44, 73, 0.06);
+  color: var(--hd-navy);
 }
 
-.hd__utils .hd__emergency-short,
-.hd__mobile-actions .hd__emergency-full {
-  display: none;
+.hd__nav-link--active {
+  color: var(--hd-navy);
+  font-weight: 600;
 }
 
-.hd__phone {
-  display: inline-flex;
+.hd[data-tone="film"] .hd__nav-link,
+.hd[data-tone="film"] .hd__nav-trigger {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.hd[data-tone="film"] .hd__nav-link:hover,
+.hd[data-tone="film"] .hd__nav-trigger:hover,
+.hd[data-tone="film"] .hd__nav-trigger[aria-expanded="true"] {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.hd[data-tone="film"] .hd__nav-link--active {
+  color: #fff;
+}
+
+.hd__nav-trigger svg {
+  transition: transform 200ms ease;
+}
+
+.hd__nav-trigger[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+/* ---------- actions ---------- */
+
+.hd__actions,
+.hd__mobile-actions {
+  display: flex;
   align-items: center;
-  gap: 9px;
-  min-height: 44px;
-  color: var(--color-ink);
-  white-space: nowrap;
+  justify-content: flex-end;
+  justify-self: end;
+  gap: 8px;
 }
 
-.hd__phone strong {
-  font-family: var(--font-heading);
-  font-size: 1rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-.hd__phone:hover strong {
-  color: var(--hd-blue);
-}
-
+/* The one pill. The site's buttons are 3-4px rectangles; this is the second
+   deliberate exception after the hero's phone CTA, because the header is built
+   to the reference and the reference's action is a pill: filled navy on paper,
+   a light pill on the film - the reference's cream-on-film. */
 .hd__cta {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  min-height: 44px;
-  border-radius: var(--radius-md);
+  min-height: 48px;
+  border-radius: 999px;
   background: var(--hd-navy);
-  padding: 0 20px;
+  padding: 0 22px;
   color: #fff;
   font-family: var(--e-sans);
   font-size: 0.95rem;
   font-weight: 600;
   white-space: nowrap;
-  transition: background-color 180ms ease;
+  transition:
+    background-color 300ms ease,
+    color 300ms ease,
+    box-shadow 200ms ease,
+    transform 200ms var(--hd-ease);
 }
 
 .hd__cta:hover {
-  background: var(--color-ink);
+  background: var(--e-ink);
+  box-shadow: 0 8px 20px -8px rgba(12, 44, 73, 0.5);
 }
 
-/* ---------- generic dropdown shell ---------- */
+.hd__cta:active {
+  transform: scale(0.97);
+}
 
+.hd[data-tone="film"] .hd__cap .hd__cta {
+  background: #fff;
+  color: var(--hd-navy);
+}
+
+.hd[data-tone="film"] .hd__cap .hd__cta:hover {
+  background: #f1efe9;
+  box-shadow: 0 8px 22px -8px rgba(0, 0, 0, 0.45);
+}
+
+.hd__mobile-actions {
+  display: none;
+}
+
+/* The menu and close buttons are a bare glyph, as the reference's are: three
+   navy bars at 14:1 identify the control on their own, so the box that used
+   to frame them was a second boundary saying the same thing. A soft plate on
+   hover, and 44px either way. */
+.hd__iconbtn {
+  display: inline-grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--hd-navy);
+  touch-action: manipulation;
+  transition:
+    background-color 300ms ease,
+    border-color 300ms ease,
+    color 300ms ease;
+}
+
+.hd__iconbtn:hover {
+  background: var(--color-brand-blue-soft);
+}
+
+.hd[data-tone="film"] .hd__cap .hd__iconbtn {
+  color: #fff;
+}
+
+.hd[data-tone="film"] .hd__cap .hd__iconbtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* The emergency call in the drawer's head: a tinted red pill with a red edge
+   that keeps its word. The capsule itself carries only the booking. */
+.hd__urgent {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  border: 1px solid var(--hd-emergency);
+  border-radius: 999px;
+  background: var(--hd-emergency-soft);
+  padding: 0 14px;
+  color: var(--hd-emergency);
+  font-family: var(--e-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  touch-action: manipulation;
+  transition:
+    background-color 300ms ease,
+    border-color 300ms ease;
+}
+
+.hd__urgent svg {
+  flex: 0 0 auto;
+}
+
+/* The phone's pill is compact - 38px drawn, 44px to the finger through an
+   invisible halo - with a calendar glyph so the short label cannot be read as
+   anything but an appointment. It is always there: a capsule holding only the
+   logo and the menu reads as empty. The full-width white pill that came first
+   crowded the capsule edge to edge. */
+.hd__mobile-cta {
+  position: relative;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 14px 0 12px;
+  font-size: 0.88rem;
+  transition:
+    background-color 300ms ease,
+    color 300ms ease;
+}
+
+.hd__mobile-cta::after {
+  content: "";
+  position: absolute;
+  inset: -3px 0;
+}
+
+.hd__mobile-cta svg {
+  flex: 0 0 auto;
+}
+
+.hd__cta-full {
+  display: none;
+}
+
+
+/* ---------- the strip ---------- */
+
+/* The reference's promo band, carrying what a hospital's promo band should:
+   the emergency line on the left, and on the right the hospital this reader
+   has chosen with that hospital's own OPD number. Navy, full bleed, and not
+   sticky - it scrolls away with the page and the capsule stays. Desktop only;
+   a phone has the emergency pill in the capsule and the picker in the drawer. */
+.hd__strip {
+  position: relative;
+  z-index: 70;
+  height: var(--hd-strip-h);
+  background: var(--e-navy);
+  color: #fff;
+}
+
+.hd__strip-in {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: var(--e-shell);
+  height: 100%;
+  margin-inline: auto;
+}
+
+.hd__strip-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+}
+
+/* Label then number, never one without the other. */
+.hd__strip-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  padding-inline: 4px;
+  color: rgba(255, 255, 255, 0.74);
+  font-family: var(--e-sans);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.hd__strip-item strong {
+  color: #fff;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+.hd__strip-item:hover strong {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* A red dot, not a red glyph: the reference's strip is one quiet line, and a
+   dot is the one mark that says "urgent" without shouting across it. */
+.hd__strip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff6b5e;
+  box-shadow: 0 0 0 4px rgba(255, 107, 94, 0.18);
+}
+
+.hd__strip-sep {
+  width: 1px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.hd__strip .hd__pop {
+  height: 100%;
+}
+
+/* ---------- branch picker ---------- */
+
+/* A quiet control on the strip, not a bordered box. The rectangle it replaced
+   read as a disabled form select sitting in the middle of a row of links; the
+   pin, the hospital's name and a chevron say "this is the one you are being
+   given numbers for, and you can change it" without drawing a frame. */
 .hd__pop {
   position: relative;
 }
@@ -225,29 +508,36 @@
 .hd__pop-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  border: 1px solid var(--hd-rule);
-  border-radius: var(--radius-md);
+  gap: 7px;
+  min-height: var(--hd-strip-h);
+  border: 0;
+  border-radius: 0;
   background: transparent;
-  padding: 0 12px;
-  color: var(--color-ink);
+  padding: 0 10px;
+  color: #fff;
   font-family: var(--e-sans);
-  font-size: 0.95rem;
+  font-size: 0.83rem;
   font-weight: 600;
   white-space: nowrap;
   transition:
-    border-color 180ms ease,
-    background-color 180ms ease;
+    background-color 180ms ease,
+    color 180ms ease;
 }
 
 .hd__pop-toggle:hover,
 .hd__pop-toggle[aria-expanded="true"] {
-  border-color: var(--hd-blue);
-  background: var(--color-brand-blue-soft);
+  background: rgba(255, 255, 255, 0.1);
 }
 
+.hd__pop-label {
+  color: rgba(255, 255, 255, 0.74);
+  font-family: var(--e-tight);
+  font-weight: 500;
+}
+
+.hd__pop-toggle svg:first-child,
 .hd__pop-toggle svg:last-child {
+  color: rgba(255, 255, 255, 0.8);
   transition: transform 200ms ease;
 }
 
@@ -257,7 +547,7 @@
 
 .hd__panel {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 6px);
   right: 0;
   z-index: 30;
   border: 1px solid var(--hd-rule);
@@ -384,76 +674,23 @@
   color: var(--hd-blue);
 }
 
-/* ---------- desktop nav row ---------- */
-
-.hd__navbar .hd__container {
-  height: var(--hd-nav-h);
-  justify-content: flex-start;
-  border-top: 1px solid var(--hd-rule-soft);
-}
-
-.hd__nav {
-  display: flex;
-  align-items: stretch;
-  gap: 34px;
-  height: 100%;
-}
-
-.hd__nav-link,
-.hd__nav-trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 100%;
-  border: 0;
-  border-bottom: 2px solid transparent;
-  background: transparent;
-  padding: 0;
-  color: var(--color-ink);
-  font-family: var(--font-heading);
-  font-size: 0.97rem;
-  font-weight: 600;
-  white-space: nowrap;
-  transition:
-    color 160ms ease,
-    border-color 160ms ease;
-}
-
-.hd__nav-link:hover,
-.hd__nav-trigger:hover,
-.hd__nav-trigger[aria-expanded="true"] {
-  color: var(--hd-blue);
-  border-bottom-color: rgba(18, 60, 97, 0.35);
-}
-
-.hd__nav-link--active {
-  color: var(--hd-blue);
-  border-bottom-color: var(--color-accent-magenta);
-}
-
-.hd__nav-trigger svg {
-  transition: transform 200ms ease;
-}
-
-.hd__nav-trigger[aria-expanded="true"] svg {
-  transform: rotate(180deg);
-}
-
-/* ---------- hospitals menu ---------- */
+/* ---------- nav dropdowns ---------- */
 
 .hd__mega-wrap {
   position: relative;
   display: flex;
+  align-items: center;
+  height: 100%;
 }
 
 /* One narrow column under its own trigger. The panel text is inset by its own
    padding plus the row padding, so the offset pulls the branch names back into
    line with the nav label above them. */
 .hd__mega {
-  --hd-mega-inset: 22px;
+  --hd-mega-inset: 20px;
 
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 9px);
   left: calc(var(--hd-mega-inset) * -1);
   z-index: 30;
   width: min(340px, calc(100vw - 32px));
@@ -463,18 +700,17 @@
   box-shadow: 0 20px 44px rgba(12, 44, 73, 0.16);
   padding: 8px;
   animation: hd-mega 160ms ease-out;
-
 }
 
-/* The 10px gap above the panel would drop the hover and close the menu
-   mid-travel, so the panel bridges it with a transparent strip. */
+/* The gap above the panel would drop the hover and close the menu mid-travel,
+   so the panel bridges it with a transparent strip. */
 .hd__mega::before {
   content: "";
   position: absolute;
-  top: -11px;
+  top: -13px;
   right: 0;
   left: 0;
-  height: 11px;
+  height: 13px;
 }
 
 .hd__mega::after {
@@ -528,7 +764,7 @@
 .hd__mega-list {
   display: grid;
   gap: 2px;
-  max-height: calc(100vh - var(--hd-main-h) - var(--hd-nav-h) - 28px - 125px);
+  max-height: calc(100vh - var(--hd-height) - 28px - 125px);
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -618,30 +854,6 @@
   text-transform: uppercase;
 }
 
-/* ---------- mobile actions ---------- */
-
-.hd__mobile-actions {
-  display: none;
-  align-items: center;
-  gap: 6px;
-}
-
-.hd__iconbtn {
-  display: inline-grid;
-  width: 44px;
-  height: 44px;
-  place-items: center;
-  border: 1px solid var(--hd-edge);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  color: var(--hd-navy);
-  touch-action: manipulation;
-}
-
-.hd__iconbtn:hover {
-  background: var(--color-brand-blue-soft);
-}
-
 /* ---------- mobile drawer ----------
 
    The drawer leads with navigation and keeps the actions pinned in the thumb
@@ -713,17 +925,17 @@
   outline: none;
 }
 
-/* Exactly the header row's height and logo size, so the close button lands
-   on the menu button's slot at every width. As min-height plus padding the
-   head was 70px against the header's 65px between 561 and 1040px, and the
-   close button sat 3px lower than the button that opened it. */
+/* Exactly the header's height, with the capsule's right edge, so the close
+   button lands on the menu button's slot in both tones: the film capsule is
+   inset 12px with 4px of end padding and the paper band pads 16px, and both
+   put the button's right edge 16px in and its centre half the header down. */
 .hd__drawer-head {
   display: flex;
   flex: 0 0 auto;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  height: calc(var(--hd-main-h) + 1px);
+  height: var(--hd-height);
   border-bottom: 1px solid var(--hd-rule-soft);
   padding: 0 16px;
 }
@@ -971,9 +1183,12 @@
   box-shadow: 0 -12px 26px rgba(12, 44, 73, 0.07);
 }
 
+/* The drawer's booking is filled navy on its light foot in both tones, and
+   shares the tiles' 14px corner so the foot reads as one set of controls. */
 .hd__drawer-foot .hd__cta {
   justify-content: center;
   min-height: 52px;
+  border-radius: 14px;
 }
 
 .hd__drawer-trio {
@@ -992,7 +1207,7 @@
   gap: 4px;
   min-height: 58px;
   border: 1px solid var(--hd-edge);
-  border-radius: var(--radius-md);
+  border-radius: 14px;
   background: var(--color-surface);
   color: var(--hd-navy);
   font-family: var(--e-sans);
@@ -1082,61 +1297,145 @@
 
 /* ---------- responsive ---------- */
 
-@media (max-width: 1040px) {
-  :root {
-    --hd-main-h: 64px;
-    --hd-height: calc(var(--hd-main-h) + 1px);
+/* Between the desktop layout and the drawer, the three columns give room from
+   the gaps and the link padding before anything else. */
+/* Here the nav centres in the space between the logo and the actions rather
+   than on the page: the film capsule is inset, so at 1180px its content is
+   48px narrower than the paper band's, and equal side columns left the
+   actions 12px short. Between the two columns nothing can ever overlap. */
+@media (max-width: 1320px) and (min-width: 1180px) {
+  .hd__cap {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 10px;
   }
 
-  .hd__utils,
-  .hd__navbar {
+  .hd__nav-link,
+  .hd__nav-trigger {
+    padding: 0 7px;
+  }
+
+  .hd__cta {
+    padding: 0 18px;
+  }
+}
+
+/* Phones and tablets: one row in the capsule - logo, the emergency pill, Book
+   where it fits, and the menu. No strip on a phone: a band across the top of
+   every phone screen sits directly under a browser toolbar whose colour the
+   page does not control, and two builds with one were removed for it. The
+   phone's hospital picker is the drawer's branch block.
+
+   1179px, not the 1040px the old bar broke at: six links, the emergency
+   line and the pill need about 1040px of capsule, and below 1180 the capsule
+   has less than that. A tablet held sideways gets the drawer, as it does on
+   the reference. */
+@media (max-width: 1179px) {
+  :root {
+    --hd-strip-h: 0px;
+    --hd-cap-h: 56px;
+    --hd-cap-gap: 8px;
+  }
+
+  .hd__strip,
+  .hd__nav,
+  .hd__actions {
     display: none;
+  }
+
+  .hd__cap {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+    padding-inline: 16px;
+  }
+
+  /* 14px ahead of the logo and 3px after the menu button (plus the glass's
+     1px edge), so the button's right edge is 16px in - where the paper band
+     puts it and where the drawer's close button lands. */
+  .hd[data-tone="film"] .hd__cap {
+    width: calc(100% - 24px);
+    padding-inline: 13px 3px;
+    border-radius: 16px;
   }
 
   .hd__mobile-actions {
     display: flex;
   }
 
-  .hd--scrolled .hd__main .hd__container {
-    height: var(--hd-main-h);
-  }
-
-  .hd--scrolled .hd__brand img {
-    width: clamp(140px, 15vw, 178px);
+  .hd__logo {
+    width: clamp(136px, 18vw, 164px);
   }
 }
 
-@media (max-width: 1199px) {
-  .hd__brand-est {
+/* A tablet has the room for the whole label. */
+@media (min-width: 600px) {
+  .hd__cta-full {
+    display: inline;
+  }
+
+  .hd__cta-short {
     display: none;
   }
 }
 
-/* The compact rule in the 1040px block outranks a bare .hd__brand img on
-   specificity, so without its own scrolled rule the logo grew from 132px to
-   140px the moment a phone reader scrolled past the compact threshold. */
-@media (max-width: 560px) {
-  .hd__brand img,
-  .hd--scrolled .hd__brand img,
+/* The logo steps down before the row is full, so the pill and the menu keep
+   their size. */
+@media (max-width: 400px) {
+  .hd__logo,
   .hd__drawer-head img {
-    width: 132px;
-  }
-
-  .hd__mobile-actions .hd__emergency {
-    font-size: 0.88rem;
+    width: 126px;
   }
 }
 
-/* Below this width the label no longer fits beside the logo and menu button;
-   the icon keeps a full-size tap target and the accessible name. */
-@media (max-width: 370px) {
-  .hd__mobile-actions .hd__emergency {
-    justify-content: center;
-    width: 44px;
+/* The drawer head is the capsule's row inside a sheet only min(400px, 92%)
+   wide, so its logo gives first: at 320px the sheet has 262px for the logo,
+   the emergency pill and the close button. */
+@media (max-width: 430px) {
+  .hd__drawer-head {
+    gap: 8px;
   }
 
-  .hd__mobile-actions .hd__emergency-short {
+  .hd__drawer-head .hd__urgent {
+    gap: 0;
+    padding: 0 12px;
+    font-size: 0.86rem;
+  }
+
+  .hd__drawer-head .hd__urgent svg {
     display: none;
+  }
+}
+
+/* The word goes last, never first: below this the pill drops its siren and
+   keeps "Emergency" - the glyph is decoration and the word is the meaning. */
+@media (max-width: 360px) {
+  .hd__urgent {
+    gap: 0;
+    padding: 0 12px;
+    font-size: 0.86rem;
+  }
+
+  .hd__urgent svg {
+    display: none;
+  }
+
+  .hd__logo {
+    width: 116px;
+  }
+
+  .hd__drawer-head img {
+    width: 100px;
+  }
+}
+
+/* Where backdrop-filter is missing the glass would be a faint tint over a
+   bright film, so it is given the density the blur would have lent it. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .hd__cap {
+    background: #fff;
+  }
+
+  .hd[data-tone="film"] .hd__cap {
+    background: rgba(7, 20, 33, 0.72);
   }
 }
 
@@ -1144,7 +1443,8 @@
   .hd,
   .hd *,
   .hd::before,
-  .hd::after {
+  .hd::after,
+  .hd__strip * {
     animation-duration: 1ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 1ms !important;

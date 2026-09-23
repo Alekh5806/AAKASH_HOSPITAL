@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, Pause, Phone, Play } from "lucide-react";
+import { ArrowRight, MessageCircle, Pause, Play } from "lucide-react";
 import { Link } from "react-router-dom";
-import { branches } from "../lib/coreData";
-import { cleanTel, getPrimaryBranch, getPrimaryPhone } from "../lib/contact";
 import { INTRO_DONE_EVENT, isIntroPending, useIntroDone } from "../lib/intro";
 
 const PHONE_QUERY = "(max-width: 760px)";
@@ -162,8 +160,6 @@ export default function Hero({ hero }) {
      curtain and no beat. */
   const introDone = useIntroDone();
   const [afterIntro] = useState(isIntroPending);
-  const primaryBranch = getPrimaryBranch(branches.items);
-  const primaryPhone = getPrimaryPhone(primaryBranch);
 
   return (
     <section className="e-hero" aria-label="Aakash Eye Hospital">
@@ -183,24 +179,23 @@ export default function Hero({ hero }) {
             ease: [0.32, 0.72, 0, 1],
           }}
         >
+          {/* The reference's glass chip over its headline says the offer is easy
+              to take up; this one says the same true thing about booking here. */}
+          <p className="e-hero__eyebrow">
+            <MessageCircle size={15} aria-hidden="true" />
+            <span>{hero.eyebrow}</span>
+          </p>
+          {/* One line, as the reference's is: the roman word and the italic
+              accent share it. */}
           <h1>
-            {hero.title}
-            <span className="e-hero__accent">{hero.titleAccent}</span>
+            {hero.title} <span className="e-hero__accent">{hero.titleAccent}</span>
           </h1>
           <p className="e-hero__lede">{hero.subtitle}</p>
           <div className="e-hero__actions">
-            <Link className="e-btn e-btn--light" to="/appointment">
-              Book appointment
-              <ArrowRight size={17} aria-hidden="true" />
+            <Link className="e-btn e-btn--light e-hero__cta" to="/appointment">
+              {hero.ctaLabel}
+              <ArrowRight size={18} aria-hidden="true" />
             </Link>
-            <a
-              className="e-hero__call"
-              href={`tel:${cleanTel(primaryPhone)}`}
-              aria-label={`Call ${primaryBranch.name} OPD on ${primaryPhone}`}
-            >
-              <Phone size={17} aria-hidden="true" />
-              <span>Call {primaryBranch.name} OPD</span>
-            </a>
           </div>
         </motion.div>
 

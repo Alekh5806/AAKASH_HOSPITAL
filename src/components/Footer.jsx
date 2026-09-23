@@ -102,7 +102,7 @@ export default function Footer() {
         <div className="ft__card">
           <div className="ft__masthead">
             <Link className="ft__brand" to="/" aria-label={`${site.brand.name} home`}>
-              <img src={site.brand.logo} alt={site.brand.logoAlt} width="210" height="70" />
+              <img src={site.brand.logo} alt={site.brand.logoAlt} width="207" height="50" />
             </Link>
             <span className="ft__since">
               <span className="ft__since-word">{sinceWord}</span>

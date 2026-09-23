@@ -3,7 +3,9 @@
     "name": "Aakash Eye Hospital",
     "tagline": "Advanced eye care since 1993",
     "establishedDate": "1993-08-08",
-    "logo": "/assets/logo.png",
+    "logo": "/assets/logo.svg",
+    "logoLight": "/assets/logo-light.svg",
+    "logoRaster": "/assets/logo.png",
     "logoAlt": "Aakash Eye Hospital logo"
   },
   "defaultSeo": {
@@ -39,16 +41,22 @@
   },
   "header": {
     "establishedLabel": "Since 1993",
+    "bookLabel": "Book appointment",
+    "bookShortLabel": "Book",
+    "menuLabel": "Menu",
+    "opdLabel": "OPD",
     "emergency": {
       "label": "Emergency Helpline",
       "shortLabel": "Emergency",
-      "phone": "+91-760-008-2710"
+      "phone": "+91-760-008-2710",
+      "combinedLabel": "Emergency and OPD helpline"
     },
     "branchPicker": {
       "label": "Your hospital",
       "menuTitle": "Choose your hospital",
       "allLabel": "View all hospitals",
-      "menuHint": "Sets the number you call and the branch we book you into."
+      "menuHint": "Sets the number you call and the branch we book you into.",
+      "changeLabel": "Change"
     }
   },
   "socialLinks": [

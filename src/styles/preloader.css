@@ -227,7 +227,7 @@ body.pl-lock {
 }
 
 .pl__logo {
-  width: clamp(124px, 32vw, 152px);
+  width: clamp(148px, 36vw, 196px);
   height: auto;
   opacity: 0;
 }

@@ -61,7 +61,7 @@ export default function IntroMark() {
       </div>
 
       <div className="pl__copy">
-        <img className="pl__logo" src={site.brand.logo} alt="" width="210" height="70" />
+        <img className="pl__logo" src={site.brand.logo} alt="" width="207" height="50" />
         <p className="pl__line">
           {taglineLead}
           {taglineSince ? <em> {taglineSince}</em> : null}
