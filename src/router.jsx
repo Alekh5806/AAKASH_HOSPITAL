@@ -1,27 +1,30 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
-import HydrateFallback from "./components/HydrateFallback";
+import { redirect } from "react-router-dom";
 import RootLayout from "./components/RootLayout";
 
+/* The route table, shared by the browser (main.jsx builds a browser router
+   from it) and the prerender (entry-server.jsx renders every page from it at
+   build time), so the two can never disagree about what a URL shows. */
 function lazyPage(loader) {
   return async () => {
     const module = await loader();
-    return { Component: module.default, HydrateFallback };
+    return { Component: module.default };
   };
 }
 
-const router = createBrowserRouter([
+export const routes = [
   {
     path: "/",
     element: <RootLayout />,
-    HydrateFallback,
     children: [
       {
         index: true,
         lazy: lazyPage(() => import("./pages/HomePage.jsx")),
       },
       {
+        // A real 301 on the server (src/data/redirects.json); this covers an
+        // in-app link to it.
         path: "about",
-        element: <Navigate to="/about/journey" replace />,
+        loader: () => redirect("/about/journey"),
       },
       {
         path: "about/journey",
@@ -44,16 +47,16 @@ const router = createBrowserRouter([
         lazy: lazyPage(() => import("./pages/DoctorsPage.jsx")),
       },
       {
+        path: "doctors/:slug",
+        lazy: lazyPage(() => import("./pages/DoctorProfilePage.jsx")),
+      },
+      {
         path: "branches",
         lazy: lazyPage(() => import("./pages/BranchesPage.jsx")),
       },
       {
         path: "branches/:slug",
         lazy: lazyPage(() => import("./pages/BranchPage.jsx")),
-      },
-      {
-        path: "gallery",
-        lazy: lazyPage(() => import("./pages/GalleryPage.jsx")),
       },
       {
         path: "appointment",
@@ -69,6 +72,4 @@ const router = createBrowserRouter([
       },
     ],
   },
-]);
-
-export default router;
+];

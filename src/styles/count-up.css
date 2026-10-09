@@ -1,0 +1,31 @@
+/* =========================================================================
+   A counted figure
+   Namespace: .e-count   |   owned by components/CountUp.jsx
+   CountUp is used on the home page (the numbers band), the journey page (the
+   closing figures) and the services index (the stamp), so its rules are not
+   in any one page's stylesheet. main.jsx imports this sheet into the shared
+   bundle: at 0.3KB it costs every page less than the extra render-blocking
+   request it was as a sheet of its own. Each of those pages sizes the figure
+   for its own place with a more specific rule (.e-impact__band .e-count,
+   .ab-stage__figures .e-count, .sv-top__stamp .e-count), so the order the
+   sheets arrive in never matters.
+   ========================================================================= */
+
+.e-count {
+  display: inline-flex;
+  align-items: baseline;
+  color: var(--e-ink);
+  font-family: var(--e-serif);
+  font-size: clamp(2.1rem, 3vw, 2.9rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.e-count__value {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.e-count__suffix {
+  color: var(--e-accent);
+}

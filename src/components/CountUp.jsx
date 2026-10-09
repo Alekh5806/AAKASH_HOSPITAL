@@ -21,12 +21,23 @@ export default function CountUp({ value, suffix = "", start = false, duration = 
     return () => cancelAnimationFrame(frame);
   }, [start, value, duration, shouldReduceMotion]);
 
+  /* The count restarts from zero every time its card comes back into view,
+     so the digits on screen are only ever a picture of the figure; the figure
+     itself is always whole in the hidden span. */
   return (
     <span className="e-count">
-      <span className="e-count__value">
+      <span className="sr-only">
+        {value.toLocaleString("en-IN")}
+        {suffix}
+      </span>
+      <span className="e-count__value" aria-hidden="true">
         {(shouldReduceMotion ? value : current).toLocaleString("en-IN")}
       </span>
-      {suffix ? <span className="e-count__suffix">{suffix}</span> : null}
+      {suffix ? (
+        <span className="e-count__suffix" aria-hidden="true">
+          {suffix}
+        </span>
+      ) : null}
     </span>
   );
 }

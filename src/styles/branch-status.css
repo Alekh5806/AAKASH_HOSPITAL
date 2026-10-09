@@ -1,0 +1,76 @@
+/* =========================================================================
+   A hospital's live OPD status
+   Namespace: .br-status   |   owned by components/BranchStatus.jsx
+   The pill is on a hospital's own page, the hospitals index map, the contact
+   switchboard and the booking slip, so its rules are not in branch.css.
+   main.jsx imports this sheet into the shared bundle: at 0.8KB it costs every
+   page less than the extra render-blocking request it was as a sheet of its
+   own. Each place sets --br-edge-light for the pill's border and adjusts the
+   pill with a more specific rule (.ct-readout .br-status, .hs-map__stamp
+   .br-status__pill), so the order the sheets arrive in never matters.
+   ========================================================================= */
+
+/* The one thing on this page that changes through the day, standing where the
+   lede stood: under the heading, at every width. */
+.br-status {
+  display: grid;
+  gap: 9px;
+  justify-items: start;
+  margin: 0;
+  font-family: var(--e-sans);
+}
+
+.br-status__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--br-edge-light);
+  border-radius: 999px;
+  padding: 8px 16px 8px 13px;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.br-status__detail {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+}
+
+/* The dot is the glance; the words carry the meaning, so its colour is never
+   the only thing saying whether the doors are open. */
+.br-status__dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.br-status[data-open] .br-status__dot {
+  background: #57d39b;
+  box-shadow: 0 0 0 0 rgba(87, 211, 155, 0.55);
+  animation: br-breathe 2.6s var(--e-ease) infinite;
+}
+
+@keyframes br-breathe {
+  0% {
+    box-shadow: 0 0 0 0 rgba(87, 211, 155, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 9px rgba(87, 211, 155, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(87, 211, 155, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The status still says whether the doors are open; only the breathing goes. */
+  .br-status[data-open] .br-status__dot {
+    animation: none;
+  }
+}

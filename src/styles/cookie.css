@@ -4,7 +4,9 @@
 
    Two surfaces, one component. The banner is a card the reader can ignore
    and scroll past; the dialog is a real modal that takes the screen, locks
-   the page and traps focus. They share the tokens below and nothing else.
+   the page and traps focus. The dialog rises over the banner rather than
+   replacing it, so closing it without a choice uncovers the banner that was
+   there all along, and a phone never shows an empty frame between the two.
    ========================================================================= */
 
 .ck {
@@ -18,6 +20,10 @@
   --ck-edge: #7f8b96;
   --ck-radius: 14px;
   --ck-shadow: 0 18px 60px rgba(12, 44, 73, 0.22);
+  --ck-sheet-shadow: 0 -12px 40px rgba(12, 44, 73, 0.16);
+  /* Arrivals ride the header's ease-out; exits accelerate off the screen, so
+     a choice is answered from the first frame and nothing lingers. */
+  --ck-exit: cubic-bezier(0.4, 0, 1, 1);
   font-family: var(--e-sans);
 }
 
@@ -32,7 +38,25 @@
   white-space: nowrap;
 }
 
+/* The page behind the dialog. A class rather than an inline style, the
+   gallery viewer's rule. */
+body.ck-locked {
+  overflow: hidden;
+}
+
 /* ---- shared type ---- */
+
+.ck__head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ck__heading {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
 
 .ck__eyebrow {
   display: block;
@@ -50,6 +74,7 @@
   color: var(--e-ink-2);
   font-size: 0.92rem;
   line-height: 1.58;
+  text-wrap: pretty;
 }
 
 /* The phone gets a shorter sentence rather than a clamped one, the same way
@@ -87,26 +112,17 @@
   font-weight: 600;
   line-height: 1.2;
   text-align: center;
+  white-space: nowrap;
   transition:
     background-color 180ms var(--e-ease),
     border-color 180ms var(--e-ease),
-    color 180ms var(--e-ease);
-}
-
-.ck__btn:hover {
-  border-color: var(--e-ink);
-  background: var(--e-paper-2);
+    color 180ms var(--e-ease),
+    transform 140ms var(--e-ease);
 }
 
 .ck__btn--primary {
   border-color: var(--e-navy);
   background: var(--e-navy);
-  color: #fff;
-}
-
-.ck__btn--primary:hover {
-  border-color: var(--e-ink);
-  background: var(--e-ink);
   color: #fff;
 }
 
@@ -126,17 +142,77 @@
   text-decoration: underline;
   text-underline-offset: 4px;
   text-decoration-color: var(--e-rule-2);
+  white-space: nowrap;
   transition:
     color 180ms var(--e-ease),
     text-decoration-color 180ms var(--e-ease);
 }
 
-.ck__more:hover {
-  color: var(--e-accent);
-  text-decoration-color: var(--e-accent);
+.ck__close {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: -6px -8px 0 auto;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--e-ink-2);
+  transition:
+    background-color 180ms var(--e-ease),
+    color 180ms var(--e-ease);
 }
 
-.ck :is(button):focus-visible {
+/* Hover plates are for a real pointer. A tap leaves :hover on whatever it
+   touched, which kept a disclosure accent-coloured for the rest of the
+   dialog; a finger gets :active instead. */
+@media (hover: hover) and (pointer: fine) {
+  .ck__btn:hover {
+    border-color: var(--e-ink);
+    background: var(--e-paper-2);
+  }
+
+  .ck__btn--primary:hover {
+    border-color: var(--e-ink);
+    background: var(--e-ink);
+  }
+
+  .ck__more:hover {
+    color: var(--e-accent);
+    text-decoration-color: var(--e-accent);
+  }
+
+  .ck__close:hover {
+    background: var(--e-paper-2);
+    color: var(--e-ink);
+  }
+
+  .ck__cat-summary:hover {
+    color: var(--e-accent);
+  }
+}
+
+.ck__btn:active {
+  background: var(--e-paper-3);
+  transform: scale(0.98);
+}
+
+.ck__btn--primary:active {
+  border-color: var(--e-ink);
+  background: var(--e-ink);
+}
+
+.ck__more:active,
+.ck__cat-summary:active {
+  color: var(--e-accent);
+}
+
+.ck__close:active {
+  background: var(--e-paper-2);
+}
+
+.ck :is(button, summary):focus-visible {
   outline: 2px solid var(--e-accent);
   outline-offset: 2px;
 }
@@ -145,9 +221,13 @@
    Banner
    ========================================================================= */
 
+/* Bottom right, never bottom left: the home hero sets its headline and its
+   booking button in the lower left of the first screen at every desktop
+   width, and a card in that corner sat on "Advanced eye care." the moment
+   the curtain lifted. */
 .ck__banner {
   position: fixed;
-  left: 24px;
+  right: 24px;
   bottom: 24px;
   /* Under the header (200) and its mobile drawer (210) on purpose: the drawer
      is a full-height sheet, and a consent card floating on top of it would
@@ -156,20 +236,29 @@
      is the one that takes the screen. */
   z-index: 190;
   display: grid;
-  grid-template-columns: 40px minmax(0, 1fr);
-  gap: 14px 16px;
-  width: min(460px, calc(100vw - 48px));
+  gap: 14px;
+  width: min(480px, calc(100vw - 48px));
   border: 1px solid var(--ck-rule);
   border-radius: var(--ck-radius);
   background: var(--ck-card);
   box-shadow: var(--ck-shadow);
   padding: 22px;
-  animation: ck-rise 340ms var(--e-ease) both;
+  animation: ck-card-in 480ms var(--e-ease) both;
 }
 
-.ck__banner-copy {
-  display: grid;
-  gap: 6px;
+/* It arrives in reading order behind its own frame: the heading, the
+   sentence, then the decisions. */
+.ck__banner > * {
+  animation: ck-part 440ms var(--e-ease) both;
+  animation-delay: calc(110ms + var(--ck-i, 0) * 70ms);
+}
+
+.ck__banner .ck__text {
+  --ck-i: 1;
+}
+
+.ck__banner .ck__actions {
+  --ck-i: 2;
 }
 
 .ck__banner-title {
@@ -182,28 +271,69 @@
   line-height: 1.22;
 }
 
+/* One row wherever the three fit: the two decisions hug their labels and the
+   route into the details sits at the far end, so a desktop card and a tablet
+   bar never spend a row on a lone text link. */
 .ck__actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
-  grid-column: 2;
 }
 
 .ck__actions .ck__btn {
-  flex: 1 1 auto;
-  min-width: 140px;
+  flex: 0 0 auto;
 }
 
 .ck__actions .ck__more {
-  flex: 1 0 100%;
-  justify-content: flex-start;
+  margin-left: auto;
 }
 
-@keyframes ck-rise {
+/* A choice sends it away; opening the dialog on a wide screen fades it out
+   under the scrim and brings it back when the dialog closes unanswered. On a
+   phone the dialog covers it outright, so there it stays put. */
+.ck__banner[data-state="leaving"] {
+  animation: ck-card-out 220ms var(--ck-exit) forwards;
+  pointer-events: none;
+}
+
+@media (min-width: 721px) {
+  .ck__banner[data-covered] {
+    animation: ck-card-out 220ms var(--ck-exit) forwards;
+    pointer-events: none;
+  }
+}
+
+@keyframes ck-card-in {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(20px) scale(0.98);
+  }
+}
+
+@keyframes ck-card-out {
+  to {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+}
+
+@keyframes ck-part {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes ck-sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes ck-sheet-out {
+  to {
+    transform: translateY(100%);
   }
 }
 
@@ -220,12 +350,30 @@
   padding: 24px;
 }
 
+/* Mounted with the page and hidden until asked for. Its entrances are keyed on
+   the open state below rather than set on the elements, so each opening plays
+   them again instead of finding them spent at page load. */
+.ck__overlay[data-state="closed"] {
+  visibility: hidden;
+}
+
+.ck__overlay:not([data-state="open"]) {
+  pointer-events: none;
+}
+
 .ck__scrim {
   position: absolute;
   inset: 0;
   border: 0;
   background: rgba(9, 28, 46, 0.55);
-  animation: ck-fade 200ms var(--e-ease) both;
+}
+
+.ck__overlay[data-state="open"] .ck__scrim {
+  animation: ck-fade 280ms var(--e-ease) both;
+}
+
+.ck__overlay[data-state="leaving"] .ck__scrim {
+  animation: ck-fade-out 260ms ease forwards;
 }
 
 .ck__dialog {
@@ -233,52 +381,41 @@
   display: flex;
   flex-direction: column;
   width: min(620px, 100%);
+  /* svh, not vh: Safari's vh is the height with its toolbars hidden, and a
+     sheet sized by it runs under the address bar on an iPhone. */
   max-height: min(86vh, 760px);
+  max-height: min(86svh, 760px);
   border-radius: var(--ck-radius);
   background: var(--ck-card);
   box-shadow: var(--ck-shadow);
   overflow: hidden;
-  animation: ck-pop 260ms var(--e-ease) both;
+}
+
+.ck__overlay[data-state="open"] .ck__dialog {
+  animation: ck-pop 380ms var(--e-ease) both;
+}
+
+.ck__overlay[data-state="leaving"] .ck__dialog {
+  animation: ck-pop-out 200ms var(--ck-exit) forwards;
 }
 
 .ck__dialog-head {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 14px;
   flex: none;
   border-bottom: 1px solid var(--ck-rule);
-  padding: 22px 22px 18px;
+  padding: 20px 22px 16px;
 }
 
 .ck__dialog-title {
-  margin: 2px 0 0;
+  margin: 0;
   color: var(--e-ink);
   font-family: var(--e-tight);
   font-size: clamp(1.25rem, 2.4vw, 1.5rem);
   font-weight: 600;
   letter-spacing: -0.025em;
   line-height: 1.15;
-}
-
-.ck__close {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  margin: -4px -6px 0 auto;
-  border: 1px solid transparent;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--e-ink-2);
-  transition:
-    background-color 180ms var(--e-ease),
-    color 180ms var(--e-ease);
-}
-
-.ck__close:hover {
-  background: var(--e-paper-2);
-  color: var(--e-ink);
 }
 
 .ck__dialog-body {
@@ -291,6 +428,13 @@
   -webkit-overflow-scrolling: touch;
 }
 
+/* The foot fades only while there is more below - the phone menu's device -
+   so a reader on a short screen can see the list goes on under the buttons. */
+.ck__dialog-body[data-more] {
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 36px), transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 36px), transparent 100%);
+}
+
 /* ---- categories ---- */
 
 .ck__cats {
@@ -299,13 +443,28 @@
   list-style: none;
   margin: 0;
   padding: 0;
+  /* interpolate-size inherits, so it is scoped here rather than on :root. */
+  interpolate-size: allow-keywords;
 }
 
 .ck__cat {
   border: 1px solid var(--ck-rule);
   border-radius: 10px;
   background: var(--e-paper);
-  padding: 13px 16px 9px;
+  padding: 14px 16px 2px;
+}
+
+.ck__overlay[data-state="open"] .ck__cat {
+  animation: ck-part 420ms var(--e-ease) both;
+  animation-delay: calc(120ms + var(--ck-i, 0) * 60ms);
+}
+
+.ck__cat:nth-child(2) {
+  --ck-i: 1;
+}
+
+.ck__cat:nth-child(3) {
+  --ck-i: 2;
 }
 
 .ck__cat[data-locked] {
@@ -315,26 +474,13 @@
 .ck__cat-head {
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-
-.ck__cat-icon {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  background: var(--e-paper-2);
-  color: var(--e-navy);
-}
-
-.ck__cat[data-locked] .ck__cat-icon {
-  background: var(--ck-card);
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 32px;
 }
 
 .ck__cat-title {
-  flex: 1 1 auto;
+  min-width: 0;
   color: var(--e-ink);
   font-family: var(--e-tight);
   font-size: 1rem;
@@ -343,17 +489,31 @@
   line-height: 1.2;
 }
 
+/* A status, not a control: the lit dot the site uses for "open now" and the
+   switch's own micro caps, with no border or fill for a finger to mistake
+   for a button - the journey page's tag lesson. */
 .ck__cat-lock {
+  display: inline-flex;
   flex: none;
-  border: 1px solid var(--e-rule-2);
-  border-radius: 999px;
-  padding: 5px 11px;
-  color: var(--e-ink-2);
-  font-size: 0.72rem;
+  align-items: center;
+  gap: 8px;
+  color: var(--e-navy);
+  font-size: 0.74rem;
   font-weight: 600;
   letter-spacing: 0.06em;
+  line-height: 1;
   text-transform: uppercase;
   white-space: nowrap;
+}
+
+.ck__cat-lock::before {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-success);
+  box-shadow: 0 0 0 3px rgba(27, 107, 74, 0.16);
+  content: "";
 }
 
 .ck__cat-text {
@@ -363,38 +523,45 @@
   line-height: 1.55;
 }
 
-.ck__cat-more {
+.ck__cat-summary {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 36px;
-  border: 0;
-  background: transparent;
-  padding: 6px 0;
+  min-height: 44px;
+  border-radius: 4px;
   color: var(--e-ink-2);
   font-family: var(--e-sans);
   font-size: 0.82rem;
   font-weight: 600;
   line-height: 1.2;
+  list-style: none;
+  cursor: pointer;
+  transition: color 180ms var(--e-ease);
 }
 
-.ck__cat-more:hover {
-  color: var(--e-accent);
+.ck__cat-summary::-webkit-details-marker {
+  display: none;
 }
 
-.ck__cat-more svg {
+.ck__cat-summary svg {
   flex: none;
-  transition: transform 200ms var(--e-ease);
+  transition: transform 240ms var(--e-ease);
 }
 
-.ck__cat-more[aria-expanded="true"] svg {
+.ck__cat-more[open] .ck__cat-summary svg {
   transform: rotate(180deg);
 }
 
-/* The disclosure is toggled with the hidden attribute, and display: grid below
-   would win over the browser's [hidden] rule without this. */
-.ck__cat-list[hidden] {
-  display: none;
+.ck__cat-more::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition:
+    block-size 280ms var(--e-ease),
+    content-visibility 280ms allow-discrete;
+}
+
+.ck__cat-more[open]::details-content {
+  block-size: auto;
 }
 
 .ck__cat-list {
@@ -402,8 +569,8 @@
   gap: 7px;
   list-style: none;
   border-top: 1px solid var(--ck-rule);
-  margin: 4px 0 0;
-  padding: 10px 0 2px;
+  margin: 0 0 12px;
+  padding: 10px 0 0;
 }
 
 .ck__cat-list li {
@@ -469,7 +636,7 @@
   border-radius: 50%;
   background: var(--ck-card);
   box-shadow: 0 1px 3px rgba(12, 44, 73, 0.3);
-  transition: transform 200ms var(--e-ease);
+  transition: transform 260ms var(--e-ease);
 }
 
 .ck__switch[aria-checked="true"] .ck__switch-track {
@@ -504,6 +671,10 @@
   line-height: 1.55;
 }
 
+.ck__overlay[data-state="open"] .ck__note {
+  animation: ck-part 420ms var(--e-ease) 300ms both;
+}
+
 .ck__dialog-foot {
   display: flex;
   flex-wrap: wrap;
@@ -525,10 +696,23 @@
   }
 }
 
+@keyframes ck-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
 @keyframes ck-pop {
   from {
     opacity: 0;
-    transform: translateY(14px) scale(0.985);
+    transform: translateY(16px) scale(0.975);
+  }
+}
+
+@keyframes ck-pop-out {
+  to {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
   }
 }
 
@@ -536,49 +720,52 @@
    Responsive
    ========================================================================= */
 
-/* Tablet: the banner spans the width rather than sitting in a corner, where a
-   460px card left two thirds of the row empty. */
-@media (max-width: 860px) {
+/* A tablet keeps the corner card: in the corner it leaves the hero's booking
+   button in the lower left clear, where a bar across the width sat on it.
+   456px is what clears the hero's words and button on an iPad mini (744px);
+   narrower, the card grows taller and climbs into the headline instead. */
+@media (max-width: 1023px) {
   .ck__banner {
-    left: 16px;
     right: 16px;
     bottom: 16px;
-    width: auto;
-  }
-
-  /* The buttons hug their labels on the wide band. Stretched to half the row
-     each they were a pair of 300px slabs, heavier than anything else on the
-     screen; the phone block below stretches them again, where the width is
-     the only way to keep both decisions the same size. */
-  .ck__actions .ck__btn {
-    flex: 0 0 auto;
+    width: min(456px, calc(100vw - 32px));
   }
 }
 
-/* Phone: both surfaces become bottom sheets. The dialog keeps its own scroll
-   and pins the actions in the thumb zone, so a reader never has to scroll a
-   consent sheet to reach Accept. */
+/* Phone: both surfaces become bottom sheets that slide up from the screen's
+   edge. The dialog keeps its own scroll and pins the actions in the thumb
+   zone, so a reader never has to scroll a consent sheet to reach Accept. */
 @media (max-width: 720px) {
-  /* The sheet keeps the glyph beside the copy rather than above it, and pairs
-     the two decisions on one row. Stacked, the banner stood 397px tall on a
-     390x844 phone - 47% of the screen for a notice - and it is 268px here. */
+  /* The sentence runs the sheet's full width under the heading rather than
+     beside the glyph, which is a line shorter on every phone. */
   .ck__banner {
     left: 0;
     right: 0;
     bottom: 0;
-    grid-template-columns: 34px minmax(0, 1fr);
-    gap: 12px 12px;
+    width: auto;
+    gap: 12px;
     border-width: 1px 0 0;
     border-radius: 18px 18px 0 0;
-    padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+    box-shadow: var(--ck-sheet-shadow);
+    padding: 18px 16px calc(8px + env(safe-area-inset-bottom));
     max-height: 82vh;
+    max-height: 82svh;
     overflow-y: auto;
     overscroll-behavior: contain;
+    animation: ck-sheet-in 520ms var(--e-ease) both;
+  }
+
+  .ck__banner[data-state="leaving"] {
+    animation: ck-sheet-out 300ms var(--ck-exit) forwards;
   }
 
   .ck__banner .ck__glyph {
-    width: 34px;
-    height: 34px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .ck__head {
+    gap: 12px;
   }
 
   .ck__text--full {
@@ -590,17 +777,19 @@
   }
 
   .ck__actions {
-    grid-column: 1 / -1;
     gap: 8px;
   }
 
+  /* The two decisions share a row at the same size; the details take the
+     row under them. */
   .ck__actions .ck__btn {
     flex: 1 1 0;
     min-width: 0;
   }
 
   .ck__actions .ck__more {
-    justify-content: center;
+    flex: 1 0 100%;
+    margin-left: 0;
   }
 
   .ck__overlay {
@@ -611,8 +800,17 @@
   .ck__dialog {
     width: 100%;
     max-height: 92vh;
+    max-height: 92svh;
     border-radius: 18px 18px 0 0;
-    animation-name: ck-rise;
+    box-shadow: var(--ck-sheet-shadow);
+  }
+
+  .ck__overlay[data-state="open"] .ck__dialog {
+    animation: ck-sheet-in 520ms var(--e-ease) both;
+  }
+
+  .ck__overlay[data-state="leaving"] .ck__dialog {
+    animation: ck-sheet-out 300ms var(--ck-exit) forwards;
   }
 
   .ck__dialog-head {
@@ -625,27 +823,45 @@
 
   .ck__dialog-foot {
     gap: 8px;
-    padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
   }
 
-  /* Save leads on its own row; the two blanket choices share the next one.
-     Three stacked buttons took 160px of a sheet whose job is the list above
-     them, and both of these are still 175px wide on a 390px phone. */
   .ck__dialog-foot .ck__btn {
     flex: 1 1 0;
     min-width: 0;
   }
+}
 
+/* Save leads on its own row where three buttons cannot share one; the two
+   blanket choices share the next. */
+@media (max-width: 559px) {
   .ck__dialog-foot .ck__btn--primary {
     flex: 1 1 100%;
   }
 }
 
-/* Very narrow phones: the pair of banner buttons is 140px wide at 320px, and
-   Reject optional broke to two lines there, leaving the two decisions at
-   different heights. The side padding goes rather than the label or the type. */
+/* The SE: the heading keeps one line beside a smaller glyph. */
+@media (max-width: 359px) {
+  .ck__banner .ck__glyph {
+    width: 32px;
+    height: 32px;
+  }
+
+  .ck__head {
+    gap: 10px;
+  }
+
+  .ck__banner-title {
+    font-size: 1.05rem;
+  }
+}
+
+/* Very narrow phones: a pair of buttons is 140px wide at 320px, and Reject
+   optional broke to two lines there, leaving the two decisions at different
+   heights. The side padding goes rather than the label or the type. */
 @media (max-width: 400px) {
-  .ck__actions .ck__btn {
+  .ck__actions .ck__btn,
+  .ck__dialog-foot .ck__btn {
     padding-inline: 8px;
     font-size: 0.9rem;
   }
@@ -659,27 +875,117 @@
   }
 
   .ck__cat {
-    padding: 12px 14px 10px;
+    padding: 12px 14px 0;
   }
 
   .ck__dialog-foot {
-    padding-block: 12px;
+    padding-block: 10px calc(10px + env(safe-area-inset-bottom));
+  }
+}
+
+/* A phone held sideways has no height for a stacked sheet or a corner card:
+   the banner is a bar across the width, the words take the left and the
+   decisions stack on the right. */
+@media (max-height: 520px) and (min-width: 721px) {
+  .ck__banner {
+    left: 16px;
+    right: 16px;
+    bottom: 12px;
+    width: auto;
+  }
+}
+
+@media (max-height: 520px) and (min-width: 654px) {
+  .ck__banner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 24px;
+    row-gap: 8px;
+    padding-block: 14px calc(10px + env(safe-area-inset-bottom));
+  }
+
+  .ck__banner .ck__head,
+  .ck__banner .ck__text {
+    grid-column: 1;
+  }
+
+  .ck__banner .ck__actions {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    width: 288px;
+    gap: 8px;
+  }
+
+  .ck__actions .ck__btn {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .ck__actions .ck__more {
+    flex: 1 0 100%;
+    margin-left: 0;
+  }
+
+  .ck__text--full {
+    display: none;
+  }
+
+  .ck__text--short {
+    display: block;
+  }
+}
+
+/* The SE held sideways is too narrow for a column of words beside the
+   decisions: the sentence runs the width and all three actions share the
+   row under it. */
+@media (max-height: 520px) and (min-width: 560px) and (max-width: 653px) {
+  .ck__banner {
+    gap: 10px;
+    padding-block: 12px calc(10px + env(safe-area-inset-bottom));
+  }
+
+  .ck__actions {
+    flex-wrap: nowrap;
+  }
+
+  .ck__actions .ck__btn {
+    flex: 1 1 auto;
+  }
+
+  .ck__actions .ck__more {
+    flex: none;
+    margin-left: 4px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .ck__banner,
-  .ck__dialog,
-  .ck__scrim {
+  .ck__banner[data-state],
+  .ck__banner > *,
+  .ck__overlay[data-state] :is(.ck__scrim, .ck__dialog, .ck__cat, .ck__note) {
     animation: none;
   }
 
   .ck__btn,
   .ck__more,
   .ck__close,
+  .ck__cat-summary,
+  .ck__cat-summary svg,
+  .ck__cat-more::details-content,
   .ck__switch-track,
-  .ck__switch-knob,
-  .ck__cat-more svg {
+  .ck__switch-knob {
     transition: none;
+  }
+
+  .ck__btn:active {
+    transform: none;
+  }
+}
+
+/* Reduced motion on a wide screen: the covered banner is simply not there. */
+@media (prefers-reduced-motion: reduce) and (min-width: 721px) {
+  .ck__banner[data-covered] {
+    visibility: hidden;
+    animation: none;
   }
 }

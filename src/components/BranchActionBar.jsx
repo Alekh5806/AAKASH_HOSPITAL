@@ -13,7 +13,9 @@ import { fillTemplate } from "../lib/servicesData";
  * sees the same button twice. Phones and small tablets only. */
 export default function BranchActionBar({ branch, anchorRef }) {
   const shouldReduceMotion = useReducedMotion();
-  const [shown, setShown] = useState(() => typeof IntersectionObserver === "undefined");
+  const [shown, setShown] = useState(
+    () => typeof window !== "undefined" && typeof IntersectionObserver === "undefined",
+  );
 
   useEffect(() => {
     const anchor = anchorRef?.current;

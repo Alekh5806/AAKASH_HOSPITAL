@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import {
+  startTransition,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, MessageCircle, Phone } from "lucide-react";
@@ -22,12 +30,14 @@ import {
   BRANCH_CHANGE_EVENT,
   buildWhatsApp,
   cleanTel,
+  getPrimaryBranch,
   getPrimaryPhone,
   getStoredBranch,
   storeBranch,
 } from "../lib/contact";
 import { branches } from "../lib/coreData";
 import { getBranchHours, getHoursRows } from "../lib/hours";
+import { useHydrated } from "../lib/hydration";
 import { fillTemplate, servicePage, services } from "../lib/servicesData";
 import { SendStep, WhatStep, WhenStep, WhereStep, WhoStep } from "./BookingSteps";
 
@@ -45,6 +55,69 @@ const RAIL_HIT_MS = 320;
 /* The slip sits beside the card wherever there is room for both. Below this
    the card takes the width and the slip becomes the last step's review. */
 const STACKED_QUERY = "(max-width: 1023px)";
+/* Header.jsx does not hide the header in the first 160px of the page. */
+const HEADER_HIDES_AFTER = 160;
+/* How far a revealed card sits from the header, or from the top of the
+   screen once the header has slid away. */
+const REVEAL_GAP = 20;
+
+/* The card arrives after the head, the rail draws itself across it, and the
+   first step's rows assemble a beat behind - in that order, from the page's
+   own start (`lead`). */
+const CARD = {
+  hidden: { opacity: 0, y: 22 },
+  shown: (lead) => ({ opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE, delay: lead } }),
+};
+const TRACK = {
+  hidden: { scaleX: 0 },
+  shown: (lead) => ({ scaleX: 1, transition: { duration: 0.7, ease: EASE, delay: lead } }),
+};
+const DOT = {
+  hidden: { opacity: 0, scale: 0.5, y: 6 },
+  shown: (lead) => ({
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 420, damping: 24, delay: lead },
+  }),
+};
+const LATE = {
+  hidden: { opacity: 0, y: 10 },
+  shown: (lead) => ({ opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE, delay: lead } }),
+};
+
+/* After a step change, the least scroll that puts the whole new step on
+   screen - never so far that the card's top goes under the header - and a
+   step taller than the screen opens on its top. The header slides away on a
+   scroll down past 160px, so a target past that is measured against the top
+   of the screen instead. The panel is measured as it mounts, while the frame
+   is still at the old step's height, so the foot's buttons are placed from
+   the frame's top plus the new panel's height - the buttons, not the card's
+   padding under them, which is not worth moving the page for. */
+function revealCard(card, frame, panelHeight, behavior) {
+  const header = document.querySelector(".hd");
+  const headerHeight = header ? header.getBoundingClientRect().height : 0;
+  const cardBox = card.getBoundingClientRect();
+  const frameBox = frame.getBoundingClientRect();
+  const foot = card.querySelector(".ap-foot");
+  const under = (foot ? foot.getBoundingClientRect() : cardBox).bottom - frameBox.bottom;
+  const top = cardBox.top + window.scrollY;
+  const bottom = frameBox.top + window.scrollY + panelHeight + under;
+  const aim = (inset) => {
+    const view = window.scrollY;
+    if (bottom - top > window.innerHeight - inset - REVEAL_GAP) return top - inset;
+    if (top - view < inset) return top - inset;
+    if (bottom - view > window.innerHeight - REVEAL_GAP) {
+      return bottom - window.innerHeight + REVEAL_GAP;
+    }
+    return view;
+  };
+  let target = aim(headerHeight + REVEAL_GAP);
+  if (target > window.scrollY && target > HEADER_HIDES_AFTER) target = aim(REVEAL_GAP);
+  target = Math.max(0, Math.round(target));
+  if (Math.abs(target - window.scrollY) < 12) return;
+  window.scrollTo({ top: target, behavior });
+}
 
 function subscribeToStacked(callback) {
   const query = window.matchMedia(STACKED_QUERY);
@@ -80,13 +153,15 @@ function findBranch(slug) {
  * answered, its summary. A step already visited can be reopened from it; a
  * step ahead cannot be skipped to. Continue validates only the fields of the
  * step it leaves, so an error is always shown beside the thing it is about.
+ * A new step takes the focus on its heading, which carries "Step 2 of 5" for
+ * a screen reader, and the page moves only as far as it needs to show it.
  *
  * The hospital is the header's hospital. It opens on the one stored for this
  * reader (or the one in the query, which the header has already adopted),
  * writes back through `storeBranch()` when changed here, and follows the
  * header if it moves - the number the slip is addressed to is always the one
  * at the top of the screen. */
-export default function BookingFlow() {
+export default function BookingFlow({ start = true, delay = 0 }) {
   const shouldReduceMotion = useReducedMotion();
   const [searchParams] = useSearchParams();
   const stacked = useSyncExternalStore(
@@ -96,7 +171,16 @@ export default function BookingFlow() {
   );
   const requestedBranch = searchParams.get("branch");
   const requestedService = searchParams.get("service");
-  const initialBranch = findBranch(requestedBranch) ?? getStoredBranch(branches.items);
+  /* The hospital the form opens on: the one the link names, or the reader's
+     own. The form only holds a hospital once one is named or chosen; until
+     then it shows this one, so the prerendered form can open on the head
+     office and move to the reader's hospital as React adopts the page, in
+     place - the form reads its first values once, and building it again
+     would paint the step a second time. */
+  const hydrated = useHydrated();
+  const openingBranch =
+    findBranch(requestedBranch) ??
+    (hydrated ? getStoredBranch(branches.items) : getPrimaryBranch(branches.items));
   const initialService = services.items.some((service) => service.id === requestedService)
     ? requestedService
     : "";
@@ -106,6 +190,7 @@ export default function BookingFlow() {
     control,
     trigger,
     setValue,
+    getValues,
     setFocus,
     getFieldState,
     reset,
@@ -117,7 +202,7 @@ export default function BookingFlow() {
     defaultValues: {
       name: searchParams.get("name") ?? "",
       phone: "",
-      branch: initialBranch.slug,
+      branch: findBranch(requestedBranch)?.slug ?? "",
       service: initialService,
       preferredDate: "",
       daypart: "",
@@ -140,22 +225,28 @@ export default function BookingFlow() {
   const [direction, setDirection] = useState(1);
   const [furthest, setFurthest] = useState(0);
   const [sent, setSent] = useState(false);
+  /* The first step arrives with the card; every later one slides in the
+     direction the reader is moving. */
+  const [moved, setMoved] = useState(false);
   const [serviceError, setServiceError] = useState("");
   const cardRef = useRef(null);
   const frameRef = useRef(null);
   const observerRef = useRef(null);
+  const revealRef = useRef(false);
   const dotRefs = useRef({});
   const hitTimer = useRef(0);
 
-  const branch = findBranch(values.branch) ?? initialBranch;
+  const branch = findBranch(values.branch) ?? openingBranch;
+  /* What the reader has answered, with the hospital they are shown. */
+  const answers = useMemo(() => ({ ...values, branch: branch.slug }), [values, branch.slug]);
   /* The day rail is the chosen hospital's: its own closed days are skipped and
      today drops out at its own closing time, so the rail is rebuilt when the
      hospital changes. */
   const days = useMemo(() => getOpenDays(branch), [branch]);
   const service = services.items.find((item) => item.id === values.service);
   const stepId = STEP_IDS[step];
-  const ready = appointmentSchema.safeParse(values).success;
-  const complete = STEP_IDS.map((id) => isStepComplete(id, values));
+  const ready = appointmentSchema.safeParse(answers).success;
+  const complete = STEP_IDS.map((id) => isStepComplete(id, answers));
 
   /* Follow the header while the reader is still on the page. */
   useEffect(() => {
@@ -166,9 +257,12 @@ export default function BookingFlow() {
     return () => window.removeEventListener(BRANCH_CHANGE_EVENT, follow);
   }, [setValue]);
 
+  /* The header and the footer follow as a transition, so the chip the reader
+     tapped moves first and the rest of the page catches up a frame later
+     rather than holding the tap - the contact page's switchboard device. */
   const chooseBranch = (slug) => {
     setValue("branch", slug, { shouldValidate: true });
-    storeBranch(slug);
+    startTransition(() => storeBranch(slug));
   };
 
   const chooseService = (id) => {
@@ -176,14 +270,17 @@ export default function BookingFlow() {
     setServiceError("");
   };
 
-  /* Moving between steps. A step further down the page than the top of the
-     card scrolls the card back under the header, so the reader never lands
-     halfway down a new step. */
+  /* Moving between steps. The new panel reveals itself and takes the focus
+     as it mounts (`measurePanel`), so the reader never lands halfway down a
+     new step and a keyboard never drops to the top of the page. */
   const go = useCallback(
     (next) => {
-      setDirection(next >= step ? 1 : -1);
+      if (next === step) return;
+      setDirection(next > step ? 1 : -1);
       setStep(next);
       setFurthest((current) => Math.max(current, next));
+      setMoved(true);
+      revealRef.current = true;
       /* Moving forward, the fill runs along the track and the dot it reaches
          takes a one-shot ring - progress is seen to arrive, not to switch. */
       window.clearTimeout(hitTimer.current);
@@ -196,12 +293,6 @@ export default function BookingFlow() {
           dot.classList.add("is-hit");
         }, RAIL_HIT_MS);
       }
-      const card = cardRef.current;
-      if (!card) return;
-      const top = card.getBoundingClientRect().top;
-      if (top < 0) {
-        card.scrollIntoView({ block: "start", behavior: shouldReduceMotion ? "auto" : "smooth" });
-      }
     },
     [step, shouldReduceMotion],
   );
@@ -211,6 +302,7 @@ export default function BookingFlow() {
      under the chips instead. */
   const validateStep = async (index) => {
     const id = STEP_IDS[index];
+    if (!getValues("branch")) setValue("branch", branch.slug);
     const ok = await trigger(STEP_FIELDS[id]);
     if (ok) return true;
     if (id === "what") setServiceError(appointmentPage.fields.service.error);
@@ -239,6 +331,7 @@ export default function BookingFlow() {
       validateStep(missing === -1 ? 0 : missing);
       return;
     }
+    revealRef.current = true;
     setSent(true);
   };
 
@@ -252,6 +345,7 @@ export default function BookingFlow() {
       daypart: "",
       message: "",
     });
+    revealRef.current = true;
     setSent(false);
     setFurthest(0);
     setDirection(-1);
@@ -263,19 +357,33 @@ export default function BookingFlow() {
      straight to the DOM from a callback ref, not an effect keyed on the step:
      AnimatePresence holds the outgoing panel until its exit finishes, so an
      effect would measure the panel that is leaving and then read zero when it
-     detached. */
-  const measurePanel = useCallback((node) => {
-    observerRef.current?.disconnect();
-    observerRef.current = null;
-    if (!node) return;
-    const apply = () => {
-      if (frameRef.current) frameRef.current.style.height = `${node.offsetHeight}px`;
-    };
-    apply();
-    if (typeof ResizeObserver === "undefined") return;
-    observerRef.current = new ResizeObserver(apply);
-    observerRef.current.observe(node);
-  }, []);
+     detached. A panel the reader moved to - not the one the page opened
+     on - also takes the focus on its heading and is brought on screen. */
+  const measurePanel = useCallback(
+    (node) => {
+      observerRef.current?.disconnect();
+      observerRef.current = null;
+      if (!node) return;
+      const apply = () => {
+        if (frameRef.current) frameRef.current.style.height = `${node.offsetHeight}px`;
+      };
+      if (revealRef.current && cardRef.current && frameRef.current) {
+        revealRef.current = false;
+        node.querySelector(".ap-step__title")?.focus({ preventScroll: true });
+        revealCard(
+          cardRef.current,
+          frameRef.current,
+          node.offsetHeight,
+          shouldReduceMotion ? "auto" : "smooth",
+        );
+      }
+      apply();
+      if (typeof ResizeObserver === "undefined") return;
+      observerRef.current = new ResizeObserver(apply);
+      observerRef.current.observe(node);
+    },
+    [shouldReduceMotion],
+  );
 
   useEffect(
     () => () => {
@@ -285,17 +393,28 @@ export default function BookingFlow() {
     [],
   );
 
+  /* `custom` is the direction of travel (0 for the step the page opens on,
+     which rises with the card rather than sliding) and a lead that holds
+     that first step's rows until the card has arrived. */
   const panelVariants = {
-    enter: (dir) => (shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: dir * 28 }),
-    center: {
+    enter: ({ dir }) => (shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: dir * 28 }),
+    center: ({ lead }) => ({
       opacity: 1,
       x: 0,
       transition: shouldReduceMotion
         ? { duration: 0 }
-        : { duration: 0.32, ease: EASE, staggerChildren: 0.06, delayChildren: 0.04 },
-    },
-    exit: (dir) => (shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: dir * -28 }),
+        : {
+            duration: 0.32,
+            ease: EASE,
+            delay: lead,
+            staggerChildren: 0.06,
+            delayChildren: lead + 0.04,
+          },
+    }),
+    exit: ({ dir }) => (shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: dir * -28 }),
   };
+  const panelCustom = moved ? { dir: direction, lead: 0 } : { dir: 0, lead: delay + 0.5 };
+  const stage = start ? "shown" : "hidden";
 
   /* What the slip shows, described in the same words the message uses. The
      two optional lines stay blank until the reader has passed the step that
@@ -316,7 +435,7 @@ export default function BookingFlow() {
     ? buildWhatsApp(
         branch,
         buildAppointmentMessage(
-          { ...values, name: values.name ?? "", message: values.message ?? "" },
+          { ...answers, name: values.name ?? "", message: values.message ?? "" },
           branch,
           service,
         ),
@@ -327,6 +446,7 @@ export default function BookingFlow() {
   const slipProps = { branch, rows, ready, sent, activeLine };
   const opdPhone = getPrimaryPhone(branch);
   const still = Boolean(shouldReduceMotion);
+  const stepOf = fillTemplate(stepOfLabel, { step: step + 1, total: STEP_IDS.length });
 
   return (
     <>
@@ -339,21 +459,17 @@ export default function BookingFlow() {
             event.preventDefault();
             next();
           }}
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 22 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={
-            shouldReduceMotion ? { duration: 0 } : { duration: 0.7, ease: EASE, delay: 0.2 }
-          }
+          initial={still ? false : "hidden"}
+          animate={stage}
+          variants={CARD}
+          custom={delay + 0.25}
         >
           <ol className="ap-rail" aria-label={appointmentPage.label}>
             <motion.span
               className="ap-rail__track"
               aria-hidden="true"
-              initial={shouldReduceMotion ? false : { scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={
-                shouldReduceMotion ? { duration: 0 } : { duration: 0.7, ease: EASE, delay: 0.45 }
-              }
+              variants={TRACK}
+              custom={delay + 0.5}
             >
               <motion.span
                 className="ap-rail__fill"
@@ -380,13 +496,8 @@ export default function BookingFlow() {
                   key={id}
                   data-on={index === step && !sent ? "true" : undefined}
                   data-done={done ? "true" : undefined}
-                  initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.5, y: 6 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={
-                    shouldReduceMotion
-                      ? { duration: 0 }
-                      : { type: "spring", stiffness: 420, damping: 24, delay: 0.42 + index * 0.08 }
-                  }
+                  variants={DOT}
+                  custom={delay + 0.47 + index * 0.08}
                 >
                   <button
                     type="button"
@@ -411,22 +522,17 @@ export default function BookingFlow() {
               );
             })}
           </ol>
-          <p className="sr-only" aria-live="polite">
-            {sent
-              ? after.title
-              : `${fillTemplate(stepOfLabel, { step: step + 1, total: STEP_IDS.length })}: ${steps[stepId].title}`}
-          </p>
 
           <div className="ap-card__frame" ref={frameRef}>
-            <AnimatePresence mode="wait" custom={direction} initial={false}>
+            <AnimatePresence mode="wait" custom={panelCustom} initial={!still}>
               <motion.div
                 className="ap-step"
                 key={sent ? "done" : stepId}
                 ref={measurePanel}
-                custom={direction}
+                custom={panelCustom}
                 variants={panelVariants}
                 initial="enter"
-                animate="center"
+                animate={start ? "center" : "enter"}
                 exit="exit"
                 transition={{ duration: shouldReduceMotion ? 0 : 0.32, ease: EASE }}
               >
@@ -435,6 +541,7 @@ export default function BookingFlow() {
                     branch={branch}
                     waHref={waHref}
                     onEdit={() => {
+                      revealRef.current = true;
                       setSent(false);
                       setDirection(-1);
                     }}
@@ -448,14 +555,17 @@ export default function BookingFlow() {
                     register={field}
                     errors={errors}
                     phoneValue={values.phone ?? ""}
+                    phoneValid={phone.valid}
+                    stepOf={stepOf}
                     still={still}
                   />
                 ) : null}
                 {!sent && stepId === "where" ? (
                   <WhereStep
                     items={branches.items}
-                    value={values.branch}
+                    value={branch.slug}
                     onChange={chooseBranch}
+                    stepOf={stepOf}
                     still={still}
                   />
                 ) : null}
@@ -465,6 +575,7 @@ export default function BookingFlow() {
                     value={values.service}
                     onChange={chooseService}
                     error={serviceError}
+                    stepOf={stepOf}
                     still={still}
                   />
                 ) : null}
@@ -477,6 +588,7 @@ export default function BookingFlow() {
                     daypart={values.daypart ?? ""}
                     onDaypart={(id) => setValue("daypart", id)}
                     error={errors.preferredDate?.message}
+                    stepOf={stepOf}
                     still={still}
                   />
                 ) : null}
@@ -485,6 +597,7 @@ export default function BookingFlow() {
                     register={field}
                     errors={errors}
                     messageValue={values.message ?? ""}
+                    stepOf={stepOf}
                     still={still}
                   >
                     {stacked ? <BookingSlip {...slipProps} compact /> : null}
@@ -512,6 +625,7 @@ export default function BookingFlow() {
                 <motion.button
                   type="submit"
                   className="e-btn ap-foot__next"
+                  data-ready={complete[step] ? "true" : undefined}
                   whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
                 >
                   <span>{nav.continueLabel}</span>
@@ -538,22 +652,22 @@ export default function BookingFlow() {
         {!stacked ? (
           <motion.div
             className="ap-aside"
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={
-              shouldReduceMotion ? { duration: 0 } : { duration: 0.7, ease: EASE, delay: 0.32 }
-            }
+            initial={still ? false : "hidden"}
+            animate={stage}
+            variants={CARD}
+            custom={delay + 0.4}
           >
-            <BookingSlip {...slipProps} />
+            <BookingSlip {...slipProps} printed={start} lead={delay + 0.6} />
           </motion.div>
         ) : null}
       </div>
 
       <motion.p
         className="ap-call"
-        initial={shouldReduceMotion ? false : { opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.5, delay: 0.5 }}
+        initial={still ? false : "hidden"}
+        animate={stage}
+        variants={LATE}
+        custom={delay + 1.1}
       >
         <a className="e-link" href={`tel:${cleanTel(opdPhone)}`}>
           <Phone size={15} aria-hidden="true" />
@@ -580,7 +694,9 @@ function DonePanel({ branch, waHref, onEdit, onAgain, still, slip }) {
       >
         <Check size={26} strokeWidth={3} />
       </motion.span>
-      <h2 className="ap-step__title">{after.title}</h2>
+      <h2 className="ap-step__title" tabIndex={-1}>
+        {after.title}
+      </h2>
       <p className="ap-step__lede">{fillTemplate(after.lede, { branch: branch.name })}</p>
       <dl className="ap-done__hours">
         <dt className="e-label">{after.hoursLabel}</dt>

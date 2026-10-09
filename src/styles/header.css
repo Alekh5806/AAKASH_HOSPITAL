@@ -26,9 +26,20 @@
   --hd-cap-h: 68px;
   --hd-cap-gap: 10px;
   --hd-height: calc(var(--hd-cap-h) + var(--hd-cap-gap) * 2);
+  /* The header's slide off and back on. The bars that pin under it (the
+     doctors filter rail, the hospitals map) move their `top` on this same
+     timing, so the two travel as one piece: with no transition the rail
+     dropped 72px in one frame and left the page showing under the header as
+     it slid back, and at 160ms the map ran 27px ahead of it. */
+  --hd-slide: 300ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-.hd {
+/* The strip is the header's sibling, not its child - it has to scroll away
+   while the header sticks - so it declares the same tokens. Without them the
+   strip's hospital picker inherited the strip's white text: its title and its
+   `View all hospitals` link were white on the white panel, with no border. */
+.hd,
+.hd__strip {
   --hd-navy: var(--e-navy);
   --hd-blue: var(--e-navy-2);
   --hd-rule: rgba(12, 44, 73, 0.12);
@@ -39,7 +50,9 @@
   --hd-emergency: var(--color-danger);
   --hd-emergency-soft: #fbeeed;
   --hd-ease: cubic-bezier(0.32, 0.72, 0, 1);
+}
 
+.hd {
   position: sticky;
   top: 0;
   z-index: 60;
@@ -51,7 +64,7 @@
   /* The box is air around the capsule; only the capsule and the drawer take
      the pointer, so the film under the gaps is never covered by a dead box. */
   pointer-events: none;
-  transition: transform 300ms var(--hd-ease);
+  transition: transform var(--hd-slide);
 }
 
 /* On the home page the hero runs up under the header, so the film is what the
@@ -76,8 +89,12 @@
   transform: none;
 }
 
+/* The menu sheet is position: fixed inside this box, and a transform on the
+   box would make the box its containing block - so while the sheet is shown
+   the header snaps to no transform rather than sliding there. */
 .hd--drawer-open {
   z-index: 200;
+  transition: none;
 }
 
 /* ---------- the capsule ---------- */
@@ -120,6 +137,16 @@
 .hd--scrolled .hd__cap {
   border-color: var(--hd-rule);
   box-shadow: 0 10px 30px -18px rgba(12, 44, 73, 0.35);
+}
+
+/* The site's magenta focus ring measured 2.05:1 against the film glass and
+   about 2.9:1 on the navy strip, under the 3:1 a focus indicator needs; the
+   hero's controls take the headline's cream for the same reason. Named
+   controls only - the white dropdown panels hang inside the capsule and the
+   strip, and a cream ring would vanish on them. */
+.hd[data-tone="film"] :is(.hd__brand, .hd__nav-link, .hd__nav-trigger, .hd__cta, .hd__iconbtn):focus-visible,
+:is(.hd__strip-item, .hd__pop-toggle):focus-visible {
+  outline-color: #fbf7ef;
 }
 
 .hd[data-tone="film"] .hd__cap {
@@ -173,9 +200,10 @@
   align-items: center;
   justify-self: center;
   /* The links' own 10px padding is the spacing, so the hover plates sit 2px
-     apart. That is what keeps the row narrow enough to stay truly centred with
-     the logo on one side and the actions on the other: measured, each side
-     column needs 317px at 1440 and the row leaves 339. */
+     apart. Five links keep the row narrow enough to stay truly centred with
+     the logo on one side and the actions on the other at every desktop width:
+     measured, the pill sits 105px clear of the last link on the film at
+     1180px and 183px clear from 1366px. */
   gap: 2px;
   height: 100%;
 }
@@ -234,11 +262,22 @@
     background-color 200ms ease;
 }
 
-.hd__nav-link:hover,
-.hd__nav-trigger:hover,
+/* A tablet held sideways gets this row under a finger, and a tap leaves
+   :hover on the link it opened - the header outlives the route, so the plate
+   stayed on `Doctors` for the whole of the doctors page. The plate is for a
+   real pointer; a finger gets it while it is down. */
+.hd__nav-link:active,
 .hd__nav-trigger[aria-expanded="true"] {
   background: rgba(12, 44, 73, 0.06);
   color: var(--hd-navy);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hd__nav-link:hover,
+  .hd__nav-trigger:hover {
+    background: rgba(12, 44, 73, 0.06);
+    color: var(--hd-navy);
+  }
 }
 
 .hd__nav-link--active {
@@ -251,11 +290,18 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
-.hd[data-tone="film"] .hd__nav-link:hover,
-.hd[data-tone="film"] .hd__nav-trigger:hover,
+.hd[data-tone="film"] .hd__nav-link:active,
 .hd[data-tone="film"] .hd__nav-trigger[aria-expanded="true"] {
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hd[data-tone="film"] .hd__nav-link:hover,
+  .hd[data-tone="film"] .hd__nav-trigger:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
 }
 
 .hd[data-tone="film"] .hd__nav-link--active {
@@ -282,9 +328,16 @@
 }
 
 /* The one pill. The site's buttons are 3-4px rectangles; this is the second
-   deliberate exception after the hero's phone CTA, because the header is built
-   to the reference and the reference's action is a pill: filled navy on paper,
-   a light pill on the film - the reference's cream-on-film. */
+   deliberate exception after the hero's CTA, because the header is built to
+   the reference and the reference's action is a pill.
+
+   It is drawn in the hero's own two colours and nothing else: on the film it
+   is the headline's cream (#fbf7ef) with navy type, the same object as the
+   hero's own button below it; on paper it is the site's navy with cream type.
+   The two tones are one transition, so crossing the bottom of the film turns
+   the pill over with the capsule rather than swapping it. A magenta build
+   was tried and sent back - the saturated fill jumped out of a calm hero and
+   read as an advert rather than part of the page. */
 .hd__cta {
   display: inline-flex;
   align-items: center;
@@ -293,22 +346,34 @@
   min-height: 48px;
   border-radius: 999px;
   background: var(--hd-navy);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 8px 20px -12px rgba(12, 44, 73, 0.6);
   padding: 0 22px;
-  color: #fff;
+  color: #fbf7ef;
   font-family: var(--e-sans);
   font-size: 0.95rem;
   font-weight: 600;
   white-space: nowrap;
   transition:
-    background-color 300ms ease,
-    color 300ms ease,
-    box-shadow 200ms ease,
-    transform 200ms var(--hd-ease);
+    background-color 360ms ease,
+    color 360ms ease,
+    box-shadow 240ms ease,
+    transform 240ms var(--hd-ease);
 }
 
-.hd__cta:hover {
-  background: var(--e-ink);
-  box-shadow: 0 8px 20px -8px rgba(12, 44, 73, 0.5);
+.hd__cta svg {
+  flex: 0 0 auto;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hd__cta:hover {
+    background: var(--hd-blue);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 12px 26px -12px rgba(12, 44, 73, 0.7);
+    transform: translateY(-1px);
+  }
 }
 
 .hd__cta:active {
@@ -316,23 +381,27 @@
 }
 
 .hd[data-tone="film"] .hd__cap .hd__cta {
-  background: #fff;
+  background: #fbf7ef;
+  box-shadow:
+    inset 0 -1px 0 rgba(12, 44, 73, 0.08),
+    0 8px 22px -10px rgba(0, 0, 0, 0.5);
   color: var(--hd-navy);
 }
 
-.hd[data-tone="film"] .hd__cap .hd__cta:hover {
-  background: #f1efe9;
-  box-shadow: 0 8px 22px -8px rgba(0, 0, 0, 0.45);
+@media (hover: hover) and (pointer: fine) {
+  .hd[data-tone="film"] .hd__cap .hd__cta:hover {
+    background: #fff;
+  }
 }
 
 .hd__mobile-actions {
   display: none;
 }
 
-/* The menu and close buttons are a bare glyph, as the reference's are: three
-   navy bars at 14:1 identify the control on their own, so the box that used
-   to frame them was a second boundary saying the same thing. A soft plate on
-   hover, and 44px either way. */
+/* The menu button is a bare glyph, as the reference's is: three navy bars at
+   14:1 identify the control on their own, so the box that used to frame them
+   was a second boundary saying the same thing. A soft plate on hover, and
+   44px either way. */
 .hd__iconbtn {
   display: inline-grid;
   width: 44px;
@@ -343,48 +412,36 @@
   background: transparent;
   color: var(--hd-navy);
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition:
     background-color 300ms ease,
     border-color 300ms ease,
     color 300ms ease;
 }
 
-.hd__iconbtn:hover {
+/* A touch leaves :hover on whatever it tapped, so the hover plate is for a
+   real pointer only - otherwise the button that opened the menu wore a plate
+   after the menu had closed. A finger gets the plate while it is down. */
+.hd__iconbtn:active {
   background: var(--color-brand-blue-soft);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hd__iconbtn:hover {
+    background: var(--color-brand-blue-soft);
+  }
+
+  .hd[data-tone="film"] .hd__cap .hd__iconbtn:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
 }
 
 .hd[data-tone="film"] .hd__cap .hd__iconbtn {
   color: #fff;
 }
 
-.hd[data-tone="film"] .hd__cap .hd__iconbtn:hover {
-  background: rgba(255, 255, 255, 0.12);
-}
-
-/* The emergency call in the drawer's head: a tinted red pill with a red edge
-   that keeps its word. The capsule itself carries only the booking. */
-.hd__urgent {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  min-height: 44px;
-  border: 1px solid var(--hd-emergency);
-  border-radius: 999px;
-  background: var(--hd-emergency-soft);
-  padding: 0 14px;
-  color: var(--hd-emergency);
-  font-family: var(--e-sans);
-  font-size: 0.9rem;
-  font-weight: 600;
-  white-space: nowrap;
-  touch-action: manipulation;
-  transition:
-    background-color 300ms ease,
-    border-color 300ms ease;
-}
-
-.hd__urgent svg {
-  flex: 0 0 auto;
+.hd[data-tone="film"] .hd__cap .hd__iconbtn:active {
+  background: rgba(255, 255, 255, 0.16);
 }
 
 /* The phone's pill is compact - 38px drawn, 44px to the finger through an
@@ -398,9 +455,6 @@
   min-height: 38px;
   padding: 0 14px 0 12px;
   font-size: 0.88rem;
-  transition:
-    background-color 300ms ease,
-    color 300ms ease;
 }
 
 .hd__mobile-cta::after {
@@ -470,9 +524,11 @@
   letter-spacing: 0.01em;
 }
 
-.hd__strip-item:hover strong {
-  text-decoration: underline;
-  text-underline-offset: 3px;
+@media (hover: hover) and (pointer: fine) {
+  .hd__strip-item:hover strong {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
 }
 
 /* A red dot, not a red glyph: the reference's strip is one quiet line, and a
@@ -524,9 +580,14 @@
     color 180ms ease;
 }
 
-.hd__pop-toggle:hover,
 .hd__pop-toggle[aria-expanded="true"] {
   background: rgba(255, 255, 255, 0.1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hd__pop-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
 }
 
 .hd__pop-label {
@@ -734,11 +795,14 @@
   }
 }
 
+/* A <p>, so it resets global.css's paragraph margin, which had opened 16px
+   of empty panel between this label and the first row. */
 .hd__mega-head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 10px;
+  margin: 0;
   padding: 6px 12px 8px;
 }
 
@@ -854,470 +918,1174 @@
   text-transform: uppercase;
 }
 
-/* ---------- mobile drawer ----------
+/* ---------- the menu glyph ----------
 
-   The drawer leads with navigation and keeps the actions pinned in the thumb
-   zone at the bottom, which is the opposite of the order it had. Before, a
-   full-width CTA, two ghost buttons and a four-line address block sat above
-   the links, so on a 390x844 phone the reader saw three of the seven routes
-   and had to scroll a navigation menu to reach Gallery or Contact.
+   Three bars drawn in CSS. The menu button in the capsule and the close
+   button in the sheet are the same glyph in the same place: opening the menu
+   turns the bars into a cross, closing turns them back, so the reader sees
+   one control change state rather than one button vanish and another appear
+   beside a grey plate. */
+.hd__glyph {
+  position: relative;
+  display: block;
+  width: 18px;
+  height: 14px;
+}
 
-   The branch block is now the only place the drawer names a hospital. The
-   address panel and the separate "Our Hospitals" accordion below it said the
-   same thing twice; the accordion is folded into this block, and the nav row
-   of the same name is an ordinary link to /branches like every other row.
+.hd__glyph span {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+}
 
-   Rows carry no chevron. Seven identical arrows pointing at seven links tell
-   the reader nothing - the same reason the desktop hospitals menu dropped its
-   six MapPin tiles. The magenta inset bar still means "the page you are on".
+.hd__glyph span:nth-child(1) {
+  top: 0;
+}
 
-   The head mirrors the header's brand row - logo, emergency line, and the
-   close button in the menu button's slot - so the sheet opens in place over
-   the row it came from. That is also what took the emergency line out of the
-   foot: three tiers there were 193px, a third of a 568px screen, and on the
-   short phones still common here the reader saw three of eight routes before
-   the actions. Two tiers are 145px.
-*/
+.hd__glyph span:nth-child(2) {
+  top: 6px;
+}
 
+.hd__glyph span:nth-child(3) {
+  top: 12px;
+}
+
+/* In two steps, the way a physical switch moves: the outer bars close onto
+   the middle one, then the pair turns into a cross - and the reverse on the
+   way out. Translating and rotating at once passes through a `>` on the way,
+   which read as an arrow for a few frames. */
+.hd__drawer[data-state="open"] .hd__glyph span:nth-child(1) {
+  animation: hd-bar-top 380ms var(--hd-ease) both;
+}
+
+.hd__drawer[data-state="open"] .hd__glyph span:nth-child(2) {
+  animation: hd-bar-mid 380ms linear both;
+}
+
+.hd__drawer[data-state="open"] .hd__glyph span:nth-child(3) {
+  animation: hd-bar-bottom 380ms var(--hd-ease) both;
+}
+
+.hd__drawer[data-state="closing"] .hd__glyph span:nth-child(1) {
+  animation: hd-bar-top 340ms cubic-bezier(0.45, 0, 0.55, 1) reverse both;
+}
+
+.hd__drawer[data-state="closing"] .hd__glyph span:nth-child(2) {
+  animation: hd-bar-mid 340ms linear reverse both;
+}
+
+.hd__drawer[data-state="closing"] .hd__glyph span:nth-child(3) {
+  animation: hd-bar-bottom 340ms cubic-bezier(0.45, 0, 0.55, 1) reverse both;
+}
+
+@keyframes hd-bar-top {
+  0% {
+    transform: none;
+  }
+
+  35% {
+    transform: translateY(6px);
+  }
+
+  100% {
+    transform: translateY(6px) rotate(45deg) scaleX(1.1);
+  }
+}
+
+@keyframes hd-bar-bottom {
+  0% {
+    transform: none;
+  }
+
+  35% {
+    transform: translateY(-6px);
+  }
+
+  100% {
+    transform: translateY(-6px) rotate(-45deg) scaleX(1.1);
+  }
+}
+
+@keyframes hd-bar-mid {
+  0%,
+  28% {
+    opacity: 1;
+  }
+
+  35%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ---------- the phone menu ----------
+
+   A full-screen sheet, after the reference the hospital supplied: the places
+   a patient goes to set large, the rest small under them, and a dock at the
+   foot holding the chosen hospital and the booking. Head, links and dock are
+   three bands on one paper, split by two matching hairlines - no card inside
+   the sheet, because every box inside a sheet is one more surface to read.
+
+   It is always mounted and hidden (`visibility`, `inert`), so opening it is
+   one attribute change. The first build mounted it on open and revealed it
+   with an animated `clip-path`; both run on the main thread, so on a phone the
+   mount stalled the first frames and the circle jumped, and a route loading
+   under a closing menu froze it mid-shut - "it stops and then comes back".
+   Everything that moves now is a transform or an opacity, which the
+   compositor runs on its own:
+
+   - the bloom, a circle of paper sized to the farthest corner of the screen,
+     scales up from the menu button on the header's ease-out and back down
+     into the close button, casting a soft shadow onto the page as it goes -
+     paper sliding over paper, where a magenta rim used to cut an arc through
+     the page and showed as a dotted ring at the button on its first frame;
+   - each piece of content fades up as the bloom's edge reaches it. The delays
+     are measured in Header.jsx (`stageReveal`) for the screen in hand and
+     arrive as `--hd-at`, so the content moves with the circle instead of
+     waiting for it;
+   - the menu glyph turns into a cross in place (above);
+   - the hospital picker rises from the foot as its own sheet over a dimmed
+     menu, and the menu under it never moves.
+
+   `pointer-events: auto` on the visible states is load-bearing. `.hd` is
+   `none` so the air around the film capsule never covers the hero, and the
+   property inherits: without it every tap on the sheet fell through. */
 .hd__drawer {
+  --hd-or: hypot(100vw, 100vh);
+  --hd-plate: var(--e-paper-2);
+  --hd-bloom-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --hd-shut-ease: cubic-bezier(0.3, 0.6, 0.2, 1);
+
   position: fixed;
   inset: 0;
   z-index: 210;
-  display: flex;
-  justify-content: flex-end;
-  background: rgba(12, 44, 73, 0.55);
-  animation: hd-fade 180ms ease-out;
+  visibility: hidden;
+  pointer-events: none;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* The sheet stops short of the left edge so the dimmed page stays visible
-   behind it: a full-bleed white panel reads as a page, not as a layer. */
-.hd__drawer-panel {
-  display: flex;
-  width: min(400px, 92%);
-  height: 100%;
-  flex-direction: column;
-  overflow: hidden;
-  background: var(--color-surface);
-  box-shadow: -22px 0 54px rgba(12, 44, 73, 0.26);
-  animation: hd-slide 260ms var(--e-ease);
+.hd__drawer[data-state="open"],
+.hd__drawer[data-state="closing"] {
+  visibility: visible;
+  pointer-events: auto;
 }
 
-@keyframes hd-fade {
+/* ---------- the bloom ---------- */
+
+.hd__bloom {
+  --hd-bloom-r: var(--hd-or);
+
+  position: absolute;
+  top: calc(var(--hd-height) / 2 - var(--hd-bloom-r));
+  left: calc(100% - 38px - var(--hd-bloom-r));
+  width: calc(var(--hd-bloom-r) * 2);
+  height: calc(var(--hd-bloom-r) * 2);
+  border-radius: 50%;
+  background: var(--e-paper);
+  box-shadow:
+    0 0 0 1px rgba(12, 44, 73, 0.05),
+    0 0 44px rgba(12, 44, 73, 0.16);
+  transform: scale(0);
+}
+
+/* The duration and the curve are mirrored in Header.jsx (BLOOM_MS,
+   BLOOM_EASE); change them together. */
+.hd__drawer[data-state="open"] .hd__bloom {
+  transform: none;
+  animation: hd-bloom-open 520ms var(--hd-bloom-ease);
+  will-change: transform;
+}
+
+/* Shutting, the content fades first and the circle starts to close 90ms in,
+   as the last of it goes, so nothing is left standing on the page outside the
+   circle. It leaves at speed and slows into the button - a slow start held
+   an all-white frame between the fade and the page coming back. */
+.hd__drawer[data-state="closing"] .hd__bloom {
+  animation: hd-bloom-shut 420ms var(--hd-shut-ease) 90ms both;
+  will-change: transform;
+}
+
+@keyframes hd-bloom-open {
   from {
+    transform: scale(0.001);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+/* The last of the circle fades as it lands, so on the film it does not
+   linger as a white dot round the glyph. */
+@keyframes hd-bloom-shut {
+  from {
+    transform: scale(1);
+  }
+
+  70% {
+    opacity: 1;
+  }
+
+  to {
     opacity: 0;
+    transform: scale(0.001);
   }
 }
 
-@keyframes hd-slide {
+/* ---------- the sheet ---------- */
+
+.hd__sheet {
+  position: absolute;
+  inset: 0;
+}
+
+/* Once the bloom has landed the sheet carries its own paper, so a phone turned
+   with the menu open is covered whatever the circle was sized for. It drops
+   the paper the moment the menu starts to shut, so the circle shows. */
+.hd__drawer[data-state="open"] .hd__sheet {
+  animation: hd-ground 1ms linear 520ms both;
+}
+
+@keyframes hd-ground {
   from {
-    transform: translateX(100%);
+    background-color: transparent;
+  }
+
+  to {
+    background-color: var(--e-paper);
   }
 }
 
-@keyframes hd-rise {
-  from {
-    opacity: 0;
-    transform: translateY(9px);
-  }
-}
-
-.hd__drawer-panel:focus {
+.hd__sheet:focus {
   outline: none;
 }
 
-/* Exactly the header's height, with the capsule's right edge, so the close
-   button lands on the menu button's slot in both tones: the film capsule is
-   inset 12px with 4px of end padding and the paper band pads 16px, and both
-   put the button's right edge 16px in and its centre half the header down. */
-.hd__drawer-head {
+.hd__drawer[data-state="open"] [data-reveal] {
+  animation: hd-reveal 440ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: var(--hd-at, 0ms);
+}
+
+/* The head's objects and the two hairlines arrive without rising: something
+   in the header's own row that slides reads as the header moving. On paper
+   the sheet's logo lies exactly on the header's own, so it does not animate
+   at all - in or out - and the mark never blinks while the circle passes. */
+.hd__drawer[data-state="open"] :is(.hd__sheet-head img, .hd__sheet-urgent, .hd__sheet-rule) {
+  animation-name: hd-fade-in;
+}
+
+.hd[data-tone="paper"] .hd__drawer[data-state="open"] .hd__sheet-head img {
+  animation: none;
+}
+
+/* Shutting, the content fades before the circle starts to close on it. The
+   cross is not in this list: it turns back into the menu glyph in place. */
+.hd__drawer[data-state="closing"] :is(
+    .hd__sheet-rule,
+    .hd__sheet-urgent,
+    .hd__sheet-body,
+    .hd__sheet-dock,
+    .hd__picker,
+    .hd__picker-scrim
+  ),
+.hd[data-tone="film"] .hd__drawer[data-state="closing"] .hd__sheet-head img {
+  animation: hd-sheet-out 120ms ease-out both;
+}
+
+@keyframes hd-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes hd-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes hd-sheet-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes hd-beacon {
+  from {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(2.8);
+  }
+}
+
+@keyframes hd-pending {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.hd__sheet-main {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- head ---------- */
+
+/* The header's own row at the header's own height, padded like the paper
+   band, so the close button's rect is the menu button's in both tones and
+   the emergency pill sits where the booking pill was. */
+.hd__sheet-head {
+  position: relative;
   display: flex;
   flex: 0 0 auto;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   height: var(--hd-height);
-  border-bottom: 1px solid var(--hd-rule-soft);
-  padding: 0 16px;
+  /* The paper band carries a 1px bottom border inside the same box, so its
+     row is centred half a pixel higher; matching it lets the logo, the pill
+     and the glyph land on the header's own to the pixel. */
+  padding: 0 16px 1px;
 }
 
-.hd__drawer-head img {
-  width: clamp(140px, 15vw, 168px);
+/* One hairline under the head and its twin over the dock: the links sit
+   between two rules, which is what lets the space under a short list read as
+   room rather than as a gap. */
+.hd__sheet-rule {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: var(--hd-rule);
+}
+
+.hd__sheet-dock > .hd__sheet-rule {
+  top: 0;
+  bottom: auto;
+}
+
+.hd__sheet-head img {
+  display: block;
+  width: clamp(136px, 18vw, 164px);
   height: auto;
+  min-width: 0;
 }
 
-.hd__drawer-head .hd__mobile-actions {
+.hd__sheet-tools {
   display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Only this strip scrolls, so the brand row above and the actions below stay
-   put while the reader moves through the branch list. */
-.hd__drawer-scroll {
+/* The booking pill's geometry exactly - 38px drawn, 44px to the finger - in
+   the soft red plate, so opening the menu turns one pill into another rather
+   than dropping a bigger object into the row. Its dot is the one thing that
+   keeps moving while the menu is open, drawn in transform and opacity. */
+.hd__sheet-urgent {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  border-radius: 999px;
+  background: var(--hd-emergency-soft);
+  padding: 0 14px 0 12px;
+  color: var(--hd-emergency);
+  font-family: var(--e-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  white-space: nowrap;
+  touch-action: manipulation;
+}
+
+.hd__sheet-urgent::after {
+  content: "";
+  position: absolute;
+  inset: -3px 0;
+}
+
+.hd__sheet-beacon {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.hd__sheet-beacon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+}
+
+.hd__drawer[data-state="open"] .hd__sheet-beacon::after {
+  animation: hd-beacon 2.2s ease-out 600ms infinite;
+}
+
+/* The menu button, turned into a cross: a bare glyph like the button it
+   replaces, with the soft plate only under a finger or a pointer. */
+.hd__sheet-close {
+  display: grid;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--hd-navy);
+  touch-action: manipulation;
+  transition: background-color 200ms ease;
+}
+
+.hd__sheet-close:active {
+  background: var(--hd-plate);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hd__sheet-close:hover {
+    background: var(--hd-plate);
+  }
+}
+
+/* On the film the capsule's glyph is white, so the cross turns white as the
+   circle closes on it and hands over to the capsule without a change of
+   colour at the last frame. */
+.hd[data-tone="film"] .hd__drawer[data-state="closing"] .hd__sheet-close {
+  color: #fff;
+  transition: color 200ms linear 280ms;
+}
+
+/* ---------- the links ---------- */
+
+.hd__sheet-body {
+  position: relative;
+  display: flex;
   flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
+  padding: clamp(10px, 3svh, 30px) 16px 14px;
 }
 
-.hd__drawer-branch {
-  border-bottom: 1px solid var(--hd-rule-soft);
-  padding: 10px 12px;
+.hd__sheet-body[data-more] {
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
 }
 
-/* One card, two controls. The hospital is a link to its own page and Change
-   is the toggle that opens the list; the tinted card is the thing the reader
-   sees, and the hairline between the two is what says there are two of them. */
-.hd__drawer-branch-summary {
+/* The display serif the site sets its headlines in, and the page the reader
+   is on in the italic accent every heading on the site uses for its key
+   phrase. One size rule for every phone: the width sets it, and on the
+   shortest screens (the visible height with Safari's toolbars, hence svh)
+   the height caps it so all five rows share the first screen with the dock. */
+.hd__sheet-link {
   display: flex;
-  align-items: stretch;
-  min-height: 68px;
-  border-radius: var(--radius-lg);
-  background: var(--color-clinical);
-  overflow: hidden;
+  align-items: center;
+  min-height: 44px;
+  color: var(--e-ink);
+  font-family: var(--e-serif);
+  font-size: clamp(1.75rem, min(8.6vw, 5.4svh), 2.4rem);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
 }
 
-.hd__drawer-branch-page {
-  display: grid;
-  flex: 1 1 auto;
-  align-content: center;
-  gap: 1px;
-  min-width: 0;
-  padding: 11px 14px;
-  line-height: 1.3;
-  text-decoration: none;
+.hd__sheet-link span {
+  position: relative;
+  padding-block: clamp(4px, 0.75svh, 8px);
+  transition:
+    transform 260ms var(--hd-ease),
+    color 200ms ease;
 }
 
-.hd__drawer-branch-page small {
-  color: var(--color-slate);
-  font-size: 0.68rem;
+.hd__sheet-link[aria-current="page"] {
+  color: var(--e-accent);
+  font-style: italic;
+}
+
+.hd__sheet-link:active span {
+  transform: translateX(6px);
+  color: var(--hd-navy);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hd__sheet-link:hover span {
+    transform: translateX(6px);
+    color: var(--hd-navy);
+  }
+}
+
+/* A tapped link holds its step to the right in the accent and draws a line
+   under itself while its page loads; the menu closes over the page when it
+   arrives. On a warm cache that is a frame or two and the line never shows. */
+.hd__sheet-link[data-pending] span,
+.hd__sheet-minor[data-pending] {
+  color: var(--e-accent);
+}
+
+.hd__sheet-link[data-pending] span {
+  transform: translateX(8px);
+}
+
+.hd__sheet-link[data-pending] span::after,
+.hd__sheet-minor[data-pending]::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 3px;
+  left: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transform-origin: left;
+  animation: hd-pending 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* The small links are one row on every phone - they were three stacked rows
+   on a tall screen and one row on a short one, so two phones showed two
+   different menus. */
+.hd__sheet-more {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 20px;
+  margin-top: clamp(4px, 1.6svh, 16px);
+}
+
+.hd__sheet-minor {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.98rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color 200ms ease;
+}
+
+.hd__sheet-minor:active {
+  color: var(--hd-navy);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hd__sheet-minor:hover {
+    color: var(--hd-navy);
+  }
+}
+
+.hd__sheet-minor[aria-current="page"] {
+  color: var(--e-accent);
   font-weight: 600;
-  letter-spacing: 0.1em;
+}
+
+.hd__sheet-minor[data-pending]::after {
+  bottom: 8px;
+}
+
+/* ---------- the dock ---------- */
+
+.hd__sheet-dock {
+  position: relative;
+  display: grid;
+  flex: 0 0 auto;
+  gap: 12px;
+  padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+}
+
+/* The hospital is a labelled field: the eyebrow over a soft pill holding a
+   pin, the name and its hours, and Change with the up-down mark a select
+   carries, so it reads as the one thing in the dock that is a choice rather
+   than an action. It was an outlined Change pill floating at the end of a
+   bare line - the same white, edged, navy-worded object as the three actions
+   under it, 36px beside their 48, aligned to nothing, with a down chevron
+   promising a dropdown where a sheet rises from below. The fill is the
+   emergency pill's device in the site's paper, borderless: the word and the
+   mark identify the control, so the fill is not a boundary that needs 3:1. */
+.hd__place {
+  display: grid;
+  gap: 8px;
+}
+
+/* The site's eyebrow (.e-label), so the dock's one label reads like every
+   section label on the pages behind it - and like a field's label, over the
+   field it names. */
+.hd__place-label {
+  margin: 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1.3;
   text-transform: uppercase;
 }
 
-.hd__drawer-branch-page strong {
+.hd__place-field {
   display: flex;
   align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 62px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--e-paper-2);
+  box-shadow: inset 0 0 0 1px var(--hd-rule-soft);
+  padding: 8px 18px 8px 16px;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  touch-action: manipulation;
+  transition:
+    background-color 200ms ease,
+    transform 200ms var(--hd-ease);
+}
+
+.hd__place-field:active {
+  background: var(--e-paper-3);
+  transform: scale(0.985);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hd__place-field:hover {
+    background: var(--e-paper-3);
+  }
+}
+
+.hd__place-pin {
+  flex: 0 0 auto;
+  color: var(--hd-navy);
+}
+
+/* A new hospital rises into the field - its name and its hours together, the
+   two facts that changed - so a choice made in the picker is seen to land. */
+.hd__place-text {
+  display: grid;
+  flex: 1 1 auto;
+  gap: 1px;
+  min-width: 0;
+  animation: hd-reveal 420ms var(--hd-ease) backwards;
+}
+
+.hd__place-text strong {
+  color: var(--hd-navy);
+  font-family: var(--e-serif);
+  font-size: 1.3rem;
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+.hd__place-status {
+  display: inline-flex;
+  align-items: center;
   gap: 7px;
-  color: var(--hd-blue);
-  font-family: var(--font-heading);
-  font-size: 1.08rem;
-  font-weight: 600;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.35;
 }
 
-/* The chevron after the name is what says the name is a route. It is the one
-   chevron in the drawer's nav column, so it still means something. */
-.hd__drawer-branch-page strong svg:last-child {
-  color: var(--color-accent-magenta);
-  transition: transform 200ms ease;
+.hd__place-status[data-open] {
+  color: var(--color-success);
 }
 
-.hd__drawer-branch-page:hover strong svg:last-child {
-  transform: translateX(2px);
+.hd__place-dot {
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
 }
 
-.hd__drawer-branch-page > span {
-  overflow: hidden;
-  color: var(--color-slate);
-  font-size: 0.82rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.hd__drawer-branch-toggle {
+.hd__place-change {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
   gap: 4px;
-  min-width: 44px;
-  border: 0;
-  border-left: 1px solid var(--hd-rule-soft);
-  border-radius: 0;
-  background: transparent;
-  padding: 0 14px 0 12px;
-  color: var(--color-accent-magenta);
+  color: var(--hd-navy);
   font-family: var(--e-sans);
-  font-size: 0.84rem;
+  font-size: 0.9rem;
   font-weight: 600;
 }
 
-.hd__drawer-branch-toggle svg {
-  transition: transform 200ms ease;
-}
-
-.hd__drawer-branch-toggle[aria-expanded="true"] svg {
-  transform: rotate(180deg);
-}
-
-.hd__drawer-sub {
-  display: grid;
-  gap: 2px;
-  padding: 4px 0 2px;
-}
-
-/* The selected branch shows in the summary row and again, checked, in the
-   list. The heading is what makes that read as a list of choices rather than
-   as the same row printed twice. */
-.hd__drawer-sub .hd__drawer-label {
-  padding: 10px 12px 4px;
-}
-
-/* Same row anatomy as the desktop menu - name, locality, and a check on the
-   chosen branch - at a thumb-sized height. Buttons, not links: a row sets the
-   hospital in place and the drawer's call actions follow it. */
-.hd__drawer-branch-option,
-.hd__drawer-sub-all {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  width: 100%;
-  min-height: 52px;
-  border: 0;
-  border-radius: var(--radius-md);
-  background: transparent;
-  padding: 8px 12px;
-  color: var(--color-ink);
-  font: inherit;
-  text-align: left;
-}
-
-.hd__drawer-branch-option > span {
-  display: grid;
-  gap: 2px;
-  min-width: 0;
-}
-
-.hd__drawer-branch-option:hover,
-.hd__drawer-branch-option[aria-checked="true"] {
-  background: var(--color-brand-blue-soft);
-}
-
-.hd__drawer-branch-option strong {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-heading);
-  font-size: 0.98rem;
-  font-weight: 600;
-}
-
-.hd__drawer-branch-option[aria-checked="true"] strong {
-  color: var(--hd-blue);
-}
-
-.hd__drawer-branch-option small {
-  overflow: hidden;
-  color: var(--color-slate);
-  font-size: 0.79rem;
-  line-height: 1.35;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.hd__drawer-branch-option svg,
-.hd__drawer-sub-all svg {
-  flex: 0 0 auto;
-  color: var(--hd-blue);
-}
-
-.hd__drawer-sub-all {
-  margin-top: 4px;
-  border-top: 1px solid var(--hd-rule-soft);
-  border-radius: 0;
-  color: var(--hd-blue);
-  font-family: var(--font-heading);
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
-.hd__drawer-nav {
-  display: grid;
-  gap: 2px;
-  padding: 0 12px 6px;
-}
-
-.hd__drawer-label {
-  padding: 10px 12px 4px;
-  color: var(--color-slate);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-/* 48px rather than 52px: the About entry gives the drawer an eighth row, and
-   the whole list plus every action still has to fit a 390x844 phone with
-   nothing to scroll. Still well clear of the 44px minimum. */
-.hd__drawer-link {
-  display: flex;
-  align-items: center;
-  min-height: 48px;
-  border-radius: var(--radius-md);
-  padding: 0 12px;
-  color: var(--color-ink);
-  font-family: var(--font-heading);
-  font-size: 1.05rem;
-  font-weight: 600;
-  animation: hd-rise 240ms var(--e-ease) backwards;
-  animation-delay: calc(var(--hd-i, 0) * 26ms + 90ms);
-}
-
-.hd__drawer-link:hover {
-  background: var(--color-brand-blue-soft);
-}
-
-.hd__drawer-link--active {
-  background: var(--color-clinical);
-  color: var(--hd-blue);
-  box-shadow: inset 3px 0 0 var(--color-accent-magenta);
-}
-
-/* The actions sit at the bottom because that is where a thumb rests, and they
-   stay there while the list above scrolls. */
-.hd__drawer-foot {
-  display: grid;
-  flex: 0 0 auto;
-  gap: 9px;
-  border-top: 1px solid var(--hd-rule);
-  background: var(--color-surface-alt);
-  padding: 13px 14px calc(13px + env(safe-area-inset-bottom));
-  box-shadow: 0 -12px 26px rgba(12, 44, 73, 0.07);
-}
-
-/* The drawer's booking is filled navy on its light foot in both tones, and
-   shares the tiles' 14px corner so the foot reads as one set of controls. */
-.hd__drawer-foot .hd__cta {
-  justify-content: center;
-  min-height: 52px;
-  border-radius: 14px;
-}
-
-.hd__drawer-trio {
+/* Call, WhatsApp and Directions carry the hospital page's tile vocabulary -
+   the 3:1 edge, the navy glyph, one word each - drawn as pills, because every
+   other control in this sheet (the emergency line, Change, the booking) is a
+   pill and a box among them was the one shape out of place. The glyph sits
+   beside its word: the dock is short on height, and a third of a phone is
+   wide enough for both on one line. */
+.hd__place-actions {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
-/* Icon over label: three side-by-side buttons are about 110px wide on a 390px
-   phone, and "WhatsApp" beside an icon overflowed that at a readable size. */
-.hd__ghost {
-  display: inline-flex;
-  flex-direction: column;
+.hd__place-actions a {
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  min-height: 58px;
+  gap: 6px;
+  min-width: 0;
+  min-height: 48px;
   border: 1px solid var(--hd-edge);
-  border-radius: 14px;
-  background: var(--color-surface);
+  border-radius: 999px;
+  background: var(--e-paper);
+  padding: 0 4px;
   color: var(--hd-navy);
   font-family: var(--e-sans);
-  font-size: 0.79rem;
+  font-size: 0.84rem;
   font-weight: 600;
-  text-align: center;
+  line-height: 1.2;
+  white-space: nowrap;
+  touch-action: manipulation;
+  transition:
+    background-color 180ms ease,
+    transform 180ms var(--hd-ease);
 }
 
-.hd__ghost:hover {
-  background: var(--color-brand-blue-soft);
+.hd__place-actions svg {
+  flex: 0 0 auto;
 }
 
-/* A 640px-tall phone cannot hold the whole menu at full size, so the frame
-   tightens - never the type, which older patients read. The summary row drops
-   its locality line (the city is the fact; the street is on the branches
-   page), the rows go to the 44px minimum, and the Menu label goes - the
-   hairline under the branch block already separates the two. Measured slack
-   in the scroll area: 0px at 360x640 and 375x667, 84px on a 320x568. */
-@media (max-height: 720px) {
-  .hd__drawer-branch {
-    padding-block: 8px;
+.hd__place-actions a:active {
+  background: var(--hd-plate);
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hd__place-actions a:hover {
+    background: var(--hd-plate);
+  }
+}
+
+/* The reference's closing pill in the hero's two colours: navy with cream
+   type, and the hero button's arrow disc in cream at its right end. */
+.hd__sheet-book {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  border-radius: 999px;
+  background: var(--hd-navy);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 14px 28px -16px rgba(12, 44, 73, 0.75);
+  padding: 0 60px;
+  color: #fbf7ef;
+  font-family: var(--e-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  touch-action: manipulation;
+  transition:
+    background-color 240ms ease,
+    transform 240ms var(--hd-ease);
+}
+
+.hd__sheet-book-disc {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 50%;
+  background: #fbf7ef;
+  color: var(--hd-navy);
+  translate: 0 -50%;
+}
+
+.hd__sheet-book-disc svg {
+  transition: transform 240ms var(--hd-ease);
+}
+
+.hd__sheet-book[data-pending] .hd__sheet-book-disc svg {
+  transform: translateX(3px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hd__sheet-book:hover {
+    background: var(--hd-blue);
   }
 
-  .hd__drawer-branch-summary {
-    min-height: 52px;
+  .hd__sheet-book:hover .hd__sheet-book-disc svg {
+    transform: translateX(3px);
+  }
+}
+
+.hd__sheet-book:active {
+  transform: scale(0.98);
+}
+
+/* ---------- the hospital picker ---------- */
+
+.hd__picker-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(12, 44, 73, 0.38);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 300ms ease,
+    visibility 0s linear 300ms;
+}
+
+/* The picker and its scrim set their own visibility, which would show through
+   a hidden menu, so they only answer the flag while the menu is shown. */
+.hd__drawer[data-picker]:not([data-state="closed"]) .hd__picker-scrim {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 320ms ease;
+}
+
+.hd__picker {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 560px);
+  max-height: calc(100% - var(--hd-height));
+  margin-inline: auto;
+  border-radius: 20px 20px 0 0;
+  background: var(--e-paper);
+  box-shadow: 0 -20px 50px -24px rgba(12, 44, 73, 0.5);
+  transform: translateY(100%);
+  visibility: hidden;
+  transition:
+    transform 320ms cubic-bezier(0.4, 0, 1, 1),
+    visibility 0s linear 320ms;
+}
+
+.hd__drawer[data-picker]:not([data-state="closed"]) .hd__picker {
+  transform: none;
+  visibility: visible;
+  transition: transform 480ms var(--hd-ease);
+}
+
+.hd__picker-top {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 16px 2px 20px;
+}
+
+.hd__picker-title {
+  margin: 0;
+  color: var(--e-ink);
+  font-family: var(--e-serif);
+  font-size: clamp(1.5rem, 6.4vw, 1.85rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.012em;
+}
+
+/* A sheet's dismiss: the soft round plate a phone reader knows from every
+   bottom sheet. The menu's own close is the glyph, because it is the menu
+   button; this one belongs to the sheet. */
+.hd__picker-close {
+  display: grid;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--hd-plate);
+  color: var(--hd-navy);
+  touch-action: manipulation;
+  transition:
+    background-color 200ms ease,
+    transform 200ms var(--hd-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hd__picker-close:hover {
+    background: var(--e-paper-3);
+  }
+}
+
+.hd__picker-close:active {
+  transform: scale(0.92);
+}
+
+.hd__picker-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 20px calc(16px + env(safe-area-inset-bottom));
+}
+
+.hd__picker-hint {
+  max-width: 36ch;
+  margin: 2px 0 10px;
+  color: var(--e-ink-2);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.hd__picker-list {
+  display: grid;
+}
+
+/* Hairline rows, a name in the serif and its street under it, and a ring at
+   the right that fills navy and draws a check on the one chosen - the
+   booking page's chips, so "this one" is never only a colour. */
+.hd__pick {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  min-height: 62px;
+  border: 0;
+  border-top: 1px solid var(--hd-rule-soft);
+  background: transparent;
+  padding: 9px 0;
+  color: var(--e-ink);
+  font: inherit;
+  text-align: left;
+  touch-action: manipulation;
+}
+
+.hd__drawer[data-picker]:not([data-state="closed"]) .hd__pick {
+  animation: hd-reveal 420ms var(--hd-ease) backwards;
+  animation-delay: calc(90ms + var(--hd-i, 0) * 35ms);
+}
+
+.hd__pick-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.hd__pick strong {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  font-family: var(--e-serif);
+  font-size: 1.28rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.hd__pick[aria-checked="true"] strong {
+  color: var(--hd-navy);
+  font-style: italic;
+}
+
+.hd__pick small {
+  color: var(--e-ink-2);
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.hd__pick-tag {
+  border-radius: 999px;
+  background: var(--color-accent-magenta-soft);
+  padding: 3px 8px;
+  color: var(--e-accent);
+  font-family: var(--e-sans);
+  font-size: 0.64rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.hd__pick-ring {
+  display: grid;
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  border: 1.5px solid var(--hd-edge);
+  border-radius: 50%;
+  color: transparent;
+  transition:
+    background-color 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease;
+}
+
+.hd__pick[aria-checked="true"] .hd__pick-ring {
+  border-color: var(--hd-navy);
+  background: var(--hd-navy);
+  color: #fbf7ef;
+}
+
+.hd__picker-all {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+  border-top: 1px solid var(--hd-rule-soft);
+  color: var(--hd-navy);
+  font-family: var(--e-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* ---------- short screens ---------- */
+
+/* The phones whose visible height (Safari's toolbars showing) is under 620px -
+   an iPhone SE, a small Android - hold every link and the whole dock on one
+   screen by taking the air out of the dock, never by dropping a part of it or
+   shrinking the type a patient reads. */
+@media (max-height: 620px) {
+  .hd__sheet-body {
+    padding-block: 8px 6px;
   }
 
-  .hd__drawer-branch-page {
-    padding-block: 8px;
+  .hd__sheet-dock {
+    gap: 7px;
+    padding-block: 8px calc(8px + env(safe-area-inset-bottom));
   }
 
-  .hd__drawer-branch-page > span {
-    display: none;
+  .hd__place {
+    gap: 4px;
   }
 
-  .hd__drawer-nav > .hd__drawer-label {
-    display: none;
+  .hd__place-field {
+    min-height: 50px;
+    padding-block: 4px;
   }
 
-  .hd__drawer-nav {
-    gap: 0;
-    padding-top: 8px;
+  .hd__place-text strong {
+    font-size: 1.2rem;
   }
 
-  .hd__drawer-link {
-    min-height: 44px;
+  .hd__place-actions a {
+    min-height: 46px;
   }
 
-  .hd__drawer-foot {
-    gap: 8px;
-    padding-block: 10px calc(10px + env(safe-area-inset-bottom));
-  }
-
-  .hd__drawer-foot .hd__cta {
+  .hd__sheet-book {
     min-height: 48px;
   }
-
-  .hd__ghost {
-    min-height: 52px;
-  }
 }
 
-/* A phone held sideways has about 390px of height. Two tiers of actions left
-   two nav rows visible; as one four-up row, Book Appointment becomes a filled
-   tile beside the three ghosts and the list gets 57px back - five rows. */
-@media (max-height: 480px) {
-  .hd__drawer-foot {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+/* A 320px phone cannot set a tile's glyph beside its word, so the word goes
+   under the glyph, as on the hospital page; and the field's pin and padding
+   give way so the hours keep one line - the label over the field already
+   says it is a place. */
+@media (max-width: 359px) {
+  .hd__sheet-head {
     gap: 8px;
   }
 
-  .hd__drawer-trio {
-    display: contents;
+  .hd__place-field {
+    gap: 8px;
+    padding-inline: 18px 14px;
   }
 
-  .hd__drawer-foot .hd__cta {
+  .hd__place-pin {
+    display: none;
+  }
+
+  .hd__place-actions a {
     flex-direction: column;
-    gap: 4px;
-    min-height: 52px;
-    padding: 6px;
-    font-size: 0.79rem;
-    line-height: 1.15;
-    text-align: center;
-    white-space: normal;
+    gap: 3px;
+    min-height: 56px;
+    font-size: 0.78rem;
+  }
+
+  .hd__sheet-urgent {
+    gap: 6px;
+    padding: 0 11px 0 10px;
+  }
+}
+
+/* ---------- tablets, and phones held sideways ---------- */
+
+/* Where there is width, the links take the left and the dock sits at the
+   bottom of a column on the right - the menu reads as a page, and a phone
+   held sideways keeps every link and every action on one screen. */
+@media (min-width: 700px), (max-height: 500px) and (min-width: 560px) {
+  .hd__sheet-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .hd__sheet-head {
+    grid-column: 1 / -1;
+  }
+
+  .hd__sheet-body {
+    grid-row: 2;
+    grid-column: 1;
+    padding-right: 24px;
+  }
+
+  .hd__sheet-dock {
+    grid-row: 2;
+    grid-column: 2;
+    align-self: end;
+    padding: 16px 16px calc(24px + env(safe-area-inset-bottom)) 0;
+  }
+
+  .hd__sheet-dock > .hd__sheet-rule {
+    right: 16px;
+  }
+}
+
+@media (min-width: 700px) {
+  .hd__sheet-link {
+    font-size: clamp(2.5rem, 5.4vw, 3.4rem);
+  }
+}
+
+@media (max-height: 500px) and (min-width: 560px) {
+  .hd__sheet-main {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+  }
+
+  .hd__sheet-body {
+    padding-block: 10px 16px;
+  }
+
+  .hd__sheet-link {
+    font-size: 1.6rem;
+  }
+
+  .hd__sheet-link span {
+    padding-block: 3px 4px;
+  }
+
+  .hd__sheet-dock {
+    padding-bottom: calc(14px + env(safe-area-inset-bottom));
   }
 }
 
 /* ---------- responsive ---------- */
-
-/* Between the desktop layout and the drawer, the three columns give room from
-   the gaps and the link padding before anything else. */
-/* Here the nav centres in the space between the logo and the actions rather
-   than on the page: the film capsule is inset, so at 1180px its content is
-   48px narrower than the paper band's, and equal side columns left the
-   actions 12px short. Between the two columns nothing can ever overlap. */
-@media (max-width: 1320px) and (min-width: 1180px) {
-  .hd__cap {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    gap: 10px;
-  }
-
-  .hd__nav-link,
-  .hd__nav-trigger {
-    padding: 0 7px;
-  }
-
-  .hd__cta {
-    padding: 0 18px;
-  }
-}
 
 /* Phones and tablets: one row in the capsule - logo, the emergency pill, Book
    where it fits, and the menu. No strip on a phone: a band across the top of
@@ -1325,10 +2093,12 @@
    page does not control, and two builds with one were removed for it. The
    phone's hospital picker is the drawer's branch block.
 
-   1179px, not the 1040px the old bar broke at: six links, the emergency
-   line and the pill need about 1040px of capsule, and below 1180 the capsule
-   has less than that. A tablet held sideways gets the drawer, as it does on
-   the reference. */
+   1179px, not the 1040px the old bar broke at. The five links and the pill
+   would stay centred on the film down to about 1000px (they meet at 970),
+   but every sticky offset
+   and short-screen rule on the site is measured against this split, so it
+   stays here. A tablet held sideways gets the drawer, as it does on the
+   reference. */
 @media (max-width: 1179px) {
   :root {
     --hd-strip-h: 0px;
@@ -1381,49 +2151,17 @@
    their size. */
 @media (max-width: 400px) {
   .hd__logo,
-  .hd__drawer-head img {
+  .hd__sheet-head img {
     width: 126px;
   }
 }
 
-/* The drawer head is the capsule's row inside a sheet only min(400px, 92%)
-   wide, so its logo gives first: at 320px the sheet has 262px for the logo,
-   the emergency pill and the close button. */
-@media (max-width: 430px) {
-  .hd__drawer-head {
-    gap: 8px;
-  }
-
-  .hd__drawer-head .hd__urgent {
-    gap: 0;
-    padding: 0 12px;
-    font-size: 0.86rem;
-  }
-
-  .hd__drawer-head .hd__urgent svg {
-    display: none;
-  }
-}
-
-/* The word goes last, never first: below this the pill drops its siren and
-   keeps "Emergency" - the glyph is decoration and the word is the meaning. */
+/* The logo steps down with the capsule's, so it does not move as the
+   aperture passes over it. */
 @media (max-width: 360px) {
-  .hd__urgent {
-    gap: 0;
-    padding: 0 12px;
-    font-size: 0.86rem;
-  }
-
-  .hd__urgent svg {
-    display: none;
-  }
-
-  .hd__logo {
+  .hd__logo,
+  .hd__sheet-head img {
     width: 116px;
-  }
-
-  .hd__drawer-head img {
-    width: 100px;
   }
 }
 
@@ -1444,9 +2182,13 @@
   .hd *,
   .hd::before,
   .hd::after,
+  .hd *::before,
+  .hd *::after,
   .hd__strip * {
     animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
   }
 }

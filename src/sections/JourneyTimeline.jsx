@@ -1,10 +1,20 @@
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { motion, useMotionValueEvent, useReducedMotion, useScroll } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import CountUp from "../components/CountUp";
 import SmartImage from "../components/SmartImage";
 import { about } from "../lib/aboutData";
 import { branches } from "../lib/coreData";
-import { doctors } from "../lib/doctorsData";
+import { useCurrentYear } from "../lib/hydration";
+import { specialists } from "../lib/doctorsData";
 
 const { journey } = about;
 const DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
@@ -100,8 +110,20 @@ function YearRoll({ value, from, active, className }) {
    stop whose segment starts at progress 0 was mishandled there - the opening
    stop faded *up* across the whole stage instead of out at the end of its own
    segment, so two stops were legible at once. Writing them here keeps the
-   mapping exact, and costs six property writes per stop per frame. */
-function Stop({ stop, index, count, progress, previousYear, isActive, staticMode }) {
+   mapping exact, and costs six property writes per stop per frame.
+
+   Memoised: every prop but `isActive` is stable, so a change of year re-renders
+   the two stops it concerns rather than all six and their twelve odometers -
+   at 4x CPU throttle each change was a 67ms frame. */
+const Stop = memo(function Stop({
+  stop,
+  index,
+  count,
+  progress,
+  previousYear,
+  isActive,
+  staticMode,
+}) {
   const rootRef = useRef(null);
   const mediaRef = useRef(null);
   const frameRef = useRef(null);
@@ -195,7 +217,7 @@ function Stop({ stop, index, count, progress, previousYear, isActive, staticMode
               src={stop.image}
               alt={stop.alt}
               sizes={MEDIA_SIZES}
-              loading={index === 0 ? "eager" : "lazy"}
+              loading="lazy"
             />
           </span>
         </span>
@@ -213,11 +235,15 @@ function Stop({ stop, index, count, progress, previousYear, isActive, staticMode
         <h3 className="e-h3">{stop.title}</h3>
         <p className="e-body">{stop.description}</p>
 
+        {/* The closing figures count up each time the reader arrives at
+            today - the payoff of the whole stage. */}
         {isNow ? (
           <div className="ab-stage__figures">
             {stop.figures.map((figure) => (
               <div key={figure.key}>
-                <strong>{figure.value}</strong>
+                <strong>
+                  <CountUp value={figure.value} start={isActive} duration={1.4} />
+                </strong>
                 <span>{figure.label}</span>
               </div>
             ))}
@@ -228,7 +254,7 @@ function Stop({ stop, index, count, progress, previousYear, isActive, staticMode
       </div>
     </li>
   );
-}
+});
 
 export default function JourneyTimeline() {
   const shouldReduceMotion = useReducedMotion();
@@ -239,12 +265,13 @@ export default function JourneyTimeline() {
   const headRef = useRef(null);
   const chipNodes = useRef([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const year = useCurrentYear();
 
   const stops = useMemo(() => {
     const figureValues = {
-      years: new Date().getFullYear() - journey.establishedYear,
+      years: year - journey.establishedYear,
       hospitals: branches.items.length,
-      specialists: doctors.items.length,
+      specialists: specialists.length,
     };
     return [
       ...journey.milestones.map((milestone) => ({
@@ -263,7 +290,7 @@ export default function JourneyTimeline() {
         })),
       },
     ];
-  }, []);
+  }, [year]);
 
   const count = stops.length;
 

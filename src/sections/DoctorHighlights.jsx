@@ -2,13 +2,19 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { revealVariants, staggerContainer } from "../lib/motion";
+import DoctorPortrait from "../components/DoctorPortrait";
+import { describeHospitals, fillTemplate, hasProfile, profileHref } from "../lib/doctorsData";
+import { SCROLL_DRIVEN, revealVariants, staggerContainer, useInViewReplay } from "../lib/motion";
 
 export default function DoctorHighlights({ doctorHighlights, doctors }) {
   const shouldReduceMotion = useReducedMotion();
   const trackRef = useRef(null);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
+  const arrival = useInViewReplay(trackRef, 0.2);
+  /* Where the scroll deals the rail in (landing.css), the cards' own lift
+     would be a second move on top of it, so they rest where they are. */
+  const dealt = SCROLL_DRIVEN && !shouldReduceMotion;
 
   const featured = doctorHighlights.featured
     .map((name) => doctors.find((doctor) => doctor.name === name))
@@ -25,7 +31,9 @@ export default function DoctorHighlights({ doctorHighlights, doctors }) {
     if (!stride) return null;
 
     const inner =
-      track.clientWidth - parseFloat(styles.paddingLeft || 0) - parseFloat(styles.paddingRight || 0);
+      track.clientWidth -
+      parseFloat(styles.paddingLeft || 0) -
+      parseFloat(styles.paddingRight || 0);
     return { stride, perView: Math.max(1, Math.floor((inner + gap) / stride)) };
   };
 
@@ -77,28 +85,37 @@ export default function DoctorHighlights({ doctorHighlights, doctors }) {
           className="e-docs__track"
           ref={trackRef}
           variants={staggerContainer(shouldReduceMotion)}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          initial={dealt ? "visible" : "hidden"}
+          animate={dealt || arrival.inView ? "visible" : "hidden"}
         >
-          {featured.map((doctor, index) => (
+          {featured.map((doctor) => (
             <motion.li
               className="e-docs__card"
               key={doctor.name}
               variants={revealVariants(shouldReduceMotion)}
             >
               <div className="e-docs__media">
-                <img
-                  src={doctor.photo}
-                  alt={doctor.photoAlt}
-                  loading={index < 4 ? "eager" : "lazy"}
-                  decoding="async"
-                />
+                {/* Lazy, all of them: SmartImage marks an eager image high
+                    priority, and this rail is four sections below the hero
+                    film the first screen is waiting on. */}
+                <DoctorPortrait doctor={doctor} sizes="(min-width: 761px) 292px, 70vw" />
               </div>
               <h3 className="e-docs__name">
-                {doctor.name}, {doctor.qualifications}
+                {hasProfile(doctor) ? (
+                  <Link className="e-docs__link" to={profileHref(doctor)}>
+                    {doctor.name}
+                  </Link>
+                ) : (
+                  doctor.name
+                )}
+                , {doctor.qualifications}
               </h3>
-              <p className="e-docs__text">{doctor.highlight}</p>
+              <p className="e-docs__text">
+                {fillTemplate(doctorHighlights.cardText, {
+                  specialty: doctor.specialty,
+                  hospitals: describeHospitals(doctor),
+                })}
+              </p>
             </motion.li>
           ))}
         </motion.ul>

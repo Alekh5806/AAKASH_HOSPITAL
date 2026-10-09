@@ -1,19 +1,22 @@
-import { createElement, useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useLayoutEffect, useRef, useState } from "react";
 import { ChevronDown, Cookie, X } from "lucide-react";
 import { site } from "../lib/coreData";
-import { getIcon } from "../lib/icons";
+import { applyBranchConsent } from "../lib/contact";
+import { readConsent, writeConsent } from "../lib/consent";
+import { useHydrated } from "../lib/hydration";
 import { INTRO_DONE_EVENT, INTRO_EXIT_MS, isIntroPending } from "../lib/intro";
 
-const COOKIE_NAME = "aakash_cookie_preferences";
-const COOKIE_DAYS = 180;
 /* On a first visit the banner waits for the opening curtain to lift and then
    settles in a beat later, so it is never slid in behind the intro; a visit
    with no curtain gets it after a short pause rather than the old fixed wait. */
 const BANNER_DELAY_MS = 600;
 const BANNER_AFTER_INTRO_MS = INTRO_EXIT_MS + 500;
-const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+/* Every exit in cookie.css finishes inside this: the phone sheet's 300ms drop
+   is the longest. Each surface holds its last frame until it goes. */
+const LEAVE_MS = 320;
+const FOCUSABLE = 'a[href], button:not([disabled]), summary, [tabindex]:not([tabindex="-1"])';
 
-const { banner: bannerCopy, dialog: dialogCopy, categories } = site.cookies;
+const { banner: bannerCopy, dialog: dialogCopy, categories, savedMessage } = site.cookies;
 const optionalCategories = categories.filter((category) => category.id !== "necessary");
 
 /* Every optional category starts off, which is also exactly what Reject
@@ -29,30 +32,17 @@ const allPreferences = optionalCategories.reduce(
   { necessary: true },
 );
 
-function readCookie() {
-  const value = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith(`${COOKIE_NAME}=`))
-    ?.split("=")[1];
-
-  if (!value) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(decodeURIComponent(value));
-  } catch {
-    return null;
-  }
-}
-
-function writeCookie(preferences) {
-  const expires = new Date(Date.now() + COOKIE_DAYS * 24 * 60 * 60 * 1000).toUTCString();
-  document.cookie = `${COOKIE_NAME}=${encodeURIComponent(JSON.stringify(preferences))}; expires=${expires}; path=/; SameSite=Lax`;
-}
-
 function normalize(preferences) {
   return { ...noOptional, ...preferences, necessary: true };
+}
+
+function getStoredPreferences() {
+  const saved = readConsent();
+  return saved ? normalize(saved) : null;
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
 function CookieSwitch({ category, checked, onChange }) {
@@ -73,17 +63,15 @@ function CookieSwitch({ category, checked, onChange }) {
   );
 }
 
+/* "What this stores" is a native disclosure, the FAQ's: it opens without
+   JavaScript, the browser gives it its expanded state, and cookie.css lets it
+   glide where ::details-content is understood. */
 function CookieCategory({ category, checked, onChange }) {
-  const [isOpen, setIsOpen] = useState(false);
   const isLocked = category.id === "necessary";
-  const detailsId = `ck-details-${category.id}`;
 
   return (
     <li className="ck__cat" data-locked={isLocked || undefined}>
       <div className="ck__cat-head">
-        <span className="ck__cat-icon" aria-hidden="true">
-          {createElement(getIcon(category.icon), { size: 18, strokeWidth: 1.7 })}
-        </span>
         <span className="ck__cat-title" id={`ck-cat-${category.id}`}>
           {category.title}
         </span>
@@ -96,48 +84,60 @@ function CookieCategory({ category, checked, onChange }) {
 
       <p className="ck__cat-text">{category.summary}</p>
 
-      <button
-        type="button"
-        className="ck__cat-more"
-        aria-expanded={isOpen}
-        aria-controls={detailsId}
-        onClick={() => setIsOpen((open) => !open)}
-      >
-        {dialogCopy.detailsLabel}
-        <ChevronDown size={15} aria-hidden="true" />
-      </button>
-
-      <ul className="ck__cat-list" id={detailsId} hidden={!isOpen}>
-        {category.items.map((item) => (
-          <li key={item}>{item}</li>
-        ))}
-      </ul>
+      <details className="ck__cat-more">
+        <summary className="ck__cat-summary">
+          {dialogCopy.detailsLabel}
+          <ChevronDown size={15} aria-hidden="true" />
+        </summary>
+        <ul className="ck__cat-list">
+          {category.items.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      </details>
     </li>
   );
 }
 
-function getStoredPreferences() {
-  if (typeof document === "undefined") {
-    return null;
-  }
-
-  const saved = readCookie();
-  return saved ? normalize(saved) : null;
+/* The reader's cookie choice is in their browser, and the banner and the
+   dialog only ever appear once the page is running, so neither is part of the
+   prerendered page: they mount as React takes it over, which is when a page
+   built fresh used to mount them. */
+export default function CookieConsent() {
+  return useHydrated() ? <CookieSheets /> : null;
 }
 
-export default function CookieConsent() {
-  const [storedPreferences] = useState(getStoredPreferences);
-  const [mode, setMode] = useState(null);
-  const [preferences, setPreferences] = useState(storedPreferences ?? noOptional);
+function CookieSheets() {
+  const [choice, setChoice] = useState(getStoredPreferences);
+  const [preferences, setPreferences] = useState(choice ?? noOptional);
+  const [bannerReady, setBannerReady] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  /* null, "dialog" (the dialog closes and the banner stays) or "all" (a choice
+     was made and everything on screen goes). */
+  const [leaving, setLeaving] = useState(null);
+  const [announcement, setAnnouncement] = useState("");
   const dialogRef = useRef(null);
+  const bodyRef = useRef(null);
+  const chooseRef = useRef(null);
   const openerRef = useRef(null);
+  const restoreRef = useRef(null);
+  const leaveTimer = useRef(0);
+
+  const showBanner = !choice && bannerReady;
+
+  /* A hospital remembered before this choice existed - or before the reader
+     changed it on another visit - moves to the storage the choice allows. */
+  useEffect(() => {
+    applyBranchConsent();
+    return () => window.clearTimeout(leaveTimer.current);
+  }, []);
 
   useEffect(() => {
-    if (storedPreferences) return undefined;
+    if (choice) return undefined;
 
-    let timer = null;
+    let timer = 0;
     const show = (delay) => {
-      timer = window.setTimeout(() => setMode("banner"), delay);
+      timer = window.setTimeout(() => setBannerReady(true), delay);
     };
     const onIntroDone = () => show(BANNER_AFTER_INTRO_MS);
 
@@ -151,53 +151,33 @@ export default function CookieConsent() {
       window.removeEventListener(INTRO_DONE_EVENT, onIntroDone);
       window.clearTimeout(timer);
     };
-  }, [storedPreferences]);
+  }, [choice]);
+
+  const onOpenPreferences = useEffectEvent(() => openDialog(document.activeElement));
+  const onEscape = useEffectEvent(() => close());
 
   useEffect(() => {
-    function openPreferences() {
-      const saved = readCookie();
-
-      if (saved) {
-        setPreferences(normalize(saved));
-      }
-
-      openerRef.current = document.activeElement;
-      setMode("dialog");
-    }
-
-    window.addEventListener("aakash:open-cookie-preferences", openPreferences);
-    return () => window.removeEventListener("aakash:open-cookie-preferences", openPreferences);
-  }, []);
-
-  /* Closing the dialog without choosing falls back to the banner when nothing
-     has been stored yet, so a reader who opens the details and changes their
-     mind is still asked rather than silently left with no choice recorded. */
-  const close = useCallback((options = {}) => {
-    setMode(options.saved || readCookie() ? null : "banner");
-    const opener = openerRef.current;
-    openerRef.current = null;
-
-    if (opener?.isConnected) {
-      opener.focus();
-    }
+    const open = () => onOpenPreferences();
+    window.addEventListener("aakash:open-cookie-preferences", open);
+    return () => window.removeEventListener("aakash:open-cookie-preferences", open);
   }, []);
 
   /* The dialog is the only surface that takes the screen, so it is the only one
      that locks the page, traps Tab and answers Escape. The banner stays a
-     dismissible layer the reader can scroll past. */
+     layer the reader can scroll past. */
+  const trapping = dialogOpen && !leaving;
+
   useEffect(() => {
-    if (mode !== "dialog") return undefined;
+    if (!trapping) return undefined;
 
     const panel = dialogRef.current;
-    const previousOverflow = document.body.style.overflow;
-
-    document.body.style.overflow = "hidden";
+    document.body.classList.add("ck-locked");
     panel?.querySelector(FOCUSABLE)?.focus();
 
     function onKeyDown(event) {
       if (event.key === "Escape") {
         event.preventDefault();
-        close();
+        onEscape();
         return;
       }
 
@@ -222,134 +202,232 @@ export default function CookieConsent() {
 
     document.addEventListener("keydown", onKeyDown);
     return () => {
-      document.body.style.overflow = previousOverflow;
+      document.body.classList.remove("ck-locked");
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [mode, close]);
+  }, [trapping]);
+
+  /* Focus goes back to whatever opened the dialog once the dialog has let go
+     of the page - for the banner's own link, that is also the moment the
+     banner stops being inert. */
+  useEffect(() => {
+    if (trapping) return;
+    const target = restoreRef.current;
+    restoreRef.current = null;
+    if (target?.isConnected) target.focus();
+  }, [trapping]);
+
+  /* The list scrolls inside the sheet on a phone; its foot fades only while
+     there is more below, the phone menu's device. A measurement of the
+     scroller, written straight to it, never render state. */
+  useLayoutEffect(() => {
+    if (!dialogOpen) return undefined;
+
+    const body = bodyRef.current;
+    if (!body) return undefined;
+
+    body.scrollTop = 0;
+    const mark = () => {
+      body.toggleAttribute("data-more", body.scrollTop + body.clientHeight < body.scrollHeight - 4);
+    };
+    const observer = new ResizeObserver(mark);
+
+    mark();
+    observer.observe(body);
+    Array.from(body.children).forEach((child) => observer.observe(child));
+    body.addEventListener("scroll", mark, { passive: true });
+
+    return () => {
+      observer.disconnect();
+      body.removeEventListener("scroll", mark);
+    };
+  }, [dialogOpen]);
+
+  /* Every surface plays its exit before it goes; under reduced motion it
+     simply goes. */
+  function leave(kind, done) {
+    if (prefersReducedMotion()) {
+      done();
+      return;
+    }
+
+    setLeaving(kind);
+    window.clearTimeout(leaveTimer.current);
+    leaveTimer.current = window.setTimeout(() => {
+      setLeaving(null);
+      done();
+    }, LEAVE_MS);
+  }
+
+  function openDialog(opener) {
+    if (leaving) return;
+    openerRef.current = opener ?? null;
+    setPreferences(normalize(readConsent() ?? noOptional));
+    setAnnouncement("");
+    setDialogOpen(true);
+  }
+
+  /* Closing without choosing falls back to the banner when nothing has been
+     stored yet - it was never taken away, only covered - so a reader who opens
+     the details and changes their mind is still asked. */
+  function close() {
+    if (leaving) return;
+    restoreRef.current = openerRef.current;
+    leave("dialog", () => setDialogOpen(false));
+  }
 
   function save(next) {
+    if (leaving) return;
+
     const normalized = normalize(next);
-    writeCookie(normalized);
+    const opener = dialogOpen ? openerRef.current : null;
+
+    writeConsent(normalized);
+    applyBranchConsent();
     setPreferences(normalized);
-    close({ saved: true });
+    setAnnouncement(savedMessage);
+    restoreRef.current = opener && !opener.closest?.(".ck__banner") ? opener : null;
+    leave("all", () => {
+      setChoice(normalized);
+      setDialogOpen(false);
+    });
   }
 
   function toggle(id) {
     setPreferences((current) => ({ ...current, [id]: !current[id] }));
   }
 
-  if (!mode) {
-    return null;
-  }
+  return (
+    <>
+      <p className="ck__sr" role="status">
+        {announcement}
+      </p>
 
-  if (mode === "banner") {
-    return (
-      <aside className="ck ck__banner" aria-labelledby="ck-banner-title">
-        <span className="ck__glyph" aria-hidden="true">
-          <Cookie size={20} strokeWidth={1.7} />
-        </span>
-        <div className="ck__banner-copy">
-          <span className="ck__eyebrow">{bannerCopy.eyebrow}</span>
-          <h2 className="ck__banner-title" id="ck-banner-title">
-            {bannerCopy.title}
-          </h2>
+      {showBanner ? (
+        <aside
+          className="ck ck__banner"
+          aria-labelledby="ck-banner-title"
+          data-state={leaving === "all" ? "leaving" : undefined}
+          data-covered={dialogOpen && leaving !== "dialog" ? "" : undefined}
+          inert={trapping}
+        >
+          <div className="ck__head">
+            <span className="ck__glyph" aria-hidden="true">
+              <Cookie size={20} strokeWidth={1.7} />
+            </span>
+            <div className="ck__heading">
+              <span className="ck__eyebrow">{bannerCopy.eyebrow}</span>
+              <h2 className="ck__banner-title" id="ck-banner-title">
+                {bannerCopy.title}
+              </h2>
+            </div>
+          </div>
           <p className="ck__text ck__text--full">{bannerCopy.body}</p>
           <p className="ck__text ck__text--short">{bannerCopy.bodyShort}</p>
-        </div>
-        <div className="ck__actions">
-          <button
-            type="button"
-            className="ck__btn ck__btn--primary"
-            onClick={() => save(allPreferences)}
-          >
-            {bannerCopy.acceptLabel}
-          </button>
-          <button type="button" className="ck__btn" onClick={() => save(noOptional)}>
-            {bannerCopy.rejectLabel}
-          </button>
-          <button
-            type="button"
-            className="ck__more"
-            onClick={() => {
-              openerRef.current = null;
-              setMode("dialog");
-            }}
-          >
-            {bannerCopy.customiseLabel}
-          </button>
-        </div>
-      </aside>
-    );
-  }
-
-  return (
-    <div className="ck ck__overlay">
-      <button
-        type="button"
-        className="ck__scrim"
-        aria-label={dialogCopy.closeLabel}
-        tabIndex={-1}
-        onClick={() => close()}
-      />
-      <section
-        className="ck__dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="ck-dialog-title"
-        aria-describedby="ck-dialog-lede"
-        ref={dialogRef}
-      >
-        <header className="ck__dialog-head">
-          <span className="ck__glyph" aria-hidden="true">
-            <Cookie size={20} strokeWidth={1.7} />
-          </span>
-          <div>
-            <span className="ck__eyebrow">{dialogCopy.eyebrow}</span>
-            <h2 className="ck__dialog-title" id="ck-dialog-title">
-              {dialogCopy.title}
-            </h2>
+          {/* The two decisions carry the same weight, the way GOV.UK sets
+              them: refusing is never the harder or quieter choice. */}
+          <div className="ck__actions">
+            <button
+              type="button"
+              className="ck__btn ck__btn--primary"
+              onClick={() => save(allPreferences)}
+            >
+              {bannerCopy.acceptLabel}
+            </button>
+            <button
+              type="button"
+              className="ck__btn ck__btn--primary"
+              onClick={() => save(noOptional)}
+            >
+              {bannerCopy.rejectLabel}
+            </button>
+            <button
+              type="button"
+              className="ck__more"
+              ref={chooseRef}
+              onClick={(event) => openDialog(event.currentTarget)}
+            >
+              {bannerCopy.customiseLabel}
+            </button>
           </div>
-          <button type="button" className="ck__close" onClick={() => close()}>
-            <X size={18} aria-hidden="true" />
-            <span className="ck__sr">{dialogCopy.closeLabel}</span>
-          </button>
-        </header>
+        </aside>
+      ) : null}
 
-        <div className="ck__dialog-body">
-          <p className="ck__text" id="ck-dialog-lede">
-            {dialogCopy.lede}
-          </p>
+      {/* Always mounted and hidden, like the phone menu: building it on the tap
+          cost 34ms at 4x CPU before the sheet could start to rise, and opening
+          is now one attribute. Closed, it is inert and invisible. */}
+      <div
+        className="ck ck__overlay"
+        data-state={dialogOpen ? (leaving ? "leaving" : "open") : "closed"}
+        inert={!dialogOpen}
+      >
+        <button
+          type="button"
+          className="ck__scrim"
+          aria-label={dialogCopy.closeLabel}
+          tabIndex={-1}
+          onClick={close}
+        />
+        <section
+          className="ck__dialog"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="ck-dialog-title"
+          aria-describedby="ck-dialog-lede"
+          ref={dialogRef}
+        >
+          <header className="ck__dialog-head">
+            <span className="ck__glyph" aria-hidden="true">
+              <Cookie size={20} strokeWidth={1.7} />
+            </span>
+            <div className="ck__heading">
+              <span className="ck__eyebrow">{dialogCopy.eyebrow}</span>
+              <h2 className="ck__dialog-title" id="ck-dialog-title">
+                {dialogCopy.title}
+              </h2>
+            </div>
+            <button type="button" className="ck__close" onClick={close}>
+              <X size={18} aria-hidden="true" />
+              <span className="ck__sr">{dialogCopy.closeLabel}</span>
+            </button>
+          </header>
 
-          <ul className="ck__cats">
-            {categories.map((category) => (
-              <CookieCategory
-                key={category.id}
-                category={category}
-                checked={category.id === "necessary" ? true : Boolean(preferences[category.id])}
-                onChange={() => toggle(category.id)}
-              />
-            ))}
-          </ul>
+          <div className="ck__dialog-body" ref={bodyRef}>
+            <p className="ck__text" id="ck-dialog-lede">
+              {dialogCopy.lede}
+            </p>
 
-          <p className="ck__note">{dialogCopy.note}</p>
-        </div>
+            <ul className="ck__cats">
+              {categories.map((category) => (
+                <CookieCategory
+                  key={category.id}
+                  category={category}
+                  checked={category.id === "necessary" ? true : Boolean(preferences[category.id])}
+                  onChange={() => toggle(category.id)}
+                />
+              ))}
+            </ul>
 
-        <footer className="ck__dialog-foot">
-          <button
-            type="button"
-            className="ck__btn ck__btn--primary"
-            onClick={() => save(preferences)}
-          >
-            {dialogCopy.saveLabel}
-          </button>
-          <button type="button" className="ck__btn" onClick={() => save(allPreferences)}>
-            {dialogCopy.acceptLabel}
-          </button>
-          <button type="button" className="ck__btn" onClick={() => save(noOptional)}>
-            {dialogCopy.rejectLabel}
-          </button>
-        </footer>
-      </section>
-    </div>
+            <p className="ck__note">{dialogCopy.note}</p>
+          </div>
+
+          <footer className="ck__dialog-foot">
+            <button
+              type="button"
+              className="ck__btn ck__btn--primary"
+              onClick={() => save(preferences)}
+            >
+              {dialogCopy.saveLabel}
+            </button>
+            <button type="button" className="ck__btn" onClick={() => save(allPreferences)}>
+              {dialogCopy.acceptLabel}
+            </button>
+            <button type="button" className="ck__btn" onClick={() => save(noOptional)}>
+              {dialogCopy.rejectLabel}
+            </button>
+          </footer>
+        </section>
+      </div>
+    </>
   );
 }

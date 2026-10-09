@@ -53,6 +53,11 @@
   font-style: italic;
 }
 
+/* Each word of the promise is clipped on its own as it writes itself in. */
+.ct-head__ink {
+  display: inline-block;
+}
+
 .ct-head__lede {
   max-width: 46ch;
   margin: clamp(14px, 1.8vw, 22px) 0 0;
@@ -169,12 +174,16 @@
   transition: background-color 200ms var(--e-ease);
 }
 
-.ct-jack:hover {
-  background: rgba(255, 255, 255, 0.05);
+/* A real pointer gets the hover plate and a finger the press: a tap leaves
+   `:hover` on whatever it touched, for the rest of the visit. */
+@media (hover: hover) and (pointer: fine) {
+  .ct-jack:not([data-checked]):hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
 }
 
-.ct-jack[data-checked]:hover {
-  background: transparent;
+.ct-jack:not([data-checked]):active {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .ct-jack__bg {
@@ -312,8 +321,10 @@
   inset: -8px 0;
 }
 
-.ct-readout__number:hover {
-  border-bottom-color: rgba(255, 255, 255, 0.55);
+@media (hover: hover) and (pointer: fine) {
+  .ct-readout__number:hover {
+    border-bottom-color: rgba(255, 255, 255, 0.55);
+  }
 }
 
 /* The odometer: one column per digit over a strip of 0-9, shifted by exactly
@@ -323,6 +334,14 @@
   display: inline-flex;
   align-items: flex-start;
   white-space: nowrap;
+  opacity: 0;
+  transition: opacity 280ms var(--e-ease);
+}
+
+/* Clear until the card's first connection lands, then every digit rolls up
+   into place from 0. */
+.ct-odo[data-landed] {
+  opacity: 1;
 }
 
 .ct-odo__col {
@@ -346,12 +365,37 @@
   display: inline-block;
 }
 
-.ct-readout__address {
-  max-width: 44ch;
-  margin: 0;
+/* The pill and its detail share a line where they fit (`OPD open now` /
+   `Closes 8:00 PM`) and wrap where they do not - stacked, the detail cost
+   the call row its place on a phone's first screen. */
+.ct-readout .br-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+/* The address closes the readout, under the actions, behind a hairline. */
+.ct-readout__where {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 2px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 16px;
   color: rgba(255, 255, 255, 0.72);
   font-size: 0.95rem;
   line-height: 1.55;
+}
+
+.ct-readout__where svg {
+  flex: none;
+  margin-top: 0.2em;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.ct-readout__address {
+  max-width: 46ch;
   text-wrap: pretty;
 }
 
@@ -389,17 +433,28 @@
   flex: none;
 }
 
-.ct-act:hover {
-  border-color: #fff;
-}
-
 .ct-act[data-primary] {
   border-color: #fff;
   background: #fff;
   color: var(--e-navy);
 }
 
-.ct-act[data-primary]:hover {
+@media (hover: hover) and (pointer: fine) {
+  .ct-act:hover {
+    border-color: #fff;
+  }
+
+  .ct-act[data-primary]:hover {
+    background: rgba(255, 255, 255, 0.86);
+  }
+}
+
+.ct-act:active {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ct-act[data-primary]:active {
   background: rgba(255, 255, 255, 0.86);
 }
 
@@ -431,11 +486,23 @@
   padding: 18px 24px 18px 20px;
   color: var(--e-ink);
   text-decoration: none;
-  transition: box-shadow 220ms var(--e-ease);
+  transition:
+    box-shadow 220ms var(--e-ease),
+    background-color 200ms var(--e-ease);
 }
 
-.ct-urgent:hover {
-  box-shadow: 0 14px 34px rgba(16, 22, 28, 0.09);
+@media (hover: hover) and (pointer: fine) {
+  .ct-urgent:hover {
+    box-shadow: 0 14px 34px rgba(16, 22, 28, 0.09);
+  }
+
+  .ct-urgent:hover .ct-urgent__number {
+    color: var(--e-accent);
+  }
+}
+
+.ct-urgent:active {
+  background: #fdf3f7;
 }
 
 .ct-urgent__mark {
@@ -497,10 +564,6 @@
   transition: color 200ms var(--e-ease);
 }
 
-.ct-urgent:hover .ct-urgent__number {
-  color: var(--e-accent);
-}
-
 /* The ledger: a hospital per row, its desks beside it, and the row's name
    the way into its page. The accent draws across the row's top rule under
    the pointer - the values ledger's device. */
@@ -539,7 +602,7 @@
   transform: scaleX(1);
 }
 
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .ct-row:hover::before {
     transform: scaleX(1);
   }
@@ -580,6 +643,32 @@
   text-transform: uppercase;
 }
 
+/* The header's `Your hospital`, on the row of the hospital the switchboard
+   is connected to. The dot is the switchboard's lit ring. */
+.ct-row__city .ct-row__yours {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-color: rgba(184, 22, 87, 0.45);
+  color: var(--e-accent);
+  animation: ct-tag 420ms var(--e-ease) both;
+}
+
+.ct-row__yours::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+@keyframes ct-tag {
+  from {
+    opacity: 0;
+    scale: 0.85;
+  }
+}
+
 .ct-row__where {
   color: var(--e-ink-2);
   font-size: 0.9rem;
@@ -602,7 +691,7 @@
   transition: transform 240ms var(--e-ease);
 }
 
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .ct-row__name:hover .ct-row__city,
   .ct-row__name:hover .ct-row__go {
     color: var(--e-accent);
@@ -663,11 +752,19 @@
     color 200ms var(--e-ease);
 }
 
-.ct-num:hover,
-.ct-num:focus-visible {
+.ct-num:focus-visible,
+.ct-num:active {
   border-color: var(--e-navy);
   background: var(--e-navy);
   color: #fff;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ct-num:hover {
+    border-color: var(--e-navy);
+    background: var(--e-navy);
+    color: #fff;
+  }
 }
 
 /* Stacked, a hospital is a fold: its name and street on the summary, and
@@ -750,6 +847,27 @@
   color: var(--e-navy);
   font-family: var(--e-sans);
   text-decoration: none;
+  transition: background-color 160ms var(--e-ease);
+}
+
+.ct-line:active {
+  background: rgba(12, 44, 73, 0.05);
+}
+
+/* Opening a fold deals its lines in one by one, top to bottom, behind the
+   glide - the fold reads as opening onto a list, not swapping one in. */
+@keyframes ct-line {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ct-fold[open] .ct-line {
+    animation: ct-line 420ms var(--e-ease) both;
+    animation-delay: calc(var(--i, 0) * 45ms + 90ms);
+  }
 }
 
 .ct-line__label {
@@ -784,12 +902,14 @@
   transition: transform 240ms var(--e-ease);
 }
 
-.ct-line--go:hover {
-  color: var(--e-accent);
-}
+@media (hover: hover) and (pointer: fine) {
+  .ct-line--go:hover {
+    color: var(--e-accent);
+  }
 
-.ct-line--go:hover svg {
-  transform: translate(2px, -2px);
+  .ct-line--go:hover svg {
+    transform: translate(2px, -2px);
+  }
 }
 
 /* Email and hours close the list: both are the same at every hospital. */
@@ -838,8 +958,10 @@
   color: var(--e-ink-2);
 }
 
-.ct-foot__mail:hover {
-  color: var(--e-accent);
+@media (hover: hover) and (pointer: fine) {
+  .ct-foot__mail:hover {
+    color: var(--e-accent);
+  }
 }
 
 .ct-foot__note {
@@ -873,12 +995,6 @@
 
 /* ---------- responsive ---------- */
 
-@media (max-width: 760px) {
-  .ct-dir {
-    padding-block: 44px 56px;
-  }
-}
-
 @media (max-width: 1100px) {
   .ct-deskline {
     grid-template-columns: minmax(0, 1fr);
@@ -886,9 +1002,85 @@
   }
 }
 
-/* Stacked: the six hospitals are a two-column grid of chips, all visible
-   at once, and the cable runs down the gutter between the columns. */
+/* Wider than a tablet, the hospital the switchboard is connected to lifts
+   off the ledger as a white card - the FAQ's open row - and the hairlines on
+   either side of it step aside, so a rule never runs into its corners. It
+   moves when the reader chooses another hospital above. */
+@media (min-width: 900px) {
+  .ct-ledger {
+    transition: border-color 360ms var(--e-ease);
+  }
+
+  .ct-row {
+    isolation: isolate;
+    transition: border-color 360ms var(--e-ease);
+  }
+
+  .ct-row::after {
+    content: "";
+    position: absolute;
+    inset: -1px -20px;
+    z-index: -1;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 18px 40px rgba(16, 22, 28, 0.07);
+    opacity: 0;
+    transition: opacity 360ms var(--e-ease);
+  }
+
+  .ct-row[data-chosen]::after {
+    opacity: 1;
+  }
+
+  .ct-row[data-chosen],
+  .ct-row:has(+ .ct-row[data-chosen]) {
+    border-bottom-color: transparent;
+  }
+
+  .ct-ledger:has(> .ct-row[data-chosen]:first-child) {
+    border-top-color: transparent;
+  }
+
+  .ct-row[data-chosen]::before {
+    display: none;
+  }
+}
+
+/* Below 900px the directory's hospitals are folds (decided in JS). */
 @media (max-width: 899px) {
+  .ct-dir {
+    padding-block: 36px 56px;
+  }
+
+  .ct-dir .e-head {
+    margin-bottom: 26px;
+  }
+
+  .ct-row {
+    display: block;
+    padding-block: 0;
+  }
+
+  .ct-urgent {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "mark label"
+      "mark number"
+      "note note";
+    gap: 2px 14px;
+    padding: 16px 18px 16px 16px;
+  }
+
+  .ct-urgent__note {
+    margin-top: 10px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Stacked - a phone or tablet held upright: the six hospitals are a
+   two-column grid of chips, all visible at once, and the cable runs down the
+   gutter between the columns. The query is STACKED_QUERY in ContactDesk. */
+@media (max-width: 899px) and (min-height: 521px) {
   .ct {
     padding-bottom: 40px;
   }
@@ -966,8 +1158,7 @@
     display: none;
   }
 
-  /* The cable's lane runs where the hint sat; the drawer carries the same
-     sentence beside its own picker. */
+  /* The cable's lane runs where the hint sat. */
   .ct-pick__hint {
     display: none;
   }
@@ -976,35 +1167,7 @@
     gap: 16px;
   }
 
-  .ct-readout__address {
-    font-size: 0.9rem;
-  }
-
-  .ct-dir {
-    padding-block: 36px 56px;
-  }
-
-  .ct-dir .e-head {
-    margin-bottom: 26px;
-  }
-
-  .ct-row {
-    display: block;
-    padding-block: 0;
-  }
-
-  .ct-urgent {
-    grid-template-columns: auto minmax(0, 1fr);
-    grid-template-areas:
-      "mark label"
-      "mark number"
-      "note note";
-    gap: 2px 14px;
-    padding: 16px 18px 16px 16px;
-  }
-
-  .ct-urgent__note {
-    margin-top: 10px;
+  .ct-readout__where {
     font-size: 0.9rem;
   }
 }
@@ -1026,6 +1189,36 @@
   }
 }
 
+/* A phone's first screen is the switchboard, measured at the heights Safari
+   actually shows (390x664, 393x659): the head, the six hospitals, the
+   number, whether the OPD is open and the call row. The air comes out of
+   the gaps, never out of the type or a 44px target. */
+@media (max-width: 640px) and (min-height: 521px) {
+  .ct {
+    padding-top: 16px;
+  }
+
+  .ct-head {
+    margin-bottom: 18px;
+  }
+
+  .ct-desk {
+    gap: 26px;
+  }
+
+  .ct-pick__rail {
+    row-gap: 6px;
+  }
+
+  .ct-jack {
+    min-height: 44px;
+  }
+
+  .ct-readout {
+    gap: 14px;
+  }
+}
+
 @media (max-width: 360px) {
   .ct-desk {
     padding: 16px;
@@ -1043,7 +1236,7 @@
    chips stack in one column with every ring at the right, and the bus runs
    down the card's right margin instead of a gutter. Check with scrollWidth
    against clientWidth - a clipped name still reports one line. */
-@media (max-width: 399px) {
+@media (max-width: 399px) and (min-height: 521px) {
   .ct-pick__rail {
     column-gap: 20px;
   }
@@ -1067,7 +1260,7 @@
   }
 }
 
-@media (max-width: 356px) {
+@media (max-width: 356px) and (min-height: 521px) {
   .ct-pick__rail {
     grid-template-columns: minmax(0, 1fr);
     gap: 6px;
@@ -1079,28 +1272,227 @@
   }
 }
 
+/* A laptop window under 760px tall (1366x657 is the commonest) sets the head
+   a size smaller and closer to the card, so the number, the status and the
+   call row share its first screen with the whole head, lede included. */
+@media (min-width: 900px) and (max-height: 760px) and (min-height: 521px) {
+  .ct {
+    padding-top: 20px;
+  }
+
+  .ct-head {
+    margin-bottom: 30px;
+  }
+
+  .ct-head__title {
+    font-size: clamp(2.3rem, 5vw, 3.4rem);
+  }
+
+  .ct-head__lede {
+    margin-top: 12px;
+  }
+
+  .ct-desk {
+    padding-block: 30px;
+  }
+
+  .ct-readout {
+    gap: 16px;
+  }
+}
+
+/* A phone held sideways keeps the desktop's two columns, compacted - the
+   head on one line, the hospitals as one-line rows - so the number, the
+   status and the call row share its first screen. Stacked, the chips alone
+   filled it and the number sat a screen below. */
+@media (max-width: 1023px) and (max-height: 520px) {
+  .ct {
+    padding-block: 14px 36px;
+  }
+
+  .ct-head {
+    margin-bottom: 18px;
+  }
+
+  .ct-head__title {
+    max-width: none;
+    font-size: clamp(2rem, 5vw, 2.6rem);
+  }
+
+  .ct-head__title em {
+    display: inline;
+  }
+
+  .ct-head__lede {
+    display: none;
+  }
+
+  .ct-desk {
+    gap: 28px;
+    border-radius: 16px;
+    padding: 18px 20px;
+  }
+
+  .ct-pick {
+    gap: 10px;
+  }
+
+  .ct-jack {
+    grid-template-areas: "name ring";
+    min-height: 44px;
+    padding: 6px 14px;
+  }
+
+  .ct-jack__name {
+    font-size: 1.05rem;
+  }
+
+  .ct-jack__where,
+  .ct-jack__name em,
+  .ct-pick__hint {
+    display: none;
+  }
+
+  .ct-readout {
+    gap: 12px;
+  }
+
+  .ct-readout__number {
+    font-size: clamp(1.7rem, 3.8vw, 2.2rem);
+  }
+
+  /* The pill alone, as on the hospitals index held sideways; the hours are
+     in the directory's foot. */
+  .ct-readout .br-status__detail {
+    display: none;
+  }
+
+  .ct-acts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 0;
+  }
+
+  .ct-act {
+    min-height: 48px;
+  }
+
+  .ct-readout__where {
+    padding-top: 12px;
+    font-size: 0.9rem;
+  }
+}
+
+/* ---------- arrivals as the reader scrolls ---------- */
+
+/* The service and hospital pages' model: every value is a function of the
+   scroll position, so the directory's head, the emergency line and each
+   hospital come up under the thumb as they enter, stop when the reader
+   stops, and play backwards on the way up. CSS on the compositor; nothing
+   holds or re-times the scroll. It replaced a framer fade that played once,
+   10px, and read as still. The switchboard above has its own arrival. Every
+   move ends on the element's resting style, and where the browser cannot
+   drive an animation from scroll (Firefox today) the page is simply there.
+   Nothing animated here may sit under an `overflow: hidden` ancestor. */
+@keyframes ct-rise {
+  from {
+    opacity: 0;
+    translate: 0 var(--ct-rise, 32px);
+  }
+}
+
+@keyframes ct-draw {
+  from {
+    scale: 0 1;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .ct-dir .e-head > * {
+      animation: ct-rise cubic-bezier(0.2, 0.7, 0.3, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+
+    .ct-dir .e-head > :nth-child(2) {
+      --ct-rise: 60px;
+    }
+
+    /* The rule over the head draws across as it arrives. */
+    .ct-dir .e-head {
+      position: relative;
+      border-top-color: transparent;
+    }
+
+    .ct-dir .e-head::before {
+      content: "";
+      position: absolute;
+      top: -1px;
+      right: 0;
+      left: 0;
+      height: 1px;
+      background: var(--e-rule);
+      transform-origin: 0 50%;
+      animation: ct-draw cubic-bezier(0.3, 0.6, 0.2, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 35%;
+    }
+
+    .ct-urgent,
+    .ct-row,
+    .ct-foot__cell {
+      animation: ct-rise cubic-bezier(0.2, 0.7, 0.3, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 28%;
+    }
+
+    .ct-urgent {
+      --ct-rise: 40px;
+    }
+
+    .ct-row {
+      --ct-rise: 26px;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) and (min-width: 641px) {
+    .ct-foot__cell:nth-child(2) {
+      --ct-rise: 56px;
+    }
+  }
+}
+
+/* ---------- reduced motion ---------- */
+
 @media (prefers-reduced-motion: reduce) {
   .ct-jack,
   .ct-jack__ring,
   .ct-readout__jack,
   .ct-readout__number,
+  .ct-odo,
   .ct-act,
   .ct-urgent,
   .ct-urgent__number,
+  .ct-ledger,
+  .ct-row,
   .ct-row::before,
+  .ct-row::after,
   .ct-row__city,
   .ct-row__go,
   .ct-row__go svg,
   .ct-num,
   .ct-fold__mark,
   .ct-fold::details-content,
+  .ct-line,
   .ct-line--go svg,
   .ct-foot__mail {
     transition: none;
   }
 
   .ct-readout__jack.is-hit,
-  .ct-urgent__mark svg {
+  .ct-urgent__mark svg,
+  .ct-row__city .ct-row__yours {
     animation: none;
   }
 

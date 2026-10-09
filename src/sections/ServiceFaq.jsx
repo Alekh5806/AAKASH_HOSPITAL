@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Plus } from "lucide-react";
-import Reveal from "../components/Reveal";
 import { serviceDetail } from "../lib/servicesData";
 
 const { questions } = serviceDetail;
@@ -20,22 +19,25 @@ const { questions } = serviceDetail;
  *
  * `Ask us directly` sits at the end of the list, not in the head: a reader who
  * still has a question has it after reading the seven, which on a phone is a
- * screen and a half below where the head was. */
+ * screen and a half below where the head was.
+ *
+ * The head and each question rise into place as the reader scrolls to them -
+ * the scroll-driven block at the end of service-detail.css. */
 export default function ServiceFaq({ items }) {
   if (!items?.length) return null;
 
   return (
     <section className="sd-sec sd-faq" id="questions" aria-labelledby="sd-faq-title">
       <div className="e-shell sd-faq__shell">
-        <Reveal className="sd-faq__head">
+        <div className="sd-faq__head">
           <span className="sd-label">{questions.label}</span>
           <h2 className="sd-h2" id="sd-faq-title">
             {questions.title}
           </h2>
           <p className="sd-faq__lede">{questions.lede}</p>
-        </Reveal>
+        </div>
 
-        <Reveal className="sd-faq__list" delay={0.05}>
+        <div className="sd-faq__list">
           {items.map((item, position) => (
             <details className="sd-faq__item" key={item.question}>
               <summary className="sd-faq__q">
@@ -60,7 +62,7 @@ export default function ServiceFaq({ items }) {
               <ArrowRight size={15} aria-hidden="true" />
             </Link>
           </p>
-        </Reveal>
+        </div>
       </div>
     </section>
   );

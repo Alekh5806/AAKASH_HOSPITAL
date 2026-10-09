@@ -1,12 +1,23 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
-import { Check, Clock, Copy, Landmark, Map, Navigation, PenLine, Phone } from "lucide-react";
+import {
+  AtSign,
+  Check,
+  Clock,
+  Copy,
+  Landmark,
+  Map,
+  Navigation,
+  PenLine,
+  Phone,
+} from "lucide-react";
 import BranchMap from "../components/BranchMap";
 import BranchStatus from "../components/BranchStatus";
 import LazyMapFrame from "../components/LazyMapFrame";
-import Reveal from "../components/Reveal";
-import { buildMapLink, cleanTel } from "../lib/contact";
+import SocialMark from "../components/SocialMark";
+import { buildMapLink, cleanTel, confirmedProfiles } from "../lib/contact";
 import { branchPage } from "../lib/branchData";
+import { site } from "../lib/coreData";
 import { getBranchHours, getHoursRows } from "../lib/hours";
 
 const { locate } = branchPage;
@@ -35,9 +46,9 @@ function subscribeToStacked(callback) {
  * was a 1504px wall - four screens of label-and-list for three facts, and the
  * reason the page read as complex there. Below 1024px the map, a three-tab
  * switch and one panel become a single card the reader taps through: address,
- * numbers,
- * hours. `stacked` is decided in JS rather than by CSS because the tabs are real
- * ARIA controls and must not exist on the width where every panel is open.
+ * numbers, hours. `stacked` is decided in JS rather than by CSS because the
+ * tabs are real ARIA controls and must not exist on the width where every
+ * panel is open.
  *
  * The actions sit under the card at every width rather than inside a tab -
  * Directions is the thing a reader came for, and it must never be one tap
@@ -112,6 +123,7 @@ export default function BranchLocate({ branch }) {
     </>
   );
 
+  const profiles = confirmedProfiles(branch.socialLinks);
   const numbersPanel = (
     <>
       <span className="br-details__label">{locate.desksLabel}</span>
@@ -131,6 +143,30 @@ export default function BranchLocate({ branch }) {
             </span>
           </li>
         ))}
+        {/* The hospital's own accounts, once confirmed - one more way to
+            reach this desk, set like the numbers above it. */}
+        {profiles.length ? (
+          <li className="br-desk br-desk--social">
+            <span className="br-desk__name">
+              <AtSign size={14} aria-hidden="true" />
+              {locate.followLabel}
+            </span>
+            <span className="br-desk__numbers">
+              {profiles.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`${site.brand.name} ${branch.name} on ${link.label}`}
+                >
+                  <SocialMark name={link.icon} size={16} />
+                  {link.label}
+                </a>
+              ))}
+            </span>
+          </li>
+        ) : null}
       </ul>
     </>
   );
@@ -158,7 +194,12 @@ export default function BranchLocate({ branch }) {
 
   const actions = (
     <div className="br-details__actions">
-      <a className="e-btn e-btn--light" href={buildMapLink(branch)} target="_blank" rel="noreferrer">
+      <a
+        className="e-btn e-btn--light"
+        href={buildMapLink(branch)}
+        target="_blank"
+        rel="noreferrer"
+      >
         <Navigation size={16} aria-hidden="true" />
         <span className="br-full">{locate.mapsLabel}</span>
         <span className="br-short">{locate.mapsShortLabel}</span>
@@ -188,7 +229,7 @@ export default function BranchLocate({ branch }) {
             and the one a visitor actually wants before setting out. It stays
             under the heading at every width - in the label column it read ahead
             of the heading once the two stacked on a phone. */}
-        <Reveal className="e-head">
+        <div className="e-head">
           <span className="e-label">{locate.label}</span>
           <div className="e-head__body">
             <h2 className="e-h2" id="br-locate-title">
@@ -196,7 +237,7 @@ export default function BranchLocate({ branch }) {
             </h2>
             <BranchStatus branch={branch} />
           </div>
-        </Reveal>
+        </div>
 
         <div className="br-locate__grid">
           <div className="br-map" ref={mapRef} data-live={live ? "true" : undefined}>
@@ -243,7 +284,11 @@ export default function BranchLocate({ branch }) {
               aria-pressed={live}
               onClick={() => setLive((value) => !value)}
             >
-              {live ? <PenLine size={15} aria-hidden="true" /> : <Map size={15} aria-hidden="true" />}
+              {live ? (
+                <PenLine size={15} aria-hidden="true" />
+              ) : (
+                <Map size={15} aria-hidden="true" />
+              )}
               {live ? locate.drawnMapLabel : locate.liveMapLabel}
             </button>
           </div>
@@ -293,7 +338,10 @@ export default function BranchLocate({ branch }) {
                       initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
-                      transition={{ duration: shouldReduceMotion ? 0.12 : 0.28, ease: [0.22, 1, 0.36, 1] }}
+                      transition={{
+                        duration: shouldReduceMotion ? 0.12 : 0.28,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
                     >
                       {panels[tab]}
                     </motion.div>
@@ -304,16 +352,10 @@ export default function BranchLocate({ branch }) {
               </>
             ) : (
               <>
-                <Reveal className="br-details__block" as="div">
-                  {addressPanel}
-                </Reveal>
+                <div className="br-details__block">{addressPanel}</div>
                 {actions}
-                <Reveal className="br-details__block" as="div" delay={0.08}>
-                  {numbersPanel}
-                </Reveal>
-                <Reveal className="br-details__block" as="div" delay={0.14}>
-                  {hoursPanel}
-                </Reveal>
+                <div className="br-details__block">{numbersPanel}</div>
+                <div className="br-details__block">{hoursPanel}</div>
               </>
             )}
           </div>

@@ -6,7 +6,7 @@
 
    One head and one roster. The team is the page, so the only control is the
    question a patient actually asks - which hospital - and the answer is read
-   in two runs, the consultants and then the optometry team.
+   in runs: the consultants, the visiting specialists, the optometry team.
    ========================================================================= */
 
 .dr {
@@ -47,6 +47,12 @@
   font-style: italic;
 }
 
+/* One box per word of the promise, so each can be clipped as it writes in;
+   the spaces between them still wrap the line. */
+.dr-head__ink {
+  display: inline-block;
+}
+
 .dr-head__lede {
   max-width: 50ch;
   margin: clamp(14px, 1.8vw, 22px) 0 0;
@@ -55,6 +61,17 @@
   font-size: clamp(1rem, 1.2vw, 1.14rem);
   line-height: 1.6;
   text-wrap: pretty;
+}
+
+/* ---------- the roster ---------- */
+
+/* Capped so two cards to a line keep a measure the areas of interest read
+   well in (about 320px of words beside the portrait), centred under the
+   centred head. */
+.dr-roster,
+.dr-foot {
+  max-width: 960px;
+  margin-inline: auto;
 }
 
 /* ---------- the filter bar ---------- */
@@ -168,6 +185,22 @@
   line-height: 1.2;
 }
 
+/* The visiting run says what makes it different - set days, not every day -
+   once, under its heading, rather than on every card. */
+.dr-run__head:has(+ .dr-run__note) {
+  margin-bottom: 6px;
+}
+
+.dr-run__note {
+  max-width: 60ch;
+  margin: 0 0 clamp(14px, 1.8vw, 20px);
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
 .dr-run__count {
   color: var(--e-ink-2);
   font-family: var(--e-sans);
@@ -178,8 +211,8 @@
 
 .dr-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(16px, 2vw, 24px);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(12px, 1.6vw, 18px);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -187,13 +220,21 @@
 
 /* ---------- a card ---------- */
 
+/* A doctor is a row at every width - portrait left, words right - the shape
+   the phone always had. A tall portrait card was right for nine people with
+   nine photographs; it is wrong for a team of twenty-five where most are
+   still a monogram, which as a 290px square is a tile of tint with two
+   letters in it. The 270x260 portraits are also sharper at this size. */
 .dr-card {
-  display: flex;
-  flex-direction: column;
+  --dr-face: 120px;
+  display: grid;
+  grid-template-columns: var(--dr-face) minmax(0, 1fr);
+  align-items: start;
+  column-gap: 18px;
   border: 1px solid var(--e-rule);
   border-radius: 16px;
   background: var(--e-paper);
-  padding: 14px 14px 16px;
+  padding: 14px;
   /* A resting lift, because a phone has no hover: a bordered white card on a
      flat ground otherwise sits dead flat for the whole visit. */
   box-shadow:
@@ -201,11 +242,15 @@
     0 10px 26px rgba(16, 22, 28, 0.05);
   transition:
     border-color 240ms var(--e-ease),
-    box-shadow 240ms var(--e-ease);
+    box-shadow 240ms var(--e-ease),
+    translate 240ms var(--e-ease);
 }
 
+/* `translate`, not `transform`: framer writes the card's arrival and its
+   reflow to `transform`, and the two compose. */
 @media (hover: hover) and (pointer: fine) {
   .dr-card:hover {
+    translate: 0 -4px;
     border-color: var(--e-rule-2);
     box-shadow: 0 18px 44px rgba(16, 22, 28, 0.1);
   }
@@ -215,10 +260,19 @@
    are 270x260, so a square box is very nearly a 1:1 render of the source
    rather than an upscale. */
 .dr-card__media {
+  isolation: isolate;
   aspect-ratio: 1 / 1;
   overflow: hidden;
   border-radius: 12px;
   background: var(--color-clinical);
+}
+
+/* The portrait settles inside the frame as its card arrives (DoctorRoster);
+   the frame, not the image, carries that scale, so the hover zoom on the
+   image never fights it. */
+.dr-card__frame {
+  width: 100%;
+  height: 100%;
 }
 
 .dr-card__img {
@@ -234,14 +288,17 @@
   transform: scale(1.04);
 }
 
+/* The words take the card's full height, so the place lines sit on its foot
+   and a row of cards ends on one line. */
 .dr-card__body {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
+  align-self: stretch;
+  min-width: 0;
 }
 
 .dr-card__specialty {
-  margin-top: 16px;
+  margin-top: 2px;
   color: var(--e-accent);
   font-family: var(--e-sans);
   font-size: 0.68rem;
@@ -251,7 +308,7 @@
 }
 
 .dr-card__name {
-  margin: 8px 0 0;
+  margin: 6px 0 0;
   color: var(--e-ink);
   font-family: var(--e-tight);
   font-size: clamp(1.02rem, 1.2vw, 1.12rem);
@@ -276,8 +333,123 @@
   margin: 8px 0 0;
   color: var(--e-ink-2);
   font-family: var(--e-sans);
-  font-size: 0.92rem;
-  line-height: 1.55;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* Where and when this doctor can be seen. The hairline is drawn by the
+   spacer above the lines, so it keeps 14px from the words even on the card
+   that sets the row's height. */
+.dr-card__where {
+  display: grid;
+  gap: 3px;
+  margin-top: auto;
+  padding-top: 14px;
+}
+
+.dr-card__where::before {
+  content: "";
+  border-top: 1px solid var(--e-rule);
+  margin-bottom: 7px;
+}
+
+.dr-card__where p {
+  margin: 0;
+  color: var(--e-ink);
+  font-family: var(--e-sans);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+/* Each hospital named here is the way into its page: a link inside a
+   sentence, so it keeps the sentence's type and takes an underline. Its halo
+   reaches 4px up and down only - the foot's lines are 23px apart, and a taller
+   one would put two lines' links under one finger. */
+.dr-card__where a {
+  position: relative;
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--e-rule-2);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition:
+    color 200ms var(--e-ease),
+    text-decoration-color 200ms var(--e-ease);
+}
+
+.dr-card__where a::after {
+  content: "";
+  position: absolute;
+  inset: -4px -2px;
+}
+
+.dr-card__where a:active {
+  color: var(--e-accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dr-card__where a:hover {
+    color: var(--e-accent);
+    text-decoration-color: var(--e-accent);
+  }
+}
+
+/* The whole card is the way into the doctor's own page: the name is the link
+   and its ::after reaches across the card, while the hospital links in the
+   foot sit above it. The ring goes round the card, where the target is. */
+.dr-card {
+  position: relative;
+}
+
+.dr-card__link {
+  color: inherit;
+}
+
+.dr-card__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.dr-card__link:focus-visible {
+  outline: none;
+}
+
+.dr-card:has(.dr-card__link:focus-visible) {
+  outline: 3px solid color-mix(in srgb, var(--color-accent-magenta), white 18%);
+  outline-offset: 3px;
+}
+
+/* Says the card opens a page - a finger gets no hover to find out. */
+.dr-card__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  color: var(--e-navy-2);
+  font-family: var(--e-sans);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.dr-card__more svg {
+  transition: translate 240ms var(--e-ease);
+}
+
+.dr-card:has(.dr-card__link:active) {
+  scale: 0.99;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dr-card:hover .dr-card__link {
+    color: var(--e-accent);
+  }
+
+  .dr-card:hover .dr-card__more svg {
+    translate: 3px 0;
+  }
 }
 
 /* ---------- the foot ---------- */
@@ -313,14 +485,52 @@
 
 /* ---------- widths ---------- */
 
-/* Three columns all the way down to the phone rows, never two. The hospital's
-   portrait files are 270x260, so a two-column card on a tablet renders a
-   320px square from a 270px source and the upscale shows; three keeps the
-   card between 190px and 310px rather than the 362px a 1180px window gave
-   it. */
-@media (max-width: 1023px) {
+/* One card to a line until two leave the words a readable column. */
+@media (max-width: 760px) {
   .dr-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+}
+
+/* The lede goes on a phone and on a phone held sideways: its sentence is
+   what the filter's own label says, and on a short screen it stood between
+   the heading and the control. */
+@media (max-width: 640px), (max-width: 1023px) and (max-height: 520px) {
+  .dr-head__lede {
+    display: none;
+  }
+
+  .dr-card {
+    --dr-face: 104px;
+    column-gap: 14px;
+    padding: 12px;
+  }
+
+  .dr-card__name {
+    margin-top: 4px;
+    font-size: 1rem;
+  }
+
+  .dr-card__quals {
+    font-size: 0.9rem;
+  }
+
+  .dr-card__text {
+    margin-top: 6px;
+    font-size: 0.88rem;
+  }
+
+  .dr-card__where {
+    padding-top: 12px;
+  }
+}
+
+/* Sideways, two rows share the width: one row across 800px left the
+   sentence a single line with half the card empty beside it. */
+@media (min-width: 641px) and (max-width: 1023px) and (max-height: 520px) {
+  .dr-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -330,12 +540,6 @@
   .dr {
     background: var(--dr-ground);
     padding-block: 18px 44px;
-  }
-
-  /* The lede's sentence is what the filter row says next to it, and on a
-     phone it stood between the heading and the control. */
-  .dr-head__lede {
-    display: none;
   }
 
   .dr-head {
@@ -377,6 +581,8 @@
        edge, which sits inside the padding. */
     scroll-padding-inline: 16px;
     scrollbar-width: none;
+    /* The header's own slide, so the rail follows it off and back on. */
+    transition: top var(--hd-slide);
   }
 
   .dr-filter::-webkit-scrollbar {
@@ -427,41 +633,6 @@
     padding-top: 20px;
   }
 
-  /* A doctor is a row on a phone, portrait left and words right - the shape a
-     hospital's own team section takes at this width. Two columns of cards put
-     a 12-word sentence in a 150px column; a row keeps every card's sentence
-     and still fits three consultants on one screen. */
-  .dr-grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 10px;
-  }
-
-  .dr-card {
-    display: grid;
-    grid-template-columns: 104px minmax(0, 1fr);
-    align-items: start;
-    column-gap: 14px;
-    padding: 12px;
-  }
-
-  .dr-card__specialty {
-    margin-top: 2px;
-  }
-
-  .dr-card__name {
-    margin-top: 4px;
-    font-size: 1rem;
-  }
-
-  .dr-card__quals {
-    font-size: 0.9rem;
-  }
-
-  .dr-card__text {
-    margin-top: 6px;
-    font-size: 0.88rem;
-  }
-
   .dr-foot {
     flex-direction: column;
     align-items: flex-start;
@@ -473,7 +644,7 @@
    portrait gives up 20px and the label reads on one. */
 @media (max-width: 380px) {
   .dr-card {
-    grid-template-columns: 84px minmax(0, 1fr);
+    --dr-face: 84px;
     column-gap: 12px;
   }
 }
@@ -487,5 +658,9 @@
 
   .dr-card:hover .dr-card__img {
     transform: none;
+  }
+
+  .dr-card:hover {
+    translate: none;
   }
 }

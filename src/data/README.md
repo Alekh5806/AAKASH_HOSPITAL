@@ -4,21 +4,31 @@ Most updates only require editing JSON files in this folder. Keep commas and quo
 
 ## Update A Doctor
 
-Open `doctors.json`, find the doctor in `items`, and edit the fields:
+Open `doctors.json`, find the person in `items`, and edit the fields:
 
 ```json
 {
-  "name": "Dr. Vishnu S. Patel",
-  "qualifications": "MBBS, MS",
-  "specialty": "Ophthalmic Surgeon",
-  "photo": "/assets/media/doctors/vishnu-patel.jpg",
-  "photoAlt": "Dr. Vishnu S. Patel",
-  "bio": "Approved short biography goes here.",
-  "branches": ["Visnagar"]
+  "name": "Dr. Dhaivat Vasavada",
+  "qualifications": "MS (Ophth), FAECS, FAICO (VR)",
+  "specialty": "Senior Vitreoretina Consultant",
+  "interests": ["cataract surgery", "FLACS"],
+  "photo": "/assets/media/doctors/dhaivat-vasavada.jpg",
+  "branches": ["Ahmedabad", "Gota"],
+  "visiting": [
+    {
+      "branch": "Visnagar",
+      "schedule": [{ "days": ["Tuesday", "Saturday"], "opens": "10:00", "closes": "17:00" }]
+    }
+  ]
 }
 ```
 
-Use image paths from `public/assets/media/doctors`. Add a new image there, then reference it as `/assets/media/doctors/file-name.jpg`.
+- `branches` are the hospitals the person is based at, and `visiting` the ones they visit. Name a hospital exactly as `branches.json` does (`Visnagar`, `Ahmedabad`, `Bharuch`, `Gota`, `Himmatnagar`, `Juhapura`), never by its slug. Someone who only visits has `"branches": []`.
+- A `visiting` entry without a `schedule` reads `Visits Visnagar`; with one it reads `Visits Visnagar on Tuesday and Saturday, 10:00 AM - 5:00 PM`. Times are 24-hour.
+- `interests` is optional. Write each one as it reads in the middle of a sentence (`cataract surgery`, `LASIK`); the site capitalises the first.
+- `photo` is optional. Without one the site shows the person's initials. Add the image to `public/assets/media/doctors`, then reference it as `/assets/media/doctors/file-name.jpg`.
+- A `specialty` containing `Optometrist` puts the person in the optometry team.
+- The counts on the home page (`19 Consulting specialists`) and the hospital chips on `/doctors` update by themselves.
 
 ## Update A Service
 
@@ -33,7 +43,7 @@ Open `services.json`, find the service in `items`, and edit copy, bullets or FAQ
   "category": "specialty",
   "shortDescription": "Short card text shown on service grids.",
   "longDescription": ["Paragraph one.", "Paragraph two."],
-  "image": "/assets/media/gallery/facility-4.jpg",
+  "image": "/assets/media/conditions/glaucoma-screening-pexels-5766215.jpg",
   "thumb": "/assets/media/services/glaucoma-care-thumb.jpg",
   "imageAlt": "Diagnostic care area for glaucoma evaluation",
   "featureBullets": ["Pressure and optic nerve evaluation"],
@@ -128,7 +138,7 @@ The last four are optional and the page adapts to what is there:
 - **`services`** - leave it out and the page lists all eleven. Add the slugs a hospital actually runs to narrow it.
 - **`insideLede`** - leave it out and the gallery uses the shared `page.inside.lede`, which names the Visnagar set. Write one when the hospital has its own photographs, so the sentence says what is actually in them.
 
-A `gallery` entry is landscape unless it carries `"portrait": true`; a portrait photograph is shown whole over a blurred copy of itself rather than cropped to the landscape stage. Keep to four entries at most - a fifth thumbnail drops under the 44px tap target on a 320px phone.
+A `gallery` entry is landscape unless it carries `"portrait": true`; a portrait photograph is shown whole over a blurred copy of itself rather than cropped to the landscape stage. Keep to five entries at most - the thumbnails hold a 44px floor, and a sixth would squeeze them to 42px wide on a 320px phone. A camera watermark in a supplied photograph is cropped out before encoding, never left in.
 
 `landmarks` wants one `road` and two `landmark` entries; the drawn map puts the hospital on that road between those two. An address that names no road still works - the map draws the road unlabelled.
 

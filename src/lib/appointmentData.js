@@ -41,6 +41,11 @@ export function parseMobile(raw = "") {
 
 /* ---------- validation ---------- */
 
+/* The pages' content security policy forbids eval, and zod probes for it with
+   `new Function` to compile a faster parser - a probe the policy reports as a
+   console error. A seven-field form gains nothing from the compiled parser. */
+z.config({ jitless: true });
+
 /* The preferred day is checked against the chosen hospital's own days, so it
    is an object-level refinement rather than a field one: a Saturday is a fine
    answer for a hospital open on Saturdays and a closed day for one that is

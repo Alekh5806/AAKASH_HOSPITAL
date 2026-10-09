@@ -1,0 +1,31 @@
+{
+  "notes": "Permanent (301) redirects, read by scripts/prerender.mjs, which writes them into _redirects (Cloudflare Pages / Workers, Netlify) and .htaccess (Apache / LiteSpeed). Matched on the path only: a query string is ignored and dropped, so /team_details.php?team_id=3 lands on /doctors. The first block is every URL of the 2018 PHP site this one replaced (its sitemap, its internal links and the .aspx links it still carried); keep them for as long as the domain exists - search engines and old bookmarks keep asking for them for years. Add a line here whenever a live page moves, never delete one.",
+  "permanent": [
+    { "from": "/about", "to": "/about/journey", "reason": "About us is two pages; the section opens on the journey" },
+
+    { "from": "/index.php", "to": "/", "reason": "Legacy home page" },
+    { "from": "/index.html", "to": "/", "reason": "One URL for the home page" },
+    { "from": "/about.php", "to": "/about/journey", "reason": "Legacy about page" },
+    { "from": "/times_of_aakash.php", "to": "/about/journey", "reason": "Legacy news page; the hospital's story now lives on the journey page" },
+    { "from": "/socialactivity.php", "to": "/about/journey", "reason": "Legacy community activities page" },
+    { "from": "/portfolio.php", "to": "/about/journey", "reason": "Legacy equipment page; the technology milestones are on the journey page" },
+    { "from": "/ourteam.php", "to": "/doctors", "reason": "Legacy team page" },
+    { "from": "/eye-specialists.php", "to": "/doctors", "reason": "Legacy eye specialists page" },
+    { "from": "/team_details.php", "to": "/doctors", "reason": "Legacy doctor profiles (team_id=1..14)" },
+    { "from": "/eye-doctors.php", "to": "/doctors", "reason": "Legacy doctor profiles (team_id=1..14)" },
+    { "from": "/appointment_main.php", "to": "/appointment", "reason": "Legacy appointment form" },
+    { "from": "/contact.php", "to": "/contact", "reason": "Legacy contact page" },
+    { "from": "/feedback.php", "to": "/contact", "reason": "Legacy feedback form" },
+    { "from": "/cataract.php", "to": "/services/cataract-surgery", "reason": "Legacy cataract page" },
+    { "from": "/lasik.php", "to": "/services/lasik-refractive-surgery", "reason": "Legacy LASIK page" },
+    { "from": "/advanced_facilities.php", "to": "/services/lasik-refractive-surgery", "reason": "Legacy bladeless laser page; bladeless LASIK is part of LASIK and refractive surgery" },
+    { "from": "/glaucoma.php", "to": "/services/glaucoma-care", "reason": "Legacy glaucoma page" },
+    { "from": "/squint.php", "to": "/services/squint-services", "reason": "Legacy squint and paediatric ophthalmology page" },
+    { "from": "/pterygium.php", "to": "/services/oculoplasty", "reason": "Legacy pterygium and DCR (watering eye) page; tear duct surgery is part of oculoplasty" },
+    { "from": "/cataract.aspx", "to": "/services/cataract-surgery", "reason": "Links the legacy site still carried" },
+    { "from": "/lasik.aspx", "to": "/services/lasik-refractive-surgery", "reason": "Links the legacy site still carried" },
+    { "from": "/glaucoma.aspx", "to": "/services/glaucoma-care", "reason": "Links the legacy site still carried" },
+    { "from": "/squint.aspx", "to": "/services/squint-services", "reason": "Links the legacy site still carried" },
+    { "from": "/pterygium.aspx", "to": "/services/oculoplasty", "reason": "Links the legacy site still carried" }
+  ]
+}

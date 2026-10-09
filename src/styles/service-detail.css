@@ -19,8 +19,7 @@
 .sd-hero,
 .sd-explore,
 .sd-sec,
-.sd-bar,
-.sd-missing {
+.sd-bar {
   /* WCAG 1.4.11 wants 3:1 on the boundary of a control, and --e-rule-2
      measures 1.58:1 on paper. Same edge value the header, the cookie sheet and
      the services index use: 3.48:1 on white. Do not lighten it, and do not put
@@ -31,6 +30,14 @@
 .sd-sec {
   padding-block: clamp(40px, 4.6vw, 76px);
   scroll-margin-top: 24px;
+}
+
+/* The visit, the questions and the way on all sit on the same paper, so their
+   two paddings met as one empty band - 152px of nothing between the last
+   question and "Other services" on a laptop. The heading's own label is what
+   starts a section here, not a band of air. */
+.sd-sec + .sd-sec {
+  padding-top: clamp(8px, 1.4vw, 20px);
 }
 
 /* ---------- shared type ---------- */
@@ -136,8 +143,16 @@
 .sd-hero__title em {
   color: var(--e-accent);
   font-style: italic;
-  /* The italic needs its own breathing room after a roman word. */
-  margin-left: 0.24em;
+  /* A real space comes before it (the title must read as words to a search
+     engine, not "CataractSurgery"); the italic needs a hair more room after a
+     roman word than that space gives. */
+  margin-left: 0.02em;
+}
+
+/* Each accent word is clipped in its own box as it writes itself in, so a
+   word that wraps is never cut to its first line. */
+.sd-hero__ink {
+  display: inline-block;
 }
 
 .sd-hero__lede {
@@ -147,6 +162,9 @@
   font-family: var(--e-sans);
   font-size: clamp(1rem, 1.2vw, 1.16rem);
   line-height: 1.6;
+  /* Two even lines rather than a last word left alone - "you." sat on its
+     own line on a 390px phone. */
+  text-wrap: balance;
 }
 
 .sd-hero__actions {
@@ -190,6 +208,21 @@
   height: 100%;
   object-fit: cover;
   object-position: 50% 40%;
+}
+
+/* The photograph settles rather than simply appearing: one slow push from
+   1.05 to 1 as the frame lifts in, then it holds - the hospital hero's move.
+   One slow move on one image is what keeps the opening from reading as a
+   printed page; it never repeats. It is the individual `scale` property, so it
+   composes with nothing framer writes. */
+.sd-frame[data-in] .sd-frame__img {
+  animation: sd-settle 9s var(--e-ease) both;
+}
+
+@keyframes sd-settle {
+  from {
+    scale: 1.05;
+  }
 }
 
 /* The reference desaturates its footage behind a slate wash. Ours is the site's
@@ -251,6 +284,7 @@
    them would flatten the rest; a local gradient under the foot leaves the top of
    every picture bright and guarantees the ground where the type actually is. */
 .sd-frame__foot {
+  --sd-foot-pad: clamp(12px, 1.6vw, 20px);
   display: grid;
   position: absolute;
   z-index: 1;
@@ -264,7 +298,7 @@
     rgba(9, 21, 33, 0.72) 38%,
     rgba(9, 21, 33, 0.9) 100%
   );
-  padding: clamp(30px, 5vw, 56px) clamp(12px, 1.6vw, 20px) clamp(12px, 1.6vw, 20px);
+  padding: clamp(30px, 5vw, 56px) var(--sd-foot-pad) var(--sd-foot-pad);
 }
 
 .sd-frame__label {
@@ -525,6 +559,10 @@
   z-index: 1;
 }
 
+.sd-tab__text--short {
+  display: none;
+}
+
 .sd-tab[data-on] {
   color: #fff;
 }
@@ -584,6 +622,10 @@
 }
 
 .sd-area {
+  /* the eye model's frame, read by .sv-model inside, and its height cap: the
+     eye, its hint and the caption on one screen under the header */
+  --sv-model-ratio: 5 / 4;
+  --sv-model-max: max(200px, calc(100svh - var(--hd-height) - 150px));
   display: grid;
   gap: 12px;
   margin: 0;
@@ -663,6 +705,42 @@
   font-size: 1.06rem;
   font-variant-numeric: lining-nums tabular-nums;
   line-height: 1.4;
+}
+
+/* From 901px the causes stand side by side, one column each under a large
+   serif numeral. As rows they were three one-line sentences in a 1240px card,
+   with two thirds of every row empty. However many a service has, they share
+   one row. */
+@media (min-width: 901px) {
+  .sd-list {
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+  }
+
+  .sd-list li,
+  .sd-list li:first-child {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: 14px;
+    border-top: 0;
+    border-left: 1px solid var(--e-rule);
+    padding: 4px clamp(20px, 2.4vw, 34px);
+  }
+
+  .sd-list li:first-child {
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  .sd-list li:last-child {
+    padding-right: 0;
+  }
+
+  .sd-list li > span {
+    color: var(--e-accent);
+    font-size: clamp(1.9rem, 2.6vw, 2.5rem);
+    line-height: 1;
+  }
 }
 
 /* ---------- the signs panel ---------- */
@@ -802,6 +880,27 @@
   line-height: 1.25;
 }
 
+/* From 901px there is room for the whole chart, the way it hangs on an
+   examination room's wall: all eight rows, not a cut of the top three. The
+   cut read as a thumbnail with its fourth row sliced through the letters, and
+   an effect like tunnel vision needs the chart's edges to show on. */
+@media (min-width: 901px) {
+  .sd-chart .sv-scene {
+    --sd-readout-w: clamp(176px, 15vw, 214px);
+    align-items: start;
+    gap: clamp(18px, 2vw, 26px);
+  }
+
+  .sd-chart .sv-scene__frame {
+    height: auto;
+    aspect-ratio: 260 / 392;
+  }
+
+  .sd-chart .sv-scene__caption {
+    padding-top: 6px;
+  }
+}
+
 .sd-chart__hint {
   margin: 0;
   color: var(--e-ink-2);
@@ -839,9 +938,13 @@
 }
 
 /* The rail runs between the first and last dot centres, so it is inset by half
-   a dot at each end rather than spanning the whole row. */
+   a dot at each end rather than spanning the whole row. The travelled part of
+   the route (::after) fills in behind the reader. It carries no transition of
+   its own: the scroll handler writes --sd-progress every frame, so the rail
+   fills under a dragging thumb instead of lagging a fixed 420ms behind it, and
+   a dot press animates because the scroll it starts is smooth. */
 .sd-step__track::before,
-.sd-step__fill {
+.sd-step__track::after {
   content: "";
   position: absolute;
   top: 15px;
@@ -849,26 +952,31 @@
   left: 16px;
   height: 2px;
   border-radius: 2px;
+  transform-origin: left center;
 }
 
 .sd-step__track::before {
   background: var(--e-rule-2);
 }
 
-/* The travelled part of the route fills in behind the reader. It carries no
-   transition of its own: the scroll handler writes --sd-progress every frame,
-   so the rail fills under a dragging thumb instead of lagging a fixed 420ms
-   behind it, and a dot press animates because the scroll it starts is smooth. */
-.sd-step__fill {
+.sd-step__track::after {
   background: var(--e-navy);
   transform: scaleX(var(--sd-progress, 0));
-  transform-origin: left center;
+}
+
+.sd-step__stop {
+  display: inline-flex;
+  position: relative;
+  z-index: 1;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
 }
 
 .sd-step__dot {
   display: inline-flex;
-  position: relative;
-  z-index: 1;
   align-items: center;
   justify-content: center;
   width: 32px;
@@ -877,7 +985,6 @@
   border-radius: 999px;
   background: var(--e-paper);
   color: var(--e-ink-2);
-  font-family: var(--e-sans);
   font-size: 0.7rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -888,25 +995,75 @@
     transform 220ms var(--e-ease);
 }
 
+/* Named only from 901px, where each stop has a column to itself. */
+.sd-step__label {
+  display: none;
+}
+
 /* 44px of tap target without a 44px dot: six of those do not fit a 320px screen,
    and the dot has to stay small enough to read as a track. */
-.sd-step__dot::after {
+.sd-step__stop::after {
   content: "";
   position: absolute;
   inset: -6px;
   border-radius: 999px;
 }
 
-.sd-step__dot[data-state="done"] {
+.sd-step__stop[data-state="done"] .sd-step__dot {
   border-color: var(--e-navy);
   color: var(--e-navy);
 }
 
-.sd-step__dot[data-state="on"] {
+.sd-step__stop[data-state="on"] .sd-step__dot {
   border-color: var(--e-navy);
   background: var(--e-navy);
   color: #fff;
   transform: scale(1.14);
+}
+
+/* The route assembles the first time it is on screen: the track draws across,
+   then the stops land along it in order on a small overshoot, each name a beat
+   behind its dot. Individual `scale` and `translate`, so the arrival composes
+   with the chosen dot's transform and framer's press. */
+.sd-step__track::before {
+  scale: 0 1;
+  transition: scale 900ms cubic-bezier(0.3, 0.6, 0.2, 1) 80ms;
+}
+
+.sd-step__dot {
+  --sd-land: calc(160ms + var(--i, 0) * 110ms);
+  opacity: 0;
+  scale: 0.4;
+  transition:
+    opacity 260ms var(--e-ease) var(--sd-land),
+    scale 520ms cubic-bezier(0.34, 1.56, 0.64, 1) var(--sd-land),
+    border-color 200ms var(--e-ease),
+    background-color 200ms var(--e-ease),
+    color 200ms var(--e-ease),
+    transform 220ms var(--e-ease);
+}
+
+.sd-step__label {
+  opacity: 0;
+  translate: 0 6px;
+  transition:
+    opacity 420ms var(--e-ease) calc(280ms + var(--i, 0) * 110ms),
+    translate 420ms var(--e-ease) calc(280ms + var(--i, 0) * 110ms),
+    color 200ms var(--e-ease);
+}
+
+.sd-step[data-in] .sd-step__track::before {
+  scale: 1 1;
+}
+
+.sd-step[data-in] .sd-step__dot {
+  opacity: 1;
+  scale: 1;
+}
+
+.sd-step[data-in] .sd-step__label {
+  opacity: 1;
+  translate: none;
 }
 
 /* A native scroll-snap rail: swipe on a touch screen, dots on a pointer, and a
@@ -958,6 +1115,90 @@
   line-height: 1.6;
 }
 
+/* From 901px each stop is a column carrying its name under the dot, so the
+   track reads as a route with named stops rather than six numbers, and the
+   rail runs between the first and last column's centres. */
+@media (min-width: 901px) {
+  .sd-step__track {
+    display: grid;
+    grid-template-columns: repeat(var(--sd-steps, 6), minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .sd-step__track::before,
+  .sd-step__track::after {
+    right: calc(50% / var(--sd-steps, 6));
+    left: calc(50% / var(--sd-steps, 6));
+  }
+
+  .sd-step__track li {
+    display: flex;
+    justify-content: center;
+  }
+
+  .sd-step__stop {
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    border-radius: 12px;
+    padding: 0 4px 2px;
+    cursor: pointer;
+  }
+
+  .sd-step__stop::after {
+    inset: -6px -2px;
+    border-radius: 12px;
+  }
+
+  .sd-step__label {
+    display: block;
+    font-size: 0.86rem;
+    font-weight: 500;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .sd-step__stop[data-state="on"] .sd-step__label {
+    color: var(--e-ink);
+    font-weight: 600;
+  }
+
+  /* The chosen stop's name is on the track right above, so the panel's
+     heading stays for a screen reader only and the sentence is set at display
+     size - printed twice, forty pixels apart, the name read as a stutter. */
+  .sd-step__panel {
+    position: relative;
+  }
+
+  .sd-step__name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .sd-step__text {
+    max-width: 60ch;
+    color: var(--e-ink);
+    font-family: var(--e-tight);
+    font-size: clamp(1.12rem, 1.4vw, 1.3rem);
+    letter-spacing: -0.015em;
+    line-height: 1.45;
+  }
+}
+
+@media (min-width: 901px) and (hover: hover) and (pointer: fine) {
+  .sd-step__stop:hover .sd-step__label {
+    color: var(--e-ink);
+  }
+
+  .sd-step__stop:hover:not([data-state="on"]) .sd-step__dot {
+    border-color: var(--e-navy);
+  }
+}
+
 .sd-visit__lede {
   max-width: 40ch;
   margin: 0;
@@ -965,6 +1206,22 @@
   font-family: var(--e-sans);
   font-size: 0.98rem;
   line-height: 1.6;
+}
+
+/* Two hints and CSS picks one on the pointer, not the width - the symptoms
+   route's device on the services index. */
+.sd-visit__hint-touch {
+  display: none;
+}
+
+@media (hover: none) {
+  .sd-visit__hint {
+    display: none;
+  }
+
+  .sd-visit__hint-touch {
+    display: inline;
+  }
 }
 
 .sd-visit__note {
@@ -1005,6 +1262,19 @@
   margin: 4px 0 0;
 }
 
+/* Every hospital offering the service, each a way into its page, under the
+   words they follow (beside the pin or under it). The rows are 20px apart
+   because each link's 10px halo reaches up and down: closer, two rows' halos
+   overlap and a tap between them opens the wrong hospital. */
+.sd-visit__places {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 24px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
 /* ---------- questions ---------- */
 
 .sd-faq {
@@ -1027,10 +1297,10 @@
   gap: 10px;
   /* The column is far shorter than the list, so it follows the reader down it
      rather than leaving a screen of empty paper beside the last question. It
-     only sticks from 901px up, where the expanded header is 121px tall - so it
-     parks below that rather than sliding under it on a scroll up. */
+     only sticks from 901px up, and parks below the header rather than sliding
+     under it on a scroll up. */
   position: sticky;
-  top: 132px;
+  top: calc(var(--hd-height) + 44px);
 }
 
 .sd-faq__lede {
@@ -1358,18 +1628,6 @@
   white-space: nowrap;
 }
 
-/* ---------- a slug that does not exist ---------- */
-
-.sd-missing__title {
-  margin-top: 14px;
-  max-width: 18ch;
-}
-
-.sd-missing__lede {
-  max-width: 52ch;
-  margin: 16px 0 clamp(22px, 2.6vw, 30px);
-}
-
 /* ---------- responsive ---------- */
 
 @media (max-width: 1040px) {
@@ -1386,11 +1644,23 @@
     aspect-ratio: 4 / 3;
   }
 
+  /* The rail runs to the frame's edges and pads itself back to the foot's
+     inset, so the first chip lines up with the label above it and the rest
+     slide out under the frame's edge rather than stopping short of it. */
+  .sd-chips__wrap {
+    position: relative;
+    margin-inline: calc(var(--sd-foot-pad) * -1);
+  }
+
   .sd-chips {
     display: flex;
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;
+    /* Must match padding-inline: a snap aligns to the scrollport edge, which
+       sits inside the padding. */
+    scroll-padding-inline: var(--sd-foot-pad);
+    padding-inline: var(--sd-foot-pad);
     scrollbar-width: none;
   }
 
@@ -1403,6 +1673,39 @@
        tallest of them and a min-height only adds dead space under the short ones. */
     flex: 0 0 min(74%, 260px);
     scroll-snap-align: start;
+  }
+
+  /* The ends fade into the foot's floor only where there is more past them,
+     which is what says the rail continues. A shade rather than a mask: a mask
+     on the rail would make it the chips' backdrop root, and their glass would
+     stop blurring the photograph. */
+  .sd-chips__wrap::before,
+  .sd-chips__wrap::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+    width: 44px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms var(--e-ease);
+  }
+
+  .sd-chips__wrap::before {
+    left: 0;
+    width: 28px;
+    background: linear-gradient(90deg, rgba(9, 21, 33, 0.94), rgba(9, 21, 33, 0));
+  }
+
+  .sd-chips__wrap::after {
+    right: 0;
+    background: linear-gradient(270deg, rgba(9, 21, 33, 0.94), rgba(9, 21, 33, 0));
+  }
+
+  .sd-chips__wrap[data-start="true"]::before,
+  .sd-chips__wrap[data-end="true"]::after {
+    opacity: 1;
   }
 
   .sd-split {
@@ -1482,6 +1785,28 @@
   .sd-act__urgent {
     width: 100%;
   }
+
+  /* One segmented control that fills the row, with the short labels. The full
+     three did not fit a phone's card - "Signs to notice" was cut at the edge
+     at 390px, and choosing it cut "Overview" at the other end - and a tab bar
+     that has to be scrolled to be read is not one control any more. */
+  .sd-card__scroller {
+    overflow: visible;
+  }
+
+  .sd-tab {
+    flex: 1 1 0;
+    justify-content: center;
+    padding-inline: 8px;
+  }
+
+  .sd-tab__text--full {
+    display: none;
+  }
+
+  .sd-tab__text--short {
+    display: inline;
+  }
 }
 
 @media (max-width: 560px) {
@@ -1549,6 +1874,131 @@
   }
 }
 
+/* ---------- a phone held sideways ---------- */
+
+/* The hero on a short landscape screen: the headline gets the width to stay on
+   one line and a size the height can afford, and the frame goes back to the
+   desktop letterbox. At 844x390 a two-line "LASIK & Refractive Surgery" put
+   Book appointment 7px under the fold, and a 4:3 frame 796px wide was 597px
+   tall - a screen and a half of photograph before the card. */
+@media (max-width: 1179px) and (max-height: 520px) {
+  .sd-hero {
+    padding-top: 4px;
+  }
+
+  .sd-hero__head {
+    margin-top: 0;
+  }
+
+  .sd-hero__title {
+    max-width: 28ch;
+    font-size: clamp(2rem, 5vw, 2.6rem);
+  }
+
+  .sd-hero__lede {
+    margin-top: 10px;
+  }
+
+  .sd-hero__actions {
+    margin-top: 16px;
+  }
+
+  /* Side by side rather than stacked full width: on a 568x320 phone the
+     emergency page's helpline and booking stacked, and the second ended under
+     the fold. */
+  .sd-act__wrap,
+  .sd-act__book,
+  .sd-act__urgent {
+    width: auto;
+  }
+
+  .sd-frame {
+    aspect-ratio: 21 / 9;
+    margin-top: 20px;
+  }
+}
+
+/* A phone held sideways keeps the overview's two columns: stacked, the eye
+   and its caption were taller than the screen, and the prose waited a screen
+   below them. Side by side the eye is capped to the screen's height and the
+   first lines of the overview sit beside it. */
+@media (max-width: 900px) and (max-height: 520px) and (min-width: 660px) and (orientation: landscape) {
+  .sd-split:not(.sd-split--signs) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+    align-items: start;
+  }
+
+  .sd-split:not(.sd-split--signs) .sd-split__figure {
+    order: 0;
+  }
+
+  .sd-area {
+    max-width: none;
+  }
+}
+
+/* ---------- arrivals as the reader scrolls ---------- */
+
+/* The services index's model (the end of services.css): every value is a
+   function of the scroll position, so a head, the card or a question comes up
+   under the thumb as it enters, stops when the reader stops, and plays
+   backwards on the way up. CSS on the compositor, nothing on the main thread,
+   and it never holds or re-times the scroll. The heads cascade, the card and
+   the visit rise into place, and the questions arrive one by one. The hero has
+   its own arrival, the related rows and the urgent band keep their own
+   entrances, and the visit's route assembles on its own trigger once it is in.
+   Every move ends on the element's resting style, so a page loaded half-way
+   down renders settled; where the browser cannot drive an animation from
+   scroll (Firefox today), the page is simply there. Nothing animated here may
+   sit under an `overflow: hidden` ancestor - view() binds to the nearest
+   scroll container, and inside one that never scrolls it freezes at its first
+   frame. */
+@keyframes sd-rise {
+  from {
+    opacity: 0;
+    translate: 0 var(--sd-rise, 32px);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .sd-head > *,
+    .sd-faq__head > * {
+      animation: sd-rise cubic-bezier(0.2, 0.7, 0.3, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+
+    .sd-head > :nth-child(2),
+    .sd-faq__head > :nth-child(2) {
+      --sd-rise: 52px;
+    }
+
+    .sd-faq__head > :nth-child(3) {
+      --sd-rise: 68px;
+    }
+
+    /* Both are taller than a phone's screen is wide, so each is done rising
+       once half of it is in, not when it is a third of the way up. */
+    .sd-card,
+    .sd-step {
+      --sd-rise: 56px;
+      animation: sd-rise cubic-bezier(0.2, 0.7, 0.3, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 50%;
+    }
+
+    .sd-visit__note,
+    .sd-faq__item,
+    .sd-faq__ask {
+      --sd-rise: 26px;
+      animation: sd-rise cubic-bezier(0.2, 0.7, 0.3, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 28%;
+    }
+  }
+}
+
 /* ---------- reduced motion ---------- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1564,12 +2014,37 @@
     transform: none;
   }
 
-  .sd-step__fill,
-  .sd-step__dot {
+  /* The photograph is simply there at its final size. */
+  .sd-frame[data-in] .sd-frame__img {
+    animation: none;
+  }
+
+  /* The route is simply there: no draw, no landing, no pop on the chosen dot.
+     Durations alone are not enough - the global rule zeroes them but leaves
+     each stop's landing delay in place. */
+  .sd-step__track::before,
+  .sd-step__dot,
+  .sd-step__label,
+  .sd-chips__wrap::before,
+  .sd-chips__wrap::after {
     transition: none;
   }
 
-  .sd-step__dot[data-state="on"] {
+  .sd-step__track::before {
+    scale: none;
+  }
+
+  .sd-step__dot {
+    opacity: 1;
+    scale: none;
+  }
+
+  .sd-step__label {
+    opacity: 1;
+    translate: none;
+  }
+
+  .sd-step__stop[data-state="on"] .sd-step__dot {
     transform: none;
   }
 

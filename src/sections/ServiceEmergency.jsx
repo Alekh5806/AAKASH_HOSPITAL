@@ -19,8 +19,16 @@ const EASE = [0.22, 1, 0.36, 1];
  * number as small body text at the very bottom - so a reader with a detaching
  * retina met first aid for a different emergency before they could find the
  * number. The number is now the loudest object in the section and the first
- * thing under the heading. */
-export default function ServiceEmergency({ showMore = true }) {
+ * thing under the heading.
+ *
+ * On the emergency service page itself the band takes its own label and
+ * heading: there the hero above already says both, and the band's usual pair
+ * would print the page's title and its opening sentence a second time. */
+export default function ServiceEmergency({
+  showMore = true,
+  label = emergency.label,
+  title = emergency.title,
+}) {
   const shouldReduceMotion = useReducedMotion();
   const phone = site.header.emergency.phone;
 
@@ -33,9 +41,9 @@ export default function ServiceEmergency({ showMore = true }) {
               <span className="sv-urgent__beacon" aria-hidden="true">
                 <AlertTriangle size={15} />
               </span>
-              {emergency.label}
+              {label}
             </span>
-            <h2 className="e-h2 sv-urgent__title">{emergency.title}</h2>
+            <h2 className="e-h2 sv-urgent__title">{title}</h2>
             <p className="sv-urgent__lede">{emergency.lede}</p>
           </Reveal>
 

@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { startTransition, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Mail, MessageCircle, Navigation, Phone } from "lucide-react";
+import { Mail, MapPin, MessageCircle, Navigation, Phone } from "lucide-react";
 import BranchStatus from "../components/BranchStatus";
 import { branches } from "../lib/coreData";
 import {
@@ -8,11 +8,13 @@ import {
   buildMapLink,
   buildWhatsApp,
   cleanTel,
+  getPrimaryBranch,
   getPrimaryPhone,
   getStoredBranch,
   storeBranch,
 } from "../lib/contact";
 import { contactPage } from "../lib/contactData";
+import { useClientState, useHydrated } from "../lib/hydration";
 import { fillTemplate } from "../lib/servicesData";
 
 /* The switchboard: six hospitals on one side, one readout on the other, and a
@@ -28,10 +30,19 @@ import { fillTemplate } from "../lib/servicesData";
  * The choice is the header's choice. It reads the hospital the header stored
  * for this reader, writes back through `storeBranch()` so the number at the
  * top of the screen follows, and listens for the header moving it, so the two
- * can never name different hospitals on one screen. */
+ * can never name different hospitals on one screen.
+ *
+ * The card arrives the way it works: it rises, its hospitals light up one by
+ * one, and only then does it connect - the cable draws to the reader's
+ * hospital, the pulse lands and the number rolls up into place. Connecting at
+ * mount spent the page's one signature move under the opening curtain, or
+ * while the card was still transparent. */
 
 const { desk } = contactPage;
-const STACKED_QUERY = "(max-width: 899px)";
+/* Stacked is a phone or tablet held upright. A phone held sideways keeps the
+   desktop's two columns, compacted: stacked, the chips alone filled its
+   first screen and the number sat a screen below. */
+const STACKED_QUERY = "(max-width: 899px) and (min-height: 521px)";
 const DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 const DRAW_MS = 460;
 const PULSE_MS = 540;
@@ -39,6 +50,26 @@ const EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
 const ROLL = { type: "spring", stiffness: 110, damping: 17, mass: 0.9 };
 /* The digits start turning as the pulse lands on the readout. */
 const ROLL_DELAY = 0.3;
+const EASE_OUT = [0.22, 1, 0.36, 1];
+/* From the head's start: the card has risen and its six hospitals have lit
+   by then, so the connection is the last thing to arrive. */
+const CONNECT_AT = 0.75;
+
+/* Arrival variants; each part passes its own start as `custom`. What the
+   cable attaches to - the hospitals and the readout's jack - only fades, so
+   the line is never measured off a part still moving into place. */
+const CARD = {
+  hidden: { opacity: 0, y: 22 },
+  shown: (at) => ({ opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE_OUT, delay: at } }),
+};
+const LAMP = {
+  hidden: { opacity: 0 },
+  shown: (at) => ({ opacity: 1, transition: { duration: 0.4, ease: "easeOut", delay: at } }),
+};
+const PART = {
+  hidden: { opacity: 0, y: 10 },
+  shown: (at) => ({ opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE_OUT, delay: at } }),
+};
 
 const CHANNELS = [
   { id: "call", icon: Phone, label: desk.callLabel, primary: true },
@@ -64,32 +95,35 @@ function channelHref(id, branch) {
    a beat behind the last, so switching hospitals visibly turns the line over.
    The visible number holds until the pulse lands on the readout, then the
    punctuation swaps and the digits roll together - swapping the shape first
-   showed a nonsense number for a third of a second. Punctuation is set as
-   plain glyphs, and the real number sits in a visually hidden span, updated
-   at once, for anyone who cannot see the strips. */
-function NumberRoll({ value }) {
+   showed a nonsense number for a third of a second. Until the card's first
+   connection (`live`) nothing has landed: the strips sit at 0 and the line is
+   clear, so the arrival rolls every digit up into place. Punctuation is set
+   as plain glyphs, and the real number sits in a visually hidden span,
+   updated at once, for anyone who cannot see the strips. */
+function NumberRoll({ value, live }) {
   const shouldReduceMotion = useReducedMotion();
-  const [shown, setShown] = useState(value);
+  const [shown, setShown] = useState(live ? value : "");
+  const landed = shown !== "";
 
   useEffect(() => {
-    if (shown === value) return undefined;
+    if (!live || shown === value) return undefined;
     const timer = window.setTimeout(
       () => setShown(value),
       shouldReduceMotion ? 0 : ROLL_DELAY * 1000,
     );
     return () => window.clearTimeout(timer);
-  }, [value, shown, shouldReduceMotion]);
+  }, [live, value, shown, shouldReduceMotion]);
 
   return (
-    <span className="ct-odo">
+    <span className="ct-odo" data-landed={landed ? "true" : undefined}>
       <span className="sr-only">{value}</span>
-      {shown.split("").map((glyph, index) =>
+      {(landed ? shown : value).split("").map((glyph, index) =>
         /\d/.test(glyph) ? (
           <span className="ct-odo__col" key={index} aria-hidden="true">
             <motion.span
               className="ct-odo__strip"
               initial={false}
-              animate={{ y: `${Number(glyph) * -10}%` }}
+              animate={{ y: `${(landed ? Number(glyph) : 0) * -10}%` }}
               transition={shouldReduceMotion ? { duration: 0 } : { ...ROLL, delay: index * 0.035 }}
             >
               {DIGITS.map((digit) => (
@@ -107,12 +141,22 @@ function NumberRoll({ value }) {
   );
 }
 
-export default function ContactDesk() {
+export default function ContactDesk({ ready = true, delay = 0 }) {
   const shouldReduceMotion = useReducedMotion();
   const items = branches.items;
-  const [slug, setSlug] = useState(() => getStoredBranch(items).slug);
+  /* The reader's hospital arrives as React adopts the page (the prerendered
+     card shows the head office's). The travelling tint is named apart until
+     then, so the switch is not played as a move from one row to the other. */
+  const hydrated = useHydrated();
+  const [slug, setSlug] = useClientState(
+    () => getStoredBranch(items).slug,
+    getPrimaryBranch(items).slug,
+  );
   const branch = items.find((item) => item.slug === slug) ?? items[0];
   const phone = getPrimaryPhone(branch);
+  const [armed, setArmed] = useState(false);
+  const live = Boolean(shouldReduceMotion) || armed;
+  const stage = ready || shouldReduceMotion ? "shown" : "hidden";
 
   const cardRef = useRef(null);
   const railRef = useRef(null);
@@ -123,6 +167,7 @@ export default function ContactDesk() {
   const jackRefs = useRef({});
   const pulseFrame = useRef(0);
   const slugRef = useRef(slug);
+  const liveRef = useRef(live);
 
   /* Follow the header while the reader is still on the page. */
   useEffect(() => {
@@ -131,7 +176,7 @@ export default function ContactDesk() {
     };
     window.addEventListener(BRANCH_CHANGE_EVENT, follow);
     return () => window.removeEventListener(BRANCH_CHANGE_EVENT, follow);
-  }, [items]);
+  }, [items, setSlug]);
 
   /* The cable is geometry, measured from the two jacks and written straight
      to the path. Stacked, it is routed from the chosen pill down to the
@@ -190,8 +235,11 @@ export default function ContactDesk() {
     path.setAttribute("d", d);
     const length = path.getTotalLength();
     path.style.strokeDasharray = `${length}`;
-    /* A connect in flight owns the offset; otherwise the line is whole. */
-    if (!path.getAnimations().length) path.style.strokeDashoffset = "0";
+    /* A connect in flight owns the offset; otherwise the line is whole, or
+       not yet drawn before the card's first connection. */
+    if (!path.getAnimations().length) {
+      path.style.strokeDashoffset = liveRef.current ? "0" : `${length}`;
+    }
     return { path, length, to };
   }, []);
 
@@ -240,10 +288,19 @@ export default function ContactDesk() {
     pulseFrame.current = window.requestAnimationFrame(ride);
   }, [lay, shouldReduceMotion]);
 
+  /* The first connection waits for the card to arrive. */
+  useEffect(() => {
+    if (!ready || live) return undefined;
+    const timer = window.setTimeout(() => setArmed(true), (delay + CONNECT_AT) * 1000);
+    return () => window.clearTimeout(timer);
+  }, [ready, live, delay]);
+
   useLayoutEffect(() => {
     slugRef.current = slug;
-    connect();
-  }, [connect, slug]);
+    liveRef.current = live;
+    if (live) connect();
+    else lay();
+  }, [connect, lay, slug, live]);
 
   /* Any move of either jack - a resize, a font landing - lays the cable
      again in place without replaying it. Subscribed once: the observer's
@@ -278,8 +335,12 @@ export default function ContactDesk() {
 
   const choose = (next) => {
     if (next === slug) return;
+    setArmed(true);
     setSlug(next);
-    storeBranch(next);
+    /* The header, the directory and the footer follow as a transition, so
+       the card the reader is watching connects first and the rest of the
+       page catches up a frame or two later rather than holding the tap. */
+    startTransition(() => storeBranch(next));
   };
 
   /* Arrow keys walk the group the way a native radio group does. */
@@ -305,13 +366,10 @@ export default function ContactDesk() {
     <motion.div
       className="ct-desk"
       ref={cardRef}
-      initial={shouldReduceMotion ? false : { opacity: 0, y: 22 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={
-        shouldReduceMotion
-          ? { duration: 0 }
-          : { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.22 }
-      }
+      initial={shouldReduceMotion ? false : "hidden"}
+      animate={stage}
+      variants={CARD}
+      custom={delay + 0.15}
     >
       <svg className="ct-desk__wire" ref={svgRef} aria-hidden="true" focusable="false">
         <path className="ct-desk__cable" ref={cableRef} />
@@ -319,9 +377,14 @@ export default function ContactDesk() {
       </svg>
 
       <div className="ct-pick">
-        <p className="e-label ct-pick__label" id="ct-pick-label">
+        <motion.p
+          className="e-label ct-pick__label"
+          id="ct-pick-label"
+          variants={PART}
+          custom={delay + 0.3}
+        >
           {desk.pickLabel}
-        </p>
+        </motion.p>
         <div
           className="ct-pick__rail"
           ref={railRef}
@@ -329,10 +392,10 @@ export default function ContactDesk() {
           aria-labelledby="ct-pick-label"
           onKeyDown={onKeyDown}
         >
-          {items.map((item) => {
+          {items.map((item, index) => {
             const checked = item.slug === slug;
             return (
-              <button
+              <motion.button
                 key={item.slug}
                 type="button"
                 className="ct-jack"
@@ -344,11 +407,13 @@ export default function ContactDesk() {
                   jackRefs.current[item.slug] = node;
                 }}
                 onClick={() => choose(item.slug)}
+                variants={LAMP}
+                custom={delay + 0.36 + index * 0.06}
               >
                 {checked ? (
                   <motion.span
                     className="ct-jack__bg"
-                    layoutId="ct-jack-bg"
+                    layoutId={hydrated ? "ct-jack-bg" : "ct-jack-bg-built"}
                     transition={
                       shouldReduceMotion
                         ? { duration: 0 }
@@ -362,44 +427,36 @@ export default function ContactDesk() {
                 </span>
                 <span className="ct-jack__where">{item.locality}</span>
                 <span className="ct-jack__ring" aria-hidden="true" />
-              </button>
+              </motion.button>
             );
           })}
         </div>
-        <p className="ct-pick__hint">{desk.pickHint}</p>
+        <motion.p className="ct-pick__hint" variants={PART} custom={delay + 0.8}>
+          {desk.pickHint}
+        </motion.p>
       </div>
 
       <div className="ct-readout">
-        <p className="ct-readout__label">
+        <motion.p className="ct-readout__label" variants={LAMP} custom={delay + 0.4}>
           <span className="ct-readout__jack" ref={readoutJackRef} aria-hidden="true" />
           <span className="e-label">
             {desk.readoutLabel} <i aria-hidden="true">·</i> {branch.name}
           </span>
-        </p>
+        </motion.p>
         <p className="sr-only" aria-live="polite">
           {fillTemplate(desk.connectedLabel, { branch: branch.name })}
         </p>
 
         <a className="ct-readout__number" href={`tel:${cleanTel(phone)}`}>
-          <NumberRoll value={phone} />
+          <NumberRoll value={phone} live={live} />
         </a>
 
-        <BranchStatus branch={branch} />
-
-        <motion.p
-          className="ct-readout__address"
-          key={branch.slug}
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={
-            shouldReduceMotion ? { duration: 0 } : { duration: 0.45, delay: 0.25, ease: "easeOut" }
-          }
-        >
-          {branch.address}
-        </motion.p>
+        <motion.div className="ct-readout__status" variants={PART} custom={delay + 0.5}>
+          <BranchStatus branch={branch} />
+        </motion.div>
 
         <div className="ct-acts">
-          {CHANNELS.map(({ id, icon: Icon, label, primary }) => {
+          {CHANNELS.map(({ id, icon: Icon, label, primary }, index) => {
             const external = id === "whatsapp" || id === "directions";
             return (
               <motion.a
@@ -410,6 +467,8 @@ export default function ContactDesk() {
                 target={external ? "_blank" : undefined}
                 rel={external ? "noreferrer" : undefined}
                 whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
+                variants={PART}
+                custom={delay + 0.56 + index * 0.05}
               >
                 <Icon size={18} aria-hidden="true" />
                 <span>{label}</span>
@@ -417,6 +476,26 @@ export default function ContactDesk() {
             );
           })}
         </div>
+
+        {/* The address closes the readout, under Directions, rather than
+            standing between the status and the actions: there it pushed the
+            call row under the fold on a phone and on a laptop. */}
+        <motion.p className="ct-readout__where" variants={PART} custom={delay + 0.78}>
+          <MapPin size={16} aria-hidden="true" />
+          <motion.span
+            className="ct-readout__address"
+            key={branch.slug}
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={
+              shouldReduceMotion
+                ? { duration: 0 }
+                : { duration: 0.45, delay: 0.25, ease: "easeOut" }
+            }
+          >
+            {branch.address.replace(/ - /g, "\u00a0-\u00a0")}
+          </motion.span>
+        </motion.p>
       </div>
     </motion.div>
   );

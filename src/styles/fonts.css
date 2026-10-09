@@ -1,0 +1,212 @@
+/* =========================================================================
+   Fonts, self-hosted
+   Inlined into index.html by vite.config.js (like preloader.css), so the
+   faces are known before any stylesheet loads; nothing is requested from a
+   third party. The files are Google Fonts' own variable woff2 subsets -
+   latin and latin-extended (plus Gujarati for Noto Serif Gujarati) - each
+   family under the SIL Open Font License 1.1. To refresh them, request
+   https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&family=Noto+Serif+Gujarati:wght@500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..600;1,8..60,300..400&display=swap
+   with a current Chrome user agent and replace the files below.
+   ========================================================================= */
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/assets/fonts/inter-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/assets/fonts/inter-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Inter Tight";
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+  src: url("/assets/fonts/inter-tight-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Inter Tight";
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+  src: url("/assets/fonts/inter-tight-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Noto Serif Gujarati";
+  font-style: normal;
+  font-weight: 500 600;
+  font-display: swap;
+  src: url("/assets/fonts/noto-serif-gujarati-gujarati.woff2") format("woff2");
+  unicode-range: U+0951-0952, U+0964-0965, U+0A80-0AFF, U+200C-200D, U+20B9, U+25CC, U+A830-A839;
+}
+
+@font-face {
+  font-family: "Noto Serif Gujarati";
+  font-style: normal;
+  font-weight: 500 600;
+  font-display: swap;
+  src: url("/assets/fonts/noto-serif-gujarati-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Source Serif 4";
+  font-style: italic;
+  font-weight: 300 400;
+  font-display: swap;
+  src: url("/assets/fonts/source-serif-4-italic-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Source Serif 4";
+  font-style: italic;
+  font-weight: 300 400;
+  font-display: swap;
+  src: url("/assets/fonts/source-serif-4-italic-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Source Serif 4";
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url("/assets/fonts/source-serif-4-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Source Serif 4";
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url("/assets/fonts/source-serif-4-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ---------- metric-matched fallbacks ----------
+   While a web font loads, text is set in the system face below, scaled and
+   spaced (size-adjust and the three overrides) to take exactly the room the
+   web font will, so nothing moves when it swaps in. Georgia and Arial are
+   on Windows, macOS and iOS; Android has neither, so its Noto Serif and
+   Roboto get faces of their own. The figures were measured from the woff2
+   files above against each system font, over the site's own English text;
+   re-measure them if a family changes. */
+
+@font-face {
+  font-family: "Source Serif 4 Fallback";
+  font-style: normal;
+  src: local("Georgia");
+  size-adjust: 98.24%;
+  ascent-override: 105.46%;
+  descent-override: 34.1%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Source Serif 4 Fallback";
+  font-style: italic;
+  src: local("Georgia Italic"), local("Georgia-Italic");
+  size-adjust: 89.88%;
+  ascent-override: 115.26%;
+  descent-override: 37.27%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Source Serif 4 Android Fallback";
+  font-style: normal;
+  src: local("Noto Serif"), local("NotoSerif-Regular");
+  size-adjust: 93.33%;
+  ascent-override: 111.01%;
+  descent-override: 35.89%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Source Serif 4 Android Fallback";
+  font-style: italic;
+  src: local("Noto Serif Italic"), local("NotoSerif-Italic");
+  size-adjust: 85.16%;
+  ascent-override: 121.65%;
+  descent-override: 39.34%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Inter Fallback";
+  font-style: normal;
+  src: local("Arial"), local("ArialMT");
+  size-adjust: 106.64%;
+  ascent-override: 90.84%;
+  descent-override: 22.62%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Inter Android Fallback";
+  font-style: normal;
+  src: local("Roboto"), local("Roboto-Regular");
+  size-adjust: 107.08%;
+  ascent-override: 90.47%;
+  descent-override: 22.53%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Inter Tight Fallback";
+  font-style: normal;
+  font-weight: 500 700;
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  size-adjust: 93.74%;
+  ascent-override: 103.34%;
+  descent-override: 25.73%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Inter Tight Android Fallback";
+  font-style: normal;
+  src: local("Roboto"), local("Roboto-Regular");
+  size-adjust: 101.13%;
+  ascent-override: 95.79%;
+  descent-override: 23.85%;
+  line-gap-override: 0%;
+}

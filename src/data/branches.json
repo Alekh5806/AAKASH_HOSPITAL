@@ -1,7 +1,7 @@
 {
   "seo": {
-    "title": "Our Hospitals | Aakash Eye Hospital",
-    "description": "Six Aakash Eye Hospital hospitals across Gujarat - Visnagar, Ahmedabad, Bharuch, Gota, Himmatnagar and Juhapura - with OPD numbers, directions and each hospital's own page."
+    "title": "Hospital Branches and Directions | Aakash Eye Hospital",
+    "description": "Find your nearest Aakash Eye Hospital, from Visnagar and Himmatnagar to Ahmedabad (Odhav, Gota, Juhapura) and Bharuch, with OPD numbers and directions."
   },
   "index": {
     "label": "Our hospitals",
@@ -16,7 +16,7 @@
     "openLabel": "View hospital",
     "headOfficeTag": "Head office",
     "mapGhost": "Gujarat",
-    "note": "Each hospital books its own appointments. Old case files have no due date - bring yours on any future visit."
+    "note": "Old case files have no due date - bring yours on any future visit."
   },
   "items": [
     {
@@ -25,29 +25,40 @@
       "isHeadquarters": true,
       "locality": "M.N. College Road, North Gujarat",
       "address": "Near New Court, M.N. College Road, Near GEB, Visnagar - 384315, North Gujarat",
+      "postalAddress": {
+        "streetAddress": "Near New Court, M.N. College Road, Near GEB",
+        "addressLocality": "Visnagar",
+        "addressRegion": "Gujarat",
+        "addressCountry": "IN"
+      },
       "email": "info@aakasheyehospital.com",
       "phoneGroups": [
         {
           "label": "OPD",
-          "numbers": [
-            "+91-760-008-2710"
-          ]
+          "numbers": ["+91-942-687-7080"]
         },
         {
           "label": "Operation",
-          "numbers": [
-            "(02765)222075",
-            "+91-942-687-7080"
-          ]
+          "numbers": ["(02765)222075", "+91-942-687-7080"]
         },
         {
           "label": "LASIK",
-          "numbers": [
-            "+91-942-922-6318"
-          ]
+          "numbers": ["+91-942-922-6318"]
         }
       ],
       "whatsappNumber": "917600082710",
+      "socialLinks": [
+        {
+          "label": "Instagram",
+          "icon": "instagram",
+          "href": "https://www.instagram.com/aeh.visnagar/"
+        },
+        {
+          "label": "Facebook",
+          "icon": "facebook",
+          "href": "https://www.facebook.com/eyehospitalvisnagar/"
+        }
+      ],
       "coords": {
         "lat": 23.698,
         "lng": 72.552
@@ -71,8 +82,8 @@
       },
       "page": {
         "seo": {
-          "title": "Aakash Eye Hospital Visnagar | Head Office, M.N. College Road",
-          "description": "Aakash Eye Hospital's head office in Visnagar, North Gujarat: address near New Court on M.N. College Road, OPD, operation and LASIK desk numbers, doctors and directions.",
+          "title": "Eye Hospital in Visnagar, Mehsana | Aakash Eye Hospital",
+          "description": "Aakash Eye Hospital's head office since 1993, near New Court on M.N. College Road, Visnagar. Cataract, LASIK, retina and glaucoma care. Book on WhatsApp.",
           "image": "/assets/media/branches/visnagar/facade-1000.jpg"
         },
         "establishedYear": 1993,
@@ -132,23 +143,31 @@
       "isHeadquarters": false,
       "locality": "Odhav Circle, S.P. Ring Road",
       "address": "Siddhi Vinayak Arcade, 2nd Wing, 1st Floor, 200' S.P. Ring Road, Odhav Circle, Near Gujarat Vepari Maha Mandal, Odhav, Ahmedabad - 382410",
+      "postalAddress": {
+        "streetAddress": "Siddhi Vinayak Arcade, 2nd Wing, 1st Floor, 200' S.P. Ring Road, Odhav Circle, Near Gujarat Vepari Maha Mandal, Odhav",
+        "addressLocality": "Ahmedabad",
+        "addressRegion": "Gujarat",
+        "addressCountry": "IN"
+      },
       "email": "info@aakasheyehospital.com",
       "phoneGroups": [
         {
           "label": "OPD",
-          "numbers": [
-            "(079)-22901515",
-            "+91-937-415-1616"
-          ]
+          "numbers": ["(079)-22901515", "+91-937-415-1616"]
         },
         {
           "label": "Operation / LASIK",
-          "numbers": [
-            "+91-999-880-7891"
-          ]
+          "numbers": ["+91-951-098-0786"]
         }
       ],
       "whatsappNumber": "919998807891",
+      "socialLinks": [
+        {
+          "label": "Facebook",
+          "icon": "facebook",
+          "href": "https://www.facebook.com/AakashEyeHospitalOdhav/"
+        }
+      ],
       "coords": {
         "lat": 23.032,
         "lng": 72.674
@@ -172,8 +191,8 @@
       },
       "page": {
         "seo": {
-          "title": "Aakash Eye Hospital Ahmedabad | Odhav Circle, S.P. Ring Road",
-          "description": "Aakash Eye Hospital in Ahmedabad at Odhav Circle on the 200 ft S.P. Ring Road: OPD, operation and LASIK desk numbers, consultants, directions and appointments.",
+          "title": "Eye Hospital in Ahmedabad (Odhav) | Aakash Eye Hospital",
+          "description": "Aakash Eye Hospital at Odhav Circle on S.P. Ring Road, Ahmedabad, since 2014: cataract, retina and LASIK care with its own OPD. Call or book on WhatsApp.",
           "image": "/assets/media/branches/ahmedabad/facade-1000.jpg"
         },
         "establishedYear": 2014,
@@ -234,23 +253,21 @@
       "isHeadquarters": false,
       "locality": "Opp. Navi Vasahat, Bharuch",
       "address": "F-101-106, 201-204, R K Casta, Near Healing Touch Hospital, Opp. Navi Vasahat, Bharuch",
+      "postalAddress": {
+        "streetAddress": "F-101-106, 201-204, R K Casta, Near Healing Touch Hospital, Opp. Navi Vasahat",
+        "addressLocality": "Bharuch",
+        "addressRegion": "Gujarat",
+        "addressCountry": "IN"
+      },
       "email": "info@aakasheyehospital.com",
       "phoneGroups": [
         {
           "label": "OPD",
-          "numbers": [
-            "(026)-42242359",
-            "+91-749-000-4903",
-            "+91-749-000-4904"
-          ]
+          "numbers": ["(026)-42242359", "+91-749-000-4903", "+91-749-000-4904"]
         },
         {
           "label": "Operation",
-          "numbers": [
-            "(026)-42242359",
-            "+91-749-000-4903",
-            "+91-749-000-4904"
-          ]
+          "numbers": ["(026)-42242359", "+91-749-000-4903", "+91-749-000-4904"]
         }
       ],
       "whatsappNumber": "917490004903",
@@ -277,8 +294,8 @@
       },
       "page": {
         "seo": {
-          "title": "Aakash Eye Hospital Bharuch | R K Casta, Opp. Navi Vasahat",
-          "description": "Aakash Eye Hospital in Bharuch at R K Casta, opposite Navi Vasahat and near Healing Touch Hospital: OPD and operation numbers, directions and appointments.",
+          "title": "Eye Hospital in Bharuch | Aakash Eye Hospital",
+          "description": "Aakash Eye Hospital in Bharuch at R K Casta, opposite Navi Vasahat, near Healing Touch Hospital. Cataract, retina and everyday eye care. Book on WhatsApp.",
           "image": "/assets/media/branches/visnagar/waiting-hall-1000.jpg"
         },
         "lede": "Aakash Eye Hospital in Bharuch, at R K Casta opposite Navi Vasahat and beside Healing Touch Hospital. One desk books both OPD and operation appointments.",
@@ -327,19 +344,23 @@
       "isHeadquarters": false,
       "locality": "Ananta Space, Gota",
       "address": "Ananta Space, 505-08, Gota, Ahmedabad, Gujarat 382470",
+      "postalAddress": {
+        "streetAddress": "Ananta Space, 505-08, Gota",
+        "addressLocality": "Ahmedabad",
+        "addressRegion": "Gujarat",
+        "addressCountry": "IN"
+      },
       "email": "info@aakasheyehospital.com",
       "phoneGroups": [
         {
           "label": "OPD",
-          "numbers": [
-            "+91-900-000-0001"
-          ]
+          "numbers": ["+91-900-000-0001"],
+          "unconfirmed": true
         },
         {
           "label": "Operation / LASIK",
-          "numbers": [
-            "+91-900-000-0002"
-          ]
+          "numbers": ["+91-900-000-0002"],
+          "unconfirmed": true
         }
       ],
       "whatsappNumber": "919000000001",
@@ -349,7 +370,7 @@
       },
       "map": {
         "x": 59.4,
-        "y": 36.6,
+        "y": 35.8,
         "side": "left"
       },
       "mapEmbed": "https://www.google.com/maps?q=Aakash%20Eye%20Hospital%20Gota%20Ahmedabad&output=embed",
@@ -366,8 +387,8 @@
       },
       "page": {
         "seo": {
-          "title": "Aakash Eye Hospital Gota | Ananta Space, Ahmedabad",
-          "description": "Aakash Eye Hospital at Ananta Space in Gota, Ahmedabad: OPD, operation and LASIK numbers, consultants, directions and appointments.",
+          "title": "Eye Hospital in Gota, Ahmedabad | Aakash Eye Hospital",
+          "description": "Aakash Eye Hospital at Ananta Space in Gota, Ahmedabad: cataract, LASIK, retina and everyday eye care, with its own OPD. Call or book on WhatsApp.",
           "image": "/assets/media/branches/visnagar/waiting-hall-1000.jpg"
         },
         "lede": "Aakash Eye Hospital at Ananta Space in Gota, west Ahmedabad, with its own OPD, operation and LASIK desks.",
@@ -417,19 +438,22 @@
       "isHeadquarters": false,
       "locality": "Sahakari Jin Road, NH-48",
       "address": "2nd Floor, Upadhyay M Corporate, Sahakari Jin Rd, near Ola Showroom, Sahakari Jin, NH48, Himatnagar, Gujarat 383001",
+      "postalAddress": {
+        "streetAddress": "2nd Floor, Upadhyay M Corporate, Sahakari Jin Rd, near Ola Showroom, Sahakari Jin, NH48",
+        "addressLocality": "Himatnagar",
+        "addressRegion": "Gujarat",
+        "addressCountry": "IN"
+      },
       "email": "info@aakasheyehospital.com",
       "phoneGroups": [
         {
           "label": "OPD",
-          "numbers": [
-            "+91-900-000-0003"
-          ]
+          "numbers": ["+91-951-204-1164"]
         },
         {
           "label": "Operation / LASIK",
-          "numbers": [
-            "+91-900-000-0004"
-          ]
+          "numbers": ["+91-900-000-0004"],
+          "unconfirmed": true
         }
       ],
       "whatsappNumber": "919000000003",
@@ -456,9 +480,9 @@
       },
       "page": {
         "seo": {
-          "title": "Aakash Eye Hospital Himmatnagar | Sahakari Jin Road, NH-48",
-          "description": "Aakash Eye Hospital in Himmatnagar at Upadhyay M Corporate on Sahakari Jin Road off NH-48: OPD, operation and LASIK numbers, directions and appointments.",
-          "image": "/assets/media/branches/visnagar/waiting-hall-1000.jpg"
+          "title": "Eye Hospital in Himmatnagar | Aakash Eye Hospital",
+          "description": "Aakash Eye Hospital in Himmatnagar (Himatnagar) on Sahakari Jin Road, off NH-48, for Sabarkantha. Cataract, LASIK and everyday eye care. Book on WhatsApp.",
+          "image": "/assets/media/branches/himmatnagar/facade-1000.jpg"
         },
         "lede": "Aakash Eye Hospital at Upadhyay M Corporate on Sahakari Jin Road, just off NH-48 in Himmatnagar, with its own OPD, operation and LASIK desks.",
         "ledeShort": "On Sahakari Jin Road off NH-48, with its own OPD, operation and LASIK desks.",
@@ -483,24 +507,38 @@
           }
         ],
         "postcode": "383001",
-        "image": "/assets/media/branches/visnagar/waiting-hall-2000.jpg",
-        "imageSmall": "/assets/media/branches/visnagar/waiting-hall-1000.jpg",
-        "imageAlt": "The double-height waiting hall at an Aakash Eye Hospital",
+        "image": "/assets/media/branches/himmatnagar/facade-1600.jpg",
+        "imageSmall": "/assets/media/branches/himmatnagar/facade-1000.jpg",
+        "imageAlt": "The Aakash Eye Hospital signboard across the glass front of Upadhyay M.A. Corporate House, Himmatnagar",
+        "insideLede": "The reception and waiting hall, a consulting room, the operation theatre, the recovery room and the optical counter, so nothing about the first visit is unfamiliar.",
         "gallery": [
           {
-            "src": "/assets/media/branches/visnagar/atrium.jpg",
-            "caption": "The atrium",
-            "alt": "The atrium at an Aakash Eye Hospital, seen from the first floor"
+            "src": "/assets/media/branches/himmatnagar/reception.jpg",
+            "caption": "Reception and waiting",
+            "alt": "The reception desk under backlit wood panels and rows of waiting chairs at Aakash Eye Hospital Himmatnagar"
           },
           {
-            "src": "/assets/media/branches/visnagar/first-floor.jpg",
-            "caption": "The first floor",
-            "alt": "The first-floor walkway over the atrium at an Aakash Eye Hospital"
+            "src": "/assets/media/branches/himmatnagar/consulting-room.jpg",
+            "caption": "Consulting room",
+            "alt": "A consulting room at Aakash Eye Hospital Himmatnagar, with the slit lamp and autorefractor beside the doctor's desk",
+            "portrait": true
           },
           {
-            "src": "/assets/media/branches/visnagar/reception.jpg",
-            "caption": "OPD entrance",
-            "alt": "The OPD doors and the patient notice board at an Aakash Eye Hospital"
+            "src": "/assets/media/branches/himmatnagar/operation-theatre.jpg",
+            "caption": "Operation theatre",
+            "alt": "The operation theatre at Aakash Eye Hospital Himmatnagar, with two operating tables under the surgical microscope"
+          },
+          {
+            "src": "/assets/media/branches/himmatnagar/recovery-room.jpg",
+            "caption": "Recovery room",
+            "alt": "Beds in the recovery room at Aakash Eye Hospital Himmatnagar, beside a wall of blue curtains",
+            "portrait": true
+          },
+          {
+            "src": "/assets/media/branches/himmatnagar/optical.jpg",
+            "caption": "Optical counter",
+            "alt": "The optical counter at Aakash Eye Hospital Himmatnagar, with spectacle frames on lit shelves",
+            "portrait": true
           }
         ]
       }
@@ -511,19 +549,23 @@
       "isHeadquarters": false,
       "locality": "Vasna Road, Sarkhej",
       "address": "Amber Tower, 306-314, Blue Water Complex, Vasna Road, near Sagar Avenue, Sarkhej, Ahmedabad, Gujarat 380055",
+      "postalAddress": {
+        "streetAddress": "Amber Tower, 306-314, Blue Water Complex, Vasna Road, near Sagar Avenue, Sarkhej",
+        "addressLocality": "Ahmedabad",
+        "addressRegion": "Gujarat",
+        "addressCountry": "IN"
+      },
       "email": "info@aakasheyehospital.com",
       "phoneGroups": [
         {
           "label": "OPD",
-          "numbers": [
-            "+91-900-000-0005"
-          ]
+          "numbers": ["+91-900-000-0005"],
+          "unconfirmed": true
         },
         {
           "label": "Operation / LASIK",
-          "numbers": [
-            "+91-900-000-0006"
-          ]
+          "numbers": ["+91-900-000-0006"],
+          "unconfirmed": true
         }
       ],
       "whatsappNumber": "919000000005",
@@ -533,7 +575,7 @@
       },
       "map": {
         "x": 60.9,
-        "y": 43.9,
+        "y": 46,
         "side": "left"
       },
       "mapEmbed": "https://www.google.com/maps?q=Aakash%20Eye%20Hospital%20Juhapura%20Ahmedabad&output=embed",
@@ -550,8 +592,8 @@
       },
       "page": {
         "seo": {
-          "title": "Aakash Eye Hospital Juhapura | Blue Water Complex, Vasna Road",
-          "description": "Aakash Eye Hospital at Amber Tower, Blue Water Complex on Vasna Road, Sarkhej, Ahmedabad: OPD, operation and LASIK numbers, directions and appointments.",
+          "title": "Eye Hospital in Juhapura, Sarkhej | Aakash Eye Hospital",
+          "description": "Aakash Eye Hospital at Amber Tower, Blue Water Complex, Vasna Road, Juhapura-Sarkhej, Ahmedabad. Cataract, LASIK and everyday eye care. Book on WhatsApp.",
           "image": "/assets/media/branches/juhapura/facade-1000.jpg"
         },
         "lede": "Aakash Eye Hospital at Amber Tower in the Blue Water Complex on Vasna Road, Sarkhej, with its own OPD, operation and LASIK desks.",
@@ -580,7 +622,7 @@
         "image": "/assets/media/branches/juhapura/facade-1600.jpg",
         "imageSmall": "/assets/media/branches/juhapura/facade-1000.jpg",
         "imageAlt": "The Aakash Eye Hospital signboard on the corner of Amber Tower at Blue Water Complex, Sarkhej",
-        "insideLede": "The door you come in by, the reception you check in at, the hall you wait in and the corridor to the consulting rooms, so nothing about the first visit is unfamiliar.",
+        "insideLede": "The door you come in by, the optical counter, the reception you check in at, the hall you wait in and the corridor to the consulting rooms, so nothing about the first visit is unfamiliar.",
         "gallery": [
           {
             "src": "/assets/media/branches/juhapura/entrance.jpg",
@@ -588,10 +630,10 @@
             "alt": "The entrance door of Aakash Eye Hospital Juhapura, with the signboard over it",
             "portrait": true
           },
-           {
-            "src": "/assets/media/branches/juhapura/spectacles.jpeg",
-            "caption": "The entrance",
-            "alt": "The entrance door of Aakash Eye Hospital Juhapura, with the signboard over it",
+          {
+            "src": "/assets/media/branches/juhapura/optical.jpg",
+            "caption": "Optical counter",
+            "alt": "The optical counter at Aakash Eye Hospital Juhapura, with spectacle frames on lit shelves",
             "portrait": true
           },
           {
@@ -675,13 +717,15 @@
         "closedTodayLabel": "OPD closed today",
         "opensAt": "Opens {time}",
         "closesAt": "Closes {time}"
-      }
+      },
+      "followLabel": "Follow"
     },
     "team": {
       "label": "The team here",
       "title": "Doctors at",
-      "lede": "The consultants who see patients at this hospital.",
+      "lede": "The doctors who see patients at this hospital.",
       "supportNote": "Supported by {count} optometrists for refraction and vision testing.",
+      "supportNoteOne": "Supported by an optometrist for refraction and vision testing.",
       "ctaLabel": "Meet the full team"
     },
     "inside": {

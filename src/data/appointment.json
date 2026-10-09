@@ -1,7 +1,7 @@
 {
   "seo": {
-    "title": "Book an Appointment | Aakash Eye Hospital",
-    "description": "Book an eye care visit at any Aakash Eye Hospital in Gujarat. Choose your hospital, the reason for your visit and a day that suits you - the request is sent on WhatsApp and the hospital confirms your slot."
+    "title": "Book an Eye Appointment on WhatsApp | Aakash Eye Hospital",
+    "description": "Request an eye appointment at any Aakash Eye Hospital on WhatsApp: choose the hospital, the reason and a day. The hospital replies to confirm your slot."
   },
   "label": "Book an appointment",
   "title": "Tell us when,",
@@ -12,7 +12,7 @@
     "who": {
       "label": "Who",
       "title": "Who is the visit for?",
-      "lede": "The name the hospital will call out, and the number it will reply to."
+      "lede": "The name the hospital will call out, and the WhatsApp number it will reply to."
     },
     "where": {
       "label": "Where",
@@ -45,7 +45,6 @@
       "label": "Mobile number",
       "prefix": "+91",
       "placeholder": "10-digit mobile",
-      "hint": "The hospital replies on WhatsApp to this number.",
       "error": "Enter a 10-digit mobile number."
     },
     "branch": {

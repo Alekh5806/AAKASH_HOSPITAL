@@ -3,11 +3,11 @@
    trouble is long before they know what it is called - "the back of my eye" is
    a thing anyone can point at, "retina" is not.
  *
- * It is drawn rather than modelled. Depth here is gradients, specular
- * highlights and layered translucency, which cost nothing to ship, stay crisp
- * at every size, and leave the whole thing themeable and screen-reader safe. A
- * WebGL model would buy a little more realism for a library, a GPU cost on the
- * phones most patients use, and a canvas with no accessible structure at all.
+ * It is the fallback for EyeModel, the real eye: a browser without WebGL, or a
+ * GPU that drops the context, gets this drawing with the same props and the
+ * same behaviour rather than an empty frame. Depth here is gradients, specular
+ * highlights and layered translucency, which cost nothing to ship and stay
+ * crisp at every size.
  *
  * Hover previews, click chooses, and neither one navigates. They are separate
  * props on purpose: wiring hover to the commit handler is exactly how a stray

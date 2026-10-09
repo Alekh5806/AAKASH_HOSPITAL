@@ -1,35 +1,92 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
-import Reveal from "../components/Reveal";
-import SmartImage from "../components/SmartImage";
+import DoctorPlaces from "../components/DoctorPlaces";
+import DoctorPortrait from "../components/DoctorPortrait";
 import { branchPage } from "../lib/branchData";
+import {
+  describeInterests,
+  doctorsPage,
+  getDoctorPlaces,
+  hasProfile,
+  listNames,
+  profileHref,
+} from "../lib/doctorsData";
 import { fillTemplate } from "../lib/servicesData";
 
 const { team: copy } = branchPage;
-const EASE = [0.22, 1, 0.36, 1];
+/* The visiting group's name and note are the doctors page's own, so the two
+   pages can never call it different things. */
+const visitingGroup = doctorsPage.groups.find((group) => group.id === "visiting");
 
-/* The consultants who see patients at this hospital, and nobody else.
+/* The doctors page's card, seen from this hospital: its place lines say only
+   what a reader here does not already know - the doctor's other hospitals,
+   or the days a visiting specialist is here. */
+function DoctorCard({ doctor, here, heading: Heading }) {
+  const places = getDoctorPlaces(doctor, here);
+  return (
+    <li className="br-doc">
+      <div className="br-doc__media">
+        <DoctorPortrait
+          doctor={doctor}
+          className="br-doc__img"
+          sizes="(min-width: 641px) 120px, 92px"
+        />
+      </div>
+      <div className="br-doc__body">
+        <span className="br-doc__specialty">{doctor.specialty}</span>
+        <Heading className="br-doc__name">
+          {hasProfile(doctor) ? (
+            <Link className="br-doc__link" to={profileHref(doctor)}>
+              {doctor.name}
+            </Link>
+          ) : (
+            doctor.name
+          )}
+          {doctor.qualifications ? " " : null}
+          {doctor.qualifications ? (
+            <span className="br-doc__quals">{doctor.qualifications}</span>
+          ) : null}
+        </Heading>
+        {doctor.interests?.length ? (
+          <p className="br-doc__text">{describeInterests(doctor)}</p>
+        ) : null}
+        {places.length ? (
+          <div className="br-doc__where">
+            <DoctorPlaces lines={places} />
+          </div>
+        ) : null}
+        {hasProfile(doctor) ? (
+          <span className="br-doc__more" aria-hidden="true">
+            {doctorsPage.profile.moreLabel}
+            <ArrowRight size={14} />
+          </span>
+        ) : null}
+      </div>
+    </li>
+  );
+}
+
+/* The people who see patients at this hospital, and nobody else.
  *
  * Not the full team: /doctors owns the team, and the link at the head of the
- * section is the way there. The optometrists are named in one line under the
- * cards with their portraits stacked beside it, so the reader knows the
- * hospital does its own refraction without the page growing three more cards
- * for it. */
+ * section is the way there. The consultants come first; the specialists who
+ * hold clinics here on set days follow under their own heading, because a
+ * patient cannot walk in and see them any day; and the optometrists are named
+ * in one line under both with their faces stacked beside it, so the reader
+ * knows the hospital does its own refraction without the page growing a card
+ * for each of them. */
 export default function BranchTeam({ branch, team }) {
-  const shouldReduceMotion = useReducedMotion();
-  if (!team?.doctors.length) return null;
+  if (!team?.doctors.length && !team?.visiting.length) return null;
 
-  const listNames = (people) => {
-    const names = people.map((person) => person.name);
-    if (names.length < 2) return names[0] ?? "";
-    return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
-  };
+  const supportNote =
+    team.optometrists.length === 1
+      ? copy.supportNoteOne
+      : fillTemplate(copy.supportNote, { count: team.optometrists.length });
 
   return (
     <section className="e-sec e-sec--tight br-team" aria-labelledby="br-team-title">
       <div className="e-shell">
-        <Reveal className="e-head br-team__head">
+        <div className="e-head br-team__head">
           <span className="e-label">{copy.label}</span>
           <div className="e-head__body e-head__row">
             <h2 className="e-h2" id="br-team-title">
@@ -41,59 +98,40 @@ export default function BranchTeam({ branch, team }) {
             </Link>
             <p className="e-lede br-team__lede">{copy.lede}</p>
           </div>
-        </Reveal>
+        </div>
 
-        <ul className="br-team__grid" data-count={Math.min(team.doctors.length, 3)}>
-          {team.doctors.map((doctor, position) => (
-            <motion.li
-              className="br-doc"
-              key={doctor.name}
-              initial={shouldReduceMotion ? false : { opacity: 0, y: 22 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{
-                duration: shouldReduceMotion ? 0 : 0.55,
-                ease: EASE,
-                delay: shouldReduceMotion ? 0 : position * 0.09,
-              }}
-            >
-              <div className="br-doc__media">
-                <SmartImage
-                  className="br-doc__img"
-                  src={doctor.photo}
-                  alt={doctor.photoAlt}
-                  sizes="(min-width: 900px) 30vw, 50vw"
-                />
-              </div>
-              <span className="br-doc__specialty">{doctor.specialty}</span>
-              {/* Some records carry the specialty as the qualification too -
-                  `Medical Officer, Medical Officer` is the same words twice. */}
-              <h3 className="br-doc__name">
-                {doctor.name}
-                {doctor.qualifications && doctor.qualifications !== doctor.specialty ? (
-                  <>
-                    <span className="br-doc__sep">, </span>
-                    <span className="br-doc__quals">{doctor.qualifications}</span>
-                  </>
-                ) : null}
-              </h3>
-              <p className="br-doc__text">{doctor.highlight ?? doctor.bio}</p>
-            </motion.li>
-          ))}
-        </ul>
+        {team.doctors.length ? (
+          <ul className="br-team__grid" data-count={Math.min(team.doctors.length, 2)}>
+            {team.doctors.map((doctor) => (
+              <DoctorCard key={doctor.name} doctor={doctor} here={branch.name} heading="h3" />
+            ))}
+          </ul>
+        ) : null}
+
+        {team.visiting.length ? (
+          <div className="br-team__group">
+            <h3 className="br-team__group-title">{visitingGroup.label}</h3>
+            <p className="br-team__group-note">{visitingGroup.note}</p>
+            <ul className="br-team__grid" data-count={Math.min(team.visiting.length, 2)}>
+              {team.visiting.map((doctor) => (
+                <DoctorCard key={doctor.name} doctor={doctor} here={branch.name} heading="h4" />
+              ))}
+            </ul>
+          </div>
+        ) : null}
 
         {team.optometrists.length ? (
-          <Reveal className="br-team__support" as="div">
+          <div className="br-team__support">
             <span className="br-team__faces" aria-hidden="true">
               {team.optometrists.map((person) => (
-                <img key={person.name} src={person.photo} alt="" loading="lazy" />
+                <DoctorPortrait key={person.name} doctor={person} decorative />
               ))}
             </span>
             <p>
-              {fillTemplate(copy.supportNote, { count: team.optometrists.length })}{" "}
-              <span>{listNames(team.optometrists)}.</span>
+              {supportNote}{" "}
+              <span>{listNames(team.optometrists.map((person) => person.name))}.</span>
             </p>
-          </Reveal>
+          </div>
         ) : null}
       </div>
     </section>

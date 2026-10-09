@@ -1,11 +1,12 @@
-import { BreadcrumbJsonLd } from "../components/JsonLd";
+import { PageJsonLd } from "../components/JsonLd";
 import SEO from "../components/SEO";
 import { about } from "../lib/aboutData";
 import { site } from "../lib/coreData";
+import AboutHead from "../sections/AboutHead";
 import AboutNext from "../sections/AboutNext";
-import AboutSwitch from "../sections/AboutSwitch";
 import VisionStatements from "../sections/VisionStatements";
 import VisionValues from "../sections/VisionValues";
+import "../styles/about.css";
 
 const { vision } = about;
 
@@ -13,35 +14,20 @@ export default function AboutVisionPage() {
   return (
     <>
       <SEO meta={site.pageSeo.aboutVision} />
-      <BreadcrumbJsonLd
-        items={[
-          { name: "Home", href: "/" },
-          { name: "About", href: "/about/journey" },
+      <PageJsonLd
+        path="/about/vision"
+        meta={site.pageSeo.aboutVision}
+        types={["AboutPage"]}
+        crumbs={[
+          { name: "About us", href: "/about/journey" },
           { name: "Vision and mission", href: "/about/vision" },
         ]}
       />
 
-      <section className="e-sec e-sec--tight ab-top">
-        <div className="e-shell">
-          <span className="e-label">{vision.eyebrow}</span>
-          <h1 className="e-h1 ab-top__title">
-            {vision.title} <em>{vision.titleAccent}</em>
-          </h1>
-          <div className="ab-top__row">
-            <p className="e-lede ab-top__lede">{vision.lede}</p>
-            {/* The sibling of the journey page's founding date, in the same
-                stamp: there it dates the hospital, here it names the three
-                words the vision statement rests on. */}
-            <p className="ab-top__est ab-top__est--stack">
-              <span>{vision.promiseLabel}</span>
-              {vision.promise.map((word) => (
-                <strong key={word}>{word}</strong>
-              ))}
-            </p>
-          </div>
-          <AboutSwitch />
-        </div>
-      </section>
+      {/* The stamp is the sibling of the journey page's founding date: there it
+          dates the hospital, here it names the three words the vision
+          statement rests on. */}
+      <AboutHead page={vision} stamp={{ label: vision.promiseLabel, words: vision.promise }} />
 
       <VisionStatements />
 

@@ -1,104 +1,39 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-IN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Aakash Eye Hospital provides cataract, LASIK, retina, glaucoma and OPD eye care across Visnagar, Ahmedabad and Bharuch."
-    />
-    <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="color-scheme" content="light" />
     <!-- White, to merge with the white header where a browser honours it. Chrome
          for Android ignores this in dark mode and paints its own dark toolbar;
          the header is built to sit under either. -->
     <meta name="theme-color" content="#ffffff" />
-    <!-- The opening curtain's first frame: paper, the pupil seed, the wordmark
-         and the line, painted before any script so there is never a white
-         flash or a spinner ahead of it. AppPreloader paints the identical frame
-         on top and removes this one, resuming the wordmark's rise from this
-         clock; the inline script hides it when this session has already seen
-         the intro; the delayed animation hides it if JavaScript never runs.
-         The geometry is preloader.css's and must stay identical to it. -->
+    <!-- The opening curtain: the hospital's logo on paper, which opens like an
+         eyelid onto the page once it is ready. It is static HTML so it paints
+         before any script; vite.config.js fills in its stylesheet
+         (src/styles/preloader.css), the split logo and the tagline.
+         AppPreloader takes it over once React runs. The inline script stamps
+         the curtain's clock and hides it when this session has already seen
+         it. -->
     <style>
-      #app-intro {
-        --pl-iris: clamp(240px, 46vw, 360px);
-        --pl-lift: 4vh;
-        position: fixed;
-        inset: 0;
-        z-index: 300;
-        background: #ffffff;
-        animation: app-intro-safety 1ms linear 6s forwards;
-      }
-      @media (max-height: 520px) {
-        #app-intro {
-          --pl-iris: clamp(150px, 36vh, 240px);
-          --pl-lift: 7vh;
-        }
-      }
-      #app-intro > * {
-        position: absolute;
-        left: 50%;
-      }
-      #app-intro svg {
-        top: calc(50% - var(--pl-lift));
-        width: var(--pl-iris);
-        height: auto;
-        translate: -50% -50%;
-      }
-      #app-intro div {
-        top: calc(50% - var(--pl-lift) + var(--pl-iris) / 2 + 2px);
-        display: grid;
-        width: max-content;
-        max-width: calc(100vw - 48px);
-        justify-items: center;
-        gap: 10px;
-        translate: -50% 0;
-        text-align: center;
-      }
-      #app-intro img {
-        width: clamp(148px, 36vw, 196px);
-        height: auto;
-        opacity: 0;
-      }
-      #app-intro p {
-        margin: 0;
-        color: #4b535c;
-        font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
-        font-size: clamp(0.98rem, 1.6vw, 1.08rem);
-        line-height: 1.4;
-        opacity: 0;
-      }
-      .pl-ready #app-intro img {
-        animation: app-intro-rise 420ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
-      }
-      .pl-ready #app-intro p {
-        animation: app-intro-rise 420ms cubic-bezier(0.32, 0.72, 0, 1) 100ms forwards;
-      }
-      #app-intro em {
-        color: #b81657;
-        font-style: italic;
-      }
-      .intro-seen #app-intro {
-        display: none;
-      }
-      @keyframes app-intro-rise {
-        from {
-          opacity: 0;
-          translate: 0 10px;
-        }
-        to {
-          opacity: 1;
-          translate: 0 0;
-        }
-      }
-      @keyframes app-intro-safety {
-        to {
-          visibility: hidden;
-          pointer-events: none;
-        }
-      }
+      %PL_CSS%
     </style>
+    <noscript>
+      <style>
+        #app-intro,
+        #app-wait {
+          display: none;
+        }
+        /* The prerendered page without JavaScript: anything waiting for its
+           entrance animation is simply shown. */
+        #root [style*="opacity:0"] {
+          opacity: 1 !important;
+        }
+        #root [style*="clip-path"] {
+          clip-path: none !important;
+        }
+      </style>
+    </noscript>
     <script>
       window.__aakashIntroStart = performance.now();
       try {
@@ -107,89 +42,95 @@
         }
       } catch (error) {}
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&family=Noto+Serif+Gujarati:wght@500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..600;1,8..60,300..400&display=swap"
-    />
-    <!-- The hero poster is the LCP element and the film paints over it, so it is
-         fetched at high priority; the phone gets the portrait cut. -->
-    <link
-      rel="preload"
-      as="image"
-      href="/assets/media/heroes/hero-desktop-poster.jpg"
-      media="(min-width: 761px)"
-      fetchpriority="high"
-    />
-    <link
-      rel="preload"
-      as="image"
-      href="/assets/media/heroes/hero-mobile-poster.jpg"
-      media="(max-width: 760px)"
-      fetchpriority="high"
-    />
+    <!-- The site's own fonts (src/styles/fonts.css, inlined by vite.config.js):
+         no third-party request, and the two faces the first screen sets - the
+         serif of the headlines and the curtain's tagline, and Inter for the
+         body - start loading with the HTML. -->
+    <style>
+      %FONT_CSS%
+    </style>
+    <link rel="preload" href="/assets/fonts/source-serif-4-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png" />
     <link rel="icon" type="image/png" sizes="512x512" href="/assets/icon-512.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
-    <meta property="og:site_name" content="Aakash Eye Hospital" />
-    <meta property="og:title" content="Aakash Eye Hospital" />
-    <meta
-      property="og:description"
-      content="Advanced eye care across Visnagar, Ahmedabad and Bharuch."
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://aakasheyehospital.com/" />
-    <meta
-      property="og:image"
-      content="https://aakasheyehospital.com/assets/media/heroes/bladeless-robotic-laser-surgery.jpg"
-    />
-    <meta name="twitter:card" content="summary_large_image" />
-    <link rel="canonical" href="https://aakasheyehospital.com/" />
-    <title>Aakash Eye Hospital</title>
+    <!-- The page's own title, description, canonical, social tags and the
+         preload for its first picture: scripts/prerender.mjs writes them in
+         for every page at build time, and SEO.jsx keeps them current as the
+         reader moves between pages. -->
+    <!--app-head-->
   </head>
   <body>
-    <div id="app-intro" aria-hidden="true">
-      <svg viewBox="0 0 400 400" focusable="false">
-        <circle cx="200" cy="200" r="12" fill="#06182a" />
-      </svg>
-      <div>
-        <img src="%BRAND_LOGO%" alt="" width="207" height="50" />
-        <p>%BRAND_TAGLINE_LEAD% <em>%BRAND_TAGLINE_SINCE%</em></p>
+    <div id="app-intro" class="pl" role="status" aria-label="%PL_NAME_LABEL% is opening">
+      <div class="pl__shade pl__shade--top"></div>
+      <div class="pl__shade pl__shade--bottom"></div>
+      <div class="pl__lid pl__lid--top"></div>
+      <div class="pl__lid pl__lid--bottom"></div>
+      <div class="pl__brand" style="aspect-ratio: %PL_RATIO%" aria-hidden="true">
+        <span class="pl__mark" style="aspect-ratio: %PL_MARK_RATIO%; background: %PL_MARK_FILL%">
+          <svg viewBox="%PL_MARK_BOX%" focusable="false">%PL_MARK%</svg>
+        </span>
+        <span class="pl__name">
+          <svg viewBox="%PL_NAME_BOX%" focusable="false">%PL_NAME%</svg>
+        </span>
       </div>
-      <!-- The wordmark and the line rise together once the image has decoded
-           and the serif has loaded, never in a fallback face or half-arrived;
-           the moment is stamped so React can resume the same rise. -->
+      <span class="pl__seam" aria-hidden="true"></span>
+      <div class="pl__foot">
+        <p class="pl__line">%BRAND_TAGLINE_LEAD% <em>%BRAND_TAGLINE_SINCE%</em></p>
+      </div>
+      <!-- The line between the logo and the tagline fills as the page really
+           loads; this script owns its first two steps (the frame is up, the
+           serif has arrived) and AppPreloader the rest. The tagline rises
+           once the serif has loaded, never in a fallback face, and not
+           before the name has begun to arrive. -->
       <script>
         (function () {
           var html = document.documentElement;
+          var frame = document.getElementById("app-intro");
+          var start = window.__aakashIntroStart;
+          function step(value, ms) {
+            if (value <= (parseFloat(frame.style.getPropertyValue("--pl-p")) || 0)) return;
+            frame.style.setProperty("--pl-pt", ms + "ms");
+            frame.style.setProperty("--pl-p", String(value));
+          }
+          setTimeout(function () {
+            step(0.3, 1400);
+          }, 380);
           var done = false;
           function ready() {
             if (done) return;
             done = true;
-            html.style.setProperty(
-              "--pl-ready-at",
-              Math.round(performance.now() - window.__aakashIntroStart) + "ms",
-            );
+            var elapsed = performance.now() - start;
+            html.style.setProperty("--pl-line-at", Math.max(0, Math.round(560 - elapsed)) + "ms");
             html.classList.add("pl-ready");
-          }
-          var waits = [];
-          var logo = document.querySelector("#app-intro img");
-          if (logo && logo.decode) waits.push(logo.decode().catch(function () {}));
-          if (document.fonts && document.fonts.load) {
-            waits.push(
-              Promise.all([
-                document.fonts.load('400 1em "Source Serif 4"'),
-                document.fonts.load('italic 400 1em "Source Serif 4"'),
-              ]).catch(function () {}),
+            setTimeout(
+              function () {
+                step(0.52, 2400);
+              },
+              Math.max(0, 420 - elapsed),
             );
           }
-          Promise.all(waits).then(ready, ready);
+          if (document.fonts && document.fonts.load) {
+            Promise.all([
+              document.fonts.load('400 1em "Source Serif 4"'),
+              document.fonts.load('italic 400 1em "Source Serif 4"'),
+            ]).then(ready, ready);
+          }
           setTimeout(ready, 1500);
         })();
       </script>
     </div>
-    <div id="root"></div>
+    <!-- A reload later in the visit, when the curtain is not shown: paper over
+         the prerendered page until React has rendered it, so nothing flashes
+         between the static copy and the app. Only a slow load sees the logo
+         (preloader.css); AppPreloader removes it on mount. -->
+    <div id="app-wait" class="pl pl--wait" aria-hidden="true">
+      <img class="pl__logo" src="%BRAND_LOGO%" alt="" width="207" height="50" />
+      <div class="pl__foot">
+        <p class="pl__line">%BRAND_TAGLINE_LEAD% <em>%BRAND_TAGLINE_SINCE%</em></p>
+      </div>
+    </div>
+    <div id="root"><!--app-html--></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

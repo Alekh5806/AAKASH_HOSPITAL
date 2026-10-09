@@ -6,7 +6,7 @@ import reactRefresh from "eslint-plugin-react-refresh";
 
 export default [
   {
-    ignores: ["dist", "node_modules"],
+    ignores: ["dist", "dist-server", "node_modules"],
   },
   js.configs.recommended,
   {
@@ -39,6 +39,24 @@ export default [
     settings: {
       react: {
         version: "detect",
+      },
+    },
+  },
+  {
+    // The prerender's renderer: a module of functions, never hot-reloaded.
+    files: ["src/entry-server.jsx"],
+    rules: {
+      "react-refresh/only-export-components": "off",
+    },
+  },
+  {
+    // Build scripts run in Node, not the browser.
+    files: ["scripts/**/*.mjs", "vite.config.js"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: {
+        ...globals.node,
       },
     },
   },

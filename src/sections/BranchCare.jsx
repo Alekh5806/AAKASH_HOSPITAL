@@ -1,12 +1,9 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
-import Reveal from "../components/Reveal";
 import { branchPage } from "../lib/branchData";
 import { getCategoryLabel } from "../lib/servicesData";
 
 const { care } = branchPage;
-const EASE = [0.22, 1, 0.36, 1];
 
 /* What can be treated here.
  *
@@ -32,7 +29,6 @@ const EASE = [0.22, 1, 0.36, 1];
  * The index still owns the explaining; this band only answers "is my treatment
  * done at this hospital". */
 export default function BranchCare({ services }) {
-  const shouldReduceMotion = useReducedMotion();
   if (!services?.length) return null;
 
   const groups = [];
@@ -52,7 +48,7 @@ export default function BranchCare({ services }) {
   return (
     <section className="e-sec e-sec--tight e-sec--paper br-care" aria-labelledby="br-care-title">
       <div className="e-shell">
-        <Reveal className="e-head br-care__head">
+        <div className="e-head br-care__head">
           <span className="e-label">{care.label}</span>
           <div className="e-head__body e-head__row">
             <h2 className="e-h2 br-care__title" id="br-care-title">
@@ -63,22 +59,14 @@ export default function BranchCare({ services }) {
               <ArrowRight size={15} aria-hidden="true" />
             </Link>
           </div>
-        </Reveal>
+        </div>
 
         <ul className="br-care__groups">
-          {groups.map((group, groupIndex) => (
-            <motion.li
+          {groups.map((group) => (
+            <li
               className="br-care__group"
               key={group.id}
               data-urgent={group.id === "urgent" ? "true" : undefined}
-              initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{
-                duration: shouldReduceMotion ? 0 : 0.5,
-                ease: EASE,
-                delay: shouldReduceMotion ? 0 : groupIndex * 0.08,
-              }}
             >
               <p className="br-care__kind">{group.label}</p>
 
@@ -91,7 +79,7 @@ export default function BranchCare({ services }) {
                   </li>
                 ))}
               </ul>
-            </motion.li>
+            </li>
           ))}
         </ul>
       </div>

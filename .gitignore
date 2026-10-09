@@ -1,6 +1,8 @@
 node_modules/
 dist/
 .vite/
+.wrangler/
+.dev.vars
 .env
 .env.local
 .env.*.local
@@ -13,3 +15,4 @@ tmp/
 
 # Last, so the negations above cannot pull it back in.
 .DS_Store
+dist-server

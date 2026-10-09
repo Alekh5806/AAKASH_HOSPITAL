@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import EyeDiagram from "../components/EyeDiagram";
+import EyeModel from "../components/EyeModel";
 import SymptomScene from "../components/SymptomScene";
-import { getPartForService, serviceDetail } from "../lib/servicesData";
+import { getPartForService, serviceDetail, servicePage } from "../lib/servicesData";
 
-const { tabs } = serviceDetail;
+const { tabs, tabsShort } = serviceDetail;
 const EASE = [0.22, 1, 0.36, 1];
 /* Long enough for the panel to have arrived, short enough that a reader who
    went looking for the drawing is not left waiting for it. */
@@ -26,7 +26,11 @@ function AreaFigure({ part, still }) {
 
   return (
     <figure className="sd-area">
-      <EyeDiagram activePart={lit ? part.id : null} />
+      <EyeModel
+        activePart={lit ? part.id : null}
+        hint={servicePage.finder.modelHint}
+        hintTouch={servicePage.finder.modelHintTouch}
+      />
       <figcaption>
         <span>{serviceDetail.areaLabel}</span>
         <strong>{part.label}</strong>
@@ -62,9 +66,13 @@ export default function ServiceExplore({ service }) {
   const panels = useMemo(
     () =>
       [
-        { id: "overview", label: tabs.overview },
-        service.causes?.length ? { id: "causes", label: tabs.causes } : null,
-        service.symptoms?.length ? { id: "symptoms", label: tabs.symptoms } : null,
+        { id: "overview", label: tabs.overview, short: tabsShort.overview },
+        service.causes?.length
+          ? { id: "causes", label: tabs.causes, short: tabsShort.causes }
+          : null,
+        service.symptoms?.length
+          ? { id: "symptoms", label: tabs.symptoms, short: tabsShort.symptoms }
+          : null,
       ].filter(Boolean),
     [service],
   );
@@ -90,6 +98,21 @@ export default function ServiceExplore({ service }) {
         behavior: shouldReduceMotion ? "auto" : "smooth",
       });
     });
+  };
+
+  /* The tabs are one control: arrow keys and Home / End walk them and the
+     chosen tab is the only one in the tab order, as a tablist should be. */
+  const onTabKey = (event) => {
+    const order = panels.map((panel) => panel.id);
+    const at = order.indexOf(active);
+    const target = { ArrowRight: at + 1, ArrowLeft: at - 1, Home: 0, End: order.length - 1 }[
+      event.key
+    ];
+    if (target === undefined) return;
+    event.preventDefault();
+    const id = order[(target + order.length) % order.length];
+    switchTo(id);
+    scrollerRef.current?.querySelector(`[data-tab="${id}"]`)?.focus({ preventScroll: true });
   };
 
   /* The card grows and shrinks to the tab rather than snapping to it, so the
@@ -151,7 +174,7 @@ export default function ServiceExplore({ service }) {
       <div className="e-shell">
         <div className="sd-card">
           <div className="sd-card__tabs" role="tablist" aria-label={service.title}>
-            <div className="sd-card__scroller" ref={scrollerRef}>
+            <div className="sd-card__scroller" ref={scrollerRef} onKeyDown={onTabKey}>
               {panels.map((panel) => (
                 <motion.button
                   type="button"
@@ -163,6 +186,8 @@ export default function ServiceExplore({ service }) {
                   data-on={active === panel.id ? "true" : undefined}
                   aria-selected={active === panel.id}
                   aria-controls={`sd-panel-${panel.id}`}
+                  aria-label={panel.label}
+                  tabIndex={active === panel.id ? 0 : -1}
                   onClick={() => switchTo(panel.id)}
                   whileTap={press}
                 >
@@ -178,7 +203,12 @@ export default function ServiceExplore({ service }) {
                       aria-hidden="true"
                     />
                   ) : null}
-                  <span className="sd-tab__text">{panel.label}</span>
+                  {/* Two labels and CSS picks one, the cookie sheet's device:
+                      on a phone the three tabs share the row as one segmented
+                      control, and "Signs to notice" was cut at the card's edge
+                      there, behind a scroller nothing said could scroll. */}
+                  <span className="sd-tab__text sd-tab__text--full">{panel.label}</span>
+                  <span className="sd-tab__text sd-tab__text--short">{panel.short}</span>
                 </motion.button>
               ))}
             </div>
@@ -258,7 +288,11 @@ export default function ServiceExplore({ service }) {
                     </ul>
 
                     <motion.div className="sd-chart" variants={item}>
-                      <SymptomScene visual={shownSign?.visual} label={shownSign?.text} />
+                      <SymptomScene
+                        visual={shownSign?.visual}
+                        label={shownSign?.text}
+                        heading={servicePage.finder.sceneLabel}
+                      />
                       <p className="sd-chart__hint">{serviceDetail.symptomsHint}</p>
                     </motion.div>
                   </div>

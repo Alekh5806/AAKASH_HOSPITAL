@@ -20,7 +20,8 @@
           "href": "/about/vision",
           "description": "What we promise patients"
         }
-      ]
+      ],
+      "drawerGroup": "more"
     },
     {
       "label": "Services",
@@ -34,10 +35,6 @@
       "label": "Our Hospitals",
       "href": "/branches",
       "dropdown": "branches"
-    },
-    {
-      "label": "Gallery",
-      "href": "/gallery"
     },
     {
       "label": "Contact",
@@ -94,16 +91,12 @@
           "href": "/services"
         },
         {
-          "label": "Gallery",
-          "href": "/gallery"
+          "label": "All hospitals",
+          "href": "/branches"
         },
         {
           "label": "Contact us",
           "href": "/contact"
-        },
-        {
-          "label": "Book appointment",
-          "href": "/appointment"
         }
       ]
     }

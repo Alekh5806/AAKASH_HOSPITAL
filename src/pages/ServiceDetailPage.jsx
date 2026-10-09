@@ -1,17 +1,17 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { BreadcrumbJsonLd, FAQJsonLd, ServiceJsonLd } from "../components/JsonLd";
+import { useEffect, useMemo, useRef } from "react";
+import { useParams } from "react-router-dom";
+import { ServiceJsonLd } from "../components/JsonLd";
+import LazyNotFound from "../components/LazyNotFound";
 import SEO from "../components/SEO";
 import ServiceActionBar from "../components/ServiceActionBar";
 import { branches } from "../lib/coreData";
-import { BRANCH_CHANGE_EVENT, getStoredBranch } from "../lib/contact";
+import { BRANCH_CHANGE_EVENT, getPrimaryBranch, getStoredBranch } from "../lib/contact";
+import { useClientState } from "../lib/hydration";
 import {
-  getNumberedServices,
   getPartForService,
   getRelatedServices,
   getServiceBySlug,
   serviceDetail,
-  servicePage,
 } from "../lib/servicesData";
 import ServiceEmergency from "../sections/ServiceEmergency";
 import ServiceExplore from "../sections/ServiceExplore";
@@ -19,6 +19,8 @@ import ServiceFaq from "../sections/ServiceFaq";
 import ServiceHero from "../sections/ServiceHero";
 import ServiceRelated from "../sections/ServiceRelated";
 import ServiceVisit from "../sections/ServiceVisit";
+import "../styles/services.css";
+import "../styles/service-detail.css";
 
 /* One service, in five short blocks: what it is (a hero), everything about it
  * (one card the reader explores), what a visit looks like, what they still want
@@ -39,52 +41,29 @@ export default function ServiceDetailPage() {
   /* The hospital the reader picked in the header, so the number this page
      offers is never a different one from the number at the top of the screen -
      including when they change it while they are still reading. */
-  const [branch, setBranch] = useState(() => getStoredBranch(branches.items));
+  const [branch, setBranch] = useClientState(
+    () => getStoredBranch(branches.items),
+    getPrimaryBranch(branches.items),
+  );
 
   useEffect(() => {
     const sync = () => setBranch(getStoredBranch(branches.items));
     window.addEventListener(BRANCH_CHANGE_EVENT, sync);
     return () => window.removeEventListener(BRANCH_CHANGE_EVENT, sync);
-  }, []);
+  }, [setBranch]);
 
   const part = useMemo(() => (service ? getPartForService(service.slug) : null), [service]);
   const related = useMemo(() => (service ? getRelatedServices(service.slug) : []), [service]);
   const isUrgent = service?.category === "urgent";
 
-  if (!service) {
-    const { notFound } = serviceDetail;
-    return (
-      <>
-        <SEO
-          meta={{ title: "Service not found | Aakash Eye Hospital", description: notFound.lede }}
-        />
-        <section className="e-sec sd-missing">
-          <div className="e-shell">
-            <span className="sd-label">{notFound.label}</span>
-            <h1 className="e-h1 sd-missing__title">{notFound.title}</h1>
-            <p className="e-lede sd-missing__lede">{notFound.lede}</p>
-            <Link className="e-btn" to="/services">
-              {notFound.ctaLabel}
-            </Link>
-          </div>
-        </section>
-        <ServiceRelated items={getNumberedServices()} title={servicePage.index.title} />
-      </>
-    );
-  }
+  /* A slug that names no service is the site's not-found page, which reads
+     the address and offers the service it most likely meant. */
+  if (!service) return <LazyNotFound />;
 
   return (
     <>
-      <SEO meta={service.seo} />
-      <BreadcrumbJsonLd
-        items={[
-          { name: "Home", href: "/" },
-          { name: "Services", href: "/services" },
-          { name: service.title, href: `/services/${service.slug}` },
-        ]}
-      />
-      <ServiceJsonLd service={service} />
-      <FAQJsonLd items={service.faq} />
+      <SEO meta={{ image: service.image, imageAlt: service.imageAlt, ...service.seo }} />
+      <ServiceJsonLd service={service} part={part} />
 
       <ServiceHero
         service={service}
@@ -96,7 +75,15 @@ export default function ServiceDetailPage() {
 
       <ServiceExplore service={service} />
 
-      {isUrgent ? <ServiceEmergency showMore={false} /> : <ServiceVisit branch={branch} />}
+      {isUrgent ? (
+        <ServiceEmergency
+          showMore={false}
+          label={serviceDetail.urgent.label}
+          title={serviceDetail.urgent.title}
+        />
+      ) : (
+        <ServiceVisit service={service} />
+      )}
 
       <ServiceFaq items={service.faq} />
 

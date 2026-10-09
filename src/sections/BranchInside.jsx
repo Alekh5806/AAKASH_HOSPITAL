@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
-import Reveal from "../components/Reveal";
 import SmartImage from "../components/SmartImage";
 import { branchPage } from "../lib/branchData";
 
@@ -17,8 +16,13 @@ const { inside } = branchPage;
  * laptop, a two-column grid on a tablet and a swipe rail on a phone - so the
  * section a reader met depended on the device, and only the laptop showed the
  * photographs at a size worth looking at. Now every width gets the same
- * instrument and only its measurements change: one large photograph, the four
+ * instrument and only its measurements change: one large photograph, the
  * thumbnails under it, and the full-screen viewer a tap away.
+ *
+ * **Swiping the stage is a parallax, not a slide.** Each landscape photograph
+ * drifts inside its own frame as the frame crosses the stage (a view timeline
+ * on the stage's inline axis, in branch.css), so a swipe reads as looking
+ * through a window rather than pushing a strip of pictures along.
  *
  * **The stage fills with a landscape photograph and contains a portrait one.**
  * Every landscape frame - 4:3 from the Visnagar shoot, 20:9 from the Odhav
@@ -124,7 +128,7 @@ export default function BranchInside({ branch }) {
   return (
     <section className="e-sec e-sec--tight br-inside" aria-labelledby="br-inside-title">
       <div className="e-shell">
-        <Reveal className="e-head">
+        <div className="e-head">
           <span className="e-label">{inside.label}</span>
           <div className="e-head__body">
             <h2 className="e-h2" id="br-inside-title">
@@ -135,9 +139,9 @@ export default function BranchInside({ branch }) {
                 set shows. */}
             <p className="e-lede">{branch.page.insideLede ?? inside.lede}</p>
           </div>
-        </Reveal>
+        </div>
 
-        <Reveal className="br-gallery" as="div">
+        <div className="br-gallery">
           <div
             className="br-gallery__stage"
             ref={stageRef}
@@ -166,7 +170,7 @@ export default function BranchInside({ branch }) {
                   className="br-gallery__img"
                   src={photo.src}
                   alt={photo.alt}
-                  loading={position === 0 ? "eager" : "lazy"}
+                  loading="lazy"
                   sizes="(min-width: 1024px) 60vw, 100vw"
                 />
                 <span className="br-gallery__zoom" aria-hidden="true">
@@ -177,7 +181,9 @@ export default function BranchInside({ branch }) {
           </div>
 
           <p className="br-gallery__caption">
-            <span>{gallery[index]?.caption}</span>
+            {/* Keyed on the photograph, so a new caption rises in as the stage
+                arrives on it rather than the words swapping in place. */}
+            <span key={index}>{gallery[index]?.caption}</span>
             <em>
               {index + 1} / {gallery.length}
             </em>
@@ -199,7 +205,7 @@ export default function BranchInside({ branch }) {
               </li>
             ))}
           </ul>
-        </Reveal>
+        </div>
       </div>
 
       <AnimatePresence>

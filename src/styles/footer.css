@@ -49,6 +49,7 @@
 
 .ft__brand {
   display: block;
+  padding-block: 1px;
 }
 
 .ft__brand img {
@@ -161,26 +162,24 @@
     color 200ms var(--e-ease);
 }
 
+/* The pair grow from nothing and never below their label, so side by side they
+   are one width where they can be, and where the column is too narrow for both
+   they stack at one width rather than as 236px over 212px. */
+.ft__cta,
+.ft__ghost {
+  flex: 1 1 0;
+  min-width: max-content;
+}
+
 .ft__cta svg,
 .ft__ghost svg {
   flex: none;
-}
-
-.ft__cta:hover {
-  border-color: var(--e-ink);
-  background: var(--e-ink);
 }
 
 .ft__ghost {
   border-color: var(--ft-edge);
   background: transparent;
   color: var(--e-ink);
-}
-
-.ft__ghost:hover {
-  border-color: var(--e-navy);
-  background: transparent;
-  color: var(--e-navy);
 }
 
 /* ---- reach band: phone, email and hours, directly under the masthead ----
@@ -207,6 +206,14 @@
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+/* With the reader's hospital's own OPD number there are four rows, and a
+   fourth cell alone under three reads as left over: a 40% floor caps the grid
+   at two columns, so the rows pair up - the network's two, then the
+   hospital's two. */
+.ft__contact[data-count="4"] {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, max(260px, 40%)), 1fr));
 }
 
 .ft__contact li {
@@ -258,8 +265,11 @@
 }
 
 /* The phone and the email are the two things an older patient actually taps
-   here, so both clear the 24px minimum target on their own. */
+   here. They keep their 26px line and gain an invisible halo to 44px - the
+   size every control on the site holds, at every width: the footer used to
+   hold it only on phones, and a desktop reader got 40px rows and 42px squares. */
 .ft__contact a {
+  position: relative;
   min-height: 26px;
   padding-block: 1px;
   text-decoration: underline;
@@ -268,9 +278,10 @@
   transition: text-decoration-color 200ms var(--e-ease), color 200ms var(--e-ease);
 }
 
-.ft__contact a:hover {
-  color: var(--e-accent);
-  text-decoration-color: currentColor;
+.ft__contact a::after {
+  content: "";
+  position: absolute;
+  inset: -9px 0;
 }
 
 .ft__emergency {
@@ -290,7 +301,7 @@
    the links it titles, so the column read as one block of near-equal type;
    this gives each column a heading a reader can actually land on. The micro
    uppercase style stays on the contact labels, where it labels a value. */
-.ft__col h3 {
+.ft__col h2 {
   margin: 0 0 10px;
   color: var(--e-ink);
   font-family: var(--e-tight);
@@ -309,7 +320,8 @@
   display: flex;
   align-items: baseline;
   gap: 8px;
-  padding: 9px 0;
+  min-height: 44px;
+  padding: 11px 0;
   color: var(--e-ink-2);
   font-size: 0.98rem;
   line-height: 1.4;
@@ -323,10 +335,6 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-}
-
-.ft__col a:hover {
-  color: var(--e-accent);
 }
 
 /* ---- utility row ---- */
@@ -356,18 +364,13 @@
   border-radius: var(--ft-radius);
   background: transparent;
   padding: 0 16px;
-  min-height: 42px;
+  min-height: 44px;
   color: var(--e-ink-2);
   font-family: inherit;
   font-size: 0.88rem;
   font-weight: 500;
   line-height: 1;
   transition: border-color 200ms var(--e-ease), color 200ms var(--e-ease);
-}
-
-.ft__legal button:hover {
-  border-color: var(--e-navy);
-  color: var(--e-navy);
 }
 
 /* Icon squares on the header's menu-button shape rather than the reference's
@@ -380,17 +383,11 @@
   justify-content: center;
   border: 1px solid var(--ft-edge);
   border-radius: var(--ft-radius);
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   color: var(--e-ink-2);
   transition: border-color 200ms var(--e-ease), background-color 200ms var(--e-ease),
     color 200ms var(--e-ease);
-}
-
-.ft__social a:hover {
-  border-color: var(--e-navy);
-  background: var(--e-navy);
-  color: #fff;
 }
 
 .ft__legal {
@@ -430,6 +427,54 @@
   font-weight: 600;
 }
 
+/* ---- hover and press ----
+   Hover is for a real pointer. The footer outlives the route, so a tap that
+   left :hover behind kept a link in the accent - or a social square filled
+   navy - on the page it opened, for the rest of the visit. A finger gets
+   :active instead. */
+
+@media (hover: hover) and (pointer: fine) {
+  .ft__cta:hover {
+    border-color: var(--e-ink);
+    background: var(--e-ink);
+  }
+  .ft__ghost:hover,
+  .ft__legal button:hover {
+    border-color: var(--e-navy);
+    color: var(--e-navy);
+  }
+  .ft__contact a:hover {
+    color: var(--e-accent);
+    text-decoration-color: currentColor;
+  }
+  .ft__col a:hover {
+    color: var(--e-accent);
+  }
+  .ft__social a:hover {
+    border-color: var(--e-navy);
+    background: var(--e-navy);
+    color: #fff;
+  }
+}
+
+.ft__cta:active {
+  border-color: var(--e-ink);
+  background: var(--e-ink);
+}
+
+.ft__ghost:active,
+.ft__legal button:active,
+.ft__social a:active {
+  border-color: var(--e-navy);
+  background: rgba(12, 44, 73, 0.06);
+  color: var(--e-navy);
+}
+
+.ft__contact a:active,
+.ft__col a:active {
+  color: var(--e-accent);
+}
+
 /* ---- responsive ---- */
 
 /* The action block drops to the full width above the columns, which keeps the
@@ -454,7 +499,12 @@
   .ft__actLede {
     max-width: 52ch;
   }
+  /* Two equal tracks, so the pair beside the copy is one width - as flex
+     items in a content-sized column they hugged their labels at 236 and 211. */
   .ft__actions {
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
     grid-column: 2;
     grid-row: 1 / span 2;
     margin-top: 0;
@@ -472,13 +522,10 @@
     max-width: 46ch;
   }
   .ft__actions {
+    display: flex;
     grid-column: 1;
     grid-row: auto;
     margin-top: 20px;
-  }
-  .ft__cta,
-  .ft__ghost {
-    flex: 1 1 210px;
   }
 }
 
@@ -508,6 +555,18 @@
   .ft__utility {
     justify-content: flex-start;
   }
+
+  /* The two buttons share the row and fill it - side by side at one width
+     where both labels fit, one above the other where they do not - rather
+     than hugging their labels at two different widths under the squares. */
+  .ft__legal {
+    width: 100%;
+  }
+  .ft__legal button {
+    flex: 1 1 0;
+    min-width: max-content;
+    justify-content: center;
+  }
 }
 
 /* Two branches to a row, or a ~210px column, leave no room for the label
@@ -519,9 +578,11 @@
   }
 }
 
-/* Under ~360px two link columns are about 120px wide and half the labels wrap.
-   One column costs height on the smallest handsets and nothing else. */
-@media (max-width: 380px) {
+/* The widest label, "Cataract surgery", is 125px, and two columns hold it from
+   345px. Below that - the first SE - one column costs height and nothing else;
+   at 380px, where this used to break, a 360 or 375 phone gave up ~360px of
+   screen to a single column it did not need. */
+@media (max-width: 344px) {
   .ft__body {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -533,9 +594,6 @@
 @media (max-width: 400px) {
   .ft__card {
     padding-inline: 20px;
-  }
-  .ft__legal {
-    width: 100%;
   }
 }
 

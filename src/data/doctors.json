@@ -1,13 +1,13 @@
 {
   "seo": {
-    "title": "Eye Specialists | Aakash Eye Hospital",
-    "description": "Meet the doctors and optometry team at Aakash Eye Hospital across Visnagar, Ahmedabad and Bharuch."
+    "title": "Eye Specialists and Surgeons | Aakash Eye Hospital",
+    "description": "Meet the eye surgeons, retina, oculoplasty and children's specialists and optometrists at every Aakash Eye Hospital in Gujarat. Book on WhatsApp."
   },
   "page": {
     "label": "Our team",
-    "title": "Meet the people",
+    "title": "Meet the doctors",
     "titleAccent": "who will see you.",
-    "lede": "Ophthalmic surgeons, clinicians and optometrists across our hospitals. Choose a hospital to see who you would meet there.",
+    "lede": "Eye surgeons, visiting specialists and optometrists across our six hospitals. Choose a hospital to see who you would meet there.",
     "filterLabel": "Choose a hospital",
     "allLabel": "All hospitals",
     "statusAll": "Showing all {total}, across every hospital",
@@ -18,128 +18,452 @@
         "label": "Doctors and surgeons"
       },
       {
+        "id": "visiting",
+        "label": "Visiting specialists",
+        "note": "They hold clinics on set days. The OPD will tell you the next one when you book."
+      },
+      {
         "id": "optometry",
         "label": "Optometry team"
       }
     ],
+    "card": {
+      "seesAt": "Sees patients at {hospitals}",
+      "alsoAt": "Also sees patients at {hospitals}",
+      "visits": "Visits {hospital}",
+      "visitsOn": "Visits {hospital} on {schedule}",
+      "hereOn": "Here on {schedule}"
+    },
     "foot": {
       "text": "Not sure who to see? Book an appointment and the OPD will place you with the right clinic.",
       "ctaLabel": "Book an appointment",
       "contactLabel": "Ask us directly"
+    },
+    "profile": {
+      "backLabel": "All doctors",
+      "bookLabel": "Book at {hospital}",
+      "callLabel": "Call {hospital} OPD",
+      "interestsLabel": "Areas of interest",
+      "whereLabel": "Where and when",
+      "whereTitle": "Where to see {name}",
+      "basedTag": "Based here",
+      "visitingTag": "Visiting",
+      "hoursLabel": "OPD hours",
+      "daysLabel": "Clinic days",
+      "daysUnknown": "Set days - the OPD can tell you the next one.",
+      "bookHere": "Book here",
+      "callHere": "Call OPD",
+      "directions": "Directions",
+      "careLabel": "Treatments",
+      "careTitle": "What to see {name} for",
+      "teamLabel": "The team",
+      "teamTitle": "Also at {hospitals}",
+      "moreLabel": "View profile",
+      "seoTitle": "{name}, {specialty}",
+      "seoDescription": "{name}, {qualifications}, {specialty} at Aakash Eye Hospital in {hospitals}.{interests} Book on WhatsApp.",
+      "seoDescriptionShort": "{name}, {specialty} at Aakash Eye Hospital in {hospitals}.{interests} Book on WhatsApp.",
+      "seoInterests": " Interests include {interests}.",
+      "imageAlt": "{name}, {specialty} at Aakash Eye Hospital"
     }
   },
   "items": [
     {
+      "slug": "dr-vishnu-s-patel",
       "name": "Dr. Vishnu S. Patel",
-      "qualifications": "MBBS, MS",
+      "qualifications": "MS (Ophth)",
       "specialty": "Ophthalmic Surgeon",
-      "highlight": "Senior ophthalmic surgeon at Visnagar. Part of the founding surgical team.",
+      "interests": [
+        "cataract surgery",
+        "FLACS",
+        "glaucoma",
+        "squint",
+        "LASIK",
+        "Femto LASIK",
+        "ICL"
+      ],
       "photo": "/assets/media/doctors/vishnu-patel.jpg",
-      "photoAlt": "Dr. Vishnu S. Patel",
-      "bio": "Senior ophthalmologist associated with Aakash Eye Hospital's long-standing surgical care.",
-      "branches": [
-        "Visnagar"
-      ]
-    },
-    {
-      "name": "Dr. Sanjay B. Patel",
-      "qualifications": "MBBS, MS",
-      "specialty": "Ophthalmic Surgeon",
-      "highlight": "Ophthalmic surgeon at Visnagar and Ahmedabad. Cataract and general eye surgery.",
-      "photo": "/assets/media/doctors/sanjay-patel.jpg",
-      "photoAlt": "Dr. Sanjay B. Patel",
-      "bio": "Ophthalmic surgeon supporting surgical and clinical care pathways.",
       "branches": [
         "Visnagar",
-        "Ahmedabad"
+        "Gota"
+      ],
+      "services": [
+        "cataract-surgery",
+        "lasik-refractive-surgery",
+        "glaucoma-care",
+        "squint-services"
       ]
     },
     {
-      "name": "Dr. Saurabh Kapoor",
-      "qualifications": "MBBS, MS, DNB",
+      "slug": "dr-sanjay-b-patel",
+      "name": "Dr. Sanjay B. Patel",
+      "qualifications": "MS (Ophth)",
       "specialty": "Ophthalmic Surgeon",
-      "highlight": "Specialist ophthalmic surgeon at Ahmedabad. MS and DNB qualified.",
+      "interests": [
+        "cataract surgery",
+        "FLACS",
+        "glaucoma",
+        "squint",
+        "LASIK",
+        "Femto LASIK",
+        "ICL"
+      ],
+      "photo": "/assets/media/doctors/sanjay-patel.jpg",
+      "branches": [
+        "Visnagar",
+        "Gota"
+      ],
+      "services": [
+        "cataract-surgery",
+        "lasik-refractive-surgery",
+        "glaucoma-care",
+        "squint-services"
+      ]
+    },
+    {
+      "slug": "dr-aakash-v-patel",
+      "name": "Dr. Aakash V. Patel",
+      "qualifications": "MS (Ophth)",
+      "specialty": "Ophthalmic Surgeon",
+      "interests": [
+        "cataract surgery",
+        "FLACS",
+        "glaucoma",
+        "LASIK",
+        "Femto LASIK"
+      ],
+      "branches": [
+        "Visnagar",
+        "Gota"
+      ],
+      "services": [
+        "cataract-surgery",
+        "lasik-refractive-surgery",
+        "glaucoma-care"
+      ]
+    },
+    {
+      "slug": "dr-toral-a-patel",
+      "name": "Dr. Toral A. Patel",
+      "qualifications": "DO (Ophth)",
+      "specialty": "Ophthalmic Surgeon",
+      "interests": [
+        "LASIK",
+        "Femto LASIK",
+        "cataract surgery",
+        "FLACS"
+      ],
+      "branches": [
+        "Visnagar"
+      ],
+      "services": [
+        "lasik-refractive-surgery",
+        "cataract-surgery"
+      ]
+    },
+    {
+      "slug": "dr-nishant-m-patel",
+      "name": "Dr. Nishant M. Patel",
+      "qualifications": "MS (Ophth)",
+      "specialty": "Ophthalmic Surgeon",
+      "interests": [
+        "cataract surgery",
+        "FLACS",
+        "pterygium"
+      ],
+      "branches": [
+        "Visnagar"
+      ],
+      "services": [
+        "cataract-surgery"
+      ]
+    },
+    {
+      "slug": "dr-vijay-gupta",
+      "name": "Dr. Vijay Gupta",
+      "qualifications": "DO (Ophth)",
+      "specialty": "Ophthalmic Surgeon",
+      "interests": [
+        "cataract surgery",
+        "pterygium"
+      ],
+      "branches": [
+        "Visnagar"
+      ],
+      "services": [
+        "cataract-surgery"
+      ]
+    },
+    {
+      "slug": "dr-saurabh-kapoor",
+      "name": "Dr. Saurabh Kapoor",
+      "qualifications": "DO, DNB (Ophth), MNAMS",
+      "specialty": "Senior Phacorefractive Surgeon",
+      "interests": [
+        "routine and complex cataract surgery",
+        "comprehensive ophthalmology",
+        "pterygium"
+      ],
       "photo": "/assets/media/doctors/saurabh-kapoor.jpg",
-      "photoAlt": "Dr. Saurabh Kapoor",
-      "bio": "Specialist ophthalmologist with clinical and surgical credentials.",
       "branches": [
-        "Ahmedabad"
+        "Ahmedabad",
+        "Gota"
+      ],
+      "services": [
+        "cataract-surgery",
+        "comprehensive-eye-examination"
       ]
     },
     {
-      "name": "Dr. Asesh B. Patel",
-      "qualifications": "MBBS RPFU, DOMS",
-      "specialty": "Ophthalmology",
-      "highlight": "Ophthalmology clinician at Visnagar. Diagnosis, treatment planning and follow-up.",
-      "photo": "/assets/media/doctors/asesh-patel.jpg",
-      "photoAlt": "Dr. Asesh B. Patel",
-      "bio": "Ophthalmology clinician supporting diagnosis, treatment planning and patient care.",
-      "branches": [
-        "Visnagar"
-      ]
-    },
-    {
+      "slug": "dr-dhaivat-vasavada",
       "name": "Dr. Dhaivat Vasavada",
-      "qualifications": "MS, FAECS, FAICO-VR",
-      "specialty": "Vitreoretina",
-      "highlight": "Vitreoretina specialist at Ahmedabad. Advanced retina and macular care.",
+      "qualifications": "MS (Ophth), FAECS, FAICO (VR)",
+      "specialty": "Senior Vitreoretina Consultant",
       "photo": "/assets/media/doctors/dhaivat-vasavada.jpg",
-      "photoAlt": "Dr. Dhaivat Vasavada",
-      "bio": "Vitreoretina-focused ophthalmologist supporting advanced retina care.",
+      "branches": [
+        "Ahmedabad",
+        "Gota"
+      ],
+      "visiting": [
+        {
+          "branch": "Visnagar",
+          "schedule": [
+            {
+              "days": [
+                "Tuesday",
+                "Saturday"
+              ],
+              "opens": "10:00",
+              "closes": "17:00"
+            }
+          ]
+        }
+      ],
+      "services": [
+        "retina-services"
+      ]
+    },
+    {
+      "slug": "dr-nirav-zala",
+      "name": "Dr. Nirav Zala",
+      "qualifications": "DNB (Ophth), FAECS",
+      "specialty": "Vitreoretina Consultant",
+      "branches": [
+        "Ahmedabad",
+        "Gota"
+      ],
+      "visiting": [
+        {
+          "branch": "Visnagar"
+        }
+      ],
+      "services": [
+        "retina-services"
+      ]
+    },
+    {
+      "slug": "dr-kushal-shah",
+      "name": "Dr. Kushal Shah",
+      "qualifications": "MS (Ophth)",
+      "specialty": "Ophthalmic Surgeon",
+      "interests": [
+        "cataract surgery",
+        "pterygium",
+        "comprehensive ophthalmology"
+      ],
       "branches": [
         "Ahmedabad"
+      ],
+      "services": [
+        "cataract-surgery",
+        "comprehensive-eye-examination"
       ]
     },
     {
-      "name": "Kashyap M. Patel",
-      "qualifications": "B.Optom, DOT",
-      "specialty": "Optometry",
-      "highlight": "Optometrist at Visnagar. Refraction, vision testing and evaluation.",
-      "photo": "/assets/media/doctors/kashyap-patel.jpg",
-      "photoAlt": "Kashyap M. Patel",
-      "bio": "Optometry team member supporting refraction and patient evaluation.",
-      "branches": [
-        "Visnagar"
-      ]
-    },
-    {
-      "name": "Bhavika R. Patel",
-      "qualifications": "Diploma Optometrist",
-      "specialty": "Optometry",
-      "highlight": "Optometrist at Visnagar. Everyday eye examinations and refraction.",
-      "photo": "/assets/media/doctors/bhavika-patel.jpg",
-      "photoAlt": "Bhavika R. Patel",
-      "bio": "Optometrist supporting everyday eye examinations and refraction care.",
-      "branches": [
-        "Visnagar"
-      ]
-    },
-    {
-      "name": "A. K. Patel",
-      "qualifications": "DOT, Sr. Optometrist",
-      "specialty": "Senior Optometry",
-      "highlight": "Senior optometrist at Visnagar. Clinical diagnostics and patient evaluation.",
-      "photo": "/assets/media/doctors/ak-patel.jpg",
-      "photoAlt": "A. K. Patel",
-      "bio": "Senior optometrist supporting clinical diagnostics and patient evaluation.",
-      "branches": [
-        "Visnagar"
-      ]
-    },
-    {
-      "name": "Dr. Mahendra M. Patel",
-      "qualifications": "Medical Officer",
-      "specialty": "Medical Officer",
-      "highlight": "Medical officer at Bharuch. Patient care and clinical coordination.",
-      "photo": "/assets/media/doctors/mahendra-patel.jpg",
-      "photoAlt": "Dr. Mahendra M. Patel",
-      "bio": "Medical officer supporting patient care and clinical workflows.",
+      "slug": "dr-gaurang-amin",
+      "name": "Dr. Gaurang Amin",
+      "qualifications": "MS (Ophth), DOMS",
+      "specialty": "Ophthalmologist",
       "branches": [
         "Bharuch"
+      ],
+      "services": [
+        "comprehensive-eye-examination"
+      ]
+    },
+    {
+      "slug": "dr-ashesh-patel",
+      "name": "Dr. Ashesh Patel",
+      "qualifications": "DO, MS (Ophth)",
+      "specialty": "Ophthalmologist",
+      "photo": "/assets/media/doctors/ashesh-patel.jpg",
+      "branches": [
+        "Bharuch"
+      ],
+      "services": [
+        "comprehensive-eye-examination"
+      ]
+    },
+    {
+      "slug": "dr-pooja-yadav-patel",
+      "name": "Dr. Pooja Yadav Patel",
+      "qualifications": "MS (Ophth)",
+      "specialty": "Oculoplasty Surgeon",
+      "interests": [
+        "ophthalmic plastic surgery",
+        "ocular oncology"
+      ],
+      "branches": [
+        "Bharuch"
+      ],
+      "visiting": [
+        {
+          "branch": "Visnagar"
+        }
+      ],
+      "services": [
+        "oculoplasty"
+      ]
+    },
+    {
+      "slug": "dr-kshitij-gandhi",
+      "name": "Dr. Kshitij Gandhi",
+      "qualifications": "MS (Ophth)",
+      "specialty": "Ophthalmologist",
+      "branches": [
+        "Gota"
+      ],
+      "services": [
+        "comprehensive-eye-examination"
+      ]
+    },
+    {
+      "slug": "dr-ronak-patel",
+      "name": "Dr. Ronak Patel",
+      "qualifications": "DNB (Ophth)",
+      "specialty": "Ophthalmologist",
+      "branches": [
+        "Himmatnagar"
+      ],
+      "services": [
+        "comprehensive-eye-examination"
+      ]
+    },
+    {
+      "slug": "dr-faizurraheman-chauhan",
+      "name": "Dr. Faizurraheman Chauhan",
+      "qualifications": "DOMS",
+      "specialty": "Ophthalmologist",
+      "branches": [
+        "Juhapura"
+      ],
+      "services": [
+        "comprehensive-eye-examination"
+      ]
+    },
+    {
+      "slug": "dr-harsh-shah",
+      "name": "Dr. Harsh Shah",
+      "qualifications": "MS (Ophth), Fellowship in Orbit and Oculoplasty",
+      "specialty": "Oculoplasty Specialist",
+      "branches": [],
+      "visiting": [
+        {
+          "branch": "Ahmedabad"
+        }
+      ],
+      "services": [
+        "oculoplasty"
+      ]
+    },
+    {
+      "slug": "dr-gunjan-shah",
+      "name": "Dr. Gunjan Shah",
+      "qualifications": "MS, DNB (Ophth), Fellowship in Cornea and Refractive Surgery",
+      "specialty": "Cornea and Refractive Specialist",
+      "branches": [],
+      "visiting": [
+        {
+          "branch": "Ahmedabad"
+        }
+      ],
+      "services": [
+        "lasik-refractive-surgery"
+      ]
+    },
+    {
+      "slug": "dr-riddhi-bhatt",
+      "name": "Dr. Riddhi Bhatt",
+      "qualifications": "MS (Ophth)",
+      "specialty": "Pediatric Ophthalmologist",
+      "branches": [],
+      "visiting": [
+        {
+          "branch": "Ahmedabad"
+        }
+      ],
+      "services": [
+        "pediatric-eye-care"
+      ]
+    },
+    {
+      "name": "Tanjim Saiyad",
+      "qualifications": "B.Optom",
+      "specialty": "Optometrist",
+      "branches": [
+        "Bharuch"
+      ]
+    },
+    {
+      "name": "Dharmendra Yadav",
+      "qualifications": "B.Optom",
+      "specialty": "Optometrist",
+      "branches": [
+        "Gota"
+      ]
+    },
+    {
+      "name": "Pratik Parmar",
+      "qualifications": "B.Optom",
+      "specialty": "Optometrist",
+      "branches": [
+        "Gota"
+      ]
+    },
+    {
+      "name": "Jaykishan Panchal",
+      "qualifications": "B.Optom",
+      "specialty": "Optometrist",
+      "branches": [
+        "Himmatnagar"
+      ]
+    },
+    {
+      "name": "Jaimin Barot",
+      "qualifications": "B.Optom",
+      "specialty": "Optometrist",
+      "branches": [
+        "Himmatnagar"
+      ]
+    },
+    {
+      "name": "Jaimin Modi",
+      "qualifications": "B.Optom, M.Optom, PhD Scholar",
+      "specialty": "Optometrist",
+      "interests": [
+        "specialty optometry",
+        "vision therapy",
+        "myopia management"
+      ],
+      "branches": [],
+      "visiting": [
+        {
+          "branch": "Ahmedabad"
+        }
       ]
     }
   ],
   "notes": [
-    "Doctor bios are editorial placeholders based on public role and qualification data. Replace with approved biographies when available."
+    "The team is the hospital's own list (October 2026). Names, qualifications, specialties and areas of interest are as supplied; only their spelling and punctuation were made consistent.",
+    "A record without a `photo` shows a monogram until a portrait is added. A hospital is named by its display name in branches.json: Sarkhej is Juhapura and Odhav is Ahmedabad."
   ]
 }

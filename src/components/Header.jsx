@@ -1,43 +1,153 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  ArrowRight,
   CalendarDays,
   Check,
   ChevronDown,
   ChevronRight,
+  ChevronsUpDown,
   MapPin,
-  Menu,
   MessageCircle,
   Navigation,
   Phone,
-  Siren,
   X,
 } from "lucide-react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { branches, navigation, site } from "../lib/coreData";
+import { formatTime, getBranchHours, getOpenState } from "../lib/hours";
+import { useClientState, useHydrated } from "../lib/hydration";
 import {
-  BRANCH_STORAGE_KEY,
   buildBranchHref,
   buildMapLink,
   buildWhatsApp,
   cleanTel,
   getPrimaryBranch,
   getPrimaryPhone,
+  readStoredBranchSlug,
   storeBranch,
   BRANCH_CHANGE_EVENT,
 } from "../lib/contact";
 
-const { emergency, branchPicker, bookLabel, bookShortLabel, menuLabel, opdLabel } = site.header;
-
-function readStoredBranch() {
-  try {
-    return window.localStorage.getItem(BRANCH_STORAGE_KEY);
-  } catch {
-    return null;
-  }
-}
+const {
+  emergency,
+  branchPicker,
+  bookLabel,
+  bookShortLabel,
+  menuLabel,
+  opdLabel,
+  drawer: drawerCopy,
+} = site.header;
 
 function findBranch(slug) {
   return branches.items.find((branch) => branch.slug === slug) ?? null;
+}
+
+/* The phone menu opens as a circle of paper growing from the menu button, and
+   each piece of its content fades in as that circle reaches it. The distance
+   from the button to a link differs with the screen - on a phone held
+   sideways the links are across the whole width - so the delays are measured
+   on the screen in hand rather than written into the stylesheet. These two
+   must match `.hd__drawer[data-state="open"] .hd__bloom` in header.css.
+
+   The curve is the header's own ease-out: the circle leaves the button at
+   speed and settles into the far corner. The ease-in-out it replaced spent
+   its first tenth of a second barely moving, which read as the tap not
+   having landed. */
+const BLOOM_MS = 520;
+const BLOOM_EASE = [0.32, 0.72, 0, 1];
+
+function bezier(progress, first, second) {
+  const rest = 1 - progress;
+  return (
+    3 * rest * rest * progress * first + 3 * rest * progress * progress * second + progress ** 3
+  );
+}
+
+/* Milliseconds after the bloom starts at which its edge has travelled `share`
+   of its full radius. */
+function bloomReaches(share) {
+  let low = 0;
+  let high = 1;
+  for (let step = 0; step < 24; step += 1) {
+    const middle = (low + high) / 2;
+    if (bezier(middle, BLOOM_EASE[1], BLOOM_EASE[3]) < share) low = middle;
+    else high = middle;
+  }
+  return bezier(high, BLOOM_EASE[0], BLOOM_EASE[2]) * BLOOM_MS;
+}
+
+/* The bloom is centred on the close button, and its radius is the distance
+   from there to the farthest corner of the screen - no more, so the shutting
+   circle is on screen from its first frame rather than spending a tenth of a
+   second shrinking off it. The stylesheet's `hypot(100vw, 100vh)` is only the
+   fallback. */
+function measureBloom(sheet) {
+  const close = sheet?.querySelector(".hd__sheet-close");
+  if (!close) return null;
+  const button = close.getBoundingClientRect();
+  const originX = button.left + button.width / 2;
+  const originY = button.top + button.height / 2;
+  const radius =
+    Math.hypot(
+      Math.max(originX, window.innerWidth - originX),
+      Math.max(originY, window.innerHeight - originY),
+    ) + 2;
+  sheet.parentElement.style.setProperty("--hd-or", `${Math.round(radius)}px`);
+  return { originX, originY, radius };
+}
+
+/* An element is covered once the bloom's edge has passed its farthest
+   corner, and that is when it starts to fade in. */
+function stageReveal(sheet) {
+  const bloom = measureBloom(sheet);
+  if (!bloom) return;
+  const { originX, originY, radius } = bloom;
+  sheet.querySelectorAll("[data-reveal]").forEach((element) => {
+    const box = element.getBoundingClientRect();
+    const reach = Math.hypot(
+      Math.max(Math.abs(box.left - originX), Math.abs(box.right - originX)),
+      Math.max(Math.abs(box.top - originY), Math.abs(box.bottom - originY)),
+    );
+    const delay = bloomReaches(Math.min(reach / radius, 1));
+    element.style.setProperty("--hd-at", `${Math.round(delay)}ms`);
+  });
+}
+
+/* Whether the chosen hospital's OPD is open now, in the words the menu's card
+   prints under its name - read from the hospital's own hours, on its clock. */
+function describeOpd(branch) {
+  const state = getOpenState(getBranchHours(branch));
+  if (state.closedToday) return { open: false, label: drawerCopy.closedTodayLabel };
+  if (state.open) {
+    return { open: true, label: drawerCopy.openUntil.replace("{time}", formatTime(state.closes)) };
+  }
+  return { open: false, label: drawerCopy.opensAt.replace("{time}", formatTime(state.opens)) };
+}
+
+/* Three bars drawn in CSS rather than an icon file, because the menu's close
+   button is the same three bars turning into a cross in the same place - the
+   menu button and the close button read as one control changing state. */
+function MenuGlyph() {
+  return (
+    <span className="hd__glyph" aria-hidden="true">
+      <span />
+      <span />
+      <span />
+    </span>
+  );
+}
+
+/* The link list only scrolls on the shortest phones. A fade at its foot says
+   there is more, and only while there is: a list that fits carries no fade,
+   and one scrolled to its end loses it. Offsets rather than scrollHeight,
+   because the rows are still rising into place when this first runs and a
+   transformed row counts toward the scrollable overflow. */
+function markMore(list) {
+  if (!list) return;
+  const last = list.lastElementChild;
+  const end = last ? last.offsetTop + last.offsetHeight : 0;
+  const more = end - list.scrollTop - list.clientHeight > 2;
+  list.toggleAttribute("data-more", more);
 }
 
 function BranchPicker({ branch, isOpen, onSelect, onToggle }) {
@@ -250,34 +360,60 @@ export default function Header() {
   const menuButtonRef = useRef(null);
   const dropdownTriggers = useRef({});
 
-  const [selectedSlug, setSelectedSlug] = useState(
-    () => readStoredBranch() ?? getPrimaryBranch(branches.items).slug,
+  /* The reader's hospital is theirs, so the prerendered header names the head
+     office and the hospital they chose arrives as React adopts the page; the
+     location sync below runs again at that moment too, so a hospital's own
+     page still names its hospital rather than the stored one. */
+  const hydrated = useHydrated();
+  const [selectedSlug, setSelectedSlug] = useClientState(
+    () => readStoredBranchSlug() ?? getPrimaryBranch(branches.items).slug,
+    getPrimaryBranch(branches.items).slug,
   );
-  const [syncedLocationKey, setSyncedLocationKey] = useState(null);
+  const [syncedLocationKey, setSyncedLocationKey] = useClientState(() => null, null);
   const [openMenu, setOpenMenu] = useState(null);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [drawerBranchOpen, setDrawerBranchOpen] = useState(false);
+  /* The phone menu is open, closing, or closed. Closing is its own state
+     because the sheet stays visible while its circle shuts over the page; the
+     bloom's own animationend (or a timer, if that never fires) ends it. */
+  const [drawer, setDrawer] = useState("closed");
+  /* The hospital picker, a sheet that rises over the menu from its foot. */
+  const [pickerOpen, setPickerOpen] = useState(false);
+  /* The link the reader tapped, while its page loads. The menu stays open
+     until the new page is there and then closes over it - closing at once
+     showed the old page under the circle and then swapped it. */
+  const [pendingHref, setPendingHref] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   /* On the home page the header floats on the film until the film has gone
      past it; everywhere else it is on paper from the first frame. */
   const [overFilm, setOverFilm] = useState(true);
   const menusOpenRef = useRef(false);
-  /* True until a branch has been stored for this reader. The drawer is the
-     only place a phone chooses a hospital, so on a fresh visit its branch
-     block opens expanded the first time the drawer does - the reader meets
-     the six cities where the choice matters, with no prompt in the way. Read
-     before the effect below stores the default. */
-  const freshVisitRef = useRef(readStoredBranch() === null);
+  const changeButtonRef = useRef(null);
+  const pickerRef = useRef(null);
+  const pickerOpenRef = useRef(false);
+  const drawerOpen = drawer === "open";
+  const drawerShown = drawer !== "closed";
 
   const aboutNavItem = navigation.header.find((item) => item.dropdown === "about");
-  const drawerNavItems = navigation.header.flatMap((item) => item.children ?? [item]);
+  /* The sheet reads in two sizes, as the reference does: the places a patient
+     goes to - home, the services, the doctors, the hospitals, contact - large,
+     and the rest (the two About pages) small under them. A
+     parent with children is replaced by its children, so both About pages are
+     one tap away rather than behind an accordion. */
+  const drawerPrimaryItems = navigation.header
+    .filter((item) => item.drawerGroup !== "more")
+    .flatMap((item) => item.children ?? [item]);
+  const drawerMoreItems = navigation.header
+    .filter((item) => item.drawerGroup === "more")
+    .flatMap((item) => item.children ?? [item]);
   /* The logo is the way home, as it is on the reference, so the capsule does
      not spend a link on it. The drawer keeps Home: a menu the reader opened to
      go somewhere should list everywhere they can go. */
   const desktopNavItems = navigation.header.filter((item) => item.href !== "/");
   const selectedBranch = findBranch(selectedSlug) ?? getPrimaryBranch(branches.items);
   const selectedPhone = getPrimaryPhone(selectedBranch);
+  /* The clock is the reader's too: the prerendered menu says nothing about
+     whether the OPD is open. */
+  const opdState = hydrated ? describeOpd(selectedBranch) : { open: false, label: "" };
   /* A page opened for one hospital names it either way: the index carries it
      in the query, and a hospital's own page carries it in the path. */
   const pathBranchSlug = location.pathname.match(/^\/branches\/([^/]+)/)?.[1] ?? null;
@@ -289,30 +425,36 @@ export default function Header() {
 
   const closeAll = useCallback(() => {
     setOpenMenu(null);
-    setDrawerOpen(false);
-    setDrawerBranchOpen(false);
+    setPickerOpen(false);
+    setDrawer((current) => (current === "open" ? "closing" : current));
   }, []);
 
-  const selectBranch = useCallback((slug) => {
-    setSelectedSlug(slug);
-    setOpenMenu(null);
-  }, []);
+  const selectBranch = useCallback(
+    (slug) => {
+      setSelectedSlug(slug);
+      setOpenMenu(null);
+    },
+    [setSelectedSlug],
+  );
 
   // Close every menu on navigation, and adopt the branch a page was opened for.
   // Adjusting state during render (rather than in an effect) avoids a flash of stale menus.
   if (locationKey !== syncedLocationKey) {
     setSyncedLocationKey(locationKey);
     setOpenMenu(null);
-    setDrawerOpen(false);
-    setDrawerBranchOpen(false);
+    setDrawer((current) => (current === "open" ? "closing" : current));
+    setPickerOpen(false);
+    setPendingHref(null);
     setIsHidden(false);
     setOverFilm(true);
     if (urlBranchSlug && findBranch(urlBranchSlug)) setSelectedSlug(urlBranchSlug);
   }
 
+  /* Never while React is adopting the page: the header holds the build's
+     hospital then, and writing it would overwrite the reader's own. */
   useEffect(() => {
-    storeBranch(selectedSlug);
-  }, [selectedSlug]);
+    if (hydrated) storeBranch(selectedSlug);
+  }, [hydrated, selectedSlug]);
 
   /* The contact page's switchboard stores a hospital too. Follow it, so the
      number at the top of the screen is the one the reader just chose rather
@@ -324,13 +466,14 @@ export default function Header() {
     };
     window.addEventListener(BRANCH_CHANGE_EVENT, follow);
     return () => window.removeEventListener(BRANCH_CHANGE_EVENT, follow);
-  }, []);
+  }, [setSelectedSlug]);
 
   // A menu that is open must never be scrolled off screen, so the handler
   // reads the latest state from a ref rather than resubscribing on every open.
   useEffect(() => {
-    menusOpenRef.current = Boolean(openMenu) || drawerOpen;
-  }, [openMenu, drawerOpen]);
+    menusOpenRef.current = Boolean(openMenu) || drawerShown;
+    pickerOpenRef.current = pickerOpen;
+  }, [openMenu, drawerShown, pickerOpen]);
 
   /* Give the header back to the page while the reader is moving down, and
      return it the moment they scroll up. There is no bottom bar to fall back
@@ -395,9 +538,12 @@ export default function Header() {
   }, []);
 
   /* The home page's tone: film while the hero is still under the capsule,
-     paper once its bottom edge has gone above the header's own. The hero is a
-     lazy route module and may not exist when this subscribes, so until it does
-     the header stays on film, which is what the first screen of `/` is. */
+     paper once the section after it has reached the header's own bottom edge.
+     That section is a sheet laid over the foot of the hero with rounded
+     shoulders, so its top edge - not the hero's bottom, which sits under the
+     sheet - is where the paper starts. The hero is a lazy route module and may
+     not exist when this subscribes, so until it does the header stays on
+     film, which is what the first screen of `/` is. */
   useEffect(() => {
     if (!isHome) return undefined;
     let frame = 0;
@@ -409,7 +555,9 @@ export default function Header() {
       if (!hero || !header) return;
       const strip = stripRef.current?.offsetHeight ?? 0;
       const cut = Math.max(strip - window.scrollY, 0) + header.offsetHeight;
-      setOverFilm(hero.getBoundingClientRect().bottom > cut + 1);
+      const sheet = hero.nextElementSibling;
+      const edge = sheet ? sheet.getBoundingClientRect().top : hero.getBoundingClientRect().bottom;
+      setOverFilm(edge > cut + 1);
     }
 
     function onChange() {
@@ -484,11 +632,24 @@ export default function Header() {
       });
     }
 
+    /* The strip's picker hangs from a bar that scrolls away, so a wheel or
+       trackpad scroll closes it; left open it rode up over the sticky header
+       and covered the booking pill. The nav menus hang from the header
+       itself and stay put. A touch scroll starts with a pointerdown outside,
+       which already closes it. */
+    const openedAt = window.scrollY;
+    function onScroll() {
+      if (Math.abs(window.scrollY - openedAt) > 8) setOpenMenu(null);
+    }
+    const followsStrip = openMenu === "branch-desktop";
+
     document.addEventListener("pointerdown", onPointerDown);
     document.addEventListener("keydown", onKeyDown);
+    if (followsStrip) window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       document.removeEventListener("pointerdown", onPointerDown);
       document.removeEventListener("keydown", onKeyDown);
+      if (followsStrip) window.removeEventListener("scroll", onScroll);
     };
   }, [openMenu]);
 
@@ -501,17 +662,31 @@ export default function Header() {
     const previousOverflow = document.body.style.overflow;
 
     document.body.style.overflow = "hidden";
-    panel?.focus();
+    panel?.focus({ preventScroll: true });
 
     function onKeyDown(event) {
       if (event.key === "Escape") {
-        setDrawerOpen(false);
+        /* Escape backs out one layer at a time: the picker, then the menu. */
+        if (pickerOpenRef.current) {
+          setPickerOpen(false);
+          /* The menu under the picker is inert until this commits. */
+          window.requestAnimationFrame(() => {
+            changeButtonRef.current?.focus({ preventScroll: true });
+          });
+        } else {
+          setDrawer("closing");
+        }
         return;
       }
 
       if (event.key !== "Tab") return;
 
-      const focusable = Array.from(panel?.querySelectorAll(selector) ?? []);
+      /* Whichever layer is not in use is inert - the picker while it is down,
+         the menu under it while it is up - and its controls stay out of the
+         loop. */
+      const focusable = Array.from(panel?.querySelectorAll(selector) ?? []).filter(
+        (element) => !element.closest("[inert]"),
+      );
       if (focusable.length === 0) return;
 
       const first = focusable[0];
@@ -529,15 +704,77 @@ export default function Header() {
       }
     }
 
+    const list = panel?.querySelector(".hd__sheet-body");
+    const onListScroll = () => markMore(list);
+    markMore(list);
+
+    /* A phone turned with the menu open has a new farthest corner, and the
+       circle that shuts must start from it. */
+    const remeasure = () => {
+      measureBloom(panel);
+      markMore(list);
+    };
+
     document.addEventListener("keydown", onKeyDown);
+    window.addEventListener("resize", remeasure);
+    list?.addEventListener("scroll", onListScroll, { passive: true });
     return () => {
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("resize", remeasure);
+      list?.removeEventListener("scroll", onListScroll);
       /* The sheet took focus when it opened; hand it back to the button that
          opened it rather than dropping it on the body. */
       opener?.focus({ preventScroll: true });
     };
   }, [drawerOpen]);
+
+  /* The bloom's animationend hides the sheet once its circle has shut. The
+     timer is the fallback for the case where that event never arrives - a tab
+     hidden mid-close, say - so the page can never be left under the sheet. */
+  useEffect(() => {
+    if (drawer !== "closing") return undefined;
+    const timer = window.setTimeout(() => {
+      setDrawer((current) => (current === "closing" ? "closed" : current));
+    }, 900);
+    return () => window.clearTimeout(timer);
+  }, [drawer]);
+
+  function openDrawer() {
+    setOpenMenu(null);
+    setPickerOpen(false);
+    setPendingHref(null);
+    stageReveal(drawerRef.current);
+    setDrawer("open");
+  }
+
+  /* A link to the page already on screen has nothing to load, so it closes the
+     menu at once; any other marks itself and waits for its page. */
+  function leaveDrawerFor(href) {
+    const target = new URL(href, window.location.origin);
+    if (target.pathname + target.search === location.pathname + location.search) {
+      closeAll();
+      return;
+    }
+    setPendingHref(href);
+  }
+
+  /* Focus follows the picker for a keyboard reader: into the chosen hospital
+     when it rises, back onto the card when it drops. preventScroll, because
+     the sheet is still travelling. */
+  function openPicker() {
+    setPickerOpen(true);
+    window.requestAnimationFrame(() => {
+      pickerRef.current?.querySelector('[aria-checked="true"]')?.focus({ preventScroll: true });
+    });
+  }
+
+  function closePicker() {
+    setPickerOpen(false);
+    window.requestAnimationFrame(() => {
+      changeButtonRef.current?.focus({ preventScroll: true });
+    });
+  }
 
   const dropdownMenus = {
     branches: {
@@ -573,16 +810,6 @@ export default function Header() {
      labelled number - the rule the footer already applies to the same pair. */
   const emergencyTel = cleanTel(emergency.phone);
   const sharesEmergencyLine = cleanTel(selectedPhone) === emergencyTel;
-  const urgentLink = (
-    <a
-      className="hd__urgent"
-      href={`tel:${emergencyTel}`}
-      aria-label={`${emergency.label} ${emergency.phone}`}
-    >
-      <Siren size={17} aria-hidden="true" />
-      <span>{emergency.shortLabel}</span>
-    </a>
-  );
 
   return (
     <>
@@ -591,11 +818,7 @@ export default function Header() {
           is not sticky - it scrolls away and the capsule stays. */}
       <div className="hd__strip" ref={stripRef}>
         <div className="hd__strip-in">
-          <a
-            className="hd__strip-item"
-            href={`tel:${emergencyTel}`}
-            aria-label={`${emergency.label} ${emergency.phone}`}
-          >
+          <a className="hd__strip-item" href={`tel:${emergencyTel}`}>
             <span className="hd__strip-dot" aria-hidden="true" />
             <span>{sharesEmergencyLine ? emergency.combinedLabel : emergency.label}</span>
             <strong>{emergency.phone}</strong>
@@ -632,8 +855,8 @@ export default function Header() {
       <header
         ref={headerRef}
         className={`hd ${isScrolled ? "hd--scrolled" : ""} ${
-          isHidden && !openMenu && !drawerOpen ? "hd--hidden" : ""
-        } ${drawerOpen ? "hd--drawer-open" : ""}`}
+          isHidden && !openMenu && !drawerShown ? "hd--hidden" : ""
+        } ${drawerShown ? "hd--drawer-open" : ""}`}
         data-tone={tone}
         data-over={isHome ? "" : undefined}
       >
@@ -707,6 +930,7 @@ export default function Header() {
 
           <div className="hd__actions">
             <Link className="hd__cta" to={bookHref}>
+              <CalendarDays size={17} aria-hidden="true" />
               <span>{bookLabel}</span>
             </Link>
           </div>
@@ -714,11 +938,7 @@ export default function Header() {
           {/* The phone's one action is a compact booking pill, on every screen.
               The emergency line is the first thing in the drawer's head. */}
           <div className="hd__mobile-actions">
-            <Link
-              className="hd__cta hd__mobile-cta"
-              to={bookHref}
-              aria-label={bookLabel}
-            >
+            <Link className="hd__cta hd__mobile-cta" to={bookHref} aria-label={bookLabel}>
               <CalendarDays size={16} aria-hidden="true" />
               <span className="hd__cta-full">{bookLabel}</span>
               <span className="hd__cta-short" aria-hidden="true">
@@ -732,185 +952,245 @@ export default function Header() {
               aria-label={`Open ${menuLabel.toLowerCase()}`}
               aria-expanded={drawerOpen}
               aria-controls="hd-drawer"
-              onClick={() => {
-                setOpenMenu(null);
-                setDrawerOpen(true);
-                if (freshVisitRef.current) {
-                  freshVisitRef.current = false;
-                  setDrawerBranchOpen(true);
-                }
-              }}
+              onClick={openDrawer}
             >
-              <Menu size={22} aria-hidden="true" />
+              <MenuGlyph />
             </button>
           </div>
         </div>
 
-        {drawerOpen ? (
-          <div
-            className="hd__drawer"
-            id="hd-drawer"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Site menu"
-            onClick={(event) => {
-              if (event.target === event.currentTarget) closeAll();
+        {/* The phone menu. It is always mounted and hidden, so opening it is an
+            attribute change rather than a React mount - on a phone the mount
+            was what stalled the first frames of the opening. A circle of paper
+            (the bloom) grows from the menu button and shrinks back into the
+            close button, which sits exactly where the menu button was and is
+            the same three bars turning into a cross; the content fades in as
+            the circle reaches it. Everything that moves is a transform or an
+            opacity, so the compositor runs it even while the page underneath
+            is busy loading the route the reader chose. */}
+        <div
+          className="hd__drawer"
+          id="hd-drawer"
+          role="dialog"
+          aria-modal="true"
+          aria-label={drawerCopy.label}
+          data-state={drawer}
+          data-picker={pickerOpen ? "open" : undefined}
+          inert={!drawerOpen}
+        >
+          <span
+            className="hd__bloom"
+            aria-hidden="true"
+            onAnimationEnd={(event) => {
+              if (event.animationName === "hd-bloom-shut") setDrawer("closed");
             }}
-          >
-            <div ref={drawerRef} className="hd__drawer-panel" tabIndex={-1}>
-              {/* The head is the header's own brand row: logo, the emergency
-                line, and the close button in the slot the menu button had. The
-                open and closed states line up, and the emergency line stays
-                where the reader just saw it instead of moving to the foot. */}
-              <div className="hd__drawer-head">
-                <img src={site.brand.logo} alt={site.brand.logoAlt} width="207" height="50" />
-                <div className="hd__mobile-actions">
-                  {urgentLink}
+          />
+          <div ref={drawerRef} className="hd__sheet" tabIndex={-1}>
+            <div className="hd__sheet-main" inert={pickerOpen}>
+              {/* The header's own row, object for object: the logo where the
+                  logo was, the emergency line in the booking pill's slot and at
+                  its size, and the menu button - now a cross - where it was. */}
+              <div className="hd__sheet-head">
+                <span className="hd__sheet-rule" aria-hidden="true" data-reveal="" />
+                <img
+                  src={site.brand.logo}
+                  alt={site.brand.logoAlt}
+                  width="207"
+                  height="50"
+                  data-reveal=""
+                />
+                <div className="hd__sheet-tools">
+                  <a
+                    className="hd__sheet-urgent"
+                    href={`tel:${emergencyTel}`}
+                    aria-label={`${emergency.label} ${emergency.phone}`}
+                    data-reveal=""
+                  >
+                    <span className="hd__sheet-beacon" aria-hidden="true" />
+                    <span>{emergency.shortLabel}</span>
+                  </a>
                   <button
-                    className="hd__iconbtn"
+                    className="hd__sheet-close"
                     type="button"
-                    aria-label="Close menu"
+                    aria-label={drawerCopy.closeLabel}
                     onClick={closeAll}
                   >
-                    <X size={22} aria-hidden="true" />
+                    <MenuGlyph />
                   </button>
                 </div>
               </div>
 
-              <div className="hd__drawer-scroll">
-                <div className="hd__drawer-branch">
-                  {/* Two controls in one card. The hospital itself is the link
-                    to its own page - on a phone there is no hospitals dropdown,
-                    so this row is the one place the drawer names a hospital and
-                    has to be the way to it as well. Change is the toggle that
-                    opens the list; the two are siblings because a link cannot
-                    sit inside a button. */}
-                  <div className="hd__drawer-branch-summary">
-                    <Link
-                      className="hd__drawer-branch-page"
-                      to={buildBranchHref(selectedBranch)}
-                      onClick={closeAll}
-                    >
-                      <small>{branchPicker.label}</small>
-                      <strong>
-                        <MapPin size={17} aria-hidden="true" />
-                        {selectedBranch.name}
-                        <ChevronRight size={16} aria-hidden="true" />
-                      </strong>
-                      <span>{selectedBranch.locality}</span>
-                    </Link>
-                    <button
-                      className="hd__drawer-branch-toggle"
-                      type="button"
-                      aria-label="Change your hospital"
-                      aria-expanded={drawerBranchOpen}
-                      aria-controls="hd-drawer-hospitals"
-                      onClick={() => setDrawerBranchOpen((current) => !current)}
-                    >
-                      <span>{branchPicker.changeLabel}</span>
-                      <ChevronDown size={16} aria-hidden="true" />
-                    </button>
-                  </div>
-
-                  {drawerBranchOpen ? (
-                    <div className="hd__drawer-sub" id="hd-drawer-hospitals">
-                      <p className="hd__drawer-label" id="hd-drawer-hospitals-title">
-                        {branchPicker.menuTitle}
-                      </p>
-                      {/* Choosing sets the branch in place and folds the list, so
-                        the reader stays on the page they were on with Call OPD
-                        and WhatsApp below now pointing at that hospital. The
-                        rows used to be links to /branches; a selector that
-                        navigates away is a detour. View all hospitals is the
-                        way to that page. */}
-                      <div role="radiogroup" aria-labelledby="hd-drawer-hospitals-title">
-                        {branches.items.map((branch) => (
-                          <button
-                            key={branch.slug}
-                            className="hd__drawer-branch-option"
-                            type="button"
-                            role="radio"
-                            aria-checked={branch.slug === selectedSlug}
-                            onClick={() => {
-                              selectBranch(branch.slug);
-                              setDrawerBranchOpen(false);
-                            }}
-                          >
-                            <span>
-                              <strong>
-                                {branch.name}
-                                {branch.isHeadquarters ? (
-                                  <span className="hd__tag">Head Office</span>
-                                ) : null}
-                              </strong>
-                              <small>{branch.locality}</small>
-                            </span>
-                            {branch.slug === selectedSlug ? (
-                              <Check size={17} aria-hidden="true" />
-                            ) : null}
-                          </button>
-                        ))}
-                      </div>
-                      <Link className="hd__drawer-sub-all" to="/branches" onClick={closeAll}>
-                        <span>{branchPicker.allLabel}</span>
-                        <ChevronRight size={16} aria-hidden="true" />
-                      </Link>
-                    </div>
-                  ) : null}
-                </div>
-
-                <nav className="hd__drawer-nav" aria-label="Mobile">
-                  <p className="hd__drawer-label">{menuLabel}</p>
-                  {drawerNavItems.map((item, index) => (
+              <nav className="hd__sheet-body" aria-label="Mobile">
+                {drawerPrimaryItems.map((item) => (
+                  <NavLink
+                    key={item.href}
+                    className="hd__sheet-link"
+                    data-reveal=""
+                    data-pending={pendingHref === item.href ? "" : undefined}
+                    to={item.href}
+                    end={item.href === "/"}
+                    onClick={() => leaveDrawerFor(item.href)}
+                  >
+                    <span>{item.label}</span>
+                  </NavLink>
+                ))}
+                <div className="hd__sheet-more">
+                  {drawerMoreItems.map((item) => (
                     <NavLink
                       key={item.href}
-                      className={({ isActive }) =>
-                        `hd__drawer-link ${isActive ? "hd__drawer-link--active" : ""}`
-                      }
-                      style={{ "--hd-i": index }}
+                      className="hd__sheet-minor"
+                      data-reveal=""
+                      data-pending={pendingHref === item.href ? "" : undefined}
                       to={item.href}
-                      end={item.href === "/"}
-                      onClick={closeAll}
+                      onClick={() => leaveDrawerFor(item.href)}
                     >
                       {item.label}
                     </NavLink>
                   ))}
-                </nav>
-              </div>
+                </div>
+              </nav>
 
-              <div className="hd__drawer-foot">
-                <Link className="hd__cta" to={bookHref} onClick={closeAll}>
-                  <CalendarDays size={18} aria-hidden="true" />
-                  <span>{bookLabel}</span>
-                </Link>
-                <div className="hd__drawer-trio">
-                  <a className="hd__ghost" href={`tel:${cleanTel(selectedPhone)}`}>
+              {/* The dock, where a thumb rests, under a hairline that mirrors
+                  the head's: the hospital this reader has chosen, as a labelled
+                  field - its name and whether its OPD is open right now, with
+                  Change at its end - then the three ways to reach it, and the
+                  booking. */}
+              <div className="hd__sheet-dock">
+                <span className="hd__sheet-rule" aria-hidden="true" data-reveal="" />
+                <div className="hd__place">
+                  <p className="hd__place-label" id="hd-place-label" data-reveal="">
+                    {branchPicker.label}
+                  </p>
+                  <button
+                    ref={changeButtonRef}
+                    className="hd__place-field"
+                    id="hd-place-field"
+                    type="button"
+                    aria-haspopup="dialog"
+                    aria-expanded={pickerOpen}
+                    aria-controls="hd-drawer-hospitals"
+                    aria-labelledby="hd-place-label hd-place-field"
+                    data-reveal=""
+                    onClick={openPicker}
+                  >
+                    <MapPin className="hd__place-pin" size={20} aria-hidden="true" />
+                    <span className="hd__place-text" key={selectedBranch.slug}>
+                      <strong>{selectedBranch.name}</strong>
+                      <span className="hd__place-status" data-open={opdState.open ? "" : undefined}>
+                        <span className="hd__place-dot" aria-hidden="true" />
+                        {opdState.label}
+                      </span>
+                    </span>
+                    <span className="hd__place-change">
+                      {branchPicker.changeLabel}
+                      <ChevronsUpDown size={17} strokeWidth={2.2} aria-hidden="true" />
+                    </span>
+                  </button>
+                </div>
+
+                <div className="hd__place-actions" data-reveal="">
+                  <a href={`tel:${cleanTel(selectedPhone)}`}>
                     <Phone size={18} aria-hidden="true" />
-                    <span>Call OPD</span>
+                    <span>{drawerCopy.callLabel}</span>
                   </a>
-                  <a
-                    className="hd__ghost"
-                    href={buildWhatsApp(selectedBranch)}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
+                  <a href={buildWhatsApp(selectedBranch)} target="_blank" rel="noreferrer">
                     <MessageCircle size={18} aria-hidden="true" />
-                    <span>WhatsApp</span>
+                    <span>{drawerCopy.whatsappLabel}</span>
                   </a>
-                  <a
-                    className="hd__ghost"
-                    href={buildMapLink(selectedBranch)}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Navigation size={18} aria-hidden="true" />
-                    <span>Directions</span>
+                  <a href={buildMapLink(selectedBranch)} target="_blank" rel="noreferrer">
+                    <Navigation size={17} aria-hidden="true" />
+                    <span>{drawerCopy.directionsLabel}</span>
                   </a>
                 </div>
+
+                <Link
+                  className="hd__sheet-book"
+                  data-reveal=""
+                  data-pending={pendingHref === bookHref ? "" : undefined}
+                  to={bookHref}
+                  onClick={() => leaveDrawerFor(bookHref)}
+                >
+                  <span>{bookLabel}</span>
+                  <span className="hd__sheet-book-disc" aria-hidden="true">
+                    <ArrowRight size={18} />
+                  </span>
+                </Link>
+              </div>
+            </div>
+
+            {/* The hospitals rise from the foot as a sheet of their own over a
+                dimmed menu - the picker a phone reader already knows - and
+                drop away once one is chosen. The menu underneath never moves. */}
+            <div className="hd__picker-scrim" aria-hidden="true" onClick={closePicker} />
+            <div
+              ref={pickerRef}
+              className="hd__picker"
+              id="hd-drawer-hospitals"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="hd-drawer-hospitals-title"
+              inert={!pickerOpen}
+            >
+              <div className="hd__picker-top">
+                <p className="hd__picker-title" id="hd-drawer-hospitals-title">
+                  {branchPicker.menuTitle}
+                </p>
+                <button
+                  className="hd__picker-close"
+                  type="button"
+                  aria-label={drawerCopy.pickerCloseLabel}
+                  onClick={closePicker}
+                >
+                  <X size={20} aria-hidden="true" />
+                </button>
+              </div>
+              <div className="hd__picker-scroll">
+                <p className="hd__picker-hint">{branchPicker.menuHint}</p>
+                <div
+                  className="hd__picker-list"
+                  role="radiogroup"
+                  aria-labelledby="hd-drawer-hospitals-title"
+                >
+                  {branches.items.map((branch, index) => (
+                    <button
+                      key={branch.slug}
+                      className="hd__pick"
+                      style={{ "--hd-i": index }}
+                      type="button"
+                      role="radio"
+                      aria-checked={branch.slug === selectedSlug}
+                      onClick={() => {
+                        selectBranch(branch.slug);
+                        closePicker();
+                      }}
+                    >
+                      <span className="hd__pick-text">
+                        <strong>
+                          {branch.name}
+                          {branch.isHeadquarters ? (
+                            <span className="hd__pick-tag">{drawerCopy.headOfficeLabel}</span>
+                          ) : null}
+                        </strong>
+                        <small>{branch.locality}</small>
+                      </span>
+                      <span className="hd__pick-ring" aria-hidden="true">
+                        <Check size={14} strokeWidth={3} />
+                      </span>
+                    </button>
+                  ))}
+                </div>
+                <Link
+                  className="hd__picker-all"
+                  to="/branches"
+                  onClick={() => leaveDrawerFor("/branches")}
+                >
+                  <span>{branchPicker.allLabel}</span>
+                  <ChevronRight size={17} aria-hidden="true" />
+                </Link>
               </div>
             </div>
           </div>
-        ) : null}
+        </div>
       </header>
     </>
   );

@@ -35,6 +35,9 @@ export default function RootLayout() {
       <ThemeTokens />
       <AppPreloader />
       <RouteScrollManager />
+      {/* First in the tab order when it is showing, GOV.UK's order: a keyboard
+          reader meets the choice before the skip link, not after the footer. */}
+      <CookieConsent />
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
@@ -43,7 +46,6 @@ export default function RootLayout() {
         <Outlet />
       </main>
       <Footer />
-      <CookieConsent />
     </>
   );
 }

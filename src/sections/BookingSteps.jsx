@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { CalendarDays, HelpCircle } from "lucide-react";
+import { CalendarDays, Check, HelpCircle } from "lucide-react";
 import ChoiceGroup from "../components/ChoiceGroup";
 import { appointmentPage, todayIso, UNSURE_SERVICE } from "../lib/appointmentData";
 import { describeDays, getBranchHours } from "../lib/hours";
@@ -43,11 +43,17 @@ function useGroup(still) {
   return still ? stillRows : groupVariants;
 }
 
-function StepHead({ step, still }) {
+/* A step the reader moves to takes the focus on this heading, so a keyboard
+   lands on the new question rather than on the page's top, and a screen
+   reader hears where it is in the five. */
+function StepHead({ step, stepOf, still }) {
   const rows = useRows(still);
   return (
     <motion.header className="ap-step__head" variants={rows}>
-      <h2 className="ap-step__title">{step.title}</h2>
+      <h2 className="ap-step__title" tabIndex={-1}>
+        <span className="sr-only">{stepOf}: </span>
+        {step.title}
+      </h2>
       <p className="ap-step__lede">{step.lede}</p>
     </motion.header>
   );
@@ -64,67 +70,74 @@ function FieldError({ id, message }) {
 
 /* ---------- 1. who ---------- */
 
-export function WhoStep({ register, errors, phoneValue, still }) {
+/* The two fields share a row wherever the card is wide enough (a container
+   query on the card), and stack on a phone. */
+export function WhoStep({ register, errors, phoneValue, phoneValid, stepOf, still }) {
   const rows = useRows(still);
   const international = phoneValue.trim().startsWith("+");
   return (
     <>
-      <StepHead step={steps.who} still={still} />
-      <motion.div className="ap-field" variants={rows}>
-        <label className="ap-field__label" htmlFor="ap-name">
-          {fields.name.label}
-        </label>
-        <input
-          id="ap-name"
-          className="ap-input"
-          type="text"
-          autoComplete="name"
-          autoCapitalize="words"
-          placeholder={fields.name.placeholder}
-          aria-invalid={errors.name ? "true" : undefined}
-          aria-describedby={errors.name ? "ap-name-error" : undefined}
-          {...register("name")}
-        />
-        <FieldError id="ap-name-error" message={errors.name?.message} />
-      </motion.div>
-      <motion.div className="ap-field" variants={rows}>
-        <label className="ap-field__label" htmlFor="ap-phone">
-          {fields.phone.label}
-        </label>
-        <div className="ap-input-wrap" data-intl={international ? "true" : undefined}>
-          <span className="ap-input__prefix" aria-hidden="true">
-            {fields.phone.prefix}
-          </span>
+      <StepHead step={steps.who} stepOf={stepOf} still={still} />
+      <div className="ap-pair">
+        <motion.div className="ap-field" variants={rows}>
+          <label className="ap-field__label" htmlFor="ap-name">
+            {fields.name.label}
+          </label>
           <input
-            id="ap-phone"
+            id="ap-name"
             className="ap-input"
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel-national"
-            placeholder={fields.phone.placeholder}
-            aria-invalid={errors.phone ? "true" : undefined}
-            aria-describedby={errors.phone ? "ap-phone-error" : "ap-phone-hint"}
-            {...register("phone")}
+            type="text"
+            autoComplete="name"
+            autoCapitalize="words"
+            placeholder={fields.name.placeholder}
+            aria-invalid={errors.name ? "true" : undefined}
+            aria-describedby={errors.name ? "ap-name-error" : undefined}
+            {...register("name")}
           />
-        </div>
-        <FieldError id="ap-phone-error" message={errors.phone?.message} />
-        {!errors.phone ? (
-          <span className="ap-field__hint" id="ap-phone-hint">
-            {fields.phone.hint}
-          </span>
-        ) : null}
-      </motion.div>
+          <FieldError id="ap-name-error" message={errors.name?.message} />
+        </motion.div>
+        <motion.div className="ap-field" variants={rows}>
+          <label className="ap-field__label" htmlFor="ap-phone">
+            {fields.phone.label}
+          </label>
+          {/* The check at the field's end appears the moment the number reads
+            as a real mobile - the reader knows it is right before Continue
+            says so. */}
+          <div
+            className="ap-input-wrap"
+            data-intl={international ? "true" : undefined}
+            data-valid={phoneValid ? "true" : undefined}
+          >
+            <span className="ap-input__prefix" aria-hidden="true">
+              {fields.phone.prefix}
+            </span>
+            <input
+              id="ap-phone"
+              className="ap-input"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel-national"
+              placeholder={fields.phone.placeholder}
+              aria-invalid={errors.phone ? "true" : undefined}
+              aria-describedby={errors.phone ? "ap-phone-error" : undefined}
+              {...register("phone")}
+            />
+            <Check className="ap-input__ok" size={18} strokeWidth={2.75} aria-hidden="true" />
+          </div>
+          <FieldError id="ap-phone-error" message={errors.phone?.message} />
+        </motion.div>
+      </div>
     </>
   );
 }
 
 /* ---------- 2. where ---------- */
 
-export function WhereStep({ items, value, onChange, still }) {
+export function WhereStep({ items, value, onChange, stepOf, still }) {
   const group = useGroup(still);
   return (
     <>
-      <StepHead step={steps.where} still={still} />
+      <StepHead step={steps.where} stepOf={stepOf} still={still} />
       <motion.div variants={group}>
         <ChoiceGroup
           id="ap-branch"
@@ -158,7 +171,7 @@ export function WhereStep({ items, value, onChange, still }) {
 
 /* ---------- 3. what ---------- */
 
-export function WhatStep({ groups, value, onChange, error, still }) {
+export function WhatStep({ groups, value, onChange, error, stepOf, still }) {
   const group = useGroup(still);
   const withUnsure = [
     ...groups,
@@ -169,7 +182,7 @@ export function WhatStep({ groups, value, onChange, error, still }) {
   ];
   return (
     <>
-      <StepHead step={steps.what} still={still} />
+      <StepHead step={steps.what} stepOf={stepOf} still={still} />
       <motion.div variants={group}>
         <ChoiceGroup
           id="ap-service"
@@ -215,7 +228,7 @@ function closedDaysNote(branch) {
   });
 }
 
-export function WhenStep({ branch, days, date, onDate, daypart, onDaypart, error, still }) {
+export function WhenStep({ branch, days, date, onDate, daypart, onDaypart, error, stepOf, still }) {
   const group = useGroup(still);
   const closedNote = closedDaysNote(branch);
   const listed = days.some((day) => day.iso === date);
@@ -244,14 +257,11 @@ export function WhenStep({ branch, days, date, onDate, daypart, onDaypart, error
     { id: PICK, pick: true, label: fields.date.pickLabel },
   ];
 
-  const daypartOptions = [
-    { id: ANY, label: fields.daypart.anyLabel },
-    ...fields.daypart.options,
-  ];
+  const daypartOptions = [{ id: ANY, label: fields.daypart.anyLabel }, ...fields.daypart.options];
 
   return (
     <>
-      <StepHead step={steps.when} still={still} />
+      <StepHead step={steps.when} stepOf={stepOf} still={still} />
       <motion.div className="ap-when" variants={group}>
         <ChoiceGroup
           id="ap-date"
@@ -316,10 +326,14 @@ export function WhenStep({ branch, days, date, onDate, daypart, onDaypart, error
           groups={[{ options: daypartOptions }]}
           value={daypart || ANY}
           onChange={(id) => onDaypart(id === ANY ? "" : id)}
+          /* A range breaks only at its dash, never between a time and its
+             AM or PM. */
           renderOption={(option) => (
             <>
               <span className="ap-chip__title">{option.label}</span>
-              {option.range ? <span className="ap-chip__sub">{option.range}</span> : null}
+              {option.range ? (
+                <span className="ap-chip__sub">{option.range.replace(/ (AM|PM)/g, "\u00a0$1")}</span>
+              ) : null}
             </>
           )}
         />
@@ -330,12 +344,12 @@ export function WhenStep({ branch, days, date, onDate, daypart, onDaypart, error
 
 /* ---------- 5. send ---------- */
 
-export function SendStep({ register, errors, messageValue, still, children }) {
+export function SendStep({ register, errors, messageValue, stepOf, still, children }) {
   const rows = useRows(still);
   const max = fields.message.maxLength;
   return (
     <>
-      <StepHead step={steps.send} still={still} />
+      <StepHead step={steps.send} stepOf={stepOf} still={still} />
       <motion.div className="ap-field" variants={rows}>
         <label className="ap-field__label" htmlFor="ap-message">
           {fields.message.label}

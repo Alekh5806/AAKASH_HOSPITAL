@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
-import Reveal from "../components/Reveal";
 import SmartImage from "../components/SmartImage";
 import { fillTemplate, getCategoryLabel, serviceDetail, services } from "../lib/servicesData";
 
@@ -14,25 +13,25 @@ const { related } = serviceDetail;
  * Rows, not cards: the index already reads as a ledger, and a row says the same
  * thing in a third of the height on the phone most patients use. The pictures
  * are the index's own 240px thumbnails, so this ships no new bytes. */
-export default function ServiceRelated({ items, title }) {
+export default function ServiceRelated({ items }) {
   const shouldReduceMotion = useReducedMotion();
   if (!items?.length) return null;
 
   return (
     <section className="sd-sec sd-related" aria-labelledby="sd-related-title">
       <div className="e-shell">
-        <Reveal className="sd-head">
+        <div className="sd-head">
           <div>
             <span className="sd-label">{related.label}</span>
             <h2 className="sd-h2" id="sd-related-title">
-              {title ?? related.title}
+              {related.title}
             </h2>
           </div>
           <Link className="e-link" to="/services">
             {fillTemplate(related.ctaLabel, { count: services.items.length })}
             <ArrowRight size={15} aria-hidden="true" />
           </Link>
-        </Reveal>
+        </div>
 
         <ul className="sd-related__list">
           {items.map((service, position) => (

@@ -1,7 +1,7 @@
 {
   "seo": {
-    "title": "Eye Care Services | Aakash Eye Hospital",
-    "description": "Explore cataract surgery, LASIK, medical retina, glaucoma, OPD and bladeless robotic laser eye care at Aakash Eye Hospital in Gujarat."
+    "title": "Eye Care Services and Treatments | Aakash Eye Hospital",
+    "description": "Cataract, LASIK, retina, glaucoma, squint and children's eye care at Aakash Eye Hospital, Gujarat. Find yours by what you notice and book on WhatsApp."
   },
   "page": {
     "eyebrow": "Services",
@@ -135,20 +135,27 @@
         {
           "id": "notice",
           "label": "What you have noticed",
-          "shortLabel": "Symptoms"
+          "shortLabel": "Symptoms",
+          "question": "What have you noticed?"
         },
         {
           "id": "part",
           "label": "Where it is in the eye",
-          "shortLabel": "Eye part"
+          "shortLabel": "Eye part",
+          "question": "Where is the trouble?"
         },
         {
           "id": "kind",
           "label": "By kind of care",
-          "shortLabel": "Care type"
+          "shortLabel": "Care type",
+          "question": "What kind of care do you need?"
         }
       ],
       "partsLede": "Point at the part of the eye you are asking about.",
+      "modelHint": "Drag to turn the eye",
+      "modelHintTouch": "Swipe to turn the eye",
+      "modelHintChoose": "Drag to turn the eye, or click a part",
+      "modelHintChooseTouch": "Swipe to turn the eye, or tap a part",
       "parts": [
         {
           "id": "front",
@@ -197,25 +204,37 @@
         "all": "Showing all {total} services",
         "filtered": "Showing {count} of {total}",
         "clear": "Clear",
+        "allTitle": "What we treat",
+        "matchTitle": "Suggested for you",
+        "because": "Because you chose",
+        "countOf": "{count} of {total} services",
+        "showAll": "Show all {total}",
+        "showAllShort": "Show all",
+        "kindCount": "{count} services",
+        "kindCountOne": "1 service",
         "emptyTitle": "Nothing matches that yet",
         "emptyText": "Clear the filter to see all services, or start with a comprehensive eye examination."
       },
       "groups": [
         {
           "id": "see",
-          "label": "What you see"
+          "label": "What you see",
+          "shortLabel": "Vision"
         },
         {
           "id": "health",
-          "label": "Your eyes and health"
+          "label": "Your eyes and health",
+          "shortLabel": "Health"
         },
         {
           "id": "child",
-          "label": "For your child"
+          "label": "For your child",
+          "shortLabel": "Children"
         },
         {
           "id": "everyday",
-          "label": "Everyday"
+          "label": "Everyday",
+          "shortLabel": "Everyday"
         }
       ],
       "sceneLabel": "How it can look",
@@ -226,8 +245,6 @@
     "index": {
       "label": "All services",
       "title": "What we treat",
-      "lede": "Open a service for what it involves, what to expect and the questions patients ask most.",
-      "allLabel": "All",
       "openLabel": "Open",
       "cardLabel": "Learn more",
       "cardLabelShort": "More",
@@ -241,7 +258,6 @@
       "whatsappMessage": "Hello Aakash Eye Hospital, I would like to ask about {service}.",
       "barLabel": "Quick actions",
       "hero": {
-        "areaLabel": "Area of the eye",
         "includedLabel": "Included in this care",
         "includedNote": "Discussed at your consultation and confirmed after examination."
       },
@@ -250,14 +266,23 @@
         "causes": "Why it happens",
         "symptoms": "Signs to notice"
       },
-      "symptomsHint": "Tap a sign to see how people often describe it.",
+      "tabsShort": {
+        "overview": "Overview",
+        "causes": "Causes",
+        "symptoms": "Signs"
+      },
+      "areaLabel": "Area of the eye",
+      "symptomsHint": "Choose a sign to see how people often describe it.",
       "symptomsNote": "These descriptions are a starting point, not a diagnosis. Your doctor decides after examination.",
       "visit": {
         "label": "Your visit",
         "title": "What happens when you come in",
-        "lede": "Every service here follows the same six steps. Swipe or tap a step to see what it involves.",
+        "lede": "Every service here follows the same six steps.",
+        "hint": "Choose a step to see what it involves.",
+        "hintTouch": "Swipe or tap a step to see what it involves.",
         "stepLabel": "Step",
-        "availabilityTitle": "Confirm availability before you travel"
+        "availabilityTitle": "Confirm availability before you travel",
+        "placesLabel": "Hospitals offering this service"
       },
       "questions": {
         "label": "Questions",
@@ -271,11 +296,9 @@
         "title": "Other services",
         "ctaLabel": "See all {count}"
       },
-      "notFound": {
-        "label": "Service",
-        "title": "We could not find that service",
-        "lede": "The link may be out of date. These are the services offered at Aakash Eye Hospital.",
-        "ctaLabel": "All services"
+      "urgent": {
+        "label": "When to call",
+        "title": "Signs that cannot wait."
       }
     },
     "pathway": {
@@ -389,10 +412,11 @@
         }
       ],
       "seo": {
-        "title": "Cataract Surgery | Aakash Eye Hospital",
-        "description": "Phacoemulsification cataract surgery with intraocular lens implantation at Aakash Eye Hospital, Gujarat."
+        "title": "Cataract Surgery in Ahmedabad | Aakash Eye Hospital",
+        "description": "Cataract (motiyo) surgery by phaco, with the lens planned for your eye, in Ahmedabad, Visnagar, Bharuch and Himmatnagar. Ask about it on WhatsApp."
       },
       "category": "surgical",
+      "schemaType": "SurgicalProcedure",
       "causes": [
         "Ageing is the most common reason the natural lens turns cloudy.",
         "Diabetes, long-term steroid use and an old eye injury can bring it on earlier.",
@@ -424,10 +448,10 @@
       "shortTitle": "LASIK & refractive",
       "shortDescription": "Freedom from glasses begins with finding out which procedure - if any - is right for your eyes.",
       "longDescription": [
-        "LASIK is a surgical procedure for permanent removal or reduction of dependence on glasses and contact lenses.",
-        "The legacy site describes the I Look Laser Vision Center at Aakash Eye Hospital as equipped with VISX STAR S4 IR technology, Wavescan aberrometer, pachymeter and topography support."
+        "LASIK is a laser procedure that can remove or reduce dependence on glasses and contact lenses for suitable patients.",
+        "Before any laser treatment the eye is mapped in detail - the shape of the cornea (topography), its thickness (pachymetry) and the eye's focusing errors (wavefront aberrometry) - to judge whether LASIK, or another option, is safe for you."
       ],
-      "image": "/assets/media/gallery/bladeless-facility.jpg",
+      "image": "/assets/media/services/lasik-refractive-surgery.jpg",
       "thumb": "/assets/media/services/lasik-refractive-surgery-thumb.jpg",
       "imageAlt": "Laser surgery suite at Aakash Eye Hospital",
       "featureBullets": [
@@ -467,10 +491,11 @@
         }
       ],
       "seo": {
-        "title": "LASIK & Refractive Surgery | Aakash Eye Hospital",
-        "description": "LASIK, bladeless robotic laser and refractive surgery options at Aakash Eye Hospital for suitable patients."
+        "title": "LASIK Surgery in Ahmedabad & Visnagar | Aakash Eye Hospital",
+        "description": "Find out if LASIK suits your eyes. Laser vision correction since 2009, bladeless where suitable and ICL for higher numbers. Book a LASIK check on WhatsApp."
       },
       "category": "surgical",
+      "schemaType": "SurgicalProcedure",
       "causes": [
         "The eye focuses light in front of or behind the retina instead of on it.",
         "The curve of the cornea and the length of the eye decide the number.",
@@ -537,10 +562,11 @@
         }
       ],
       "seo": {
-        "title": "Retina Services | Aakash Eye Hospital",
-        "description": "Medical retina care with OCT, FFA and laser support at Aakash Eye Hospital, Gujarat."
+        "title": "Retina Specialists in Ahmedabad | Aakash Eye Hospital",
+        "description": "Retina specialists for diabetic retinopathy, macular problems, flashes and floaters, with OCT and laser, in Ahmedabad, Gota and Visnagar. Book on WhatsApp."
       },
       "category": "specialty",
+      "schemaType": "MedicalProcedure",
       "causes": [
         "Diabetes damages the small blood vessels of the retina over time.",
         "Ageing changes at the macula affect the centre of vision.",
@@ -573,7 +599,7 @@
       "shortDescription": "Protecting vision through early detection and long-term monitoring.",
       "longDescription": [
         "Glaucoma is a disease where pressure inside the eye can damage the nerve fibers forming the optic nerve.",
-        "Aakash Eye Hospital's legacy glaucoma content describes detailed investigation with applanation tonometry, perimetry, GCC and RNFL analysis with OCT, optic disc photography and fundus camera support."
+        "Assessment can include eye pressure measurement (applanation tonometry), visual field testing (perimetry), OCT scans of the nerve fibre layer and ganglion cells, and photographs of the optic disc and retina."
       ],
       "image": "/assets/media/conditions/glaucoma-screening-pexels-5766215.jpg",
       "thumb": "/assets/media/services/glaucoma-care-thumb.jpg",
@@ -615,10 +641,11 @@
         }
       ],
       "seo": {
-        "title": "Comprehensive Glaucoma Care | Aakash Eye Hospital",
-        "description": "Glaucoma screening, pressure monitoring, perimetry and long-term care at Aakash Eye Hospital."
+        "title": "Glaucoma Treatment in Ahmedabad | Aakash Eye Hospital",
+        "description": "Glaucoma check-ups and lifelong care: eye pressure, optic nerve and field tests to protect your sight, in Ahmedabad and Visnagar. Book a check on WhatsApp."
       },
       "category": "specialty",
+      "schemaType": "MedicalProcedure",
       "causes": [
         "Pressure inside the eye damages the optic nerve, usually very slowly.",
         "A family history of glaucoma raises the risk considerably.",
@@ -649,6 +676,7 @@
       "title": "Oculoplasty",
       "shortTitle": "Oculoplasty",
       "category": "specialty",
+      "schemaType": "SurgicalProcedure",
       "shortDescription": "Specialist care for eyelids, tear passages and structures around the eye.",
       "longDescription": [
         "Oculoplasty covers the eyelids, the tear drainage passages, the orbit and the tissues surrounding the eye. Problems here can affect comfort, vision and appearance.",
@@ -690,8 +718,8 @@
         }
       ],
       "seo": {
-        "title": "Oculoplasty | Aakash Eye Hospital",
-        "description": "Eyelid, tear passage and orbital care at Aakash Eye Hospital, Gujarat."
+        "title": "Oculoplasty: Eyelid and Tear Duct Care | Aakash Eye Hospital",
+        "description": "Watering eye, a drooping eyelid or a lump on the lid? Oculoplasty care for eyelids and tear ducts in Ahmedabad, Bharuch and Visnagar. Ask us on WhatsApp."
       },
       "causes": [
         "Ageing loosens the eyelid skin and the muscle that lifts it.",
@@ -719,6 +747,7 @@
       "title": "Pediatric Eye Care",
       "shortTitle": "Children's eye care",
       "category": "children",
+      "schemaType": "MedicalProcedure",
       "shortDescription": "Healthy vision plays an important role in a child's learning and development.",
       "longDescription": [
         "Children rarely say that their vision is blurred, so many eye problems are first noticed by a parent or a teacher rather than by the child.",
@@ -760,8 +789,8 @@
         }
       ],
       "seo": {
-        "title": "Pediatric Eye Care | Aakash Eye Hospital",
-        "description": "Children's eye examinations, lazy eye assessment and school-age vision care at Aakash Eye Hospital."
+        "title": "Pediatric Eye Care in Ahmedabad | Aakash Eye Hospital",
+        "description": "Children's eye check-ups, lazy eye care and school vision tests, with a visiting pediatric ophthalmologist in Ahmedabad. Book a visit on WhatsApp."
       },
       "causes": [
         "Children rarely complain, so most problems are found on examination.",
@@ -793,6 +822,7 @@
       "title": "Myopia Clinic",
       "shortTitle": "Myopia clinic",
       "category": "children",
+      "schemaType": "MedicalTherapy",
       "shortDescription": "Monitoring increasing spectacle numbers during childhood and adolescence.",
       "longDescription": [
         "Short sight often begins in childhood and can change over several years. Tracking that change is what tells the team whether a plan is working.",
@@ -834,8 +864,8 @@
         }
       ],
       "seo": {
-        "title": "Myopia Clinic | Aakash Eye Hospital",
-        "description": "Monitoring changing spectacle numbers in children and adolescents at Aakash Eye Hospital."
+        "title": "Children's Myopia Clinic in Ahmedabad | Aakash Eye Hospital",
+        "description": "Is your child's spectacle number rising every year? Our myopia clinic tracks it over time and explains the control options, in Ahmedabad. Book on WhatsApp."
       },
       "causes": [
         "The eye grows slightly too long, so distant light focuses short of the retina.",
@@ -863,12 +893,13 @@
       "title": "Squint Services",
       "shortTitle": "Squint care",
       "category": "children",
+      "schemaType": "MedicalProcedure",
       "shortDescription": "Assessment and treatment for eyes that are not properly aligned.",
       "longDescription": [
         "A squint is an eye that turns inward, outward, up or down instead of aligning with the other eye. It can appear in childhood or later in life.",
         "Assessment establishes the type and the cause, and the doctor then discusses whether glasses, exercises or surgery are appropriate."
       ],
-      "image": "/assets/media/gallery/facility-3.jpg",
+      "image": "/assets/media/services/squint-services.jpg",
       "thumb": "/assets/media/services/squint-services-thumb.jpg",
       "imageAlt": "Consulting room at Aakash Eye Hospital",
       "featureBullets": [
@@ -904,8 +935,8 @@
         }
       ],
       "seo": {
-        "title": "Squint Services | Aakash Eye Hospital",
-        "description": "Squint assessment and treatment for children and adults at Aakash Eye Hospital, Gujarat."
+        "title": "Squint Eye Treatment in Ahmedabad | Aakash Eye Hospital",
+        "description": "Squint (crossed or turned eyes) in children and adults: assessment, glasses, and surgery when advised, in Ahmedabad and Visnagar. Book a check on WhatsApp."
       },
       "causes": [
         "The muscles that aim the two eyes do not work together.",
@@ -977,10 +1008,11 @@
         }
       ],
       "seo": {
-        "title": "Comprehensive Eye Examination | Aakash Eye Hospital",
-        "description": "Complete eye examination, refraction and OPD care at every Aakash Eye Hospital branch."
+        "title": "Complete Eye Check-Up in Ahmedabad | Aakash Eye Hospital",
+        "description": "Complete eye check-up: vision test, glasses number and a look at the front and back of the eye, at every Aakash Eye Hospital in Gujarat. Book on WhatsApp."
       },
       "category": "everyday",
+      "schemaType": "DiagnosticProcedure",
       "symptoms": [
         {
           "text": "No symptoms at all - many eye problems start silently",
@@ -1006,6 +1038,7 @@
       "title": "Optical Services",
       "shortTitle": "Optical services",
       "category": "everyday",
+      "schemaType": "MedicalTherapy",
       "shortDescription": "Spectacles that begin with the right prescription.",
       "longDescription": [
         "A spectacle prescription is the result of an examination, not a separate purchase. The optical team works from the doctor's findings.",
@@ -1047,8 +1080,8 @@
         }
       ],
       "seo": {
-        "title": "Optical Services | Aakash Eye Hospital",
-        "description": "Spectacle dispensing based on a confirmed prescription at Aakash Eye Hospital."
+        "title": "Spectacles and Optical Services | Aakash Eye Hospital",
+        "description": "Spectacles made to your doctor's prescription, with frame and lens guidance and help with children's glasses. Ask on WhatsApp which hospital to visit."
       },
       "symptoms": [
         {
@@ -1071,12 +1104,13 @@
       "title": "Emergency Eye Care",
       "shortTitle": "Emergency care",
       "category": "urgent",
+      "schemaType": "MedicalProcedure",
       "shortDescription": "Some eye conditions require urgent evaluation.",
       "longDescription": [
         "Sudden loss of vision, injury, chemical exposure and severe pain are reasons to seek care immediately rather than waiting for a routine appointment.",
         "Contact the hospital directly so the team can advise you on where to go and what to do on the way."
       ],
-      "image": "/assets/media/gallery/facility-5.jpg",
+      "image": "/assets/media/services/emergency-eye-care.jpg",
       "thumb": "/assets/media/services/emergency-eye-care-thumb.jpg",
       "imageAlt": "Aakash Eye Hospital facility",
       "featureBullets": [
@@ -1112,8 +1146,8 @@
         }
       ],
       "seo": {
-        "title": "Emergency Eye Care | Aakash Eye Hospital",
-        "description": "Urgent eye care guidance for sudden vision loss, injury, chemical exposure and severe eye pain."
+        "title": "Eye Emergency: Signs and What to Do | Aakash Eye Hospital",
+        "description": "Sudden vision loss, an eye injury or a chemical in the eye? See the signs that cannot wait, what to do first, and call the emergency helpline at once."
       },
       "causes": [
         "Injury, a chemical splash or a foreign body in the eye.",

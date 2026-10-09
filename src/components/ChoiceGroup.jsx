@@ -1,5 +1,32 @@
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+
+/* Brings a keyboard-focused tile clear of the rail's fades. The browser's
+   `nearest` leaves a tile alone once it is inside the rail's box, even under a
+   fade, and the rail snaps - a scroll to anywhere but a snap stop is pulled
+   back to the stop it came from. So the rail moves to the first stop (a
+   tile's start at the scroll padding, which is the fades' width) that clears
+   the tile. */
+function clearOfFades(node) {
+  const list = node.parentElement;
+  const style = window.getComputedStyle(list);
+  const padStart = parseFloat(style.scrollPaddingLeft) || 0;
+  const padEnd = parseFloat(style.scrollPaddingRight) || 0;
+  const box = list.getBoundingClientRect();
+  const at = (element) => element.getBoundingClientRect().left - box.left + list.scrollLeft;
+  const left = at(node);
+  const right = left + node.offsetWidth;
+  const view = list.scrollLeft;
+  let target = view;
+  if (right > view + list.clientWidth - padEnd) {
+    const need = right - (list.clientWidth - padEnd);
+    const stops = [...list.children].map((tile) => Math.max(0, at(tile) - padStart));
+    target = stops.find((stop) => stop >= need) ?? list.scrollWidth;
+  } else if (left < view + padStart) {
+    target = Math.max(0, left - padStart);
+  }
+  if (target !== view) list.scrollLeft = target;
+}
 
 /* One choice from a short list, as a radio group of chips.
  *
@@ -14,7 +41,8 @@ import { motion, useReducedMotion } from "framer-motion";
  * `groups` lets the options be read in runs under a heading - the reasons for
  * a visit are grouped by kind of care - while the keyboard still walks one
  * flat list. What a chip says is up to the caller (`renderOption`); the shape
- * is chosen with `data-shape`. */
+ * is chosen with `data-shape`. The `tile` shape is a rail that scrolls
+ * sideways, and it fades at an end only where there is more past it. */
 export default function ChoiceGroup({
   id,
   label,
@@ -43,6 +71,25 @@ export default function ChoiceGroup({
     options.findIndex((option) => option.id === value),
   );
 
+  /* The rail's ends: written straight to the DOM from a passive scroll
+     listener - a measurement of the scroller, not render state. */
+  const watchEdges = useCallback((list) => {
+    if (!list) return undefined;
+    const sync = () => {
+      const max = list.scrollWidth - list.clientWidth;
+      list.dataset.start = list.scrollLeft > 4 ? "true" : "false";
+      list.dataset.end = max > 4 && list.scrollLeft < max - 4 ? "true" : "false";
+    };
+    sync();
+    list.addEventListener("scroll", sync, { passive: true });
+    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(sync);
+    observer?.observe(list);
+    return () => {
+      list.removeEventListener("scroll", sync);
+      observer?.disconnect();
+    };
+  }, []);
+
   const onKeyDown = (event) => {
     let target = null;
     if (event.key === "ArrowDown" || event.key === "ArrowRight") {
@@ -57,7 +104,14 @@ export default function ChoiceGroup({
     if (!target) return;
     event.preventDefault();
     onChange(target.id);
-    nodes.current[target.id]?.focus();
+    /* Chrome only scrolls a focused element into view when none of it is
+       showing, so a chip half off the screen, or a tile peeking at the
+       rail's edge, would stay half hidden. */
+    const node = nodes.current[target.id];
+    if (!node) return;
+    node.focus({ preventScroll: true });
+    if (shape === "tile") clearOfFades(node);
+    else node.scrollIntoView({ block: "nearest" });
   };
 
   return (
@@ -77,7 +131,7 @@ export default function ChoiceGroup({
       {groups.map((group) => (
         <div className="ap-choice__group" key={group.id ?? group.label ?? "all"}>
           {group.label ? <p className="ap-choice__heading">{group.label}</p> : null}
-          <div className="ap-choice__list">
+          <div className="ap-choice__list" ref={shape === "tile" ? watchEdges : undefined}>
             {group.options.map((option) => {
               const checked = option.id === value;
               const tabbable =

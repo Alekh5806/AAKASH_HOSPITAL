@@ -1,29 +1,47 @@
 /* =========================================================================
    Opening curtain and the initial route wait
-   Namespace: .pl   |   AppPreloader.jsx, HydrateFallback.jsx, IntroMark.jsx
+   Namespace: .pl   |   index.html (#app-intro, #app-wait), AppPreloader.jsx
+   This file is not imported by main.jsx: vite.config.js inlines it into
+   index.html, so the curtain paints with the very first frame in dev and in
+   the build. It therefore reads no token from system.css - the values below
+   are the site's own, written out.
    ========================================================================= */
 
-/* The aperture radius is registered so it can be transitioned; both the
-   curtain and its rim read it. */
-@property --pl-r {
-  syntax: "<length>";
-  inherits: true;
-  initial-value: 0px;
+/* The hospital's logo on paper: the blue square settles, its mark rises
+   into it, the name slides out from behind it and the tagline follows. A
+   fine navy line between them fills as the page really loads (--pl-p). Then
+   the paper opens like an eyelid along that line: two lids with curved
+   edges part from the centre, so the opening starts as a slit and widens
+   into an almond, onto the page underneath. Every moving part is a
+   transform or an opacity, so all of it runs on the compositor while the
+   page's script is still loading beneath it. */
+.pl {
+  --pl-paper: #ffffff;
+  --pl-navy: #0c2c49;
+  --pl-ink: #4b535c;
+  --pl-accent: #b81657;
+  --pl-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --pl-logo: clamp(200px, 15vw + 160px, 440px);
+  --pl-gap: calc(var(--pl-logo) * 0.09);
+  /* The line the eye opens along, a little above the middle so the lockup
+     (more of it above the line than below) sits on the optical centre. */
+  --pl-split: 48%;
+  /* How far each lid's edge curves: an eye about three times as wide as it
+     is tall when its corners reach the sides of the screen. */
+  --pl-dip: min(16.667vw, 30vh);
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: contain;
 }
 
-:root {
-  --pl-iris: clamp(240px, 46vw, 360px);
-  --pl-lift: 4vh;
-  --pl-pupil: #06182a;
-}
-
-/* A phone held sideways has no height for the mark and the two lines under
-   it - the copy ran 54px past the bottom at 844x390. The mark gives, never
-   the type, and the static frame in index.html carries the same rule. */
+/* A phone held sideways has the height for a smaller lockup only. */
 @media (max-height: 520px) {
-  :root {
-    --pl-iris: clamp(150px, 36vh, 240px);
-    --pl-lift: 7vh;
+  .pl {
+    --pl-logo: clamp(180px, 46vh, 240px);
+    --pl-split: 46%;
   }
 }
 
@@ -31,315 +49,293 @@ body.pl-lock {
   overflow: hidden;
 }
 
-/* The curtain is the accent; the paper is a layer over it with a hole 3px
-   wider, so the accent shows only as the rim of the aperture as it opens.
-   The curtain's own hole is 1px inside the radius so that at rest, at 0, it
-   is closed - a hole from 0 to 1px punched a white pinprick through the
-   centre of the pupil.
-   Every gradient ends on an explicit `#000 100%` stop. At rest the curtain's
-   stops are `-1px, 0px`, and Safari renders a radial-gradient whose stops all
-   sit at or below zero as almost entirely transparent - the whole hold was
-   see-through on a Mac, the page showing under the curtain until the aperture
-   started to move. Chrome paints the same gradient solid. The trailing stop
-   gives the gradient a real extent in both and changes nothing visible. */
-.pl {
-  --pl-r: 0px;
-  position: fixed;
-  inset: 0;
-  z-index: 300;
-  overflow: hidden;
-  background: var(--e-accent);
-  touch-action: none;
-  overscroll-behavior: contain;
-  -webkit-mask: radial-gradient(
-    circle at 50% calc(50% - var(--pl-lift)),
-    transparent calc(var(--pl-r) - 1px),
-    #000 var(--pl-r),
-    #000 100%
-  );
-  mask: radial-gradient(
-    circle at 50% calc(50% - var(--pl-lift)),
-    transparent calc(var(--pl-r) - 1px),
-    #000 var(--pl-r),
-    #000 100%
-  );
-  transition:
-    --pl-r 850ms cubic-bezier(0.7, 0, 0.3, 1),
-    opacity 240ms ease 610ms;
+/* The intro already seen this session: the inline script in index.html adds
+   the class before first paint, and the paper veil (#app-wait) stands in for
+   the curtain. And if script never runs at all, either frame lets go of the
+   page by itself. */
+.intro-seen #app-intro,
+#app-wait {
+  display: none;
 }
 
-.pl::before {
+.intro-seen #app-wait {
+  display: block;
+}
+
+#app-intro,
+#app-wait {
+  animation: pl-safety 1ms linear 10s forwards;
+}
+
+/* ---------- the lids ----------
+   Each lid is paper with a half-ellipse cut out of the edge that faces the
+   other, and the two overlap where they meet, so together they cover the
+   screen. The ellipse is 51% wide, not 50%, so its ends fall just past the
+   sides of the screen (Chrome refuses a calc() as a radial-gradient size). Under both sits each lid's shade - the soft dark the lid casts on
+   the page just inside its edge - which is why the shades are layers of
+   their own: drawn on a lid, the upper lid's shade would lie across the
+   lower lid's paper wherever the two overlap. The 1.5px is the overlap at
+   the centre, so no seam of the page shows through before the lids move. */
+
+.pl__lid,
+.pl__shade {
   position: absolute;
-  inset: 0;
-  background: var(--e-paper);
-  content: "";
-  -webkit-mask: radial-gradient(
-    circle at 50% calc(50% - var(--pl-lift)),
-    transparent calc(var(--pl-r) + 2px),
-    #000 calc(var(--pl-r) + 3px),
-    #000 100%
-  );
-  mask: radial-gradient(
-    circle at 50% calc(50% - var(--pl-lift)),
-    transparent calc(var(--pl-r) + 2px),
-    #000 calc(var(--pl-r) + 3px),
-    #000 100%
-  );
+  left: 0;
+  right: 0;
 }
 
-.pl[data-phase="open"] {
-  --pl-r: calc(hypot(50vw, calc(50vh + var(--pl-lift))) + 6px);
-  opacity: 0;
-}
-
-.pl__stage,
-.pl__copy {
-  position: absolute;
-  left: 50%;
+.pl__shade {
   z-index: 1;
-  transition:
-    opacity 260ms ease,
-    scale 850ms var(--e-ease);
 }
 
-.pl[data-phase="open"] .pl__stage,
-.pl[data-phase="open"] .pl__copy {
+.pl__lid {
+  z-index: 2;
+}
+
+.pl__lid--top,
+.pl__shade--top {
+  top: 0;
+  height: calc(var(--pl-split) + var(--pl-dip) + 1.5px);
+}
+
+.pl__lid--bottom,
+.pl__shade--bottom {
+  top: calc(var(--pl-split) - var(--pl-dip) - 1.5px);
+  bottom: 0;
+}
+
+.pl__lid--top {
+  background: radial-gradient(
+    51% var(--pl-dip) at 50% 100%,
+    transparent calc(100% - 1.5px),
+    var(--pl-paper) 100%
+  );
+}
+
+.pl__lid--bottom {
+  background: radial-gradient(
+    51% var(--pl-dip) at 50% 0%,
+    transparent calc(100% - 1.5px),
+    var(--pl-paper) 100%
+  );
+}
+
+.pl__shade--top {
+  background: radial-gradient(
+    51% var(--pl-dip) at 50% 100%,
+    transparent calc(100% - 60px),
+    rgb(12 44 73 / 0.05) calc(100% - 26px),
+    rgb(12 44 73 / 0.2) calc(100% - 1px),
+    transparent 100%
+  );
+}
+
+.pl__shade--bottom {
+  background: radial-gradient(
+    51% var(--pl-dip) at 50% 0%,
+    transparent calc(100% - 60px),
+    rgb(12 44 73 / 0.05) calc(100% - 26px),
+    rgb(12 44 73 / 0.2) calc(100% - 1px),
+    transparent 100%
+  );
+}
+
+/* ---------- the lockup ----------
+   Above the lids, so a lid's curved edge can never cover a letter. The logo
+   is split by vite.config.js into the square (its colour set inline), the
+   white mark and the name, each a box of its own so each can move. */
+
+.pl__brand,
+.pl__seam,
+.pl__foot {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+}
+
+.pl__brand {
+  bottom: calc(100% - var(--pl-split) + var(--pl-gap));
+  display: flex;
+  width: var(--pl-logo);
+  translate: -50% 0;
+}
+
+.pl__mark {
+  flex: none;
+  height: 100%;
+  overflow: hidden;
   opacity: 0;
-  scale: 1.05;
+  animation: pl-square 640ms var(--pl-out) 60ms forwards;
 }
 
-.pl__stage {
-  top: calc(50% - var(--pl-lift));
-  width: var(--pl-iris);
-  aspect-ratio: 1;
-  translate: -50% -50%;
-}
-
-.pl__iris {
+.pl__mark svg,
+.pl__name svg {
   display: block;
   width: 100%;
   height: 100%;
-  overflow: visible;
 }
 
-/* ---------- the iris draws itself ----------
-   The pupil is already on screen (the static frame in index.html carries it);
-   the limbus draws round it, the stroma grows out of it, the rings arrive
-   last. Every start value is the seed the static frame painted. */
-
-.pl__ring {
-  fill: none;
-  stroke: var(--e-navy);
-  stroke-opacity: 0.16;
-  stroke-width: 1;
+.pl__mark svg {
   opacity: 0;
-  transform-origin: 200px 200px;
+  translate: 0 24%;
+  animation: pl-mark 820ms var(--pl-out) 200ms forwards;
 }
 
-.pl__ring--a {
-  stroke-dasharray: 3 12;
-  animation:
-    pl-in 480ms ease 520ms forwards,
-    pl-spin 64s linear infinite;
+/* The name slides out from behind the square's right edge: the box clips
+   it, and only the name inside moves. */
+.pl__name {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
-.pl__ring--b {
-  stroke-dasharray: 2 22;
-  stroke-opacity: 0.22;
-  animation:
-    pl-in 480ms ease 440ms forwards,
-    pl-spin 44s linear infinite reverse;
+.pl__name svg {
+  translate: -100% 0;
+  animation: pl-unroll 1000ms cubic-bezier(0.16, 1, 0.3, 1) 360ms forwards;
 }
 
-.pl__ring--c {
-  stroke-dasharray: 60 26;
-  stroke-opacity: 0.12;
-  animation:
-    pl-in 480ms ease 360ms forwards,
-    pl-spin 88s linear infinite;
+/* The line between the name and the tagline, filling out from the centre
+   as the page loads. Its value only ever rises; index.html and AppPreloader
+   both write it. */
+.pl__seam {
+  top: calc(var(--pl-split) - 0.5px);
+  width: var(--pl-logo);
+  height: 1px;
+  translate: -50% 0;
 }
 
-.pl__body,
-.pl__glow {
-  opacity: 0;
-  transform-origin: 200px 200px;
-  animation: pl-bloom 620ms var(--e-ease) 180ms forwards;
+.pl__seam::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--pl-navy);
+  opacity: 0.42;
+  transform: scaleX(var(--pl-p, 0));
+  transition: transform var(--pl-pt, 900ms) cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-.pl__stroma line {
-  stroke: #7fd3e6;
-  stroke-opacity: 0.34;
-  stroke-width: 1.1;
-  stroke-linecap: round;
-  opacity: 0;
-  transform-origin: 200px 200px;
-  animation: pl-grow 380ms var(--e-ease) calc(260ms + var(--pl-i) * 7ms) forwards;
-}
-
-.pl__limbus {
-  fill: none;
-  stroke: var(--e-navy);
-  stroke-opacity: 0.5;
-  stroke-width: 2;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  transform: rotate(-90deg);
-  transform-origin: 200px 200px;
-  animation: pl-draw 760ms cubic-bezier(0.65, 0, 0.35, 1) 60ms forwards;
-}
-
-.pl__glow {
-  pointer-events: none;
-}
-
-.pl__pupil {
-  fill: var(--pl-pupil);
-  animation:
-    pl-pupil 700ms var(--e-ease) 120ms forwards,
-    pl-pupil-idle 6s ease-in-out 1200ms infinite;
-}
-
-.pl__spark {
-  fill: #ffffff;
-  fill-opacity: 0.7;
-  opacity: 0;
-  transform-origin: 170px 168px;
-  animation: pl-spark 240ms var(--e-ease) 760ms forwards;
-}
-
-/* ---------- the copy ----------
-   The wordmark and the line rise once the static frame in index.html has the
-   logo decoded and the serif loaded - `pl-ready` on <html>, stamped at
-   `--pl-ready-at` - never in a fallback face. `--pl-t` is the time React
-   mounted, so the same animations here resume exactly where the static frame
-   left them: a negative delay when the rise was already under way, the full
-   delay when React arrived first and the class lands later. */
-
-.pl__copy {
-  top: calc(50% - var(--pl-lift) + var(--pl-iris) / 2 + 2px);
-  display: grid;
+.pl__foot {
+  top: calc(var(--pl-split) + var(--pl-gap) * 0.8);
   width: max-content;
-  max-width: calc(100vw - 48px);
-  justify-items: center;
-  gap: 10px;
+  max-width: calc(100% - 48px);
   translate: -50% 0;
   text-align: center;
 }
 
-.pl__logo {
-  width: clamp(148px, 36vw, 196px);
-  height: auto;
-  opacity: 0;
-}
-
-.pl-ready .pl__logo {
-  animation: pl-rise 420ms var(--e-ease)
-    calc(0ms - max(0ms, var(--pl-t, 0ms) - var(--pl-ready-at, 0ms))) forwards;
-}
-
+/* Rises once the serif has loaded (`pl-ready` on <html>), never in a
+   fallback face, and not before the name has begun to arrive
+   (`--pl-line-at`, both from the inline script in index.html). */
 .pl__line {
   margin: 0;
-  color: var(--e-ink-2);
-  font-family: var(--e-serif);
-  font-size: clamp(0.98rem, 1.6vw, 1.08rem);
+  color: var(--pl-ink);
+  font-family:
+    "Source Serif 4", "Source Serif 4 Fallback", "Source Serif 4 Android Fallback", Georgia,
+    "Times New Roman", serif;
+  font-size: clamp(0.98rem, calc(var(--pl-logo) * 0.056), 1.5rem);
+  font-weight: 400;
   line-height: 1.4;
   opacity: 0;
 }
 
 .pl-ready .pl__line {
-  animation: pl-rise 420ms var(--e-ease)
-    calc(100ms - max(0ms, var(--pl-t, 0ms) - var(--pl-ready-at, 0ms))) forwards;
+  animation: pl-rise 760ms var(--pl-out) var(--pl-line-at, 0ms) forwards;
 }
 
 .pl__line em {
-  color: var(--e-accent);
+  color: var(--pl-accent);
   font-style: italic;
 }
 
+/* ---------- the opening ----------
+   The two halves of the lockup part and fade as the lids begin to move,
+   the line spreads and dissolves into the slit opening beneath it, and the
+   lids travel clear of the screen - slowly at first, so the opening reads
+   as an eye starting to open, then decisively. The lids wait a beat so the
+   lockup is already leaving when the slit appears. 60ms + 1040ms is
+   INTRO_EXIT_MS (1100) in src/lib/intro.js; the lids travel past the
+   screen edge by the shade's depth so it never lingers along the top or
+   the foot. */
+
+.pl[data-phase="open"] .pl__lid--top,
+.pl[data-phase="open"] .pl__shade--top {
+  animation: pl-lid-up 1040ms cubic-bezier(0.7, 0, 0.2, 1) 60ms forwards;
+}
+
+.pl[data-phase="open"] .pl__lid--bottom,
+.pl[data-phase="open"] .pl__shade--bottom {
+  animation: pl-lid-down 1040ms cubic-bezier(0.7, 0, 0.2, 1) 60ms forwards;
+}
+
+.pl[data-phase="open"] .pl__brand {
+  animation: pl-part-up 520ms cubic-bezier(0.3, 0, 0.2, 1) forwards;
+}
+
+.pl[data-phase="open"] .pl__foot {
+  animation: pl-part-down 520ms cubic-bezier(0.3, 0, 0.2, 1) forwards;
+}
+
+.pl[data-phase="open"] .pl__seam {
+  animation: pl-seam-out 380ms ease-out forwards;
+}
+
 /* ---------- initial route wait ----------
-   A reload with the intro already seen. Bare paper until the frame has been
-   up for a beat, then the finished mark fades in - a cached route arrives
-   long before that, so nothing flashes; only a slow load gets the mark. */
+   A reload with the intro already seen. Bare paper over the prerendered page
+   until React has rendered it, then the veil goes. A cached route arrives
+   long before the beat this waits, so nothing flashes; only a slow load gets
+   the finished lockup, faded in where the curtain sets it. */
 
-.pl--wait .pl__stage,
-.pl--wait .pl__copy {
+.pl--wait {
+  background: var(--pl-paper);
+}
+
+.pl--wait .pl__logo {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% - var(--pl-split) + var(--pl-gap));
+  width: var(--pl-logo);
+  height: auto;
+  translate: -50% 0;
+}
+
+.pl--wait .pl__logo,
+.pl--wait .pl__foot {
   opacity: 0;
-  transition: opacity 320ms ease;
+  animation: pl-wait-in 320ms ease 350ms forwards;
 }
 
-.pl--wait[data-settled] .pl__stage,
-.pl--wait[data-settled] .pl__copy {
+.pl--wait .pl__line {
   opacity: 1;
+  animation: none;
 }
 
-@keyframes pl-in {
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes pl-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes pl-bloom {
+@keyframes pl-square {
   from {
     opacity: 0;
-    transform: scale(0.72);
+    scale: 0.88;
   }
 
   to {
     opacity: 1;
-    transform: scale(1);
+    scale: 1;
   }
 }
 
-@keyframes pl-grow {
+@keyframes pl-mark {
   from {
     opacity: 0;
-    transform: scale(0.55);
+    translate: 0 24%;
   }
 
   to {
     opacity: 1;
-    transform: scale(1);
+    translate: 0 0;
   }
 }
 
-@keyframes pl-draw {
+@keyframes pl-unroll {
   to {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes pl-pupil {
-  to {
-    r: 42px;
-  }
-}
-
-@keyframes pl-pupil-idle {
-  0%,
-  100% {
-    r: 42px;
-  }
-
-  50% {
-    r: 37px;
-  }
-}
-
-@keyframes pl-spark {
-  from {
-    opacity: 0;
-    transform: scale(0.3);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
+    translate: 0 0;
   }
 }
 
@@ -355,30 +351,77 @@ body.pl-lock {
   }
 }
 
-/* Still means finished: the wait frame is always still, and the curtain is
-   still under `prefers-reduced-motion` (decided in JS, which also skips the
-   floor and the aperture). Every part sits at its final state with no delay
-   to wait out - the global reduced-motion rule zeroes durations, not delays,
-   so without this a 480ms delay would be 480ms of nothing. */
-.pl[data-still] .pl__ring,
-.pl[data-still] .pl__body,
-.pl[data-still] .pl__glow,
-.pl[data-still] .pl__stroma line,
-.pl[data-still] .pl__spark,
-.pl[data-still] .pl__logo,
-.pl[data-still] .pl__line {
-  animation: none;
-  opacity: 1;
-  transform: none;
-  translate: 0 0;
+@keyframes pl-lid-up {
+  to {
+    translate: 0 calc(-100% - 64px);
+  }
 }
 
-.pl[data-still] .pl__pupil {
-  animation: none;
-  r: 42px;
+@keyframes pl-lid-down {
+  to {
+    translate: 0 calc(100% + 64px);
+  }
 }
 
-.pl[data-still] .pl__limbus {
-  animation: none;
-  stroke-dashoffset: 0;
+@keyframes pl-part-up {
+  70% {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 0;
+    translate: -50% -36px;
+  }
+}
+
+@keyframes pl-part-down {
+  70% {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 0;
+    translate: -50% 36px;
+  }
+}
+
+@keyframes pl-seam-out {
+  to {
+    opacity: 0;
+    scale: 2.6 1;
+  }
+}
+
+@keyframes pl-wait-in {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pl-safety {
+  to {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+/* Reduced motion: the lockup is simply there and the line simply grows; the
+   curtain is removed when the page is ready rather than opened (decided in
+   AppPreloader). The selectors match the motion rules' specificity, and
+   delays are cleared too - the global rule zeroes durations, not delays. */
+@media (prefers-reduced-motion: reduce) {
+  .pl .pl__mark,
+  .pl .pl__mark svg,
+  .pl .pl__name svg,
+  .pl-ready .pl__line,
+  .pl .pl__line {
+    animation: none;
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+
+  .pl .pl__seam::before {
+    transition: none;
+  }
 }

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { branchPage } from "../lib/branchData";
-import { formatTime, getBranchHours, getOpenState } from "../lib/hours";
+import { formatTime, getBranchHours, getHoursRows, getOpenState } from "../lib/hours";
+import { useHydrated } from "../lib/hydration";
 import { fillTemplate } from "../lib/servicesData";
 
-const { status } = branchPage.locate;
+const { status, hoursLabel } = branchPage.locate;
 const TICK_MS = 60000;
 
 /* Whether this hospital's OPD is open, right now.
@@ -40,7 +41,16 @@ function resolve(branch) {
   };
 }
 
+/* The prerendered page cannot know the time it will be read at, so it states
+   the hospital's hours instead; the live answer replaces them as React takes
+   the page over, before the curtain or the reload veil lifts. */
+function scheduled(branch) {
+  const [first] = getHoursRows(getBranchHours(branch));
+  return { open: false, label: hoursLabel, detail: first?.value ?? "" };
+}
+
 export default function BranchStatus({ branch }) {
+  const hydrated = useHydrated();
   const [, setTick] = useState(0);
 
   useEffect(() => {
@@ -48,7 +58,7 @@ export default function BranchStatus({ branch }) {
     return () => window.clearInterval(timer);
   }, []);
 
-  const now = resolve(branch);
+  const now = hydrated ? resolve(branch) : scheduled(branch);
 
   return (
     /* The state is a pill and the detail is a line under it. Both inside one

@@ -32,8 +32,11 @@ export default function ServiceActionBar({ service, branch, urgent = false, anch
   const shouldReduceMotion = useReducedMotion();
   /* Without an observer there is nothing to hide the bar for, so it simply
      stays. Deciding that at initialisation keeps the setter out of the effect
-     body, which react-hooks/set-state-in-effect rejects. */
-  const [shown, setShown] = useState(() => typeof IntersectionObserver === "undefined");
+     body, which react-hooks/set-state-in-effect rejects. The prerendered page
+     keeps it down, as every browser that adopts that page starts it. */
+  const [shown, setShown] = useState(
+    () => typeof window !== "undefined" && typeof IntersectionObserver === "undefined",
+  );
 
   useEffect(() => {
     const anchor = anchorRef?.current;

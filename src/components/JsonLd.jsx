@@ -1,197 +1,174 @@
-import { branches, site } from "../lib/coreData";
-import { buildBranchHref, getPrimaryBranch } from "../lib/contact";
-import { getBranchHours, toOpeningHoursSpecification } from "../lib/hours";
+import { branches } from "../lib/coreData";
+import {
+  ORGANIZATION_ID,
+  branchId,
+  doctorNode,
+  faqNodes,
+  hospitalNode,
+  itemList,
+  pageGraph,
+  ref,
+  serviceId,
+  serviceNode,
+  serviceReference,
+} from "../lib/schema";
 
-const siteUrl = site.defaultSeo.url.replace(/\/$/, "");
-
-function absoluteUrl(path = "/") {
-  return new URL(path, `${siteUrl}/`).toString();
-}
-
-function branchPhone(branch) {
-  return branch.phoneGroups.flatMap((group) => group.numbers);
-}
-
-function allPhones() {
-  return branches.items.flatMap((branch) => branchPhone(branch));
-}
-
-/* The same block the page's live open/closed pill reads, so the hours a search
-   engine is told can never drift from the hours a reader is shown. Each
-   hospital's node carries its own; the organisation carries the head office's. */
-function openingHours(branch) {
-  return toOpeningHoursSpecification(getBranchHours(branch));
-}
-
+/* One <script> per page carrying the page's whole @graph (see lib/schema.js).
+   "<" is escaped so a string in the data can never close the script early. */
 export default function JsonLd({ data }) {
-  return (
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
-  );
+  const json = JSON.stringify(data).replace(/</g, "\\u003c");
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: json }} />;
 }
 
-export function MedicalClinicJsonLd({ services = [] }) {
-  const organization = {
-    "@context": "https://schema.org",
-    "@type": "MedicalClinic",
-    "@id": `${siteUrl}/#medical-clinic`,
-    name: site.brand.name,
-    url: site.defaultSeo.url,
-    logo: absoluteUrl(site.brand.logoRaster),
-    image: absoluteUrl(site.defaultSeo.image),
-    foundingDate: site.brand.establishedDate,
-    medicalSpecialty: "Ophthalmology",
-    priceRange: "$$",
-    telephone: allPhones(),
-    sameAs: site.socialLinks.map((link) => link.href),
-    contactPoint: branches.items.map((branch) => ({
-      "@type": "ContactPoint",
-      contactType: `${branch.name} appointment desk`,
-      telephone: branchPhone(branch),
-      email: branch.email,
-      areaServed: "IN-GJ",
-      availableLanguage: ["English", "Gujarati", "Hindi"],
-    })),
-    branchOf: {
-      "@type": "Organization",
-      name: site.brand.name,
-    },
-    address: branches.items.map((branch) => ({
-      "@type": "PostalAddress",
-      streetAddress: branch.address,
-      addressRegion: "Gujarat",
-      addressCountry: "IN",
-    })),
-    openingHoursSpecification: openingHours(getPrimaryBranch(branches.items)),
-    availableService: services.map((service) => ({
-      "@type": "MedicalProcedure",
-      name: service.title,
-      url: absoluteUrl(`/services/${service.slug}`),
-    })),
-  };
+const HOME = { name: "Home", href: "/" };
 
-  return <JsonLd data={organization} />;
-}
-
-function branchNode(branch) {
-  return {
-    "@type": ["MedicalClinic", "LocalBusiness"],
-    "@id": `${siteUrl}/branches#${branch.slug}`,
-    name: `${site.brand.name} - ${branch.name}`,
-    url: absoluteUrl(buildBranchHref(branch)),
-    image: absoluteUrl(branch.page?.seo?.image ?? site.defaultSeo.image),
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: branch.address,
-      addressRegion: "Gujarat",
-      addressCountry: "IN",
-    },
-    email: branch.email,
-    telephone: branchPhone(branch),
-    priceRange: "$$",
-    medicalSpecialty: "Ophthalmology",
-    parentOrganization: {
-      "@id": `${siteUrl}/#medical-clinic`,
-    },
-    hasMap: branch.mapEmbed,
-    areaServed: {
-      "@type": "AdministrativeArea",
-      name: "Gujarat",
-    },
-    openingHoursSpecification: openingHours(branch),
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: branch.coords.lat,
-      longitude: branch.coords.lng,
-    },
-  };
-}
-
-export function BranchJsonLd() {
-  const graph = branches.items.map(branchNode);
-  return <JsonLd data={{ "@context": "https://schema.org", "@graph": graph }} />;
-}
-
-/* One hospital's own page: the same node the index graph carries, on its own,
-   so the page describes exactly one place. */
-export function BranchPageJsonLd({ branch }) {
-  return <JsonLd data={{ "@context": "https://schema.org", ...branchNode(branch) }} />;
-}
-
-export function BreadcrumbJsonLd({ items }) {
+export function HomeJsonLd({ meta }) {
   return (
     <JsonLd
-      data={{
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        itemListElement: items.map((item, index) => ({
-          "@type": "ListItem",
-          position: index + 1,
-          name: item.name,
-          item: absoluteUrl(item.href),
-        })),
-      }}
+      data={pageGraph({
+        path: "/",
+        meta,
+        about: ref(ORGANIZATION_ID),
+        nodes: branches.items.map((branch) => hospitalNode(branch)),
+      })}
     />
   );
 }
 
-export function ServiceJsonLd({ service }) {
+/* The two About pages, the appointment page and anything else that is about
+   the network as a whole. */
+export function PageJsonLd({ path, meta, types, crumbs }) {
   return (
     <JsonLd
-      data={{
-        "@context": "https://schema.org",
-        "@type": "Service",
-        "@id": `${siteUrl}/services/${service.slug}#service`,
-        name: service.title,
-        description: service.shortDescription,
-        image: absoluteUrl(service.image),
-        url: `${siteUrl}/services/${service.slug}`,
-        medicalSpecialty: "Ophthalmology",
-        provider: {
-          "@id": `${siteUrl}/#medical-clinic`,
-        },
-        availableAtOrFrom: branches.items.map((branch) => ({
-          "@id": `${siteUrl}/branches#${branch.slug}`,
-        })),
-      }}
+      data={pageGraph({ path, meta, types, about: ref(ORGANIZATION_ID), crumbs: [HOME, ...crumbs] })}
     />
   );
 }
 
-export function FAQJsonLd({ items }) {
-  if (!items?.length) return null;
-
+export function ServicesJsonLd({ meta, services }) {
   return (
     <JsonLd
-      data={{
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: items.map((item) => ({
-          "@type": "Question",
-          name: item.question,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: item.answer,
-          },
-        })),
-      }}
+      data={pageGraph({
+        path: "/services",
+        meta,
+        types: ["CollectionPage"],
+        about: ref(ORGANIZATION_ID),
+        mainEntity: itemList(services.map(serviceReference)),
+        crumbs: [HOME, { name: "Services", href: "/services" }],
+      })}
     />
   );
 }
 
-export function ServiceListJsonLd({ services = [] }) {
+export function ServiceJsonLd({ service, part }) {
+  const path = `/services/${service.slug}`;
+  const questions = faqNodes(path, service.faq);
   return (
     <JsonLd
-      data={{
-        "@context": "https://schema.org",
-        "@type": "ItemList",
-        name: "Aakash Eye Hospital services",
-        itemListElement: services.map((service, index) => ({
-          "@type": "ListItem",
-          position: index + 1,
-          name: service.title,
-          url: `${siteUrl}/services/${service.slug}`,
-        })),
-      }}
+      data={pageGraph({
+        path,
+        meta: service.seo,
+        types: questions.length ? ["MedicalWebPage", "FAQPage"] : ["MedicalWebPage"],
+        about: ref(serviceId(service)),
+        mainEntity: questions.length ? questions.map((question) => ref(question["@id"])) : undefined,
+        image: service.image,
+        review: service.review,
+        crumbs: [HOME, { name: "Services", href: "/services" }, { name: service.title, href: path }],
+        nodes: [serviceNode(service, { part }), ...questions],
+      })}
+    />
+  );
+}
+
+export function DoctorsJsonLd({ meta, doctors, isOptometrist }) {
+  const people = doctors.map((doctor) => doctorNode(doctor, { optometrist: isOptometrist(doctor) }));
+  return (
+    <JsonLd
+      data={pageGraph({
+        path: "/doctors",
+        meta,
+        types: ["CollectionPage"],
+        about: ref(ORGANIZATION_ID),
+        mainEntity: itemList(people.map((person) => ref(person["@id"]))),
+        crumbs: [HOME, { name: "Doctors", href: "/doctors" }],
+        nodes: people,
+      })}
+    />
+  );
+}
+
+/* One doctor's page: a ProfilePage about the doctor, with the treatments the
+   page lists and the hospitals they practise at (referenced by @id). */
+export function DoctorJsonLd({ doctor, meta, services }) {
+  const path = `/doctors/${doctor.slug}`;
+  const person = doctorNode(doctor, { services });
+  return (
+    <JsonLd
+      data={pageGraph({
+        path,
+        meta,
+        types: ["ProfilePage"],
+        about: ref(person["@id"]),
+        mainEntity: ref(person["@id"]),
+        image: doctor.photo,
+        crumbs: [HOME, { name: "Doctors", href: "/doctors" }, { name: doctor.name, href: path }],
+        nodes: [person],
+      })}
+    />
+  );
+}
+
+export function BranchesJsonLd({ meta }) {
+  return (
+    <JsonLd
+      data={pageGraph({
+        path: "/branches",
+        meta,
+        types: ["CollectionPage"],
+        about: ref(ORGANIZATION_ID),
+        mainEntity: itemList(branches.items.map((branch) => ref(branchId(branch)))),
+        crumbs: [HOME, { name: "Our Hospitals", href: "/branches" }],
+        nodes: branches.items.map((branch) => hospitalNode(branch)),
+      })}
+    />
+  );
+}
+
+/* One hospital's page: the hospital, everything it offers, and the people who
+   see patients there - the same three things the page shows. */
+export function BranchJsonLd({ branch, services, team, isOptometrist }) {
+  const path = `/branches/${branch.slug}`;
+  const people = team
+    ? [...team.doctors, ...team.visiting, ...team.optometrists].map((doctor) =>
+        doctorNode(doctor, { optometrist: isOptometrist(doctor) }),
+      )
+    : [];
+  return (
+    <JsonLd
+      data={pageGraph({
+        path,
+        meta: branch.page.seo,
+        about: ref(branchId(branch)),
+        mainEntity: ref(branchId(branch)),
+        image: branch.page.image,
+        crumbs: [HOME, { name: "Our Hospitals", href: "/branches" }, { name: branch.name, href: path }],
+        nodes: [hospitalNode(branch, { services }), ...people],
+      })}
+    />
+  );
+}
+
+export function ContactJsonLd({ meta }) {
+  return (
+    <JsonLd
+      data={pageGraph({
+        path: "/contact",
+        meta,
+        types: ["ContactPage"],
+        about: ref(ORGANIZATION_ID),
+        crumbs: [HOME, { name: "Contact", href: "/contact" }],
+        nodes: branches.items.map((branch) => hospitalNode(branch)),
+      })}
     />
   );
 }

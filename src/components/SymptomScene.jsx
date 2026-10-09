@@ -1,39 +1,20 @@
 import { useReducedMotion } from "framer-motion";
-
-/* The rows and acuity fractions of the standard Snellen chart, as on the wall
-   of every examination room. Sizes are in viewBox units and fall in the same
-   proportion the real chart uses. */
-const ROWS = [
-  { letters: "E", size: 62, acuity: "20/200" },
-  { letters: "L T", size: 44, acuity: "20/100" },
-  { letters: "F P H", size: 33, acuity: "20/70" },
-  { letters: "O L C F", size: 25, acuity: "20/50" },
-  { letters: "D H J B S", size: 20, acuity: "20/40" },
-  { letters: "E P T Z O", size: 16, acuity: "20/30" },
-  { letters: "C F D H J", size: 13, acuity: "20/25" },
-  { letters: "L T I P H", size: 11, acuity: "20/20" },
-];
-
-/* Rows sit at the baselines a real chart uses - a big gap under the E, then
-   tightening as the letters shrink. */
-const BASELINES = [72, 140, 194, 240, 280, 314, 343, 368];
-
-const VIEW = "0 0 260 392";
+import { SNELLEN_BASELINES, SNELLEN_ROWS, SNELLEN_VIEW } from "../lib/snellen";
 
 function Chart({ ghost = false }) {
   return (
     <svg
       className={`sv-scene__chart${ghost ? " sv-scene__chart--ghost" : ""}`}
-      viewBox={VIEW}
+      viewBox={SNELLEN_VIEW}
       preserveAspectRatio="xMidYMin slice"
       focusable="false"
     >
-      {ROWS.map((row, index) => (
+      {SNELLEN_ROWS.map((row, index) => (
         <g key={row.acuity}>
           <text
             className="sv-scene__row"
             x="118"
-            y={BASELINES[index]}
+            y={SNELLEN_BASELINES[index]}
             fontSize={row.size}
             textAnchor="middle"
           >
@@ -42,7 +23,7 @@ function Chart({ ghost = false }) {
           <text
             className="sv-scene__acuity"
             x="248"
-            y={BASELINES[index] - row.size * 0.32}
+            y={SNELLEN_BASELINES[index] - row.size * 0.32}
             textAnchor="end"
           >
             {row.acuity}

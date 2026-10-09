@@ -16,7 +16,13 @@
 
 .ab-top__title {
   margin-top: 18px;
-  max-width: 18ch;
+  /* 18ch of Inter Tight, written in em: a ch is the width of the "0" in the
+     font that has loaded, and the page first paints in the metric-matched
+     fallback, whose "0" is narrower. Inter Tight is not preloaded, so when it
+     landed the measure widened, the balanced headline re-broke and everything
+     under it jumped 80px - a 0.11-0.13 layout shift on both About pages on a
+     laptop. An em is the same in either face. */
+  max-width: 11.3344em;
 }
 
 .ab-top__title em {
@@ -25,6 +31,12 @@
   font-style: italic;
   font-weight: 400;
   letter-spacing: -0.02em;
+}
+
+/* One box per word of the accent, so each can be clipped as it writes in
+   (AboutHead); the spaces between them still wrap the line. */
+.ab-top__ink {
+  display: inline-block;
 }
 
 .ab-top__row {
@@ -329,7 +341,7 @@
   z-index: 1;
   margin: 0;
   width: 100%;
-  height: min(58vh, 470px);
+  height: min(60vh, 560px);
   overflow: hidden;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.05);
@@ -338,7 +350,7 @@
 
 @supports (height: 100svh) {
   .ab-stage__media {
-    height: min(58svh, 470px);
+    height: min(60svh, 560px);
   }
 }
 
@@ -452,7 +464,9 @@
 }
 
 /* The same year again, oversized and outlined behind the stop. It rolls with
-   the foreground one, which is what gives the stage its depth. */
+   the foreground one, which is what gives the stage its depth. Two classes, so
+   none of the breakpoints that size the foreground year can shrink it - they
+   once did, and on every phone under 700px tall the ghost was a 3rem year. */
 .ab-stage__ghost {
   position: absolute;
   z-index: 0;
@@ -463,7 +477,7 @@
   user-select: none;
 }
 
-.ab-stage__odo--ghost {
+.ab-stage__odo.ab-stage__odo--ghost {
   margin: 0;
   color: transparent;
   font-size: clamp(11rem, 30vw, 28rem);
@@ -479,18 +493,34 @@
   color: var(--ab-stage-ink-2);
 }
 
+/* A fact, not a control: the site's tag - a tinted pill led by an accent dot,
+   as on a hospital hero - rather than the outlined pill it was, which read as a
+   button and did nothing when pressed. */
 .ab-stage__metric {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
   margin: 20px 0 0;
-  border: 1px solid rgba(255, 255, 255, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 999px;
-  padding: 7px 15px;
+  background: rgba(255, 255, 255, 0.07);
+  padding: 6px 14px 6px 12px;
   color: #fff;
   font-family: var(--e-sans);
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.ab-stage__metric::before {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--e-accent);
+  box-shadow: 0 0 0 3px rgba(184, 22, 87, 0.28);
 }
 
 .ab-stage__figures {
@@ -515,7 +545,16 @@
   line-height: 1;
 }
 
-.ab-stage__figures span {
+/* CountUp's own type is the impact band's; here it takes the figure's. The
+   label rules above are `div > span` for the same reason: CountUp renders spans
+   inside the figure, and a bare `span` rule set the count in 0.82rem grey. */
+.ab-stage__figures .e-count {
+  color: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+}
+
+.ab-stage__figures div > span {
   color: var(--ab-stage-ink-3);
   font-family: var(--e-sans);
   font-size: 0.82rem;
@@ -692,9 +731,11 @@
    rather than side by side in a two-up grid: the hospital's own wording runs to
    forty and fifty words, and half a shell is not a measure that can carry that
    at display size without breaking to a dozen short lines. */
+/* clip, not hidden: hidden makes the band a scroll container, and the marker
+   column's sticky position would then stick to a box that never scrolls. */
 .ab-say {
   --ab-soft: #f4a6c4;
-  overflow: hidden;
+  overflow: clip;
   background-image: radial-gradient(
     90% 80% at 82% 6%,
     rgba(38, 96, 148, 0.4) 0%,
@@ -731,7 +772,23 @@
   gap: 12px;
 }
 
+/* Beside the statement the marker rides down with the reader, so its ring is
+   in view for as long as the sentence it measures. It follows the header up
+   and down on the header's own timing, like every other pinned element. */
+@media (min-width: 901px) {
+  .ab-say__mark-col {
+    position: sticky;
+    top: calc(var(--hd-height) + 32px);
+    transition: top var(--hd-slide);
+  }
+
+  body:has(.hd--hidden) .ab-say__mark-col {
+    top: 32px;
+  }
+}
+
 .ab-say__icon {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -740,6 +797,27 @@
   border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 50%;
   color: var(--ab-soft);
+}
+
+/* The ring round the mark fills as its statement is read, so the marker says
+   how far through the sentence the reader is. It lies exactly over the border,
+   which stays as its track, and starts at twelve o'clock. */
+.ab-say__ring {
+  position: absolute;
+  inset: -1px;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  overflow: visible;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+
+.ab-say__ring circle {
+  fill: none;
+  stroke: var(--ab-soft);
+  stroke-width: 1.5;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--read, 0));
 }
 
 /* 0.6, not the 0.42 it started at: 0.78rem semibold needs 4.5:1 and 0.42
@@ -791,6 +869,24 @@
 .ab-say__mark {
   color: var(--ab-soft);
   font-style: italic;
+}
+
+/* The reading light. --read is how far the statement has been scrolled past
+   the reading line (VisionStatements) and --at each word's place in it, so a
+   word lights over the last twelfth of the sentence before the light reaches
+   it and holds full strength after. Unlit words keep enough to be read ahead
+   of the light - pixel-sampled worst cell on the band's glow, white at 0.5 is
+   4.2:1 and the accent phrase at 0.62 is 3.3:1 (at 0.42 it was 2.3:1). Without
+   --read (reduced motion, no script) every word is lit. */
+.ab-say__word {
+  --unlit: 0.5;
+  opacity: calc(
+    var(--unlit) + (1 - var(--unlit)) * clamp(0, (var(--read, 1) - var(--at, 0)) * 12 + 1, 1)
+  );
+}
+
+.ab-say__mark .ab-say__word {
+  --unlit: 0.62;
 }
 
 .ab-say__note {
@@ -922,6 +1018,13 @@
   --ab-soft: #f4a6c4;
 }
 
+/* On the vision page the plate follows the values ledger on the same paper,
+   and the two sections' paddings met as one empty band - 112px on a phone,
+   220px on a laptop. The ledger's own foot is gap enough. */
+.ab-values + .ab-next {
+  padding-top: 0;
+}
+
 /* Copy left, action right: capped at a readable measure the panel would
    otherwise be two thirds empty on a laptop. */
 .ab-next__panel {
@@ -980,37 +1083,17 @@
 
 /* ---------- responsive ---------- */
 
-/* One column below the laptop breakpoint: the stage keeps its full height, so
-   the photograph sits over the copy and both stay inside one screen. */
+/* Below the laptop breakpoint the year, its ghost and the figures are set
+   smaller, whatever shape the screen is. */
 @media (max-width: 1023px) {
-  /* Top-aligned, not centred: the stops share one grid cell and their copy runs
-     to different lengths, so centring each one parked the photograph at a
-     different height and the frame jumped between stops. */
-  .ab-stage__stop {
-    grid-template-columns: minmax(0, 1fr);
-    align-content: start;
-    gap: clamp(16px, 3vw, 26px);
-  }
-
-  .ab-stage__odo--ghost {
-    -webkit-text-stroke-color: rgba(255, 255, 255, 0.09);
-  }
-
-  .ab-stage__media {
-    height: clamp(132px, 24vh, 300px);
-  }
-
-  .ab-stage__copy {
-    max-width: none;
-  }
-
   .ab-stage__odo {
     font-size: clamp(2.8rem, 11vw, 4.4rem);
     margin-bottom: 10px;
   }
 
-  .ab-stage__odo--ghost {
+  .ab-stage__odo.ab-stage__odo--ghost {
     font-size: clamp(9rem, 48vw, 18rem);
+    -webkit-text-stroke-color: rgba(255, 255, 255, 0.09);
   }
 
   .ab-stage__ghost {
@@ -1023,10 +1106,88 @@
   }
 }
 
+/* One column on a portrait screen: the photograph sits over the copy. A phone
+   or tablet held sideways keeps the laptop's two columns, which is the shape
+   its screen has room for - stacked, a 1000x700 window got a 140px strip of
+   photograph 952px wide.
+
+   Top-aligned, not centred: the stops share one grid cell and their copy runs
+   to different lengths, so centring each one parked the photograph at a
+   different height and the frame jumped between stops. The fixed heights here
+   are the fallback for a browser without subgrid; see the pinned frame below. */
+@media (max-width: 1023px) and (orientation: portrait) {
+  .ab-stage__stop {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: clamp(16px, 3vw, 26px);
+  }
+
+  .ab-stage__media {
+    height: clamp(132px, 24vh, 300px);
+  }
+
+  .ab-stage__copy {
+    max-width: none;
+  }
+
+  /* Unpinned there is no frame to fit, so each photograph keeps its own
+     shape. */
+  .ab-stage[data-mode="static"] .ab-stage__media {
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+}
+
 @supports (height: 100svh) {
-  @media (max-width: 1023px) {
+  @media (max-width: 1023px) and (orientation: portrait) {
     .ab-stage__media {
       height: clamp(132px, 24svh, 300px);
+    }
+  }
+}
+
+/* The pinned frame on a portrait screen. The photograph takes every pixel of
+   height the tallest stop's copy leaves it, up to its own 4:3. The six stops
+   lay their photograph and copy onto their shared grid's two rows (subgrid),
+   so the copy row is the tallest copy of the six and the photograph is one
+   size on every stop - it never jumps between years. It sits on the foot of
+   its row, over its copy, and any height left over gathers above it, which is
+   where the header returns. Before this the photograph was a fixed strip
+   (132px on a 390x664 phone, 245px on a 768x1024 tablet) with up to 300px of
+   empty navy under every stop. */
+@supports (grid-template-rows: subgrid) {
+  @media (max-width: 1023px) and (orientation: portrait) {
+    .ab-stage[data-mode="scroll"] .ab-stage__inner {
+      display: grid;
+      grid-template-rows: minmax(0, 1fr);
+      align-self: stretch;
+      padding-block: clamp(14px, 2.4vh, 26px) 14px;
+    }
+
+    .ab-stage[data-mode="scroll"] .ab-stage__stops {
+      grid-template-rows: minmax(0, 1fr) auto;
+      row-gap: clamp(16px, 3vw, 26px);
+    }
+
+    .ab-stage[data-mode="scroll"] .ab-stage__stop {
+      grid-area: 1 / 1 / 3 / 2;
+      grid-template-rows: subgrid;
+    }
+
+    .ab-stage[data-mode="scroll"] .ab-stage__media {
+      align-self: end;
+      height: auto;
+      max-height: 100%;
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  /* A phone's column is narrow enough that a 4:3 photograph left a band of
+     empty navy above it on every tall phone (147px on a 390x844); square, its
+     top lands where the header comes back to. */
+  @media (max-width: 640px) and (orientation: portrait) {
+    .ab-stage[data-mode="scroll"] .ab-stage__media {
+      aspect-ratio: 1;
     }
   }
 }
@@ -1083,13 +1244,11 @@
   }
 }
 
-/* Short screens - small phones and every phone held sideways - buy their height
-   back from the frame, never from the body copy: older patients read this. */
-@media (max-height: 700px) {
-  .ab-stage__media {
-    height: clamp(118px, 20vh, 220px);
-  }
-
+/* Short phones buy their height back from the frame, never from the body copy:
+   older patients read this. Scoped to phones and tablets - a laptop window
+   under 700px tall has width to spare, and this rule once cut its photograph
+   to a 132px strip beside the copy at 1366x657. */
+@media (max-width: 1023px) and (max-height: 700px) {
   .ab-stage__odo {
     font-size: clamp(2.4rem, 9vw, 3.4rem);
   }
@@ -1100,23 +1259,29 @@
     gap: 10px;
   }
 
-  .ab-stage__figures span {
+  .ab-stage__figures div > span {
     font-size: 0.74rem;
   }
 }
 
+@media (max-width: 1023px) and (orientation: portrait) and (max-height: 700px) {
+  .ab-stage__media {
+    height: clamp(118px, 20vh, 220px);
+  }
+}
+
 @supports (height: 100svh) {
-  @media (max-height: 700px) {
+  @media (max-width: 1023px) and (orientation: portrait) and (max-height: 700px) {
     .ab-stage__media {
       height: clamp(118px, 20svh, 220px);
     }
   }
 }
 
-/* A phone held sideways has width to spare and no height at all, so each stop
-   goes back to two columns rather than stacking its own photograph and copy.
-   Below 520px of height the stage also unpins - see SHORT_VIEWPORT. */
-@media (orientation: landscape) and (max-height: 620px) {
+/* A phone held sideways has width to spare and no height at all, so the two
+   columns get a smaller photograph and year. Below 520px of height the stage
+   also unpins - see SHORT_VIEWPORT. */
+@media (max-width: 1023px) and (orientation: landscape) and (max-height: 620px) {
   .ab-stage__stop {
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
     gap: clamp(20px, 3vw, 40px);
@@ -1132,7 +1297,7 @@
 }
 
 @supports (height: 100svh) {
-  @media (orientation: landscape) and (max-height: 620px) {
+  @media (max-width: 1023px) and (orientation: landscape) and (max-height: 620px) {
     .ab-stage__media {
       height: min(52svh, 260px);
     }
@@ -1228,12 +1393,17 @@
     padding-inline: 0;
   }
 
-  .ab-stage__figures span {
+  .ab-stage__figures div > span {
     font-size: 0.72rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .ab-say__word {
+    opacity: 1;
+  }
+
+  .ab-say__mark-col,
   .ab-switch__item,
   .ab-rail__btn,
   .ab-rail__dot,

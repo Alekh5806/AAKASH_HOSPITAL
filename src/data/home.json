@@ -1,7 +1,7 @@
 {
   "seo": {
-    "title": "Aakash Eye Hospital | Advanced Eye Care Across 6 Gujarat Branches",
-    "description": "Aakash Eye Hospital provides advanced cataract, LASIK, retina, glaucoma and OPD eye care across six branches in Gujarat: Visnagar, Ahmedabad, Bharuch, Gota, Himmatnagar and Juhapura."
+    "title": "Eye Hospital in Gujarat Since 1993 | Aakash Eye Hospital",
+    "description": "Six Aakash eye hospitals across Gujarat since 1993, in Visnagar, Ahmedabad, Gota, Juhapura, Himmatnagar and Bharuch. Cataract, LASIK and retina care."
   },
   "hero": {
     "eyebrow": "Appointments on WhatsApp",
@@ -15,11 +15,11 @@
         "label": "Founded in Visnagar"
       },
       {
-        "value": "06",
+        "count": "hospitals",
         "label": "Hospitals across Gujarat"
       },
       {
-        "value": "09",
+        "count": "specialists",
         "label": "Consulting specialists"
       }
     ],
@@ -27,12 +27,14 @@
       "desktop": {
         "webm": "/assets/media/heroes/hero-desktop.webm",
         "mp4": "/assets/media/heroes/hero-desktop.mp4",
-        "poster": "/assets/media/heroes/hero-desktop-poster.jpg"
+        "poster": "/assets/media/heroes/hero-desktop-poster.jpg",
+        "still": "/assets/media/heroes/hero-desktop-still.jpg"
       },
       "mobile": {
         "webm": "/assets/media/heroes/hero-mobile.webm",
         "mp4": "/assets/media/heroes/hero-mobile.mp4",
-        "poster": "/assets/media/heroes/hero-mobile-poster.jpg"
+        "poster": "/assets/media/heroes/hero-mobile-poster.jpg",
+        "still": "/assets/media/heroes/hero-mobile-still.jpg"
       },
       "description": "Aakash Eye Hospital: the hospital building, the main atrium reception and an examination room where patients are seen at the slit lamp."
     }
@@ -42,6 +44,9 @@
     "titleGujarati": "અંધકારથી અજવાળા તરફ",
     "tagline": "Affordable, Ethical & Quality Eye Care",
     "taglineAccent": "Since 1993",
+    "photoTag": "{city} head office, since {year}",
+    "photoTagNoYear": "{city} head office",
+    "nearestLabel": "Find the hospital nearest you",
     "cards": [
       {
         "id": "surgeries",
@@ -99,16 +104,16 @@
       {
         "id": "doctors",
         "kicker": "03",
-        "value": 9,
+        "count": "specialists",
         "suffix": "",
         "label": "Specialists on the team",
-        "description": "Surgeons, vitreoretina consultants and optometrists across branches.",
+        "description": "Eye surgeons and consultants in retina, oculoplasty, cornea and children's eyes.",
         "visual": "people"
       },
       {
         "id": "branches",
         "kicker": "04",
-        "value": 6,
+        "count": "hospitals",
         "suffix": "",
         "label": "Hospitals in Gujarat",
         "description": "A hospital close to home, with one shared patient record.",
@@ -127,10 +132,12 @@
     }
   },
   "conditions": {
-    "eyebrow": "What we treat",
+    "eyebrow": "Our services",
     "title": "Conditions we treat",
     "tagline": "Specialist eye care since 1993, across six hospitals",
     "ctaLabel": "Know more",
+    "findPrompt": "Not sure which one?",
+    "findLabel": "Find it by what you notice",
     "previousLabel": "Previous service",
     "nextLabel": "Next service",
     "items": [
@@ -182,7 +189,7 @@
   },
   "trust": {
     "eyebrow": "Why choose us",
-    "title": "Why Choose Aakash Eye Hospital?",
+    "title": "Why choose Aakash Eye Hospital?",
     "items": [
       {
         "icon": "Stethoscope",
@@ -255,22 +262,25 @@
     "titleAccent": "senior doctors",
     "lede": "Aakash Eye Hospital's medical and surgical team",
     "ctaLabel": "Meet the full team",
+    "cardText": "{specialty} at {hospitals}.",
     "featured": [
       "Dr. Vishnu S. Patel",
       "Dr. Sanjay B. Patel",
-      "Dr. Dhaivat Vasavada",
       "Dr. Saurabh Kapoor",
-      "Dr. Asesh B. Patel",
-      "A. K. Patel",
-      "Kashyap M. Patel",
-      "Bhavika R. Patel",
-      "Dr. Mahendra M. Patel"
+      "Dr. Dhaivat Vasavada",
+      "Dr. Aakash V. Patel",
+      "Dr. Nirav Zala",
+      "Dr. Pooja Yadav Patel",
+      "Dr. Toral A. Patel"
     ]
   },
   "voices": {
     "eyebrow": "Patient voices",
     "title": "What patients say after a visit",
-    "lede": "Recurring themes drawn from public reviews across our hospitals. They are summarised rather than quoted, so no words are put in a patient's mouth.",
-    "note": "Summarised from public reviews"
+    "lede": "Recurring themes from what patients write about each of our hospitals, summarised rather than quoted so that no words are put in a patient's mouth.",
+    "note": "Summarised from public reviews of our hospitals in {hospitals}",
+    "hospitalLabel": "{hospital} hospital",
+    "pauseLabel": "Pause quotes",
+    "playLabel": "Play quotes"
   }
 }

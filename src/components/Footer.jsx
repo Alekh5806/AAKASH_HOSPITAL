@@ -8,20 +8,14 @@ import {
   buildBranchHref,
   buildWhatsApp,
   cleanTel,
+  confirmedProfiles,
   getPrimaryBranch,
+  getPrimaryPhone,
   getStoredBranch,
 } from "../lib/contact";
 import { getBranchHours, getHoursRows } from "../lib/hours";
-
-/* lucide-react 1.x dropped its brand icons, so the three marks the hospital
-   actually links to are inlined here and keyed by `icon` in site.json. */
-const socialMarks = {
-  facebook:
-    "M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.45 2.89h-2.33v6.99A10 10 0 0 0 22 12z",
-  instagram:
-    "M12 4.16c2.54 0 2.85.01 3.85.06.93.04 1.44.2 1.77.33.45.17.77.38 1.1.71.34.34.55.65.72 1.1.13.34.29.85.33 1.78.05 1 .06 1.31.06 3.86s-.01 2.85-.06 3.85c-.04.93-.2 1.44-.33 1.78-.17.45-.38.76-.72 1.1-.33.33-.65.54-1.1.71-.33.13-.84.29-1.77.34-1 .04-1.31.05-3.85.05s-2.85-.01-3.85-.05c-.93-.05-1.44-.21-1.78-.34-.45-.17-.76-.38-1.1-.71-.33-.34-.54-.65-.71-1.1-.13-.34-.29-.85-.34-1.78-.04-1-.05-1.3-.05-3.85s.01-2.86.05-3.86c.05-.93.21-1.44.34-1.78.17-.45.38-.76.71-1.1.34-.33.65-.54 1.1-.71.34-.13.85-.29 1.78-.33 1-.05 1.31-.06 3.85-.06zm0-1.72c-2.59 0-2.91.01-3.93.06-1.01.04-1.7.21-2.31.44-.62.25-1.15.57-1.68 1.1-.52.52-.85 1.05-1.09 1.67-.24.61-.4 1.3-.45 2.31-.04 1.02-.06 1.34-.06 3.93s.02 2.91.06 3.93c.05 1.01.21 1.7.45 2.31.24.62.57 1.15 1.09 1.67.53.53 1.06.85 1.68 1.1.61.23 1.3.4 2.31.44 1.02.05 1.34.06 3.93.06s2.91-.01 3.93-.06c1.01-.04 1.7-.21 2.31-.44.62-.25 1.15-.57 1.67-1.1.53-.52.85-1.05 1.1-1.67.23-.61.4-1.3.44-2.31.05-1.02.06-1.34.06-3.93s-.01-2.91-.06-3.93c-.04-1.01-.21-1.7-.44-2.31a4.66 4.66 0 0 0-1.1-1.67 4.66 4.66 0 0 0-1.67-1.1c-.61-.23-1.3-.4-2.31-.44-1.02-.05-1.34-.06-3.93-.06zm0 4.64a4.92 4.92 0 1 0 0 9.84 4.92 4.92 0 0 0 0-9.84zm0 8.12a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4zm6.27-8.31a1.15 1.15 0 1 1-2.3 0 1.15 1.15 0 0 1 2.3 0z",
-  x: "M17.53 3h2.82l-6.16 7.04L21.44 21h-5.68l-4.44-5.81L6.23 21H3.4l6.59-7.53L2.83 3h5.82l4.02 5.31zm-.99 16.31h1.56L7.53 4.61H5.85z",
-};
+import { useCurrentYear } from "../lib/hydration";
+import SocialMark from "./SocialMark";
 
 /* The reader's hospital, as the header stored it. `useSyncExternalStore`
    rather than state plus a listener: the header adopts a hospital page's own
@@ -40,16 +34,6 @@ function readStoredSlug() {
 
 function readDefaultSlug() {
   return getPrimaryBranch(branches.items).slug;
-}
-
-function SocialMark({ name }) {
-  const path = socialMarks[name];
-  if (!path) return null;
-  return (
-    <svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor" aria-hidden="true">
-      <path d={path} />
-    </svg>
-  );
 }
 
 function columnId(title) {
@@ -71,29 +55,69 @@ function keepCompounds(text) {
   );
 }
 
+/* The address may break after its "@" and nowhere else: on a 320px phone it is
+   wider than its cell, and with no break opportunity it ran past the card. */
+function breakAfterAt(address) {
+  const at = address.indexOf("@");
+  if (at < 0) return address;
+  return (
+    <>
+      {address.slice(0, at + 1)}
+      <wbr />
+      {address.slice(at + 1)}
+    </>
+  );
+}
+
 export default function Footer() {
   const primaryBranch = getPrimaryBranch(branches.items);
-  const helpline = site.header.emergency.phone;
+  const { emergency, opdLabel } = site.header;
   const email = primaryBranch.email;
   const { cta, contactLabels } = site.footer;
 
-  /* The hours are the reader's hospital's - the one the header stored - and
-     the row names it, because the six can differ and a figure for "the OPD"
-     with no hospital attached would be somebody else's on five pages out of
-     six. It follows the header while the reader is still on the page, the
-     way every other number on the site does. */
-  const hoursSlug = useSyncExternalStore(subscribeToBranch, readStoredSlug, readDefaultSlug);
-  const hoursBranch = branches.items.find((branch) => branch.slug === hoursSlug) ?? primaryBranch;
-  const hoursRows = getHoursRows(getBranchHours(hoursBranch)).filter((row) => row.open);
+  /* The OPD number, the hours and the WhatsApp thread are the reader's
+     hospital's - the one the header stored - and each names it, because the
+     six can differ and a figure for "the OPD" with no hospital attached would
+     be somebody else's on five pages out of six. It follows the header while
+     the reader is still on the page, the way every other number on the site
+     does. */
+  const chosenSlug = useSyncExternalStore(subscribeToBranch, readStoredSlug, readDefaultSlug);
+  const year = useCurrentYear();
+  const chosenBranch = branches.items.find((branch) => branch.slug === chosenSlug) ?? primaryBranch;
+  const chosenPhone = getPrimaryPhone(chosenBranch);
+  /* The network's own profiles once the hospital confirms them; until then the
+     reader's hospital's accounts, or the head office's where it has none. The
+     label names whose they are. */
+  const social = [
+    { owner: site.brand.name, links: confirmedProfiles(site.socialLinks) },
+    {
+      owner: `${site.brand.name} ${chosenBranch.name}`,
+      links: confirmedProfiles(chosenBranch.socialLinks),
+    },
+    {
+      owner: `${site.brand.name} ${primaryBranch.name}`,
+      links: confirmedProfiles(primaryBranch.socialLinks),
+    },
+  ].find((entry) => entry.links.length) ?? { owner: site.brand.name, links: [] };
+  const hoursRows = getHoursRows(getBranchHours(chosenBranch)).filter((row) => row.open);
   const { word: sinceWord, year: sinceYear } = splitEstablished(site.header.establishedLabel);
+
+  /* Visnagar answers its OPD on the emergency line, so there it is one number
+     under the header's combined label; any other hospital gets its own OPD row
+     beside the helpline - the header strip's rule, so the top and the foot of
+     the page never offer a number under two different names. */
+  const sharesEmergencyLine = cleanTel(chosenPhone) === cleanTel(emergency.phone);
 
   function openCookiePreferences() {
     window.dispatchEvent(new Event("aakash:open-cookie-preferences"));
   }
 
-  function scrollToTop() {
+  /* A keyboard or screen-reader press (`detail` 0) takes focus to the top as
+     well, so the next Tab starts at the skip link rather than past the footer. */
+  function scrollToTop(event) {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+    if (event.detail === 0) document.querySelector(".skip-link")?.focus({ preventScroll: true });
   }
 
   return (
@@ -111,26 +135,40 @@ export default function Footer() {
           </div>
 
           <div className="ft__reach">
-            <ul className="ft__contact">
+            {/* Network-wide first, then the reader's hospital, so in two
+                columns the second row is all one hospital and in one column
+                its number and its hours sit together. */}
+            <ul className="ft__contact" data-count={sharesEmergencyLine ? 3 : 4}>
               <li>
                 <Phone size={17} aria-hidden="true" />
                 <div>
-                  <span>{contactLabels.phone}</span>
-                  <a href={`tel:${cleanTel(helpline)}`}>{helpline}</a>
+                  <span>{sharesEmergencyLine ? emergency.combinedLabel : emergency.label}</span>
+                  <a href={`tel:${cleanTel(emergency.phone)}`}>{emergency.phone}</a>
                 </div>
               </li>
               <li>
                 <Mail size={17} aria-hidden="true" />
                 <div>
                   <span>{contactLabels.email}</span>
-                  <a href={`mailto:${email}`}>{email}</a>
+                  <a href={`mailto:${email}`}>{breakAfterAt(email)}</a>
                 </div>
               </li>
+              {sharesEmergencyLine ? null : (
+                <li>
+                  <Phone size={17} aria-hidden="true" />
+                  <div>
+                    <span>
+                      {chosenBranch.name} {opdLabel}
+                    </span>
+                    <a href={`tel:${cleanTel(chosenPhone)}`}>{chosenPhone}</a>
+                  </div>
+                </li>
+              )}
               <li>
                 <Clock size={17} aria-hidden="true" />
                 <div>
                   <span>
-                    {contactLabels.hours} · {hoursBranch.name}
+                    {contactLabels.hours} · {chosenBranch.name}
                   </span>
                   <strong>
                     {hoursRows.map((row) => (
@@ -159,7 +197,7 @@ export default function Footer() {
                 </Link>
                 <a
                   className="ft__ghost"
-                  href={buildWhatsApp(primaryBranch)}
+                  href={buildWhatsApp(chosenBranch)}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -167,12 +205,11 @@ export default function Footer() {
                   {cta.whatsappLabel}
                 </a>
               </div>
-
             </section>
 
             {navigation.footer.map((group) => (
               <nav className="ft__col" key={group.title} aria-labelledby={columnId(group.title)}>
-                <h3 id={columnId(group.title)}>{group.title}</h3>
+                <h2 id={columnId(group.title)}>{group.title}</h2>
                 <ul>
                   {group.items.map((item) => (
                     <li key={item.href}>
@@ -184,7 +221,7 @@ export default function Footer() {
             ))}
 
             <nav className="ft__col" aria-labelledby="ft-hospitals">
-              <h3 id="ft-hospitals">{site.footer.hospitalsTitle}</h3>
+              <h2 id="ft-hospitals">{site.footer.hospitalsTitle}</h2>
               <ul>
                 {branches.items.map((branch) => (
                   <li key={branch.slug}>
@@ -199,15 +236,15 @@ export default function Footer() {
           </div>
 
           <div className="ft__utility">
-            {site.socialLinks?.length ? (
+            {social.links.length ? (
               <div className="ft__social">
-                {site.socialLinks.map((link) => (
+                {social.links.map((link) => (
                   <a
                     key={link.href}
                     href={link.href}
                     target="_blank"
                     rel="noreferrer"
-                    aria-label={`${site.brand.name} on ${link.label}`}
+                    aria-label={`${social.owner} on ${link.label}`}
                   >
                     <SocialMark name={link.icon} />
                   </a>
@@ -234,7 +271,7 @@ export default function Footer() {
           <p className="ft__copy">
             <span>{site.footer.legalNote}</span>
             <span>
-              &copy; {new Date().getFullYear()} {site.footer.copyright}
+              &copy; {year} {site.footer.copyright}
             </span>
           </p>
         </div>

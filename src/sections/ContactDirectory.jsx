@@ -1,6 +1,5 @@
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { Link } from "react-router-dom";
-import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Mail, Plus, TriangleAlert } from "lucide-react";
 import { branches, site } from "../lib/coreData";
 import {
@@ -12,6 +11,7 @@ import {
 } from "../lib/contact";
 import { contactPage, mergeDesks } from "../lib/contactData";
 import { getBranchHours, getHoursRows } from "../lib/hours";
+import { useClientState } from "../lib/hydration";
 import { fillTemplate } from "../lib/servicesData";
 
 /* Every number, every hospital, as one ruled ledger.
@@ -27,10 +27,15 @@ import { fillTemplate } from "../lib/servicesData";
  * of pills were a 2600px wall on a phone, most of it numbers for hospitals
  * the reader had not chosen; folded, the six names fit one screen and the
  * hospital chosen in the switchboard is the one already open - the folds
- * follow the same stored hospital, so the two sections always agree. */
+ * follow the same stored hospital, so the two sections always agree. Wider,
+ * that hospital's row lifts off the ledger as a white card and carries the
+ * header's `Your hospital` tag, for the same reason.
+ *
+ * It arrives as the reader scrolls - the head, the emergency line and each
+ * row rise under the thumb (the scroll-driven block at the end of
+ * contact.css) - rather than fading in once, 10px, as it used to. */
 
 const { directory } = contactPage;
-const EASE = [0.22, 1, 0.36, 1];
 const STACKED_QUERY = "(max-width: 899px)";
 
 function subscribeStacked(callback) {
@@ -54,11 +59,12 @@ function deskLines(branch) {
   );
 }
 
-function RowName({ branch }) {
+function RowName({ branch, chosen }) {
   return (
     <>
       <span className="ct-row__city">
         {branch.name}
+        {chosen ? <em className="ct-row__yours">{directory.chosenTag}</em> : null}
         {branch.isHeadquarters ? <em>{directory.headOfficeTag}</em> : null}
       </span>
       <span className="ct-row__where">{branch.locality}</span>
@@ -67,27 +73,47 @@ function RowName({ branch }) {
 }
 
 export default function ContactDirectory() {
-  const shouldReduceMotion = useReducedMotion();
   const stacked = useSyncExternalStore(subscribeStacked, readStacked, () => false);
   const items = branches.items;
   const emergency = site.header.emergency;
   const email = getPrimaryBranch(items).email;
-  const [chosen, setChosen] = useState(() => getStoredBranch(items));
-  const [openSlugs, setOpenSlugs] = useState(() => new Set([chosen.slug]));
+  /* The reader's hospital - and the fold that opens on it - arrives as React
+     adopts the page; the prerendered ledger opens on the head office. */
+  const [chosen, setChosen] = useClientState(() => getStoredBranch(items), getPrimaryBranch(items));
+  const [openSlugs, setOpenSlugs] = useClientState(
+    () => new Set([getStoredBranch(items).slug]),
+    new Set([getPrimaryBranch(items).slug]),
+  );
+  const chosenSlug = useRef(chosen.slug);
+
+  useEffect(() => {
+    chosenSlug.current = chosen.slug;
+  }, [chosen]);
 
   /* The hospital chosen in the switchboard opens its fold here too, and the
      hours at the foot are its own - the six can differ, so the foot names the
-     hospital it is describing rather than stating one figure for all. */
+     hospital it is describing rather than stating one figure for all. The
+     open fold moves with the choice rather than adding to it: a reader
+     tapping through the six to compare them was left with the whole ledger
+     open, the wall the folds exist to avoid. A fold they opened themselves
+     stays open. */
   useEffect(() => {
     const follow = (event) => {
       const next = items.find((item) => item.slug === event.detail);
       if (!next) return;
+      const previous = chosenSlug.current;
+      chosenSlug.current = next.slug;
       setChosen(next);
-      setOpenSlugs((open) => (open.has(next.slug) ? open : new Set([...open, next.slug])));
+      setOpenSlugs((open) => {
+        const moved = new Set(open);
+        if (previous !== next.slug) moved.delete(previous);
+        moved.add(next.slug);
+        return moved;
+      });
     };
     window.addEventListener(BRANCH_CHANGE_EVENT, follow);
     return () => window.removeEventListener(BRANCH_CHANGE_EVENT, follow);
-  }, [items]);
+  }, [items, setChosen, setOpenSlugs]);
 
   const toggle = (slug, isOpen) => {
     setOpenSlugs((open) => {
@@ -98,13 +124,6 @@ export default function ContactDirectory() {
       return next;
     });
   };
-
-  const reveal = (delay = 0) => ({
-    initial: shouldReduceMotion ? false : { opacity: 0, y: 14 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true, amount: 0.25 },
-    transition: shouldReduceMotion ? { duration: 0 } : { duration: 0.5, ease: EASE, delay },
-  });
 
   return (
     <section className="e-sec e-sec--paper ct-dir" aria-labelledby="ct-dir-title">
@@ -119,76 +138,89 @@ export default function ContactDirectory() {
           </div>
         </header>
 
-        <motion.a className="ct-urgent" href={`tel:${cleanTel(emergency.phone)}`} {...reveal()}>
+        <a className="ct-urgent" href={`tel:${cleanTel(emergency.phone)}`}>
           <span className="ct-urgent__mark" aria-hidden="true">
             <TriangleAlert size={20} />
           </span>
           <span className="ct-urgent__label">{directory.emergencyLabel}</span>
           <span className="ct-urgent__number">{emergency.phone}</span>
           <span className="ct-urgent__note">{directory.emergencyNote}</span>
-        </motion.a>
+        </a>
 
         <ul className="ct-ledger">
-          {items.map((branch, position) => (
-            <motion.li className="ct-row" key={branch.slug} {...reveal(position * 0.05)}>
-              {stacked ? (
-                <details
-                  className="ct-fold"
-                  open={openSlugs.has(branch.slug)}
-                  onToggle={(event) => toggle(branch.slug, event.currentTarget.open)}
-                >
-                  <summary className="ct-fold__summary">
-                    <span className="ct-row__name">
-                      <RowName branch={branch} />
-                    </span>
-                    <span className="ct-fold__mark" aria-hidden="true">
-                      <Plus size={18} />
-                    </span>
-                  </summary>
-                  <div className="ct-fold__body">
-                    {deskLines(branch).map((line) => (
-                      <a className="ct-line" href={`tel:${cleanTel(line.number)}`} key={line.key}>
-                        <span className="ct-line__label">{line.label}</span>
-                        <span className="ct-line__number">{line.number}</span>
-                      </a>
-                    ))}
-                    <Link className="ct-line ct-line--go" to={buildBranchHref(branch)}>
-                      <span className="ct-line__label">{directory.openLabel}</span>
-                      <ArrowUpRight size={16} aria-hidden="true" />
+          {items.map((branch) => {
+            const isChosen = branch.slug === chosen.slug;
+            const lines = stacked ? deskLines(branch) : [];
+            return (
+              <li className="ct-row" key={branch.slug} data-chosen={isChosen ? "true" : undefined}>
+                {stacked ? (
+                  <details
+                    className="ct-fold"
+                    open={openSlugs.has(branch.slug)}
+                    onToggle={(event) => toggle(branch.slug, event.currentTarget.open)}
+                  >
+                    <summary className="ct-fold__summary">
+                      <span className="ct-row__name">
+                        <RowName branch={branch} chosen={isChosen} />
+                      </span>
+                      <span className="ct-fold__mark" aria-hidden="true">
+                        <Plus size={18} />
+                      </span>
+                    </summary>
+                    <div className="ct-fold__body">
+                      {lines.map((line, index) => (
+                        <a
+                          className="ct-line"
+                          href={`tel:${cleanTel(line.number)}`}
+                          key={line.key}
+                          style={{ "--i": index }}
+                        >
+                          <span className="ct-line__label">{line.label}</span>
+                          <span className="ct-line__number">{line.number}</span>
+                        </a>
+                      ))}
+                      <Link
+                        className="ct-line ct-line--go"
+                        to={buildBranchHref(branch)}
+                        style={{ "--i": lines.length }}
+                      >
+                        <span className="ct-line__label">{directory.openLabel}</span>
+                        <ArrowUpRight size={16} aria-hidden="true" />
+                      </Link>
+                    </div>
+                  </details>
+                ) : (
+                  <>
+                    <Link className="ct-row__name" to={buildBranchHref(branch)}>
+                      <RowName branch={branch} chosen={isChosen} />
+                      <span className="ct-row__go" aria-hidden="true">
+                        {directory.openLabel}
+                        <ArrowUpRight size={15} />
+                      </span>
                     </Link>
-                  </div>
-                </details>
-              ) : (
-                <>
-                  <Link className="ct-row__name" to={buildBranchHref(branch)}>
-                    <RowName branch={branch} />
-                    <span className="ct-row__go" aria-hidden="true">
-                      {directory.openLabel}
-                      <ArrowUpRight size={15} />
-                    </span>
-                  </Link>
 
-                  <div className="ct-row__desks">
-                    {mergeDesks(branch.phoneGroups).map((group) => (
-                      <div className="ct-deskline" key={group.label}>
-                        <span className="ct-deskline__label">{group.label}</span>
-                        <span className="ct-deskline__numbers">
-                          {group.numbers.map((number) => (
-                            <a className="ct-num" href={`tel:${cleanTel(number)}`} key={number}>
-                              {number}
-                            </a>
-                          ))}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
-            </motion.li>
-          ))}
+                    <div className="ct-row__desks">
+                      {mergeDesks(branch.phoneGroups).map((group) => (
+                        <div className="ct-deskline" key={group.label}>
+                          <span className="ct-deskline__label">{group.label}</span>
+                          <span className="ct-deskline__numbers">
+                            {group.numbers.map((number) => (
+                              <a className="ct-num" href={`tel:${cleanTel(number)}`} key={number}>
+                                {number}
+                              </a>
+                            ))}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </li>
+            );
+          })}
         </ul>
 
-        <motion.div className="ct-foot" {...reveal()}>
+        <div className="ct-foot">
           <div className="ct-foot__cell">
             <span className="e-label">{directory.emailLabel}</span>
             <a className="ct-foot__mail" href={`mailto:${email}`}>
@@ -213,7 +245,7 @@ export default function ContactDirectory() {
               {fillTemplate(directory.hoursNote, { branch: chosen.name })}
             </span>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

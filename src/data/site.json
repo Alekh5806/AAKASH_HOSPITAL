@@ -6,28 +6,154 @@
     "logo": "/assets/logo.svg",
     "logoLight": "/assets/logo-light.svg",
     "logoRaster": "/assets/logo.png",
-    "logoAlt": "Aakash Eye Hospital logo"
+    "logoRasterWidth": 720,
+    "logoRasterHeight": 240,
+    "logoAlt": "Aakash Eye Hospital logo",
+    "languages": ["English", "Gujarati", "Hindi"],
+    "alternateNames": ["Akash Eye Hospital"]
   },
   "defaultSeo": {
-    "title": "Aakash Eye Hospital | Eye Care in Visnagar, Ahmedabad and Bharuch",
-    "description": "Aakash Eye Hospital is a multi-branch eye care hospital in Gujarat offering cataract, LASIK, retina, glaucoma and general ophthalmology services.",
-    "image": "/assets/media/heroes/bladeless-robotic-laser-surgery.jpg",
-    "url": "https://aakasheyehospital.com/"
+    "title": "Eye Hospital in Gujarat Since 1993 | Aakash Eye Hospital",
+    "description": "Aakash Eye Hospital is a network of six eye hospitals in Gujarat, founded in Visnagar in 1993, with hospitals in Ahmedabad, Gota, Juhapura, Himmatnagar and Bharuch.",
+    "image": "/assets/media/branches/visnagar/facade-1000.jpg",
+    "imageAlt": "The Aakash Eye Hospital building in Visnagar, with the Gujarati signboard over the entrance",
+    "url": "https://www.aakasheyehospital.com/"
+  },
+  "verification": {
+    "google": "",
+    "bing": ""
   },
   "pageSeo": {
     "aboutJourney": {
-      "title": "Our Journey | Aakash Eye Hospital Since 1993",
-      "description": "The Aakash Eye Hospital story since 1993: phaco cataract surgery, excimer laser, retina diagnostics and growth into an eye care network across Gujarat."
+      "title": "Our Journey Since 1993 | Aakash Eye Hospital",
+      "description": "How Aakash Eye Hospital grew from one Visnagar clinic in 1993: phaco cataract surgery from 1995, laser vision correction from 2009, Ahmedabad from 2014."
     },
     "aboutVision": {
       "title": "Vision, Mission and Core Values | Aakash Eye Hospital",
-      "description": "The mission, vision and core values behind Aakash Eye Hospital: affordable, technology-led ophthalmic care of international standards for all sections of society."
-    },
-    "notFound": {
-      "title": "Page Not Found | Aakash Eye Hospital",
-      "description": "The page you are looking for could not be found.",
-      "robots": "noindex, follow"
+      "description": "The mission, vision and core values behind Aakash Eye Hospital: only the care each patient truly needs, affordable and ethical, one standard everywhere."
     }
+  },
+  "notFound": {
+    "seo": {
+      "title": "Page Not Found | Aakash Eye Hospital",
+      "description": "This address is not a page on the Aakash Eye Hospital website. Find a treatment, a doctor or one of the six hospitals from here.",
+      "robots": "noindex, follow"
+    },
+    "label": "Error 404",
+    "title": "We could not find",
+    "titleAccent": "that page.",
+    "lede": "The link may be out of date, or the address may have a small typing mistake. Everything else on the site is still here.",
+    "triedLabel": "You opened",
+    "bookLabel": "Book an appointment",
+    "homeLabel": "Go to the home page",
+    "homeShortLabel": "Home page",
+    "matches": {
+      "title": "Were you looking for this?",
+      "titleMany": "Were you looking for one of these?",
+      "kinds": {
+        "service": "Treatment",
+        "doctor": "Doctor",
+        "branch": "Hospital",
+        "page": "Page"
+      },
+      "doctorDetail": "{specialty} at {hospitals}."
+    },
+    "ways": {
+      "title": "Where would you like to go?",
+      "titleAfterMatches": "Or go straight to"
+    },
+    "pages": [
+      {
+        "to": "/services",
+        "way": true,
+        "description": "{services} treatments, from cataract surgery to emergency eye care.",
+        "keywords": [
+          "services",
+          "service",
+          "treatment",
+          "treatments",
+          "procedures",
+          "specialities",
+          "specialties",
+          "departments"
+        ]
+      },
+      {
+        "to": "/doctors",
+        "way": true,
+        "description": "{specialists} specialists across {hospitals} hospitals.",
+        "keywords": [
+          "doctors",
+          "doctor",
+          "team",
+          "specialists",
+          "surgeons",
+          "consultants",
+          "staff",
+          "ophthalmologist",
+          "ophthalmologists"
+        ]
+      },
+      {
+        "to": "/branches",
+        "way": true,
+        "description": "{names}.",
+        "keywords": [
+          "branches",
+          "branch",
+          "hospital",
+          "hospitals",
+          "locations",
+          "location",
+          "centres",
+          "centers",
+          "gallery",
+          "photos",
+          "address",
+          "map",
+          "directions"
+        ]
+      },
+      {
+        "to": "/contact",
+        "way": true,
+        "description": "Every desk number at every hospital.",
+        "keywords": [
+          "contact",
+          "contacts",
+          "phone",
+          "call",
+          "email",
+          "enquiry",
+          "inquiry",
+          "reach",
+          "whatsapp"
+        ]
+      },
+      {
+        "to": "/appointment",
+        "title": "Book an appointment",
+        "description": "Send a request on WhatsApp and the hospital confirms a slot.",
+        "keywords": [
+          "appointment",
+          "appointments",
+          "book",
+          "booking",
+          "schedule",
+          "opd",
+          "consultation",
+          "register"
+        ]
+      },
+      {
+        "to": "/about/journey",
+        "keywords": ["about", "journey", "history", "story", "founded", "milestones", "profile"]
+      },
+      {
+        "to": "/about/vision",
+        "keywords": ["vision", "mission", "values"]
+      }
+    ]
   },
   "globalCtas": {
     "primary": {
@@ -57,23 +183,38 @@
       "allLabel": "View all hospitals",
       "menuHint": "Sets the number you call and the branch we book you into.",
       "changeLabel": "Change"
+    },
+    "drawer": {
+      "label": "Site menu",
+      "closeLabel": "Close menu",
+      "pickerCloseLabel": "Close the hospital list",
+      "callLabel": "Call OPD",
+      "whatsappLabel": "WhatsApp",
+      "directionsLabel": "Directions",
+      "headOfficeLabel": "Head office",
+      "openUntil": "OPD open until {time}",
+      "opensAt": "OPD opens {time}",
+      "closedTodayLabel": "OPD closed today"
     }
   },
   "socialLinks": [
     {
       "label": "Facebook",
       "icon": "facebook",
-      "href": "https://www.facebook.com/aakasheyehospital"
+      "href": "https://www.facebook.com/AakashEyeCareHospital/",
+      "unconfirmed": true
     },
     {
       "label": "Instagram",
       "icon": "instagram",
-      "href": "https://www.instagram.com/aakasheyehospital"
+      "href": "https://www.instagram.com/aakash_eyehospital/",
+      "unconfirmed": true
     },
     {
       "label": "X",
       "icon": "x",
-      "href": "https://x.com/aakasheyehosp"
+      "href": "https://x.com/aakashehospital",
+      "unconfirmed": true
     }
   ],
   "footer": {
@@ -86,7 +227,6 @@
       "whatsappLabel": "Ask on WhatsApp"
     },
     "contactLabels": {
-      "phone": "OPD and emergency helpline",
       "email": "Email",
       "hours": "OPD hours"
     },
@@ -96,8 +236,7 @@
       "Every treatment decision here follows an examination and a conversation with your surgeon that covers the alternatives, the risks and the expected recovery. Consultation and procedure charges depend on the tests you need, the lens or technology chosen, and any insurance or scheme cover, so please ask the OPD desk for a written estimate before a procedure is scheduled."
     ],
     "legalNote": "Aakash Eye Hospital, Visnagar - registered ophthalmic hospital operating since 8 August 1993.",
-    "copyright": "Aakash Eye Hospital. All rights reserved.",
-    "sourceNote": "Seed content references the legacy website at https://aakasheyehospital.com/ and the project brief."
+    "copyright": "Aakash Eye Hospital. All rights reserved."
   },
   "cookies": {
     "banner": {
@@ -123,28 +262,26 @@
     "categories": [
       {
         "id": "necessary",
-        "icon": "ShieldCheck",
         "title": "Necessary",
         "summary": "Keeps the website working and remembers your cookie choice. These cannot be switched off.",
         "lockedLabel": "Always on",
         "items": [
           "aakash_cookie_preferences - stores the choice you make here for 180 days.",
+          "aakash_selected_branch (this visit) - keeps the hospital you choose while you browse, and is cleared when you close the tab.",
+          "aakash_intro_seen - plays the opening animation once per visit, and is cleared when you close the tab.",
           "Security and page-delivery cookies set while you use the site."
         ]
       },
       {
         "id": "experience",
-        "icon": "MapPinned",
         "title": "Website experience",
-        "summary": "Remembers the hospital you selected so the right OPD number and directions show on every page.",
+        "summary": "Remembers the hospital you choose for your next visit, so its OPD number and directions are ready from the first page.",
         "items": [
-          "aakash_selected_branch - remembers your chosen hospital on this device.",
-          "aakash_intro_seen - skips the opening animation for the rest of your visit."
+          "aakash_selected_branch - keeps your chosen hospital on this device between visits."
         ]
       },
       {
         "id": "analytics",
-        "icon": "Gauge",
         "title": "Analytics",
         "summary": "Lets us count page visits so we can see which treatment pages patients need most. Off unless you turn it on.",
         "items": [
@@ -152,7 +289,8 @@
           "No analytics cookie is set on your device while this stays off."
         ]
       }
-    ]
+    ],
+    "savedMessage": "Your cookie choice is saved."
   },
   "notes": [
     "Business hours are placeholder values and should be verified with the hospital.",

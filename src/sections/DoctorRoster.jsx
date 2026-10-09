@@ -1,20 +1,79 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import SmartImage from "../components/SmartImage";
-import { doctorsPage, getDoctorHospitals, groupDoctors } from "../lib/doctorsData";
+import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import DoctorPortrait from "../components/DoctorPortrait";
+import DoctorPlaces from "../components/DoctorPlaces";
+import {
+  describeInterests,
+  doctorsPage,
+  fillTemplate,
+  getDoctorPlaces,
+  getRosterHospitals,
+  groupDoctors,
+  hasProfile,
+  profileHref,
+  seesPatientsAt,
+} from "../lib/doctorsData";
 
 const copy = doctorsPage;
 const EASE = [0.22, 1, 0.36, 1];
 const ALL = "all";
 const PHONE = "(max-width: 640px)";
+/* The cards on the first screen wait for the head and the filter above them,
+   so the page reads top to bottom as it arrives. Cards reached later by
+   scrolling, or brought in by a choice, arrive at once. */
+const FIRST_SCREEN_LEAD = 0.38;
+const FIRST_SCREEN_MS = 700;
 
-/* Not imported from servicesData: that module pulls services.json in with it,
-   and this route has no other reason to carry the eleven services. */
-function fill(template, values) {
-  return template.replace(/\{(\w+)\}/g, (token, key) =>
-    key in values ? String(values[key]) : token,
-  );
-}
+/* The label and the readout rise after the head; the chips follow one by
+   one, so the control assembles rather than appearing whole. `delay` is the
+   head's own, so the order holds after the curtain too. */
+const bar = (delay) => ({
+  hidden: {},
+  shown: { transition: { staggerChildren: 0.06, delayChildren: delay + 0.2 } },
+});
+
+const CHIPS = {
+  hidden: {},
+  shown: { transition: { staggerChildren: 0.05, delayChildren: 0.02 } },
+};
+
+const RISE = {
+  hidden: { opacity: 0, y: 12 },
+  shown: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } },
+};
+
+/* A card rises, then its portrait settles in the frame and its words come up
+   behind it. `shown` is resolved when the card reaches the screen, not when
+   it renders, so the first-screen lead is read at that moment. */
+const CARD = {
+  hidden: { opacity: 0, y: 20 },
+  shown: ({ position, lead }) => {
+    const delay = lead + Math.min(position, 3) * 0.07;
+    return {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: EASE,
+        delay,
+        delayChildren: delay + 0.08,
+        staggerChildren: 0.06,
+      },
+    };
+  },
+};
+
+const SETTLE = {
+  hidden: { scale: 1.14 },
+  shown: { scale: 1, transition: { duration: 1.2, ease: EASE } },
+};
+
+const LINE = {
+  hidden: { opacity: 0, y: 10 },
+  shown: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
+};
 
 /* The whole team, and one question narrowing it: which hospital.
  *
@@ -30,29 +89,40 @@ function fill(template, values) {
  * to scroll back to, and a choice made with the list already scrolled brings
  * the readout back up with it.
  *
- * The answer is read in two runs - the consultants, then the optometry team -
- * because on a medical site who is a doctor and who is an optometrist is not
- * a detail, and a run with nobody in it is not rendered rather than rendered
- * empty. */
-export default function DoctorRoster({ items }) {
+ * The answer is read in three runs - the consultants, the visiting
+ * specialists, then the optometry team - because on a medical site who is a
+ * doctor and who is an optometrist is not a detail, and a specialist who only
+ * holds clinics on set days is not someone a patient can walk in and see. A
+ * doctor's run is decided from the hospital chosen: one who is resident at
+ * Ahmedabad and visits Visnagar is a consultant under Ahmedabad and a visiting
+ * specialist under Visnagar. A run with nobody in it is not rendered. */
+export default function DoctorRoster({ items, ready, delay = 0 }) {
   const shouldReduceMotion = useReducedMotion();
+  const play = ready && !shouldReduceMotion;
   const [choice, setChoice] = useState(ALL);
+  const [arrived, setArrived] = useState(false);
   const chips = useRef({});
   const rosterRef = useRef(null);
   const railRef = useRef(null);
 
-  const hospitals = getDoctorHospitals();
+  const hospitals = getRosterHospitals();
   const options = [{ slug: ALL, name: copy.allLabel, count: items.length }, ...hospitals];
   const chosen = hospitals.find((hospital) => hospital.slug === choice) ?? null;
-  const shown = chosen ? items.filter((doctor) => doctor.branches.includes(chosen.name)) : items;
-  const runs = groupDoctors(shown);
+  const shown = chosen ? items.filter((doctor) => seesPatientsAt(doctor, chosen.name)) : items;
+  const runs = groupDoctors(shown, chosen?.name);
   const status = chosen
-    ? fill(copy.statusFiltered, {
+    ? fillTemplate(copy.statusFiltered, {
         count: shown.length,
         total: items.length,
         branch: chosen.name,
       })
-    : fill(copy.statusAll, { total: items.length });
+    : fillTemplate(copy.statusAll, { total: items.length });
+
+  useEffect(() => {
+    if (!ready) return undefined;
+    const timer = window.setTimeout(() => setArrived(true), FIRST_SCREEN_MS);
+    return () => window.clearTimeout(timer);
+  }, [ready]);
 
   /* The rail's ends are faded only where there is something past them, the
      doctor rail's device - a fade at an end the reader has already reached
@@ -103,7 +173,11 @@ export default function DoctorRoster({ items }) {
     const roster = rosterRef.current;
     const rail = railRef.current;
     if (!roster || !rail || !window.matchMedia(PHONE).matches) return;
-    if (roster.getBoundingClientRect().top >= rail.getBoundingClientRect().top) return;
+    /* Stuck is the rail sitting on its sticky offset. The roster's own top is
+       no test: the readout sits above the rail in the flow, so it is always
+       higher, and a first tap at the top of the page moved it 95px. */
+    const stuckAt = parseFloat(window.getComputedStyle(rail).top) || 0;
+    if (rail.getBoundingClientRect().top > stuckAt + 1) return;
     roster.scrollIntoView({
       block: "start",
       behavior: shouldReduceMotion ? "auto" : "smooth",
@@ -131,8 +205,13 @@ export default function DoctorRoster({ items }) {
 
   return (
     <div className="dr-roster" ref={rosterRef}>
-      <div className="dr-bar">
-        <div className="dr-bar__read">
+      <motion.div
+        className="dr-bar"
+        initial={shouldReduceMotion ? false : "hidden"}
+        animate={play || shouldReduceMotion ? "shown" : "hidden"}
+        variants={bar(delay)}
+      >
+        <motion.div className="dr-bar__read" variants={RISE}>
           <span className="e-label" id="dr-filter-label">
             {copy.filterLabel}
           </span>
@@ -149,14 +228,15 @@ export default function DoctorRoster({ items }) {
               </motion.span>
             </AnimatePresence>
           </p>
-        </div>
+        </motion.div>
 
-        <div
+        <motion.div
           className="dr-filter"
           ref={railRef}
           role="radiogroup"
           aria-labelledby="dr-filter-label"
           onKeyDown={onKeyDown}
+          variants={CHIPS}
         >
           {options.map((option) => {
             const checked = option.slug === choice;
@@ -174,6 +254,7 @@ export default function DoctorRoster({ items }) {
                 }}
                 onClick={() => choose(option.slug)}
                 onFocus={revealChip}
+                variants={RISE}
                 whileTap={shouldReduceMotion ? undefined : { scale: 0.96 }}
               >
                 {checked ? (
@@ -193,73 +274,138 @@ export default function DoctorRoster({ items }) {
               </motion.button>
             );
           })}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
-      {runs.map((run) => (
-        <section className="dr-run" key={run.id} aria-labelledby={`dr-run-${run.id}`}>
-          <h2 className="dr-run__head" id={`dr-run-${run.id}`}>
-            {run.label}
-            <span className="dr-run__count">{run.people.length}</span>
-          </h2>
+      {/* A run that empties fades out rather than vanishing, and one that
+          comes back fades in; the cards inside arrive on their own. A run
+          glides to its new place with the cards rather than jumping ahead
+          of them, and so does the page's foot (DoctorsPage) - a foot that
+          jumped up let a card on its way from the second row slide across
+          `Book an appointment`. */}
+      <AnimatePresence mode="popLayout" initial={false}>
+        {runs.map((run) => (
+          <motion.section
+            className="dr-run"
+            key={run.id}
+            aria-labelledby={`dr-run-${run.id}`}
+            layout={shouldReduceMotion ? false : "position"}
+            initial={shouldReduceMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{
+              duration: shouldReduceMotion ? 0 : 0.26,
+              ease: EASE,
+              layout: { duration: 0.46, ease: EASE },
+            }}
+          >
+            <h2 className="dr-run__head" id={`dr-run-${run.id}`}>
+              {run.label}{" "}
+              {/* The count turns over with the choice, so the heading is seen
+                to answer it rather than silently changing. */}
+              <span className="dr-run__count">
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.span
+                    key={run.people.length}
+                    initial={shouldReduceMotion ? false : { opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                    transition={{ duration: shouldReduceMotion ? 0 : 0.2, ease: EASE }}
+                  >
+                    {run.people.length}
+                  </motion.span>
+                </AnimatePresence>
+              </span>
+            </h2>
+            {run.note ? <p className="dr-run__note">{run.note}</p> : null}
 
-          <motion.ul className="dr-grid" layout={!shouldReduceMotion}>
-            {/* No `initial={false}` here: it suppresses the entrance for the
+            {/* The list itself carries no layout animation: it has no
+                ground of its own to show, and resizing it scaled the cards
+                inside toward its middle for a frame or two. */}
+            <ul className="dr-grid">
+              {/* No `initial={false}` here: it suppresses the entrance for the
                 cards present on the first render, which is every card on the
                 page, and the whole list arrived already there. */}
-            <AnimatePresence mode="popLayout">
-              {run.people.map((doctor, position) => (
-                <motion.li
-                  className="dr-card"
-                  key={doctor.name}
-                  layout={!shouldReduceMotion}
-                  initial={shouldReduceMotion ? false : { opacity: 0, y: 18, scale: 0.98 }}
-                  /* Each card rises as it reaches the screen rather than on
+              <AnimatePresence mode="popLayout">
+                {run.people.map((doctor, position) => (
+                  <motion.li
+                    className="dr-card"
+                    key={doctor.name}
+                    layout={!shouldReduceMotion}
+                    custom={{ position, lead: arrived ? 0 : delay + FIRST_SCREEN_LEAD }}
+                    variants={CARD}
+                    initial={shouldReduceMotion ? false : "hidden"}
+                    /* Each card rises as it reaches the screen rather than on
                      mount: on a phone the run is two and a half screens long,
                      so a mount-time entrance is spent on cards nobody has
-                     scrolled to yet and the rest of the list is simply there. */
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  viewport={{ once: true, amount: 0.25 }}
-                  exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.94 }}
-                  transition={{
-                    duration: shouldReduceMotion ? 0 : 0.46,
-                    ease: EASE,
-                    delay: shouldReduceMotion ? 0 : Math.min(position, 3) * 0.05,
-                  }}
-                >
-                  <div className="dr-card__media">
-                    <SmartImage
-                      className="dr-card__img"
-                      src={doctor.photo}
-                      alt={doctor.photoAlt}
-                      loading={position < 4 ? "eager" : "lazy"}
-                      sizes="(min-width: 1024px) 22vw, (min-width: 641px) 30vw, 104px"
-                    />
-                  </div>
+                     scrolled to yet and the rest of the list is simply there.
+                     Not before the curtain has lifted, either.
+                     The trigger is a distance, not a share: a card whose top
+                     is 24px inside the fold (44px with its 20px start offset)
+                     rises. A quarter of a 470px desktop card is 117px of
+                     blank ground at the fold before anything starts. */
+                    whileInView={play ? "shown" : undefined}
+                    viewport={{ once: true, margin: "0px 0px -24px 0px" }}
+                    exit={
+                      shouldReduceMotion
+                        ? { opacity: 0, transition: { duration: 0 } }
+                        : { opacity: 0, scale: 0.94, transition: { duration: 0.3, ease: EASE } }
+                    }
+                    transition={{ layout: { duration: 0.46, ease: EASE } }}
+                  >
+                    <div className="dr-card__media">
+                      <motion.div className="dr-card__frame" variants={SETTLE}>
+                        <DoctorPortrait
+                          doctor={doctor}
+                          className="dr-card__img"
+                          loading={position < 4 ? "eager" : "lazy"}
+                          sizes="(min-width: 641px) 120px, 104px"
+                        />
+                      </motion.div>
+                    </div>
 
-                  <div className="dr-card__body">
-                    <span className="dr-card__specialty">{doctor.specialty}</span>
-                    {/* Some records carry the specialty as the qualification
-                        too - `Medical Officer, Medical Officer` is the same
-                        words twice. */}
-                    <h3 className="dr-card__name">
-                      {doctor.name}
-                      {doctor.qualifications && doctor.qualifications !== doctor.specialty ? (
-                        <span className="dr-card__quals">{doctor.qualifications}</span>
+                    <div className="dr-card__body">
+                      <motion.span className="dr-card__specialty" variants={LINE}>
+                        {doctor.specialty}
+                      </motion.span>
+                      <motion.h3 className="dr-card__name" variants={LINE}>
+                        {hasProfile(doctor) ? (
+                          <Link className="dr-card__link" to={profileHref(doctor)}>
+                            {doctor.name}
+                          </Link>
+                        ) : (
+                          doctor.name
+                        )}
+                        {doctor.qualifications ? " " : null}
+                        {doctor.qualifications ? (
+                          <span className="dr-card__quals">{doctor.qualifications}</span>
+                        ) : null}
+                      </motion.h3>
+                      {doctor.interests?.length ? (
+                        <motion.p className="dr-card__text" variants={LINE}>
+                          {describeInterests(doctor)}
+                        </motion.p>
                       ) : null}
-                    </h3>
-                    {/* No hospital row under the sentence: every `highlight`
-                        opens by naming the hospital, so a labelled line
-                        repeating it would be the same words twice - the call
-                        the landing rail's cards already make. */}
-                    <p className="dr-card__text">{doctor.highlight ?? doctor.bio}</p>
-                  </div>
-                </motion.li>
-              ))}
-            </AnimatePresence>
-          </motion.ul>
-        </section>
-      ))}
+                      {/* Where and when, on the card's foot: the same lines
+                        under every choice, so a card that moves between runs
+                        never changes what it says on the way. */}
+                      <motion.div className="dr-card__where" variants={LINE}>
+                        <DoctorPlaces lines={getDoctorPlaces(doctor)} />
+                        {hasProfile(doctor) ? (
+                          <span className="dr-card__more" aria-hidden="true">
+                            {copy.profile.moreLabel}
+                            <ArrowRight size={14} />
+                          </span>
+                        ) : null}
+                      </motion.div>
+                    </div>
+                  </motion.li>
+                ))}
+              </AnimatePresence>
+            </ul>
+          </motion.section>
+        ))}
+      </AnimatePresence>
     </div>
   );
 }

@@ -2,6 +2,37 @@
    Home page - Editorial Clinical
    ========================================================================= */
 
+/* ------------------------------------------------------------- SHEETS -- */
+
+/* The page changes ground twice - from the film to paper, and from paper to
+   the navy patient wall - and both times the section after the change is a
+   sheet laid over the foot of the one before it, with rounded shoulders and a
+   shadow cast back onto what it covers. A flat edge between two bands reads as
+   two pages stacked; a sheet reads as one surface sliding over another, which
+   is what the scroll motion at the end of this file plays out. The section
+   under the sheet is extended by the radius, so the sheet's top edge - not the
+   section's bottom - is where the first screen ends. */
+.e-hero,
+.e-impact,
+.e-voices {
+  --sheet-r: clamp(22px, 2.4vw, 34px);
+}
+
+.e-impact,
+.e-voices {
+  z-index: 1;
+  margin-top: calc(var(--sheet-r) * -1);
+  border-radius: var(--sheet-r) var(--sheet-r) 0 0;
+}
+
+.e-impact {
+  box-shadow: 0 -22px 48px -20px rgba(5, 18, 31, 0.55);
+}
+
+.e-voices {
+  box-shadow: 0 -22px 48px -22px rgba(12, 44, 73, 0.4);
+}
+
 /* ---------------------------------------------------------------- HERO -- */
 
 /* Desktop/tablet: the film is full-bleed and the copy sits over the dark left
@@ -16,7 +47,7 @@
   flex-direction: column;
   justify-content: flex-end;
   /* The hero owns the first screen: exactly the viewport minus the header at
-     rest, at every size. Sized by a share of the viewport it left a strip of
+     rest, at every size, plus the radius the numbers sheet overlaps it by. Sized by a share of the viewport it left a strip of
      the next section's empty top padding showing under the stat band - 43px
      on a 390x844 phone, 79px on a 1080p monitor - and a blank strip of paper
      under a navy band is not a "peek", it is a gap. svh is the viewport with
@@ -26,20 +57,36 @@
      The header's glass capsule floats on the film (`.hd[data-over]` pulls
      the hero up under it), so the hero is the whole screen less only the
      desktop strip above it - --hd-strip-h from header.css, 0 on phones. */
-  min-height: calc(100vh - var(--hd-strip-h));
-  min-height: calc(100svh - var(--hd-strip-h));
+  min-height: calc(100vh - var(--hd-strip-h) + var(--sheet-r));
+  min-height: calc(100svh - var(--hd-strip-h) + var(--sheet-r));
+  /* The foot the numbers sheet lies over: film under its rounded corners,
+     never copy. */
+  padding-bottom: var(--sheet-r);
   overflow: hidden;
   background: var(--e-navy);
   color: #fff;
+  /* The space under the copy and the figures, shared with the pause control
+     so it can sit on their row. */
+  --hero-foot: clamp(34px, 4vw, 56px);
+  --hero-stat-gap: clamp(18px, 2vw, 30px);
 }
 
-/* z-index 0 rather than -1: the pause control lives inside the media so it can
-   sit in the corner of the film at every width, and a negative layer would put
-   it behind the section and out of reach of the pointer. */
+/* Cream, not the site's magenta ring: magenta on the film's navy is barely
+   3:1, and every control here sits on the film. */
+.e-hero :focus-visible {
+  outline-color: #fbf7ef;
+}
+
+/* No z-index of its own, so it makes no stacking context: the pause control
+   lives in here to sit on the film, and its z-index 2 has to compete in the
+   section's own stack to rise above the copy (z-index 1). With `z-index: 0`
+   here the whole media layer, control included, sat under the copy's box -
+   the copy's bottom padding on phones and the shell on wider screens - and
+   no tap or click ever reached the control. The film and the scrim still
+   paint under the copy, in source order. */
 .e-hero__media {
   position: absolute;
   inset: 0;
-  z-index: 0;
 }
 
 .e-hero__video {
@@ -54,16 +101,7 @@
 .e-hero__scrim {
   position: absolute;
   inset: 0;
-  /* The first layer is the header's: a shade across the top of the film, so
-     the capsule's white links keep their contrast over the skylight and the
-     exam-room ceiling, which are the brightest frames in the loop. */
   background:
-    linear-gradient(
-      180deg,
-      rgba(5, 18, 31, 0.62) 0,
-      rgba(5, 18, 31, 0.3) calc(var(--hd-height) + 10px),
-      rgba(5, 18, 31, 0) calc(var(--hd-height) + 90px)
-    ),
     linear-gradient(
       96deg,
       rgba(5, 18, 31, 0.95) 0%,
@@ -80,12 +118,36 @@
     );
 }
 
-/* Pause/play. Sits in the bottom-right corner of the film, clear of the stat
-   row, and stays a 44px target even though the glyph is small. */
+/* The header's shade: the capsule's white links keep their contrast over the
+   skylight and the exam-room ceiling, the brightest frames in the loop. It is
+   its own layer rather than the scrim's first gradient because the film sinks
+   as the page scrolls (see the scroll choreography at the end of this file)
+   and this has to stay under the header while it does. */
+.e-hero__shade {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: calc(var(--hd-height) + 90px);
+  background: linear-gradient(
+    180deg,
+    rgba(5, 18, 31, 0.62) 0,
+    rgba(5, 18, 31, 0.3) calc(var(--hd-height) + 10px),
+    rgba(5, 18, 31, 0) 100%
+  );
+  pointer-events: none;
+}
+
+/* Pause/play, a 44px target at every width. Its right edge is the shell's
+   right edge - the same line the figures end on and the mirror of the
+   copy's left edge - worked out against the film's own width, which is the
+   width the shell is a share of. Pinned to the window's corner instead, it
+   landed on "09 Consulting specialists" from 1041 to 1411px, where the
+   shell's margin is narrower than the control. */
 .e-hero__toggle {
   position: absolute;
-  right: clamp(16px, 2.4vw, 30px);
-  bottom: clamp(16px, 2.4vw, 30px);
+  right: calc((100% - var(--e-shell)) / 2);
+  bottom: calc(var(--hero-foot) + 7px);
   z-index: 2;
   display: inline-flex;
   align-items: center;
@@ -95,17 +157,33 @@
   border: 1px solid rgba(255, 255, 255, 0.34);
   border-radius: 50%;
   background: rgba(5, 18, 31, 0.42);
+  -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
   color: #fff;
   cursor: pointer;
   transition:
     background-color 200ms var(--e-ease),
-    border-color 200ms var(--e-ease);
+    border-color 200ms var(--e-ease),
+    transform 160ms var(--e-ease);
 }
 
-.e-hero__toggle:hover {
-  border-color: rgba(255, 255, 255, 0.7);
-  background: rgba(5, 18, 31, 0.68);
+/* The play triangle's weight sits left of its box; a pixel right centres it
+   by eye in the ring. */
+.e-hero__toggle[aria-pressed="true"] svg {
+  translate: 1px 0;
+}
+
+/* A fine pointer only: a tapped control on a phone would otherwise keep the
+   hover plate until the next tap somewhere else. */
+@media (hover: hover) {
+  .e-hero__toggle:hover {
+    border-color: rgba(255, 255, 255, 0.7);
+    background: rgba(5, 18, 31, 0.68);
+  }
+}
+
+.e-hero__toggle:active {
+  transform: scale(0.92);
 }
 
 .e-hero__inner {
@@ -114,10 +192,10 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: clamp(28px, 5vw, 72px);
+  gap: clamp(28px, 4vw, 48px);
   padding-block:
     max(clamp(76px, 10vw, 132px), calc(var(--hd-height) + 32px))
-    clamp(34px, 4vw, 56px);
+    var(--hero-foot);
 }
 
 .e-hero__copy {
@@ -203,32 +281,86 @@
   margin-top: clamp(28px, 3vw, 40px);
 }
 
-/* The reference's cream pill, at every width - the square white box it
-   replaced was the one hard edge in a hero of soft type and film. */
+/* The headline's cream, as a pill, with the arrow carried in a navy disc -
+   the navy of the figures band under the copy - so the button is made of the
+   hero's own two colours and nothing new. The flat cream pill before it read
+   as plain; the disc gives it a focal point without raising its volume. A
+   magenta fill was tried and sent back: it jumped out of the film.
+
+   The top of the pill carries a faint white sheen and the foot a navy
+   hairline, which is what makes it read as a pressed object rather than a
+   flat shape on the film. Navy on cream is 13.4:1, the arrow's cream on the
+   disc the same. */
 .e-hero .e-hero__cta {
-  min-height: 56px;
+  gap: 16px;
+  min-height: 58px;
   border: 0;
   border-radius: 999px;
-  background: #fbf7ef;
-  padding-inline: 30px 26px;
+  background-color: #fbf7ef;
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 55%);
+  padding: 7px 7px 7px 28px;
   color: var(--e-navy);
   font-size: 1.02rem;
-  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.55);
+  box-shadow:
+    inset 0 -1px 0 rgba(12, 44, 73, 0.1),
+    0 12px 32px -14px rgba(0, 0, 0, 0.6);
+  transition:
+    background-color 240ms ease,
+    box-shadow 240ms ease,
+    transform 240ms var(--e-ease);
+}
+
+.e-hero__cta-disc {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--e-navy);
+  color: #fbf7ef;
+  transition: background-color 240ms ease;
+}
+
+.e-hero__cta-disc svg {
+  transition: transform 240ms var(--e-ease);
 }
 
 .e-hero .e-hero__cta:hover {
-  background: #fff;
+  background-color: #fff;
+  color: var(--e-navy);
+  box-shadow:
+    inset 0 -1px 0 rgba(12, 44, 73, 0.1),
+    0 16px 36px -14px rgba(0, 0, 0, 0.7);
+  transform: translateY(-2px);
 }
 
+.e-hero .e-hero__cta:hover .e-hero__cta-disc {
+  background: var(--e-navy-2);
+}
+
+.e-hero .e-hero__cta:hover .e-hero__cta-disc svg {
+  transform: translateX(3px);
+}
+
+.e-hero .e-hero__cta:active {
+  transform: scale(0.98);
+}
+
+/* The figures leave the end of their row to the pause control, one stat's
+   spacing away, so the copy, the figures and the control share one line on
+   the shell. The spacing and the gap before the figures are what pay for
+   that room: at their old sizes the headline broke onto two lines from
+   1440px up, and the headline is the one thing here that must hold its line. */
 .e-hero__stats {
   display: flex;
-  margin: 0;
+  margin: 0 calc(44px + var(--hero-stat-gap)) 0 0;
   flex: 0 0 auto;
   padding-bottom: 6px;
 }
 
 .e-hero__stat {
-  padding-inline: clamp(18px, 2.4vw, 36px);
+  padding-inline: var(--hero-stat-gap);
 }
 
 .e-hero__stat:first-child {
@@ -256,8 +388,21 @@
   line-height: 1.4;
 }
 
-/* The stat row moves under the copy here, so the pause control has to clear
-   the whole stack rather than tuck beside it. */
+/* Below the desktop header the row has no room to spare for the control:
+   beside the figures it would squeeze the headline onto two lines at 1041px.
+   It takes the film's top right corner instead, under the capsule. */
+@media (max-width: 1179px) {
+  .e-hero__stats {
+    margin-right: 0;
+  }
+
+  .e-hero__toggle {
+    top: calc(var(--hd-height) + 14px);
+    bottom: auto;
+  }
+}
+
+/* The stat row moves under the copy here. */
 @media (max-width: 1040px) {
   .e-hero__inner {
     flex-direction: column;
@@ -267,11 +412,6 @@
 
   .e-hero__stats {
     padding-bottom: 0;
-  }
-
-  .e-hero__toggle {
-    top: calc(var(--hd-height) + 14px);
-    bottom: auto;
   }
 }
 
@@ -328,25 +468,34 @@
      than it was when the lede was still in the stack. The heavy version held
      the type but flattened the lower half of every scene into solid navy, and
      a film you cannot see is not worth shipping. This one grounds the last
-     third and leaves the rest of the frame open. */
+     third and leaves the rest of the frame open.
+
+     The ground is the figures band's own navy, fully opaque at the foot, so
+     the film dissolves into the band. In the near-black it used to be, the
+     film ended on a darker navy than the band under it and the join read as
+     a seam. The stops are a shade deeper than before to hold the same
+     contrast on the lighter colour. */
   .e-hero__scrim {
-    background:
-      linear-gradient(
-        180deg,
-        rgba(5, 18, 31, 0.55) 0,
-        rgba(5, 18, 31, 0.22) calc(var(--hd-height) + 8px),
-        rgba(5, 18, 31, 0) calc(var(--hd-height) + 70px)
-      ),
-      linear-gradient(
-        0deg,
-        rgba(5, 18, 31, 0.9) 0%,
-        rgba(5, 18, 31, 0.82) 18%,
-        rgba(5, 18, 31, 0.66) 34%,
-        rgba(5, 18, 31, 0.42) 50%,
-        rgba(5, 18, 31, 0.2) 68%,
-        rgba(5, 18, 31, 0.07) 86%,
-        rgba(5, 18, 31, 0.04) 100%
-      );
+    background: linear-gradient(
+      0deg,
+      rgba(12, 44, 73, 1) 0%,
+      rgba(12, 44, 73, 0.86) 18%,
+      rgba(12, 44, 73, 0.7) 34%,
+      rgba(12, 44, 73, 0.45) 50%,
+      rgba(12, 44, 73, 0.2) 68%,
+      rgba(12, 44, 73, 0.07) 86%,
+      rgba(12, 44, 73, 0.04) 100%
+    );
+  }
+
+  .e-hero__shade {
+    height: calc(var(--hd-height) + 70px);
+    background: linear-gradient(
+      180deg,
+      rgba(5, 18, 31, 0.55) 0,
+      rgba(5, 18, 31, 0.22) calc(var(--hd-height) + 8px),
+      rgba(5, 18, 31, 0) 100%
+    );
   }
 
   .e-hero__copy {
@@ -355,8 +504,7 @@
     width: var(--e-shell);
     margin-inline: auto;
     /* Leaves the corner under the CTA free for the pause control, which is
-       where the reference puts it. At 22px the control sat on top of the right
-       end of the Call OPD link and stole part of its tap target. */
+       where the reference puts it. */
     padding-bottom: 62px;
   }
 
@@ -388,9 +536,9 @@
   /* A pill that hugs its label, not a full-bleed bar. The bar read as a slab
      of white across the bottom of the frame and was the heaviest thing on the
      screen; the reference lets the film carry the width and gives the action a
-     shape instead. It stays a generous target - 54px tall with 30px of side
-     padding is well past the 44px minimum, which is what matters for the older
-     patients this site is built for. */
+     shape instead. It stays a generous target - 56px tall, well past the 44px
+     minimum, which is what matters for the older patients this site is built
+     for. */
   .e-hero__actions {
     display: flex;
     justify-content: flex-start;
@@ -400,19 +548,18 @@
   .e-hero .e-hero__cta {
     width: auto;
     justify-content: center;
-    min-height: 54px;
-    padding-inline: 30px;
+    gap: 14px;
+    min-height: 56px;
+    padding: 6px 6px 6px 26px;
     font-size: 1rem;
   }
 
   /* Back to the bottom-right corner of the film, which on a phone is the
-     corner just above the stat band - where the reference puts it. */
+     corner just above the stat band - where the reference puts it. The shell
+     edge still sets its right side. */
   .e-hero__toggle {
     top: auto;
-    right: 16px;
     bottom: 12px;
-    width: 40px;
-    height: 40px;
   }
 
   /* Its own band under the film, on solid navy. Flat, not a card: a bordered
@@ -421,7 +568,10 @@
     grid-row: 2;
     grid-column: 1;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    /* The middle label is the longest word pair, so its column is a little
+       wider: at equal thirds "across Gujarat" broke onto a third line on the
+       320px SE. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) minmax(0, 1fr);
     width: var(--e-shell);
     margin-inline: auto;
     padding-block: 16px 18px;
@@ -429,7 +579,8 @@
   }
 
   /* Keeps the reference's ruled columns. The dividers are what make this read
-     as one deliberate band rather than three loose numbers under the film. */
+     as one deliberate band rather than three loose numbers under the film.
+     The outer columns sit on the shell's edges. */
   .e-hero__stat,
   .e-hero__stat:first-child,
   .e-hero__stat:last-child {
@@ -440,6 +591,10 @@
     padding-left: 0;
   }
 
+  .e-hero__stat:last-child {
+    padding-right: 0;
+  }
+
   .e-hero__stat + .e-hero__stat {
     border-left: 1px solid rgba(255, 255, 255, 0.18);
   }
@@ -448,36 +603,48 @@
     font-size: 1.75rem;
   }
 
+  /* Every label on two balanced lines. Left to fill its column, "Founded in
+     Visnagar" fitted on one line from 412px while the other two broke, and a
+     ragged row of 1, 2 and 2 lines is what a 412px Android shows first. */
   .e-hero__stat dd {
-    max-width: none;
-    margin-top: 2px;
-    font-size: 0.72rem;
+    max-width: 8.4em;
+    margin-top: 3px;
+    font-size: 0.76rem;
+    text-wrap: balance;
   }
 }
 
 /* The 320px SE is the one phone where the headline wraps onto a second line,
    which lifts the copy into a brighter band of the film: there it measured
    2.79:1 against the 3:1 a display line needs. The scrim deepens only here,
-   so every wider phone keeps its lighter film. */
+   so every wider phone keeps its lighter film. The figures' columns tighten
+   their gutters here too, so the middle label keeps two lines. */
 @media (max-width: 359px) {
+  .e-hero__stat,
+  .e-hero__stat:first-child,
+  .e-hero__stat:last-child {
+    padding-inline: 10px;
+  }
+
+  .e-hero__stat:first-child {
+    padding-left: 0;
+  }
+
+  .e-hero__stat:last-child {
+    padding-right: 0;
+  }
+
   .e-hero__scrim {
-    background:
-      linear-gradient(
-        180deg,
-        rgba(5, 18, 31, 0.55) 0,
-        rgba(5, 18, 31, 0.22) calc(var(--hd-height) + 8px),
-        rgba(5, 18, 31, 0) calc(var(--hd-height) + 70px)
-      ),
-      linear-gradient(
-        0deg,
-        rgba(5, 18, 31, 0.92) 0%,
-        rgba(5, 18, 31, 0.86) 18%,
-        rgba(5, 18, 31, 0.76) 34%,
-        rgba(5, 18, 31, 0.6) 50%,
-        rgba(5, 18, 31, 0.36) 68%,
-        rgba(5, 18, 31, 0.12) 86%,
-        rgba(5, 18, 31, 0.04) 100%
-      );
+    background: linear-gradient(
+      0deg,
+      rgba(12, 44, 73, 1) 0%,
+      rgba(12, 44, 73, 0.9) 18%,
+      rgba(12, 44, 73, 0.8) 34%,
+      rgba(12, 44, 73, 0.63) 50%,
+      rgba(12, 44, 73, 0.38) 68%,
+      rgba(12, 44, 73, 0.12) 86%,
+      rgba(12, 44, 73, 0.04) 100%
+    );
   }
 }
 
@@ -511,9 +678,17 @@
   }
 }
 
+/* The film row is at least the copy's height and takes any height left over;
+   as `auto auto` the spare 20-odd pixels went to the figures band and sat as
+   an empty strip of navy under its labels. The columns are wide enough here
+   for each label on one line. */
 @media (max-width: 760px) and (max-height: 520px) {
   .e-hero {
-    grid-template-rows: auto auto;
+    grid-template-rows: 1fr auto;
+  }
+
+  .e-hero__stat dd {
+    max-width: none;
   }
 
   .e-hero__copy {
@@ -584,9 +759,12 @@
     box-shadow 320ms var(--e-ease);
 }
 
-.e-why__tile:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 18px 40px rgba(16, 22, 28, 0.1);
+/* A tap leaves :hover on the tile, so a finger would leave it lifted. */
+@media (hover: hover) and (pointer: fine) {
+  .e-why__tile:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(16, 22, 28, 0.1);
+  }
 }
 
 .e-why__icon {
@@ -607,10 +785,16 @@
   line-height: 1.2;
 }
 
+/* The phone's index numeral; the wider mosaic leads with the icon. */
+.e-why__num {
+  display: none;
+}
+
 .e-why__text {
   margin: 0;
   font-size: 0.94rem;
   line-height: 1.6;
+  text-wrap: pretty;
 }
 
 .e-why__meta {
@@ -898,7 +1082,11 @@
 
 .e-voices {
   --voices-gap: clamp(14px, 1.6vw, 22px);
-  overflow: hidden;
+  /* clip, not hidden: `hidden` makes the section a scroll container, and a
+     scroll-driven animation inside one binds to that box - which never
+     scrolls - instead of the page, and freezes. Measured in Safari 27: a
+     reveal inside `hidden` sat at its first frame at every scroll position. */
+  overflow: clip;
 }
 
 .e-voices__rows {
@@ -982,10 +1170,12 @@
   from {
     transform: translate3d(0, 0, 0);
   }
-  /* One full set is half the track plus half a gap: the track holds two sets
-     and 2n-1 gaps, so -50% alone lands half a gap short of a seamless join. */
+  /* One full set is the track plus one gap, divided by the number of sets:
+     the track holds that many sets and one gap fewer than it has cards, so a
+     plain share of the width lands a fraction of a gap short of a seamless
+     join. */
   to {
-    transform: translate3d(calc(-50% - var(--voices-gap) / 2), 0, 0);
+    transform: translate3d(calc((-100% - var(--voices-gap)) / var(--voices-loops, 2)), 0, 0);
   }
 }
 
@@ -1012,9 +1202,23 @@
   background: linear-gradient(270deg, var(--e-navy) 8%, rgba(12, 44, 73, 0) 100%);
 }
 
+/* From about 2000px the card grows with the screen again (448px at 2560): at
+   a fixed 348px a 2560px monitor showed seven cards to a row of six, so one
+   of them was on screen twice.
+
+   The width is set twice on purpose. The track is `width: max-content`, and
+   Safari sizes a flex container's max-content from each item's own content -
+   the quote on one line, about 1000px a card - rather than from its
+   flex-basis, as Chrome does. That made the track three times too wide in
+   Safari (18,034px for 6,340px of cards), so the drift, which moves by a
+   share of the track's width, slid past the last card and left the row empty
+   for most of every loop. With a width as well as a basis the two browsers
+   agree. */
 .e-voices__card {
+  --voices-card: clamp(268px, 26vw, max(348px, 17.5vw));
   display: flex;
-  flex: 0 0 clamp(268px, 26vw, 348px);
+  flex: 0 0 var(--voices-card);
+  width: var(--voices-card);
   flex-direction: column;
   border-radius: 18px;
   padding: clamp(20px, 1.9vw, 28px);
@@ -1054,13 +1258,19 @@
 }
 
 .e-voices__quote {
-  margin: 16px 0 0;
+  margin: 16px 0 18px;
   color: var(--e-ink);
   font-family: var(--e-serif);
-  font-size: clamp(1rem, 1.1vw, 1.1rem);
+  font-size: clamp(1rem, 1.1vw, max(1.1rem, 0.72vw));
   font-weight: 400;
   letter-spacing: -0.005em;
   line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* A four- and five-line lede on a phone left one word alone on its last line. */
+.e-voices .e-lede {
+  text-wrap: pretty;
 }
 
 /* Sentence case at a full 0.85rem, not a second tracked uppercase label: the
@@ -1086,6 +1296,21 @@
   color: var(--e-ink-3);
 }
 
+/* Reduced motion on a wide screen: every quote at once, in the shell, rather
+   than two rails that would have to be scrolled sideways with a mouse. */
+.e-voices__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--voices-gap);
+  margin: clamp(30px, 3.6vw, 52px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.e-voices__grid .e-voices__card {
+  width: auto;
+}
+
 .e-voices__labels {
   display: grid;
   gap: 10px;
@@ -1098,11 +1323,46 @@
   font-size: 0.78rem;
   line-height: 1.5;
   max-width: 34ch;
+  text-wrap: balance;
 }
 
 .e-voices__foot {
   display: flex;
+  align-items: center;
+  gap: 20px;
   margin-top: clamp(24px, 2.6vw, 34px);
+}
+
+/* The phone's story bar: one segment per quote, the way a phone's own
+   stories count them. Segments already read are full, the one on screen
+   fills while it is held (--fill, written every frame by the component) and
+   the rest wait. It runs from the shell's left edge to the pause control, so
+   the row lines up with the card above it and the heading above that. */
+.e-voices__story {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.e-voices__story span {
+  position: relative;
+  flex: 1 1 0;
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.28);
+  overflow: hidden;
+}
+
+.e-voices__story span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #fff;
+  transform-origin: left center;
+  transform: scaleX(var(--fill, 0));
 }
 
 .e-voices__toggle {
@@ -1131,16 +1391,65 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
-@media (max-width: 760px) {
+/* PHONE_QUERY in PatientStories.jsx: the phone rail, including a phone held
+   sideways. */
+@media (max-width: 760px), (max-width: 1023px) and (max-height: 520px) {
   /* Leaves a ~30px peek of the next card at 390px, which is what says the rail
      can be swiped, while the snapped card stays whole. */
   .e-voices__card {
-    flex: 0 0 min(86vw, 330px);
+    --voices-card: min(86vw, 330px);
     border-radius: 16px;
   }
 
   .e-voices__quote {
     font-size: 1rem;
+  }
+
+  .e-voices__foot {
+    gap: 16px;
+  }
+
+  /* On a phone the control is the hero film's: a 44px circle with a solid
+     glyph at the end of the story bar, not a worded pill beside it. The
+     words stay as its accessible name. */
+  .e-voices__toggle {
+    flex: none;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    padding: 0;
+    transition:
+      background-color 220ms var(--e-ease),
+      border-color 220ms var(--e-ease),
+      transform 160ms var(--e-ease);
+  }
+
+  .e-voices__toggle:active {
+    transform: scale(0.92);
+  }
+
+  /* The play triangle's weight sits left of its box; this centres it by eye. */
+  .e-voices__toggle[aria-pressed="true"] svg {
+    translate: 1px 0;
+  }
+
+  .e-voices__toggleLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* Where the head stacks (860px, system.css), the note would be three lines
+   of small print between the label and the title, and the lede under the
+   title says the same thing. Every card names its hospital. */
+@media (max-width: 860px), (max-width: 1023px) and (max-height: 520px) {
+  .e-voices__note {
+    display: none;
   }
 }
 
@@ -1176,111 +1485,155 @@
   }
 }
 
-@media (max-width: 560px) {
-  /* Six full-width tiles measured 1891px - 2.24 screens on a 390x844 phone,
-     which is more scrolling than a trust section earns before the reader gives
-     up on it. Two columns turn six rows into three and hide nothing: every
-     reason keeps its full sentence, its proof line and its visual, and the
-     reader can weigh two of them at a glance instead of holding one in memory
-     while thumbing to the next. The frame tightens, the copy never does. */
-  .e-why__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    /* The desktop mosaic offsets need natural heights; a phone has no offsets,
-       and two tiles in a row with different heights left ragged gaps under
-       the shorter one. Stretched, each pair shares a bottom edge and the
-       proof line sits on it. */
-    align-items: stretch;
-    gap: 10px;
-  }
-  .e-why__grid > *:nth-child(2n),
-  .e-why__grid > *:nth-child(3n + 2),
-  .e-why__grid > *:nth-child(3n + 3) {
-    margin-top: 0;
-  }
+/* ---- the phone ----
+
+   Two half-width columns read as a wall of small boxes on a phone: six
+   glyphs, sentences broken over five lines, proof lines over three. On a
+   phone every reason is a whole card across the width instead, led by its
+   index numeral (the ledger's device) rather than an icon, with its visual
+   at a size that says something and its proof line under a hairline. The
+   tones stay in data-tone. This query must match PHONE in ImpactStats. */
+@media (max-width: 620px), (max-width: 1023px) and (max-height: 520px) {
   .e-why__tile {
-    gap: 8px;
-    border-radius: 14px;
-    padding: 14px;
+    gap: 0;
+    border-radius: 18px;
+    padding: 0 20px 18px;
+    box-shadow:
+      0 1px 2px rgba(12, 32, 52, 0.06),
+      0 14px 30px -22px rgba(12, 32, 52, 0.45);
+  }
+  .e-why__tile[data-tone="navy"],
+  .e-why__tile[data-tone="teal"],
+  .e-why__tile[data-tone="accent"] {
+    --why-num: rgba(255, 255, 255, 0.88);
+  }
+  .e-why__tile[data-tone="clinical"],
+  .e-why__tile[data-tone="paper"] {
+    --why-num: var(--e-accent);
   }
   .e-why__icon {
-    width: 34px;
-    height: 34px;
-    border-radius: 9px;
-    margin-bottom: 0;
+    display: none;
   }
   .e-why__title {
-    font-size: 1.02rem;
-    text-wrap: balance;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding-block: 18px 10px;
+    font-size: clamp(1.12rem, 0.84rem + 1.4vw, 1.3rem);
   }
-  /* Two columns bought back so much height that the supporting copy and the
-     proof line stay near their full-width sizes. Older patients read this
-     site: the layout gives up space, the type does not. */
+  .e-why__num {
+    display: block;
+    flex: none;
+    color: var(--why-num);
+    font-family: var(--e-serif);
+    font-size: 0.92em;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+  }
   .e-why__text {
-    font-size: 0.88rem;
-    line-height: 1.45;
+    font-size: 0.97rem;
+    line-height: 1.55;
   }
-  .e-why__meta {
-    padding-top: 2px;
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-  }
-
-  /* The visuals now live in a ~137px column, so each one is refitted rather
-     than left to overflow or wrap into a second row. */
-  /* The visual takes the row's slack, so the shorter tile of a pair spreads
-     its spare height around its visual rather than parking it all above the
-     proof line. */
+  /* The visual takes the card's slack and sits centred in it, so cards held
+     to one height keep their proof lines on the same foot. */
   .e-why__visual {
     flex: 1 1 auto;
-    min-height: 40px;
+    min-height: 56px;
+    margin-top: 14px;
   }
-  .e-why__team img,
-  .e-why__teamMore {
-    width: 28px;
-    height: 28px;
-    border-width: 1.5px;
-  }
-  .e-why__team img + img,
-  .e-why__teamMore {
-    margin-left: -8px;
-  }
-  .e-why__teamMore {
-    font-size: 0.62rem;
-  }
-  .e-why__scan,
   .e-why__map {
-    height: 40px;
+    height: 60px;
   }
-  .e-why__scanTrace {
-    gap: 3px;
+  .e-why__map svg {
+    width: 138px;
   }
-  .e-why__scanTrace span {
-    flex: 0 0 4px;
+  .e-why__meta {
+    align-self: stretch;
+    margin-top: 14px;
+    border-top: 1px solid var(--why-line);
+    padding-top: 12px;
+    text-wrap: balance;
   }
-  .e-why__explain {
-    gap: 4px;
+}
+
+/* A phone held upright: one column, and with motion allowed a deck. Each
+   card sticks one title row below the card before it, so the reader reads a
+   whole card at a time, nothing they have read leaves the screen, and the
+   finished stack is an index of all six. When the section leaves, the deck
+   squares up behind the last card. A covered card recedes (--why-depth, from
+   useDeck). The column is flex, not grid: a sticky grid item is confined to
+   its own row and never sticks. Must match DECK_QUERY in WhyChooseUs. */
+@media (max-width: 620px) and (min-height: 521px) {
+  .e-why {
+    --why-strip: 52px;
+    --why-hold: 48px;
   }
-  .e-why__explain li {
-    padding: 4px 8px;
-    font-size: 0.68rem;
+  @supports (height: 1svh) {
+    .e-why {
+      --why-strip: clamp(46px, 8svh, 54px);
+    }
   }
-  .e-why__files {
-    gap: 5px;
+  .e-why__grid {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
   }
-  .e-why__files span {
-    padding: 7px 6px;
-    font-size: 0.74rem;
+  .e-why__grid > :nth-child(n) {
+    margin-top: 0;
   }
-  .e-why__check {
-    gap: 5px;
+  /* The title row is the strip a covered card keeps on show, so it is one
+     line at a fixed height on every phone. */
+  .e-why__title {
+    height: var(--why-strip);
+    padding-block: calc((var(--why-strip) - 1.2em) / 2) 0;
+    white-space: nowrap;
   }
-  .e-why__check li {
-    gap: 6px;
-    font-size: 0.72rem;
+  /* Clear of the strip even on the deepest card of the deck, which is drawn
+     at 0.9: the sentence must never show under the title it belongs to. */
+  .e-why__text {
+    margin-top: 8px;
   }
-  .e-why__check li span {
-    width: 15px;
-    height: 15px;
+
+  /* The finished index stands for a moment before the deck squares up. A
+     spacer, not padding: a sticky card is held inside its container's
+     content box. The squared deck comes to rest on the spacer's foot, so the
+     section's own padding is still the gap below it. */
+  .e-why__grid[data-deck]::after {
+    content: "";
+    flex: none;
+    height: calc(var(--why-hold) - 14px);
+  }
+  .e-why__grid[data-deck] .e-why__tile {
+    position: sticky;
+    top: calc(var(--hd-height) + 12px + var(--i) * var(--why-strip));
+    min-height: var(--why-card-h, auto);
+    transform-origin: 50% 0;
+    scale: calc(1 - var(--why-depth, 0) * 0.02);
+    /* The card's own travel is its arrival. */
+    animation: none;
+    transition: top var(--hd-slide);
+    box-shadow:
+      0 -10px 26px -16px rgba(10, 28, 46, 0.34),
+      0 14px 30px -22px rgba(12, 32, 52, 0.45);
+  }
+  /* The stack follows the header up, on the header's own timing. */
+  body:has(.hd--hidden) .e-why__grid[data-deck] .e-why__tile {
+    top: calc(12px + var(--i) * var(--why-strip));
+  }
+}
+
+/* A phone held sideways has no height for a deck: two cards to a row, level,
+   with no mosaic offsets. */
+@media (max-width: 1023px) and (max-height: 520px) {
+  .e-why__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 14px;
+  }
+  .e-why__grid > :nth-child(n) {
+    margin-top: 0;
   }
 }
 
@@ -1356,10 +1709,34 @@
     border-color 320ms var(--e-ease);
 }
 
-.e-impact__card:hover {
-  transform: translateY(-4px);
-  border-color: var(--e-rule-2);
-  box-shadow: 0 18px 40px rgba(16, 22, 28, 0.09);
+/* A tablet's finger leaves :hover on the card it touched, so the lift is for
+   a pointer only. */
+@media (hover: hover) and (pointer: fine) {
+  .e-impact__card:hover {
+    transform: translateY(-4px);
+    border-color: var(--e-rule-2);
+    box-shadow: 0 18px 40px rgba(16, 22, 28, 0.09);
+  }
+}
+
+/* Each card's five parts - kicker, figure, label, sentence, panel - sit on
+   rows shared across the grid, so a label that wraps or a sentence one line
+   longer moves its neighbours' parts with it. Two cards side by side on a
+   tablet otherwise start their sentences and panels at different heights,
+   and the pair reads as two unrelated boxes. */
+@supports (grid-template-rows: subgrid) {
+  .e-impact__card {
+    display: grid;
+    grid-row: span 5;
+    grid-template-rows: subgrid;
+    row-gap: 6px;
+  }
+  /* A one-line label beside a two-line one sits on the foot of the shared
+     row, so it stays with the sentence it introduces rather than leaving a
+     gap between them. */
+  .e-impact__label {
+    align-self: end;
+  }
 }
 
 .e-impact__kicker {
@@ -1372,25 +1749,6 @@
 
 .e-impact__figure {
   margin: 6px 0 0;
-}
-
-.e-count {
-  display: inline-flex;
-  align-items: baseline;
-  color: var(--e-ink);
-  font-family: var(--e-serif);
-  font-size: clamp(2.1rem, 3vw, 2.9rem);
-  font-weight: 400;
-  letter-spacing: -0.02em;
-  line-height: 1;
-}
-
-.e-count__value {
-  font-variant-numeric: tabular-nums lining-nums;
-}
-
-.e-count__suffix {
-  color: var(--e-accent);
 }
 
 .e-impact__label {
@@ -1408,6 +1766,7 @@
   color: var(--e-ink-2);
   font-size: 0.9rem;
   line-height: 1.55;
+  text-wrap: pretty;
 }
 
 .e-impact__visual {
@@ -1480,7 +1839,8 @@
 /* card 02 - patient trend */
 
 .e-impact__trend {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
 }
 
@@ -1493,9 +1853,16 @@
   text-transform: uppercase;
 }
 
-.e-impact__trend svg {
+.e-impact__plot {
+  position: relative;
+  aspect-ratio: 240 / 74;
+}
+
+.e-impact__plot svg {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: auto;
+  height: 100%;
   overflow: visible;
 }
 
@@ -1505,6 +1872,7 @@
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
 }
 
 .e-impact__area {
@@ -1513,9 +1881,13 @@
 }
 
 .e-impact__dot {
-  fill: var(--e-accent);
-  stroke: var(--e-paper-2);
-  stroke-width: 3;
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--e-accent);
+  box-shadow: 0 0 0 2.5px var(--e-paper-2);
+  translate: -50% -50%;
 }
 
 .e-impact__axis {
@@ -1655,13 +2027,15 @@
   opacity: 1;
 }
 
-.e-impact__chip:hover {
-  border-color: var(--e-navy);
-  color: var(--e-navy);
-}
+@media (hover: hover) and (pointer: fine) {
+  .e-impact__chip:hover {
+    border-color: var(--e-navy);
+    color: var(--e-navy);
+  }
 
-.e-impact__chip[data-active="true"]:hover {
-  color: #fff;
+  .e-impact__chip[data-active="true"]:hover {
+    color: #fff;
+  }
 }
 
 .e-impact__actions {
@@ -1677,95 +2051,185 @@
   }
 }
 
-/* Phones: four figures in two columns, not four stacked cards. Stacked, the
-   band measured 2067px on every phone - 2.45 screens on a 390x844 and 3.8 on
-   a 320x568 - for four numbers, which is where a reader stops scrolling.
-   Two columns put all four figures on one screen, the way a numbers band is
-   meant to be read: at a glance, then on.
+/* ---- the phone's proof card ----
 
-   The two big counts keep their charts - four bars and a sparkline read fine
-   in a half column. The specialists and hospitals cards drop theirs: a list of
-   three names or six cities in a 140px column is a list nobody can read, and
-   both lists are already on the page - the doctor rail two sections down
-   carries the same people with their photographs, and the footer lists every
-   hospital. Dropped rather than shrunk, like the hero's lede. The frame gives;
-   the type stays near its full-width sizes. */
-@media (max-width: 620px) {
-  .e-impact__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: stretch;
-    gap: 10px;
+   On a phone the four cards are one card (ProofCard): the head office's own
+   photograph dissolving into a navy band, and the four figures on the band
+   in the hero's figure style - cream serif, labels at 0.78 white, ruled two
+   by two with the hero band's hairlines. It is the hero film's composition
+   at card size, so the page arrives at the numbers without changing
+   language. The charts stay on the laptop's cards. The query must match
+   PHONE_QUERY in ImpactStats.jsx. */
+@media (max-width: 620px), (max-width: 1023px) and (max-height: 520px) {
+  .e-impact {
+    padding-block: 48px 44px;
   }
-  .e-impact__card {
-    gap: 4px;
-    border-radius: 14px;
-    padding: 16px 14px 14px;
+
+  .e-impact__proof {
+    border-radius: 22px;
+    background: var(--e-navy);
+    box-shadow: 0 24px 50px -30px rgba(12, 44, 73, 0.6);
+    overflow: clip;
+    isolation: isolate;
   }
-  .e-impact__kicker {
-    font-size: 0.68rem;
+
+  /* clip, not hidden: the photograph drifts on the page's scroll inside it
+     (the scroll choreography), which a scroll container would freeze. */
+  .e-impact__photo {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: clip;
   }
-  .e-impact__figure {
-    margin-top: 4px;
-  }
-  /* Fluid rather than stepped: "4,52,902+" is the widest figure and has to
-     fit a half column at 320px (111px inner) as well as at 430px. */
-  .e-count {
-    font-size: clamp(1.5rem, 7.8vw, 2.1rem);
-  }
-  .e-impact__label {
-    font-size: 0.98rem;
-  }
-  .e-impact__desc {
-    font-size: 0.84rem;
-    line-height: 1.5;
-  }
-  .e-impact__visual {
-    margin-top: 14px;
-    border-radius: 8px;
-    padding: 12px 10px;
-    min-height: 0;
-  }
-  .e-impact__card[data-visual="people"] .e-impact__visual,
-  .e-impact__card[data-visual="branches"] .e-impact__visual {
-    display: none;
-  }
-  /* Name on its own line, bar and share beneath it. In a half column the
-     name and the share cannot share a row without the name being cut to
-     "LASIK & refra...", and truncation is not how this site makes room. */
-  .e-impact__mix {
-    gap: 9px;
-  }
-  .e-impact__mix li {
-    gap: 4px 8px;
-  }
-  .e-impact__mixName {
-    grid-column: 1 / -1;
-    overflow: visible;
-    text-overflow: clip;
-    white-space: normal;
-  }
-  .e-impact__mixName,
-  .e-impact__mixShare {
-    font-size: 0.72rem;
-  }
-  .e-impact__track {
-    grid-column: 1;
-    grid-row: 2;
-    height: 5px;
-  }
-  .e-impact__mixShare {
-    grid-row: 2;
-    grid-column: 2;
-  }
-  .e-impact__caption,
-  .e-impact__axis {
-    font-size: 0.62rem;
-  }
-  .e-impact__axis {
-    padding-top: 6px;
-  }
-  .e-impact__actions .e-btn {
+
+  .e-impact__photo img {
+    display: block;
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 42%;
+  }
+
+  /* A light shade under the tag at the top, and the foot dissolving into
+     the band's own navy - the hero film's phone scrim, so the photograph
+     and the band read as one surface with no seam between them. */
+  .e-impact__photo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(7, 20, 33, 0.34) 0%,
+      rgba(7, 20, 33, 0) 24%,
+      rgba(12, 44, 73, 0) 50%,
+      rgba(12, 44, 73, 0.72) 82%,
+      rgb(12, 44, 73) 100%
+    );
+    pointer-events: none;
+  }
+
+  /* The hero chip's dark glass: a white tint would lighten the sky under
+     white type. */
+  .e-impact__tag {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    max-width: calc(100% - 28px);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    background: rgba(7, 20, 33, 0.6);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    padding: 7px 13px 7px 10px;
+    color: #fbf7ef;
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .e-impact__tag svg {
+    flex: none;
+  }
+
+  .e-impact__band {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: -1px 0 0;
+    padding: 4px 20px 8px;
+  }
+
+  .e-impact__fact {
+    min-width: 0;
+    padding: 16px 14px 18px 0;
+  }
+
+  .e-impact__fact:nth-child(even) {
+    border-left: 1px solid rgba(255, 255, 255, 0.18);
+    padding-left: 18px;
+    padding-right: 0;
+  }
+
+  .e-impact__fact:nth-child(n + 3) {
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .e-impact__band dt {
+    margin: 0;
+  }
+
+  /* The hero band's figure, a step smaller for two to a row: "1,00,000+"
+     holds one line in a 108px column at 320px. */
+  .e-impact__band .e-count {
+    color: #fbf7ef;
+    font-size: clamp(1.4rem, 6.9vw, 1.85rem);
+  }
+
+  /* The accent's soft step, as on every navy surface: the magenta itself is
+     2.6:1 on the band. */
+  .e-impact__band .e-count__suffix {
+    color: #f4a6c4;
+  }
+
+  .e-impact__band dd {
+    max-width: 11em;
+    margin: 5px 0 0;
+    color: rgba(255, 255, 255, 0.78);
+    font-family: var(--e-sans);
+    font-size: 0.8rem;
+    line-height: 1.4;
+    text-wrap: balance;
+  }
+
+  .e-impact__nearest {
+    margin: 16px 0 0;
+  }
+}
+
+/* The 320px SE: the band's sides give up 4px each so the widest figure keeps
+   its line. */
+@media (max-width: 359px) {
+  .e-impact__band {
+    padding-inline: 16px;
+  }
+}
+
+/* A phone held sideways: the photograph beside the band rather than over it,
+   dissolving into it from the left, so the card is one short row. */
+@media (max-width: 1023px) and (max-height: 520px) {
+  .e-impact__proof {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .e-impact__tag {
+    font-size: 0.74rem;
+    white-space: nowrap;
+  }
+
+  .e-impact__photo {
+    aspect-ratio: auto;
+    min-height: 100%;
+  }
+
+  .e-impact__photo::after {
+    background:
+      linear-gradient(180deg, rgba(7, 20, 33, 0.34) 0%, rgba(7, 20, 33, 0) 30%),
+      linear-gradient(90deg, rgba(12, 44, 73, 0) 45%, rgba(12, 44, 73, 0.7) 80%, rgb(12, 44, 73) 100%);
+  }
+
+  .e-impact__band {
+    align-content: center;
+    margin: 0 0 0 -1px;
+    padding: 12px 20px 12px 4px;
+  }
+
+  /* Half the card is the band here, so the figure follows the screen's
+     width: "1,00,000+" holds its line in a 109px column at 568px. */
+  .e-impact__band .e-count {
+    font-size: clamp(1.2rem, 3.5vw, 1.85rem);
   }
 }
 
@@ -1794,7 +2258,9 @@
   --cond-visible: 5;
   --cond-radius: 22px;
   --cond-edge: #7f8b96;
-  overflow: hidden;
+  /* clip, not hidden - see .e-voices: the desk and the rail move with the
+     page's scroll, which a scroll container between them would swallow. */
+  overflow: clip;
 }
 
 /* Centred head, as the reference sets it. It sits between two sections that
@@ -1814,6 +2280,7 @@
 
 .e-cond__head .e-lede {
   max-width: 40ch;
+  text-wrap: balance;
 }
 
 /* ---- the two-column picker (>= 1024px) ---- */
@@ -1989,7 +2456,8 @@
   min-height: 100%;
   border-radius: var(--cond-radius);
   background: var(--e-navy);
-  overflow: hidden;
+  /* clip, not hidden - see .e-voices: the photograph drifts with the scroll. */
+  overflow: clip;
   isolation: isolate;
 }
 
@@ -2118,7 +2586,7 @@
   white-space: nowrap;
 }
 
-/* ---- the rail (< 1024px) ---- */
+/* ---- the rail (a tablet, or a phone held sideways) ---- */
 
 /* The same scroll-snap rail as the doctor rail: swipe on touch, arrows on a
    pointer, keyboard scrollable, and a plain horizontal scroller without JS.
@@ -2250,6 +2718,273 @@
   border-color: var(--e-rule-2);
 }
 
+/* ---- the index (a phone held upright) ----
+
+   Every rule here follows data-shape, which the component sets from
+   INDEX_QUERY, so the CSS can never disagree with the markup it styles.
+
+   The section takes the paper of the sections either side of it on a phone
+   and opens on their head - the rule, the label and the headline set left -
+   so the numbers, the services and the reasons read as one run of the page
+   rather than a white band between two paper ones. The lede goes: it named
+   1993 and six hospitals a third time in two screens. */
+.e-cond[data-shape="index"] {
+  --cond-row: 56px;
+  --cond-fade: 18px;
+  /* Above the numbers sheet: its shadow is cast up onto the film, and the
+     blur of it leaked a grey band across the top of this paper. */
+  z-index: 1;
+  background: var(--e-paper-2);
+  padding-block: 24px;
+}
+
+.e-cond[data-shape="index"] .e-cond__head {
+  justify-items: start;
+  gap: 12px;
+  margin-bottom: 14px;
+  border-top: 1px solid var(--e-rule);
+  padding-top: 22px;
+  text-align: left;
+}
+
+.e-cond[data-shape="index"] .e-cond__head .e-lede {
+  display: none;
+}
+
+.e-cond__index {
+  position: relative;
+  width: var(--e-shell);
+  margin-inline: auto;
+}
+
+/* The dock is what sticks: the photograph on paper, with air above it under
+   the header, and a foot that fades from paper to clear, so a row slides
+   under a soft edge rather than showing as a slice of letters round the
+   photograph's corners (the hospitals index's dock). The fade is inside the
+   dock, not hung below it, so its box ends where a row is fully clear - the
+   edge the component measures. It follows the header up and back on the
+   header's own timing. */
+.e-cond__dock {
+  position: sticky;
+  top: var(--hd-height);
+  z-index: 3;
+  background: linear-gradient(
+    180deg,
+    var(--e-paper-2) calc(100% - var(--cond-fade)),
+    var(--e-paper-2) calc(100% - var(--cond-fade) * 0.7),
+    rgba(245, 244, 241, 0) 100%
+  );
+  padding: 8px 0 var(--cond-fade);
+  transition: top var(--hd-slide);
+}
+
+body:has(.hd--hidden) .e-cond__dock {
+  top: 0;
+}
+
+/* The photograph's height is a share of the screen Safari actually shows,
+   so six or seven rows always fit under it. */
+.e-cond__screen {
+  position: relative;
+  display: block;
+  height: clamp(184px, 32vh, 280px);
+  height: clamp(184px, 32svh, 280px);
+  border-radius: 20px;
+  background: var(--e-navy);
+  overflow: clip;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.e-cond__screen .e-cond__photos .e-cond__photo {
+  object-position: 50% 32%;
+}
+
+/* The caption takes half of a frame this short, so the floor holds its
+   depth further up than the stage's does and the label is whiter: on the
+   stage's floor the label measured 4.1:1 on four photographs at 320px.
+   Pixel-sampled worst cell across all eleven, glyphs made transparent. */
+.e-cond__screen .e-cond__floor {
+  background: linear-gradient(
+    to top,
+    rgba(7, 19, 33, 0.94) 0%,
+    rgba(7, 19, 33, 0.86) 40%,
+    rgba(7, 19, 33, 0.56) 66%,
+    rgba(7, 19, 33, 0) 90%
+  );
+}
+
+.e-cond__screen .e-cond__kind {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.e-cond__index .e-cond__caption {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 16px 18px;
+}
+
+.e-cond__index .e-cond__headline {
+  max-width: 24ch;
+  font-size: 1.08rem;
+  line-height: 1.2;
+}
+
+/* The index box ends half a row under the last row, so the last row is
+   shown for a moment before the dock lets go of the photograph. */
+.e-cond__rows {
+  position: relative;
+  margin: 0;
+  padding: 0 0 calc(var(--cond-row) / 2);
+  list-style: none;
+}
+
+.e-cond__rows > li {
+  position: relative;
+}
+
+/* Hairlines belong to the row below and stop short of the plate's corners;
+   the plate is a pixel taller than its row each way, so the two rules it
+   sits between are under it rather than running into it. */
+.e-cond__rows > li + li::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 14px;
+  left: 14px;
+  height: 1px;
+  background: var(--e-rule);
+}
+
+.e-cond__plate {
+  position: absolute;
+  inset: -1px 0;
+  z-index: 1;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow:
+    0 0 0 1px rgba(16, 22, 28, 0.05),
+    0 12px 26px -16px rgba(12, 44, 73, 0.4);
+}
+
+.e-cond__rows > li[data-tone="urgent"] .e-cond__plate {
+  background: #fbefed;
+}
+
+/* A row fades out as it slides under the dock (--up, written by the
+   component), so its last few pixels never show as a slice of letters under
+   the photograph's edge. */
+.e-cond__row {
+  position: relative;
+  z-index: 2;
+  opacity: clamp(0, 1 - var(--up, 0) * 1.6, 1);
+  display: grid;
+  grid-template-columns: 2.2em minmax(0, 1fr) 34px;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--cond-row);
+  border-radius: 14px;
+  padding: 0 11px 0 14px;
+  color: var(--e-ink);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.e-cond__num {
+  color: var(--e-ink-2);
+  font-family: var(--e-serif);
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  transition: color 200ms var(--e-ease);
+}
+
+/* The names fade with their distance below the dock's foot (--d, in rows,
+   written by the component) - the drum's own look, on the page's scroll.
+   Only the name fades, and never below 0.66: ink there composites to 5.7:1
+   on the paper, where the 0.95rem numeral would have dropped under 3:1. */
+.e-cond__label {
+  min-width: 0;
+  color: var(--e-ink);
+  font-family: var(--e-serif);
+  font-size: 1.3rem;
+  font-weight: 400;
+  letter-spacing: -0.012em;
+  line-height: 1.15;
+  opacity: clamp(0.66, 1 - var(--d, 0) * 0.17, 1);
+  transition: color 200ms var(--e-ease);
+}
+
+.e-cond__open {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--e-navy);
+  color: #fff;
+  opacity: 0;
+  scale: 0.6;
+  transition:
+    opacity 220ms var(--e-ease),
+    scale 360ms var(--e-ease);
+}
+
+.e-cond__rows > li[data-on] .e-cond__num {
+  color: var(--e-accent);
+}
+
+.e-cond__rows > li[data-on] .e-cond__label {
+  color: var(--e-navy);
+  opacity: 1;
+}
+
+.e-cond__rows > li[data-on] .e-cond__open {
+  opacity: 1;
+  scale: 1;
+}
+
+/* Emergency care keeps the danger colour the services index gives it - on
+   its numeral, its plate and its arrow, never on the faded name, where it
+   would drop under 4.5:1. */
+.e-cond__rows > li[data-tone="urgent"] .e-cond__num,
+.e-cond__rows > li[data-tone="urgent"][data-on] .e-cond__num {
+  color: var(--color-danger);
+}
+
+.e-cond__rows > li[data-tone="urgent"] .e-cond__open {
+  background: var(--color-danger);
+}
+
+.e-cond__row:active {
+  background: rgba(12, 44, 73, 0.05);
+}
+
+.e-cond__row:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--e-accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .e-cond__row:hover .e-cond__label {
+    color: var(--e-accent);
+  }
+}
+
+.e-cond__find {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  width: var(--e-shell);
+  margin: 0 auto;
+  padding-inline: 14px;
+  color: var(--e-ink-2);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
 /* ---- responsive ---- */
 
 /* Between 1024 and 1180px the stage is 560-650px wide: the button drops
@@ -2335,7 +3070,29 @@
   }
 }
 
+/* A choice of photograph is answered by its caption rising over the floor;
+   the old one goes at once, so two captions are never read together. */
+@keyframes e-cond-say {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+}
+
+.e-cond__index .e-cond__caption {
+  animation: e-cond-say 420ms var(--e-ease) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .e-cond__index .e-cond__caption {
+    animation: none;
+  }
+  .e-cond__label,
+  .e-cond__num,
+  .e-cond__open,
+  .e-cond__dock {
+    transition: none;
+  }
   .e-cond__track {
     scroll-behavior: auto;
   }
@@ -2363,7 +3120,8 @@
 
 .e-docs {
   position: relative;
-  overflow: hidden;
+  /* clip, not hidden - see .e-voices. */
+  overflow: clip;
   background: var(--e-paper-2);
 }
 
@@ -2397,6 +3155,7 @@
   color: var(--e-ink-2);
   font-size: clamp(1rem, 1.25vw, 1.2rem);
   line-height: 1.5;
+  text-wrap: balance;
 }
 
 .e-docs__rail {
@@ -2462,6 +3221,39 @@
   font-weight: 600;
   letter-spacing: -0.015em;
   line-height: 1.3;
+}
+
+/* The whole card is the way into the doctor's own page: the name is the link
+   and its ::after reaches across the card, while the hospital links in the
+   foot sit above it. The ring goes round the card, where the target is. */
+.e-docs__card {
+  position: relative;
+}
+
+.e-docs__link {
+  color: inherit;
+}
+
+.e-docs__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+}
+
+.e-docs__link:focus-visible {
+  outline: none;
+}
+
+.e-docs__card:has(.e-docs__link:focus-visible) {
+  outline: 3px solid color-mix(in srgb, var(--color-accent-magenta), white 18%);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .e-docs__card:hover .e-docs__link {
+    color: var(--e-accent);
+  }
 }
 
 .e-docs__text {
@@ -2547,6 +3339,13 @@
     display: none;
   }
 
+  /* The trust mosaic above ends on the same paper, so the two sections'
+     paddings met as 128px of empty ground - a sixth of a phone screen that
+     read as a gap in the page rather than a pause between sections. */
+  .e-why + .e-docs {
+    padding-top: 24px;
+  }
+
   /* The reference cuts the peeking card cleanly on a phone rather than
      ghosting it - at this width the fade only washed out the one portrait the
      reader is about to swipe to. */
@@ -2577,5 +3376,515 @@
 
   .e-docs__arrow {
     transform: translateY(-50%);
+  }
+}
+
+/* =========================================================================
+   Scroll choreography - how the page moves from one section to the next
+   ========================================================================= */
+
+/* Every value below is driven by the page's scroll position rather than
+   fired once by a timer: scroll down and the next section arrives under the
+   reader's thumb, stop and it stops, scroll back and it plays in reverse.
+   That is what makes the page read as one connected surface rather than six
+   blocks that each animate on their own - Apple's product pages work this
+   way. It is CSS (animation-timeline), so it runs on the compositor beside
+   the scroll itself: it costs the main thread nothing and cannot trail a
+   finger on a phone the way a scroll listener writing styles can. Nothing
+   here pins, holds or re-times the page's scroll.
+
+   Four moves, each with one job:
+   - sink:   the hero's film goes down slower than the page and dims, so the
+             numbers sheet slides over it (the hero's own timeline, --hero);
+   - rise:   a section's head and its cards come up into place as they enter,
+             each part a little further than the one before it, so a head
+             cascades and a row of cards fans out;
+   - deal:   a horizontal rail slides in from the side as it enters, the way
+             its cards move when swiped;
+   - recede: the doctor rail goes down slower than the page as the navy
+             patient wall rises over it - the hero's move at the page's other
+             change of ground (see SHEETS at the top of this file).
+
+   Only where the browser drives animations from scroll, and never under
+   reduced motion. Everywhere else the sections keep the entrances framer
+   gives them; SCROLL_DRIVEN in lib/motion.js turns those off here, or both
+   would move the same element. Every move is transform or opacity, and every
+   one ends on the element's own resting style, so a page loaded half-way
+   down is simply there. An element animated here must not sit inside an
+   `overflow: hidden` box - that box becomes its scroll container and the
+   animation freezes (see .e-voices). */
+
+@keyframes e-hero-film {
+  15% {
+    opacity: 1;
+  }
+  to {
+    translate: 0 44svh;
+    scale: 1.06;
+    opacity: 0.45;
+  }
+}
+
+@keyframes e-hero-scrim {
+  to {
+    translate: 0 44svh;
+    scale: 1.06;
+  }
+}
+
+@keyframes e-hero-copy {
+  25% {
+    opacity: 1;
+  }
+  to {
+    translate: 0 20svh;
+    opacity: 0;
+  }
+}
+
+@keyframes e-hero-band {
+  to {
+    translate: 0 44svh;
+  }
+}
+
+@keyframes e-hero-shade {
+  to {
+    translate: 0 var(--hero-travel);
+  }
+}
+
+@keyframes e-rise {
+  from {
+    opacity: 0;
+    translate: 0 var(--rise, 44px);
+  }
+}
+
+@keyframes e-draw {
+  from {
+    scale: 0 1;
+  }
+}
+
+@keyframes e-impact-dawn {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+@keyframes e-settle {
+  from {
+    opacity: 0;
+    translate: 0 72px;
+    scale: 0.94;
+  }
+}
+
+@keyframes e-drift {
+  from {
+    translate: 0 -5%;
+  }
+  to {
+    translate: 0 5%;
+  }
+}
+
+@keyframes e-deal {
+  from {
+    opacity: 0;
+    translate: var(--deal, 16vw) 0;
+  }
+}
+
+/* The patient wall's arrival slides without fading. A wall that fades in
+   reads as empty navy for the whole of its entry - the heading on screen over
+   a row of ghosts, which is how the first build of this looked on every
+   desktop. */
+@keyframes e-voices-deal {
+  from {
+    translate: var(--deal, 16vw) 0;
+  }
+}
+
+@keyframes e-recede {
+  to {
+    translate: 0 14svh;
+    scale: 0.96;
+    opacity: 0.55;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* ---- the hero sinks under the numbers sheet ----
+
+       exit-crossing runs from the hero's top reaching the top of the screen
+       to its foot leaving it, so the whole move is one hero-height of
+       scroll. The film travels 44svh of it and the copy 20svh, so the page
+       moves past in three depths: the film deepest, the words over it, the
+       sheet in front at the page's own speed. The copy holds full strength
+       for the first quarter - Book appointment is still in reach there. */
+    .e-hero {
+      /* The distance the hero's own exit covers, for the shade (below). */
+      --hero-travel: calc(100svh - var(--hd-strip-h) + var(--sheet-r));
+      view-timeline: --hero block;
+      /* The inset defaults to the page's scroll-padding (120px, for anchor
+         links under the header), which started the film sinking before the
+         reader had scrolled at all. */
+      view-timeline-inset: 0;
+    }
+
+    .e-hero__video,
+    .e-hero__scrim,
+    .e-hero__toggle,
+    .e-hero__shade,
+    .e-hero__inner,
+    .e-hero__copy,
+    .e-hero__stats {
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: --hero;
+      animation-range: exit-crossing 0% exit-crossing 100%;
+    }
+
+    /* The film and its scrim move as a pair, each on its own, and their
+       frame (.e-hero__media) is never animated: an animated frame becomes a
+       stacking context, the pause control inside it is then ranked inside
+       the frame rather than against the copy, and no tap reaches it - which
+       is what the first build of this did. The film fades toward the
+       section's navy rather than under a dark layer, which would be one more
+       screen-sized surface to composite on a phone. */
+    .e-hero__video {
+      animation-name: e-hero-film;
+    }
+
+    .e-hero__scrim {
+      animation-name: e-hero-scrim;
+    }
+
+    /* The control rides the layer it sits on: the film on a phone and a
+       tablet, the booking row from 1180px, where it is centred on the
+       button. */
+    .e-hero__toggle {
+      animation-name: e-hero-band;
+    }
+
+    @media (min-width: 1180px) {
+      .e-hero__toggle {
+        animation-name: e-hero-copy;
+      }
+    }
+
+    /* Travels exactly as far as the page does, so it stays under the
+       header while the film sinks away from it. */
+    .e-hero__shade {
+      animation-name: e-hero-shade;
+    }
+
+    @media (min-width: 761px) {
+      .e-hero__inner {
+        animation-name: e-hero-copy;
+      }
+    }
+
+    /* On a phone the shell's box is dissolved (display: contents) and has
+       nothing to move; the copy moves itself, and the figures band rides
+       with the film it sits under, so the sheet slides over both. */
+    @media (max-width: 760px) {
+      .e-hero__copy {
+        animation-name: e-hero-copy;
+      }
+
+      .e-hero__stats {
+        animation-name: e-hero-band;
+      }
+    }
+
+    /* ---- the motto plays itself: from darkness to light ----
+
+       અંધકારથી અજવાળા તરફ is the hospital's own line - "from darkness
+       towards light" - and on a phone it brightens from its first word to
+       its last as the sheet rises off the film. Ink on the paper at rest;
+       the dim end is only ever seen in passing, and the glyphs keep a
+       little ground above and below so no matra is cut from the light. */
+    @media (max-width: 620px), (max-width: 1023px) and (max-height: 520px) {
+      .e-impact__gu {
+        margin-block: -0.12em;
+        background: linear-gradient(90deg, var(--e-ink) 42%, rgba(16, 22, 28, 0.18) 58%);
+        background-size: 250% 100%;
+        padding-block: 0.12em;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: e-impact-dawn linear both;
+        animation-timeline: view();
+        animation-range: entry 25% cover 45%;
+      }
+    }
+
+    /* ---- section heads cascade ---- */
+
+    .e-impact .e-head > *,
+    .e-why .e-head > *,
+    .e-voices .e-head > *,
+    .e-cond__head > *,
+    .e-docs__head > * {
+      animation: e-rise cubic-bezier(0.2, 0.7, 0.3, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+
+    .e-impact .e-head > :nth-child(2),
+    .e-why .e-head > :nth-child(2),
+    .e-voices .e-head > :nth-child(2),
+    .e-cond__head > :nth-child(2),
+    .e-docs__head > :nth-child(2) {
+      --rise: 64px;
+    }
+
+    .e-cond__head > :nth-child(3) {
+      --rise: 84px;
+    }
+
+    /* On a phone the services head carries the rule the heads either side
+       of it carry, and it draws across the same way. */
+    .e-cond[data-shape="index"] .e-cond__head {
+      position: relative;
+      border-top-color: transparent;
+    }
+
+    .e-cond[data-shape="index"] .e-cond__head::before {
+      content: "";
+      position: absolute;
+      top: -1px;
+      right: 0;
+      left: 0;
+      height: 1px;
+      background: var(--e-rule);
+      transform-origin: 0 50%;
+      animation: e-draw cubic-bezier(0.3, 0.6, 0.2, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 35%;
+    }
+
+    /* The rule over a head draws itself across as the head arrives, the
+       way the journey timeline's accent line travels. */
+    .e-impact .e-head,
+    .e-why .e-head,
+    .e-voices .e-head {
+      position: relative;
+      border-top-color: transparent;
+    }
+
+    .e-impact .e-head::before,
+    .e-why .e-head::before,
+    .e-voices .e-head::before {
+      content: "";
+      position: absolute;
+      top: -1px;
+      right: 0;
+      left: 0;
+      height: 1px;
+      background: var(--e-rule);
+      transform-origin: 0 50%;
+      animation: e-draw cubic-bezier(0.3, 0.6, 0.2, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 35%;
+    }
+
+    .e-voices .e-head::before {
+      background: var(--e-rule-dark);
+    }
+
+    /* ---- cards fan into place ----
+
+       A row of cards enters the screen at once, so each column travels
+       further than the one before it and they land together: the row
+       fans out of the page rather than lifting as one slab. Columns are
+       counted per breakpoint because the grids change shape. */
+    .e-impact__card,
+    .e-impact__proof,
+    .e-impact__nearest,
+    .e-impact__actions,
+    .e-why__tile {
+      animation: e-rise cubic-bezier(0.2, 0.7, 0.3, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 32%;
+    }
+
+    .e-impact__card,
+    .e-impact__proof,
+    .e-why__tile {
+      --rise: 56px;
+    }
+
+    .e-impact__nearest {
+      --rise: 40px;
+    }
+
+    /* The proof card's photograph drifts inside its frame for as long as
+       the card is on screen - the services stage's move - over-scaled so
+       its edges never show. */
+    .e-impact__photo img {
+      scale: 1.12;
+      animation: e-drift linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+
+    @media (min-width: 1081px) {
+      .e-impact__card:nth-child(4n + 2) {
+        --rise: 88px;
+      }
+
+      .e-impact__card:nth-child(4n + 3) {
+        --rise: 120px;
+      }
+
+      .e-impact__card:nth-child(4n + 4) {
+        --rise: 152px;
+      }
+    }
+
+    @media (max-width: 1080px) {
+      .e-impact__card:nth-child(2n) {
+        --rise: 96px;
+      }
+    }
+
+    @media (min-width: 901px) {
+      .e-why__grid > :nth-child(3n + 2) {
+        --rise: 108px;
+      }
+
+      .e-why__grid > :nth-child(3n + 3) {
+        --rise: 80px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .e-why__grid > :nth-child(2n) {
+        --rise: 96px;
+      }
+    }
+
+    /* ---- the services wheel settles; its photograph drifts ----
+
+       The desk comes up and out to full size as it enters, and inside the
+       stage the photograph moves a little against the page for as long as
+       the stage is on screen - over-scaled so its edges never show. */
+    .e-cond__desk {
+      animation: e-settle cubic-bezier(0.2, 0.7, 0.3, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+
+    /* The index's photograph settles as the desk does, and its rows come
+       up one at a time under the thumb; each has finished rising well
+       before it reaches the photograph. */
+    .e-cond__screen {
+      animation: e-settle cubic-bezier(0.2, 0.7, 0.3, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+
+    .e-cond__rows > li {
+      --rise: 36px;
+      animation: e-rise cubic-bezier(0.2, 0.7, 0.3, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 28%;
+    }
+
+    .e-cond__photos {
+      scale: 1.12;
+      animation: e-drift linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+
+    /* ---- rails are dealt in from the side ---- */
+
+    .e-cond__track,
+    .e-docs__track {
+      animation: e-deal cubic-bezier(0.2, 0.7, 0.3, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+
+    /* The patient wall is dealt in too, but it never fades. On the phone
+       rail the row itself slides in from the right, one card arriving the
+       way a swipe moves it. */
+    .e-voices__row[data-mode="step"] {
+      animation: e-voices-deal cubic-bezier(0.2, 0.7, 0.3, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+
+    /* On the drifting wall the rows stay put and their tracks slide: a row
+       is the window the cards are seen through, and moving the window
+       sideways uncovered 230px of bare navy beside it at 1440px. The two
+       rows arrive from opposite sides - the directions they drift in - on
+       each row's own view of the page (--voices-row: the track's own
+       nearest scroll container is the row, which never scrolls). The first
+       row arrives from the right, so its track rests 16vw further left than
+       it would, which keeps the start of the track off screen for the whole
+       slide; the second arrives from the left and needs no room. Three sets
+       per track (LOOPS in PatientStories) keep the far end off screen as
+       well. */
+    .e-voices__row[data-mode="drift"] {
+      view-timeline: --voices-row block;
+      view-timeline-inset: 0;
+    }
+
+    .e-voices__row[data-mode="drift"] + .e-voices__row {
+      --deal: -16vw;
+    }
+
+    .e-voices__row[data-mode="drift"] .e-voices__track {
+      animation:
+        e-voices-drift var(--voices-duration, 60s) linear infinite,
+        e-voices-deal cubic-bezier(0.2, 0.7, 0.3, 1) both;
+      animation-timeline: auto, --voices-row;
+      animation-range: normal, entry 0% cover 40%;
+    }
+
+    .e-voices__row[data-mode="drift"]:first-child .e-voices__track {
+      margin-left: -16vw;
+    }
+
+    .e-voices__row[data-mode="drift"] .e-voices__track[data-reverse="true"] {
+      animation-direction: reverse, normal;
+    }
+
+    /* The shorthand above resets the pause, so it is restated here - for the
+       drift only; the slide keeps following the scroll. */
+    .e-voices__rows:hover .e-voices__row[data-mode="drift"] .e-voices__track,
+    .e-voices__rows:focus-within .e-voices__row[data-mode="drift"] .e-voices__track,
+    .e-voices__row[data-mode="drift"] .e-voices__track[data-paused="true"] {
+      animation-play-state: paused, running;
+    }
+
+    /* ---- the doctor rail recedes under the patient wall ----
+
+       From the section's foot meeting the bottom of the screen - which is
+       when the wall's sheet appears - to its foot leaving the top. Written
+       as an offset into `cover` rather than as `exit`, because `exit` only
+       starts there when the section is taller than the screen, and on a
+       1080p monitor or a 932px phone it is not. */
+    .e-docs {
+      view-timeline: --docs block;
+      view-timeline-inset: 0;
+    }
+
+    .e-docs__rail,
+    .e-docs__foot {
+      animation: e-recede linear both;
+      animation-timeline: --docs;
+      animation-range: cover calc(100% - 100vh) cover 100%;
+    }
   }
 }

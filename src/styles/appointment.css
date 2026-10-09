@@ -53,6 +53,11 @@
   font-style: italic;
 }
 
+/* Each word of the promise is clipped on its own as it writes itself in. */
+.ap-head__ink {
+  display: inline-block;
+}
+
 .ap-head__lede {
   max-width: 46ch;
   margin: clamp(14px, 1.8vw, 22px) 0 0;
@@ -75,11 +80,22 @@
 .ap-aside {
   position: sticky;
   top: calc(var(--hd-height) + 20px);
+  /* The header's own slide, so the slip follows it off and back on and
+     stays level with a card brought under the top of the screen. */
+  transition: top var(--hd-slide);
+}
+
+body:has(.hd--hidden) .ap-aside {
+  top: 20px;
 }
 
 /* ---------- the card ---------- */
 
 .ap-card {
+  /* The name and mobile fields share a row wherever the card, not the
+     window, is wide enough - beside the slip on a laptop it is narrower than
+     on a tablet. */
+  container: ap-card / inline-size;
   position: relative;
   overflow: clip;
   border: 1px solid var(--e-rule);
@@ -259,9 +275,17 @@
 
 /* ---------- the step ---------- */
 
-/* The frame's height follows the panel inside it, written by the flow. */
+/* The frame's height follows the panel inside it, written by the flow, and
+   it clips the panel while it grows and slides. The clip reaches past the
+   panel (padding over a matching negative margin, the height the content's
+   alone), or it cut a chip's focus ring at the edge and the receipt's rings
+   round its mark. 16px at the top, which every tier's rail margin clears,
+   so the frame never lies over the rail's labels. */
 .ap-card__frame {
   position: relative;
+  box-sizing: content-box;
+  margin: -16px -20px -8px;
+  padding: 16px 20px 8px;
   overflow: hidden;
   transition: height 360ms var(--ap-ease);
 }
@@ -275,6 +299,12 @@
 .ap-step__head {
   display: grid;
   gap: 6px;
+}
+
+/* A step the reader moves to takes the focus here; the heading is not a
+   control, so it carries no ring. */
+.ap-step__title:focus {
+  outline: 0;
 }
 
 .ap-step__title {
@@ -295,6 +325,7 @@
   font-family: var(--e-sans);
   font-size: 0.98rem;
   line-height: 1.55;
+  text-wrap: balance;
 }
 
 /* ---------- typed fields ---------- */
@@ -302,6 +333,19 @@
 .ap-field {
   display: grid;
   gap: 8px;
+}
+
+.ap-pair {
+  display: grid;
+  gap: inherit;
+}
+
+@container ap-card (min-width: 560px) {
+  .ap-pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 16px;
+  }
 }
 
 .ap-field__label {
@@ -391,6 +435,30 @@
 
 .ap-input-wrap[data-intl] .ap-input {
   padding-left: 16px;
+}
+
+/* The number reads as a real mobile: a check at the field's end. */
+.ap-input-wrap .ap-input {
+  padding-right: 46px;
+}
+
+.ap-input__ok {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  color: var(--color-success);
+  opacity: 0;
+  translate: 0 -50%;
+  scale: 0.5;
+  pointer-events: none;
+  transition:
+    opacity 180ms var(--ap-ease),
+    scale 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ap-input-wrap[data-valid] .ap-input__ok {
+  opacity: 1;
+  scale: 1;
 }
 
 .ap-field__hint,
@@ -619,11 +687,33 @@
   padding: 6px;
   overflow-x: auto;
   scroll-snap-type: x proximity;
-  scroll-padding-inline: 6px;
+  /* The fades' own widths, so a tile brought into view by a snap or an
+     arrow key stops clear of them rather than under them. */
+  scroll-padding-inline: 30px 36px;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
-  /* The rail fades at its right edge, which is what says it continues. */
-  mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent);
+}
+
+/* The rail fades at an end only where there is more past it, which is what
+   says it continues - written by ChoiceGroup from its scroll position. Every
+   stop is positive: Safari mishandles a gradient whose stops all sit at or
+   below zero, which is why there is no base rule with a 0px fade. */
+.ap-choice[data-shape="tile"] .ap-choice__list[data-start="true"] {
+  mask-image: linear-gradient(90deg, transparent 0, #000 30px);
+}
+
+.ap-choice[data-shape="tile"] .ap-choice__list[data-end="true"] {
+  mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent 100%);
+}
+
+.ap-choice[data-shape="tile"] .ap-choice__list[data-start="true"][data-end="true"] {
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 30px,
+    #000 calc(100% - 36px),
+    transparent 100%
+  );
 }
 
 .ap-choice[data-shape="tile"] .ap-choice__list::-webkit-scrollbar {
@@ -706,11 +796,25 @@
   font-variant-numeric: lining-nums tabular-nums;
 }
 
-/* The time of day: four across where they fit, two by two where they do
-   not - measured, not chosen, so the card beside the slip at 1024px does not
-   wrap `Any time` into two lines. */
+/* The time of day: two by two, and four across only where the card is wide
+   enough for each range on one line - a container query on the card, so the
+   narrower card beside the slip on a laptop keeps two. Auto-fit set three
+   and a lone `Evening` between 1024 and 1180px, and four across at 1440px
+   broke `9 AM - 12 PM`. The chip gives its range the room its ring and gap
+   were taking. */
 .ap-choice[data-shape="segment"] .ap-choice__list {
-  grid-template-columns: repeat(auto-fit, minmax(122px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ap-choice[data-shape="segment"] .ap-chip {
+  gap: 8px;
+  padding-inline: 12px;
+}
+
+@container ap-card (min-width: 620px) {
+  .ap-choice[data-shape="segment"] .ap-choice__list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 /* ---------- the foot ---------- */
@@ -732,6 +836,29 @@
   border-radius: 12px;
 }
 
+/* The outline button's border is the only thing that makes it a control, so
+   it takes the 3:1 edge, not the 1.58:1 rule the primitive carries. */
+.ap-foot__back,
+.ap-done__actions .e-btn--outline {
+  border-color: var(--ap-edge);
+}
+
+/* A tap leaves :hover on the button it landed on, and the foot outlives the
+   step - the fill would stay for the rest of the visit on a phone. */
+@media (hover: none) {
+  .ap-foot .e-btn:hover,
+  .ap-done__actions .e-btn:hover {
+    border-color: var(--e-navy);
+    background: var(--e-navy);
+  }
+
+  .ap-foot .e-btn--outline:hover,
+  .ap-done__actions .e-btn--outline:hover {
+    border-color: var(--ap-edge);
+    background: transparent;
+  }
+}
+
 .ap-foot__next {
   position: relative;
   min-width: 200px;
@@ -745,6 +872,26 @@
 @media (hover: hover) and (pointer: fine) {
   .ap-foot__next:hover svg {
     transform: translateX(4px);
+  }
+}
+
+/* The step is answered: Continue's arrow steps forward once - the reader
+   can move on. It runs as the attribute arrives, so a step that opens
+   already answered (the optional ones) does not nudge. */
+.ap-foot__next[data-ready] svg {
+  animation: ap-nudge 900ms var(--ap-ease) 80ms 1;
+}
+
+@keyframes ap-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  35% {
+    transform: translateX(7px);
+  }
+  65% {
+    transform: translateX(-1px);
   }
 }
 
@@ -1143,6 +1290,7 @@
   color: var(--e-ink);
   font-weight: 600;
   text-align: right;
+  text-wrap: balance;
 }
 
 .ap-done__actions {
@@ -1180,6 +1328,61 @@
 @media (max-width: 1023px) {
   .ap-grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Stacked, the slip lives in the last step and the column holds no aside
+     (BookingFlow decides that in JS). The prerendered page is laid out for a
+     laptop, so its aside is kept out of a phone's layout here: when React
+     adopts the page and takes the aside away, nothing under it moves. */
+  .ap-aside {
+    display: none;
+  }
+}
+
+/* A laptop window under 900px tall - most of them, once the browser's own
+   bars are counted (1366x657, 1536x730, a 13-inch MacBook's ~1470x830) -
+   sets the head on one line, a size smaller, and takes the air out of the
+   card's rhythm, so the first question, both fields and Continue share its
+   first screen with the head. */
+@media (min-width: 1024px) and (max-height: 899px) {
+  .ap {
+    padding-top: 14px;
+  }
+
+  .ap-head {
+    margin-bottom: 18px;
+  }
+
+  .ap-head__title {
+    max-width: none;
+    margin-top: 8px;
+    font-size: clamp(2.4rem, 3.2vw, 3rem);
+  }
+
+  .ap-head__title em {
+    display: inline;
+  }
+
+  .ap-head__lede {
+    max-width: none;
+    margin-top: 8px;
+  }
+
+  .ap-card {
+    padding-block: 24px;
+  }
+
+  .ap-rail {
+    margin-bottom: 18px;
+  }
+
+  .ap-step {
+    gap: 16px;
+  }
+
+  .ap-foot {
+    margin-top: 18px;
+    padding-top: 16px;
   }
 }
 
@@ -1221,6 +1424,41 @@
   }
   .ap-slip__line {
     grid-template-columns: 72px minmax(0, 1fr);
+  }
+}
+
+/* A phone's first screen is the first question, measured at the heights
+   Safari actually shows (390x664, 393x659): the head, the rail, both fields
+   and Continue. The air comes out of the gaps, never out of the type or a
+   44px target. */
+@media (max-width: 640px) and (min-height: 521px) {
+  .ap {
+    padding-top: 14px;
+  }
+
+  .ap-head {
+    margin-bottom: 18px;
+  }
+
+  .ap-rail {
+    margin-bottom: 18px;
+  }
+
+  .ap-rail__button {
+    gap: 6px;
+  }
+
+  .ap-step {
+    gap: 16px;
+  }
+
+  .ap-field {
+    gap: 6px;
+  }
+
+  .ap-foot {
+    margin-top: 18px;
+    padding-top: 14px;
   }
 }
 
@@ -1270,7 +1508,47 @@
   }
 }
 
+/* A phone held sideways sets the head on one line with no lede, so the card
+   - its rail and the first question - reaches the first screen. Stacked, the
+   head filled an 844x390 screen and the card began at its foot. */
+@media (max-width: 1023px) and (max-height: 520px) {
+  .ap {
+    padding-block: 14px 36px;
+  }
+
+  .ap-head {
+    margin-bottom: 16px;
+  }
+
+  .ap-head__title {
+    max-width: none;
+    font-size: clamp(2rem, 5vw, 2.6rem);
+  }
+
+  .ap-head__title em {
+    display: inline;
+  }
+
+  .ap-head__lede {
+    display: none;
+  }
+
+  .ap-card {
+    padding: 18px 22px 20px;
+  }
+
+  .ap-rail {
+    margin-bottom: 16px;
+  }
+
+  .ap-step {
+    gap: 16px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .ap-aside,
+  .ap-input__ok,
   .ap-card__frame,
   .ap-rail__dot,
   .ap-rail__num,
@@ -1289,6 +1567,7 @@
     transition: none;
   }
   .ap-rail__dot::after,
+  .ap-foot__next[data-ready] svg,
   .ap-chip__mark::before,
   .ap-foot__send::after,
   .ap-foot__send svg,

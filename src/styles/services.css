@@ -50,6 +50,12 @@
   letter-spacing: -0.02em;
 }
 
+/* Each word of the accent is clipped in its own box as it is written in (see
+   the page), so a phrase that wraps is never cut to its first line. */
+.sv-top__ink {
+  display: inline-block;
+}
+
 .sv-top__row {
   display: flex;
   flex-wrap: wrap;
@@ -73,13 +79,20 @@
   padding-left: 14px;
 }
 
-.sv-top__stamp span {
+/* Named, not `span`: CountUp renders spans inside the figures, and a bare
+   `span` rule set the counting digits as 0.72rem uppercase micro type. */
+.sv-top__stamp-label {
   color: var(--e-ink-2);
   font-family: var(--e-sans);
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+}
+
+.sv-top__figures {
+  display: grid;
+  gap: 2px;
 }
 
 .sv-top__stamp strong {
@@ -90,6 +103,24 @@
   letter-spacing: -0.01em;
   line-height: 1.28;
   white-space: nowrap;
+}
+
+/* CountUp's own type is the impact band's; here it takes the stamp's. The
+   digits hold the width of the finished figure while they count, so "11"
+   never pushes "services" along as it passes from one digit to two. */
+.sv-top__stamp .e-count {
+  display: inline;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+}
+
+.sv-top__stamp .e-count__value {
+  display: inline-block;
+  min-width: calc(var(--sv-digits, 1) * 1ch);
+  text-align: right;
 }
 
 .sv-top__actions {
@@ -240,11 +271,91 @@
   }
 }
 
+/* The gaze: the iris turns toward the pointer and the pupil a little further
+   than the iris round it, which is what reads as an eye rather than a disc
+   sliding about. --sv-gx and --sv-gy run from -1 to 1 (see the component);
+   the rings and the reflection stay where they are. */
+.sv-iris__eye {
+  translate: calc(var(--sv-gx, 0) * 16px) calc(var(--sv-gy, 0) * 16px);
+  transition: translate 900ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.sv-iris__lens {
+  translate: calc(var(--sv-gx, 0) * 7px) calc(var(--sv-gy, 0) * 7px);
+  transition: translate 900ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+/* The arrival, the opening curtain's iris: the pupil is on screen first, the
+   limbus draws round it, the body blooms and the stroma grows out of it, and
+   the rings arrive last. It runs on `scale` and `opacity`, which compose with
+   the breathing and the drift above rather than replacing them. */
+.sv-iris__body,
+.sv-iris__stroma {
+  transition:
+    opacity 700ms var(--e-ease) calc(var(--sv-iris-delay, 0s) + 120ms),
+    scale 1000ms var(--e-ease) calc(var(--sv-iris-delay, 0s) + 120ms);
+}
+
+.sv-iris__stroma {
+  transition-delay: calc(var(--sv-iris-delay, 0s) + 300ms);
+}
+
+.sv-iris__limbus {
+  stroke-dasharray: 654;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1100ms var(--e-ease) calc(var(--sv-iris-delay, 0s) + 160ms);
+}
+
+.sv-iris__glow,
+.sv-iris__spark {
+  transition: opacity 600ms var(--e-ease) calc(var(--sv-iris-delay, 0s) + 700ms);
+}
+
+.sv-iris__ring {
+  transition:
+    opacity 900ms var(--e-ease) calc(var(--sv-iris-delay, 0s) + 520ms),
+    scale 1200ms var(--e-ease) calc(var(--sv-iris-delay, 0s) + 520ms);
+}
+
+.sv-iris__ring--b {
+  transition-delay: calc(var(--sv-iris-delay, 0s) + 620ms);
+}
+
+.sv-iris__ring--a {
+  transition-delay: calc(var(--sv-iris-delay, 0s) + 720ms);
+}
+
+.sv-iris:not([data-drawn]) .sv-iris__body {
+  opacity: 0;
+  scale: 0.5;
+}
+
+.sv-iris:not([data-drawn]) .sv-iris__stroma {
+  opacity: 0;
+  scale: 0.45;
+}
+
+.sv-iris:not([data-drawn]) .sv-iris__limbus {
+  stroke-dashoffset: 654;
+}
+
+.sv-iris:not([data-drawn]) .sv-iris__glow,
+.sv-iris:not([data-drawn]) .sv-iris__spark {
+  opacity: 0;
+}
+
+.sv-iris:not([data-drawn]) .sv-iris__ring {
+  opacity: 0;
+  scale: 0.82;
+}
+
 .sv-iris[data-still] * {
   animation: none !important;
+  transition: none !important;
 }
 
 .sv-chip {
+  position: relative;
   display: inline-flex;
   align-items: center;
   min-height: 46px;
@@ -259,15 +370,6 @@
   line-height: 1.3;
   text-align: left;
   cursor: pointer;
-  transition:
-    border-color 200ms var(--e-ease),
-    background-color 200ms var(--e-ease),
-    color 200ms var(--e-ease);
-}
-
-.sv-chip {
-  position: relative;
-  padding-left: 18px;
   transition:
     border-color 200ms var(--e-ease),
     background-color 200ms var(--e-ease),
@@ -343,6 +445,41 @@
   height: 3px;
   background: linear-gradient(90deg, var(--e-navy) 0%, var(--color-teal) 60%, var(--e-accent) 100%);
   pointer-events: none;
+  /* it draws across the first time the console is on screen (data-on, from
+     the component), the instrument switching on */
+  transform-origin: 0 50%;
+  scale: 0 1;
+  transition: scale 1100ms var(--e-ease) 120ms;
+}
+
+.sv-console[data-on]::before {
+  scale: 1 1;
+}
+
+/* ...and the eye chart pulls into focus under it, the way a refraction test
+   hunts for the sharpest line: blurred, sharp, a little past it, sharp. It
+   runs once (data-focus is taken off when it ends) and ends where the chart
+   rests, on clear vision. */
+.sv-console[data-focus] .sv-notice > .sv-scene .sv-scene__chart:not(.sv-scene__chart--ghost) {
+  animation: sv-focus 1500ms cubic-bezier(0.4, 0, 0.2, 1) 250ms backwards;
+}
+
+@keyframes sv-focus {
+  0% {
+    opacity: 0.45;
+    filter: blur(var(--sv-focus, 7px));
+  }
+  42% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  60% {
+    filter: blur(calc(var(--sv-focus, 7px) * 0.28));
+  }
+  82%,
+  100% {
+    filter: blur(0);
+  }
 }
 
 .sv-console__body {
@@ -741,7 +878,8 @@
   display: grid;
   gap: 10px;
   position: sticky;
-  top: 140px;
+  top: calc(var(--hd-height) + 24px);
+  transition: top var(--hd-slide);
 }
 
 /* The finder's chart is a readout: the chart and its caption on the same well
@@ -1076,6 +1214,10 @@
    the section is on screen and stops the moment a part is chosen - an
    invitation, not an ornament, so it must never run after it has been taken. */
 .sv-parts__frame {
+  /* The whole eye and its hint on one screen under the header, with the
+     route's tabs still in view above it; never under 200px, which is what a
+     phone held sideways has left. */
+  --sv-model-max: max(200px, calc(100svh - var(--hd-height) - 190px));
   border: 1px solid var(--e-rule);
   border-radius: 12px;
   background: linear-gradient(180deg, #f3f6f9 0%, var(--color-clinical) 100%);
@@ -1312,12 +1454,220 @@
   font-weight: 600;
 }
 
+/* ---------- the eye model ---------- */
+
+/* The real eye (EyeModel). The canvas is transparent, so the well it sits in
+   shows round the globe, and it fades in on its first frame rather than
+   flashing an empty box while the shader compiles. A finger's vertical swipe
+   still scrolls the page: only a sideways drag turns the eye. */
+.sv-model {
+  display: grid;
+  gap: 6px;
+  touch-action: pan-y;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sv-model:active {
+  cursor: grabbing;
+}
+
+.sv-model[data-interactive][data-over="true"] {
+  cursor: pointer;
+}
+
+/* The frame that holds it may cap its height so the whole eye fits on the
+   screen (--sv-model-max). A capped stage is wider than its ratio, and the
+   renderer fits the eye to the shorter side, so the eye shrinks and centres
+   rather than being cut. */
+.sv-model__stage {
+  position: relative;
+  width: 100%;
+  max-height: var(--sv-model-max, none);
+  aspect-ratio: var(--sv-model-ratio, 16 / 10);
+}
+
+.sv-model__canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 700ms var(--e-ease);
+}
+
+.sv-model[data-ready] .sv-model__canvas {
+  opacity: 1;
+}
+
+/* The pin: where the chosen part is. It is placed with `translate` on every
+   frame the model draws, and hides whenever its spot turns away. */
+.sv-model__pin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms var(--e-ease);
+}
+
+.sv-model__pin[data-on="true"] {
+  opacity: 1;
+}
+
+.sv-model__pin::before,
+.sv-model__pin::after {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: -7px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+
+.sv-model__pin::before {
+  z-index: 1;
+  border: 2.5px solid #fff;
+  background: var(--e-accent);
+  box-shadow: 0 2px 8px rgba(12, 44, 73, 0.35);
+}
+
+.sv-model__pin::after {
+  background: rgba(184, 22, 87, 0.35);
+  animation: sv-model-ping 1.9s var(--e-ease) infinite;
+}
+
+@keyframes sv-model-ping {
+  0% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(3.4);
+  }
+}
+
+/* The part's name, riding above the pin: the word and the place it names in
+   one glance, which a caption under the frame or a chip beside it cannot do
+   for a reader who does not know which part of the picture is "the retina".
+   Placed with `translate` on every frame the model draws, like the pin. */
+.sv-model__tag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow:
+    0 1px 2px rgba(12, 44, 73, 0.14),
+    0 6px 16px rgba(12, 44, 73, 0.16);
+  padding: 5px 11px;
+  color: var(--e-navy);
+  font-family: var(--e-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms var(--e-ease);
+}
+
+.sv-model__tag[data-on="true"] {
+  opacity: 1;
+}
+
+/* The one line of instruction the model needs, under it rather than over it:
+   every corner of the picture is filled by one pose or another, and a pill
+   laid over the globe covered it on a 320px phone. It says "swipe" to a hand
+   and "drag" to a mouse. */
+.sv-model__hint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.2;
+  pointer-events: none;
+}
+
+.sv-model__hint-touch {
+  display: none;
+}
+
+@media (hover: none) {
+  .sv-model__hint-fine {
+    display: none;
+  }
+
+  .sv-model__hint-touch {
+    display: inline;
+  }
+}
+
+/* Beside its parts from 901px: the model gets the height a turning eye needs,
+   and the seven parts read down one edge like the legend of an anatomical
+   plate, rather than wrapping in a row under a picture. */
+@media (min-width: 901px) {
+  .sv-parts {
+    grid-template-columns: minmax(0, 1.55fr) minmax(250px, 1fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "frame caption"
+      "frame list";
+    align-items: start;
+    column-gap: clamp(20px, 3vw, 40px);
+    row-gap: 14px;
+  }
+
+  .sv-parts__frame {
+    grid-area: frame;
+    --sv-model-ratio: 4 / 3;
+  }
+
+  .sv-parts__caption {
+    grid-area: caption;
+    justify-content: flex-start;
+    min-height: 50px;
+    text-align: left;
+  }
+
+  .sv-parts__list {
+    grid-area: list;
+    display: grid;
+    justify-content: stretch;
+    gap: 8px;
+  }
+
+  .sv-parts__list .sv-chip--part {
+    width: 100%;
+  }
+}
+
 /* ---------- filters ---------- */
 
 .sv-explorer {
   /* The whole instrument sits on one ground so the controls and the list they
      drive read as a single thing, which is the point of merging them. */
   background: linear-gradient(180deg, var(--e-paper-2) 0%, #f1f3f5 100%);
+}
+
+/* The opening and the explorer are one ground, and their two paddings met as
+   an empty band - 96px of paper on a phone before the explorer's rule. The
+   rule is what separates them. */
+.sv-top + .sv-explorer {
+  padding-top: clamp(28px, 4vw, 64px);
 }
 
 /* ---------- the split: one photograph, held still beside the list ---------- */
@@ -1332,10 +1682,17 @@
   gap: clamp(24px, 3.2vw, 52px);
 }
 
+/* Pinned under the header, and following it up when it hides, on its own
+   timing - the device every pinned bar on the site uses. */
 .sv-stage {
   position: sticky;
-  /* clears the expanded desktop header (121px) with room to breathe */
-  top: 136px;
+  top: calc(var(--hd-height) + 24px);
+  transition: top var(--hd-slide);
+}
+
+body:has(.hd--hidden) .sv-stage,
+body:has(.hd--hidden) .sv-notice > .sv-scene {
+  top: 24px;
 }
 
 .sv-stage__inner {
@@ -1517,10 +1874,6 @@
   transition:
     background-color 240ms var(--e-ease),
     box-shadow 240ms var(--e-ease);
-  /* html carries scroll-padding-top: 120px, which clears the collapsed header
-     but not the 121px expanded desktop one; the extra also absorbs the shift
-     from the header collapsing part-way through an anchor jump. */
-  scroll-margin-top: 48px;
 }
 
 .sv-row__num {
@@ -1619,13 +1972,14 @@
 
 /* ---------- the phone grid ---------- */
 
-/* The phone's list: eleven cards, three across, all on one screen, after the
-   card-grid reference. It only renders below 641px (see the component), so
-   these rules need no media query of their own. A card is a coloured edge for
-   the kind of care, the service's number, its short name and "Learn more" at
-   the foot; the whole card is the link. The last card takes the columns its
-   row leaves empty and lays out sideways with its sentence, so the grid
-   closes on a full row and every row is the same height. */
+/* The phone's list while nothing is chosen: eleven cards, three across, all
+   on one screen, after the card-grid reference. It only renders below 641px
+   (see the component), so these rules need no media query of their own. A
+   card is a coloured edge for the kind of care, the service's number, its
+   short name and "Learn more" at the foot; the whole card is the link. The
+   last card takes the columns its row leaves empty and lays out sideways with
+   its sentence, so the grid closes on a full row and every row is the same
+   height. Any choice replaces the grid with the answer cards below. */
 .sv-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1643,8 +1997,7 @@
   grid-column: span 2;
 }
 
-.sv-tile[data-wide="3"],
-.sv-tile[data-single] {
+.sv-tile[data-wide="3"] {
   grid-column: 1 / -1;
 }
 
@@ -1654,6 +2007,7 @@
    teal for the clinics and everyday care, the accent for the children's
    services, and the danger colour on a tint for the urgent card alone. */
 .sv-tile__link,
+.sv-answer__link,
 .sv-kind {
   --sv-tone: var(--e-navy);
   --sv-tint: rgba(12, 44, 73, 0.06);
@@ -1661,6 +2015,8 @@
 
 .sv-tile[data-tone="specialty"] .sv-tile__link,
 .sv-tile[data-tone="everyday"] .sv-tile__link,
+.sv-answer[data-tone="specialty"] .sv-answer__link,
+.sv-answer[data-tone="everyday"] .sv-answer__link,
 .sv-kind[data-tone="specialty"],
 .sv-kind[data-tone="everyday"] {
   --sv-tone: var(--color-teal);
@@ -1668,12 +2024,14 @@
 }
 
 .sv-tile[data-tone="children"] .sv-tile__link,
+.sv-answer[data-tone="children"] .sv-answer__link,
 .sv-kind[data-tone="children"] {
   --sv-tone: var(--e-accent);
   --sv-tint: rgba(184, 22, 87, 0.06);
 }
 
 .sv-tile[data-tone="urgent"] .sv-tile__link,
+.sv-answer[data-tone="urgent"] .sv-answer__link,
 .sv-kind[data-tone="urgent"] {
   --sv-tone: var(--color-danger);
   --sv-tint: rgba(165, 35, 27, 0.08);
@@ -1760,20 +2118,14 @@
   background: #f6dfdc;
 }
 
-/* The number is the ledger's: "07" is the Myopia Clinic whether the reader is
-   looking at all eleven or at three, and it turns accent on a narrowed list,
-   which is what marks the cards as the answers rather than the catalogue. */
+/* The number is the ledger's: "07" is the Myopia Clinic on the grid, on an
+   answer card and on the wide-screen ledger alike. */
 .sv-tile__num {
   color: var(--e-ink-2);
   font-family: var(--e-serif);
   font-size: 0.94rem;
   font-variant-numeric: tabular-nums lining-nums;
   line-height: 1;
-  transition: color 240ms var(--e-ease);
-}
-
-.sv-tile[data-match] .sv-tile__num {
-  color: var(--e-accent);
 }
 
 .sv-tile[data-tone="urgent"] .sv-tile__num {
@@ -1803,8 +2155,8 @@
 }
 
 /* The sentence shows only where a card is wide enough to carry it: the wide
-   card, the answer card, and every card from 560px, where a third of the
-   shell is 165px or more. */
+   card, and every card from 560px, where a third of the shell is 165px or
+   more. */
 .sv-tile__text {
   display: none;
   color: var(--e-ink-2);
@@ -1813,8 +2165,7 @@
   line-height: 1.45;
 }
 
-.sv-tile[data-wide] .sv-tile__text,
-.sv-tile[data-single] .sv-tile__text {
+.sv-tile[data-wide] .sv-tile__text {
   display: block;
 }
 
@@ -1881,68 +2232,6 @@
   margin-top: 2px;
 }
 
-/* One answer is a card, not a lone tile in a row of three: the photograph,
-   the full name, the sentence and the arrow, left to right. */
-.sv-tile[data-single] .sv-tile__link {
-  display: grid;
-  grid-template-columns: 92px minmax(0, 1fr) auto;
-  grid-template-areas:
-    "photo name arrow"
-    "photo text arrow";
-  justify-items: start;
-  align-items: center;
-  gap: 4px 16px;
-  min-height: 0;
-  padding: 12px 14px 12px 16px;
-}
-
-.sv-tile__photo {
-  grid-area: photo;
-  display: block;
-  width: 92px;
-  aspect-ratio: 1;
-  border-radius: 10px;
-  overflow: hidden;
-  background: var(--color-clinical);
-}
-
-.sv-tile__img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.sv-tile[data-single] .sv-tile__name {
-  grid-area: name;
-  align-self: end;
-  margin-top: 0;
-  font-family: var(--e-serif);
-  font-size: 1.18rem;
-  font-weight: 400;
-  letter-spacing: -0.015em;
-  line-height: 1.15;
-  text-wrap: balance;
-}
-
-.sv-tile[data-single] .sv-tile__text {
-  grid-area: text;
-  align-self: start;
-  font-size: 0.86rem;
-}
-
-.sv-tile__arrow {
-  grid-area: arrow;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 999px;
-  background: var(--e-navy);
-  color: #fff;
-}
-
 @media (min-width: 560px) {
   .sv-tile__text {
     display: block;
@@ -1987,8 +2276,196 @@
   .sv-tile__link {
     padding: 11px 6px 9px 12px;
   }
-  .sv-tile[data-single] .sv-tile__link {
-    padding: 12px 12px 12px 14px;
+}
+
+/* ---------- the phone answers ---------- */
+
+/* Whatever the reader chose and however many services answer it, a phone
+   shows each answer as this one card, full width, one under the other. It is
+   the grid's tile opened up - the same coloured edge, the same number, the
+   same name and the same way in at the foot - with the width to carry what a
+   tile cannot: the service's photograph, its kind of care in the edge's
+   colour, and its sentence. Like the grid, it only renders below 641px. */
+.sv-answers {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sv-answer {
+  min-width: 0;
+}
+
+.sv-answer__link {
+  --sv-answer-photo: clamp(72px, 22vw, 96px);
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--sv-answer-photo) minmax(0, 1fr);
+  align-items: start;
+  gap: 14px;
+  border: 1px solid var(--e-rule);
+  border-radius: 16px;
+  background: var(--e-paper);
+  padding: 14px 14px 14px 19px;
+  color: var(--e-ink);
+  text-align: left;
+  overflow: clip;
+  box-shadow:
+    0 1px 2px rgba(16, 22, 28, 0.04),
+    0 10px 24px rgba(16, 22, 28, 0.05);
+  transition:
+    transform 180ms var(--e-ease),
+    border-color 220ms var(--e-ease),
+    background-color 220ms var(--e-ease),
+    box-shadow 220ms var(--e-ease);
+}
+
+.sv-answer__link::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: var(--sv-tone);
+  transition: width 180ms var(--e-ease);
+}
+
+.sv-answer__link:active {
+  transform: scale(0.98);
+  background: var(--sv-tint);
+}
+
+.sv-answer__link:active::before {
+  width: 8px;
+}
+
+.sv-answer__link:focus-visible {
+  outline: 2px solid var(--e-accent);
+  outline-offset: 2px;
+}
+
+.sv-answer[data-tone="urgent"] .sv-answer__link {
+  border-color: rgba(165, 35, 27, 0.22);
+  background: #fbefed;
+}
+
+.sv-answer[data-tone="urgent"] .sv-answer__link:active {
+  background: #f6dfdc;
+}
+
+.sv-answer__photo {
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--color-clinical);
+}
+
+.sv-answer__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The body is at least the photograph's height, so a short sentence still
+   puts the way in on the card's foot rather than halfway up it. */
+.sv-answer__body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  min-height: var(--sv-answer-photo);
+}
+
+.sv-answer__meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.sv-answer__num {
+  color: var(--e-ink-2);
+  font-family: var(--e-serif);
+  font-size: 0.98rem;
+  font-variant-numeric: tabular-nums lining-nums;
+  line-height: 1;
+}
+
+.sv-answer__cat {
+  color: var(--sv-tone);
+  font-family: var(--e-sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.sv-answer__name {
+  color: var(--e-ink);
+  font-family: var(--e-tight);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.22;
+  text-wrap: balance;
+}
+
+.sv-answer__text {
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.sv-answer__more {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-end;
+  gap: 5px;
+  margin-top: auto;
+  padding-top: 4px;
+  color: var(--color-teal);
+  font-family: var(--e-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.sv-answer__more svg {
+  transition: translate 200ms var(--e-ease);
+}
+
+.sv-answer[data-tone="urgent"] .sv-answer__num,
+.sv-answer[data-tone="urgent"] .sv-answer__name,
+.sv-answer[data-tone="urgent"] .sv-answer__more {
+  color: var(--color-danger);
+}
+
+@media (hover: hover) {
+  .sv-answer__link:hover {
+    transform: translateY(-2px);
+    border-color: var(--e-rule-2);
+    box-shadow:
+      0 1px 2px rgba(16, 22, 28, 0.04),
+      0 18px 36px rgba(16, 22, 28, 0.1);
+  }
+  .sv-answer__link:hover .sv-answer__more svg {
+    translate: 3px 0;
+  }
+}
+
+@media (max-width: 360px) {
+  .sv-answer__link {
+    gap: 12px;
+    padding: 12px 12px 12px 17px;
+  }
+  .sv-answer__name {
+    font-size: 1.02rem;
   }
 }
 
@@ -2413,33 +2890,73 @@
 }
 
 @media (max-width: 720px) {
-  .sv-top__shell {
-    grid-template-columns: minmax(0, 1fr);
+  .sv-top {
+    padding-top: 24px;
   }
 
   /* The mark leads on a phone: it is the one thing on this page that says "eye
-     hospital" before a word is read. It is capped so it never eats the fold -
-     at 200px it took a quarter of the first screen before the headline. */
-  .sv-top__mark {
-    order: -1;
-    justify-items: start;
+     hospital" before a word is read. It shares the first row with the
+     eyebrow, as a masthead - alone above the headline it was a small dot at
+     the left with two thirds of its row empty, and it cost 70px of the first
+     screen. The copy's box dissolves so its parts can hold the grid's rows;
+     it is a plain div, so that costs nothing semantically. */
+  .sv-top__shell {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "label mark"
+      "title title"
+      "row row"
+      "actions actions";
+    gap: 0 16px;
   }
 
-  .sv-iris {
-    width: min(34vw, 136px);
+  .sv-top__copy {
+    display: contents;
+  }
+
+  .sv-top__label {
+    grid-area: label;
+    align-self: end;
+    padding-bottom: 6px;
   }
 
   .sv-top__title {
-    margin-top: 12px;
+    grid-area: title;
+    margin-top: 10px;
+  }
+
+  .sv-top__row {
+    grid-area: row;
+  }
+
+  .sv-top__actions {
+    grid-area: actions;
+  }
+
+  .sv-top__mark {
+    grid-area: mark;
+    justify-items: end;
+    margin-right: -10px;
+  }
+
+  .sv-iris {
+    width: min(30vw, 120px);
   }
 
   /* The two figures on one line beside their label: a three-line block was
-     a screen's worth of stamp for two numbers the count line repeats. */
+     a screen's worth of stamp for two numbers the count line repeats. The
+     figures wrap as a pair, so a narrow phone puts both under the label
+     rather than leaving "6 hospitals" alone on a second line. */
   .sv-top__stamp {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     gap: 4px 14px;
+  }
+
+  .sv-top__figures {
+    display: flex;
+    gap: 14px;
   }
 
   .sv-top__stamp strong {
@@ -2547,6 +3064,8 @@
      static, and the card's overflow no longer has to accommodate a sticky
      child. */
   .sv-notice > .sv-scene {
+    /* the arrival's blur, scaled to a chart a third the size */
+    --sv-focus: 4px;
     --sv-readout-w: clamp(104px, 32vw, 150px);
     --sv-readout-h: clamp(100px, 25.5vw, 118px);
     position: static;
@@ -2595,109 +3114,9 @@
   .sv-notice > .sv-scene .sv-scene__floater--c {
     display: none;
   }
-
-  /* The thirteen descriptions are a rail, not a column. As full-width rows
-     they were 880px of card - a wall the reader had to scroll past to find
-     out what their tap had done to the list a screen below. Laid out as a
-     two-row horizontal rail, grouped under their headings the way a music
-     app rails its genres, the whole route is 130px tall and the list it
-     narrows is on the same screen as the chip that narrowed it. The groups
-     are the rail's columns; inside each, the chips flow down then across, so
-     a group of four is two columns of two and the reading order is unchanged.
-     The rail bleeds into the card's padding on both sides, so the peeking
-     chip at the right edge is what says there is more. */
-  .sv-notice__groups {
-    /* The fade at the right edge, and the room the last column keeps clear
-       of it: a chip that ends inside the fade would be dimmed at the end of
-       the rail, so the rail's own end padding is the fade's width. */
-    --sv-fade: 36px;
-    display: flex;
-    gap: 0 16px;
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-    scrollbar-width: none;
-    margin-inline: calc(var(--sv-pad) * -1);
-    padding-inline: var(--sv-pad) var(--sv-fade);
-    scroll-padding-inline: var(--sv-pad) var(--sv-fade);
-    overscroll-behavior-x: contain;
-    -webkit-overflow-scrolling: touch;
-    mask-image: linear-gradient(
-      90deg,
-      transparent 0,
-      #000 calc(var(--sv-pad) * 0.6),
-      #000 calc(100% - var(--sv-fade)),
-      transparent 100%
-    );
-  }
-
-  .sv-notice__groups::-webkit-scrollbar {
-    display: none;
-  }
-
-  .sv-notice__group {
-    flex: none;
-    scroll-snap-align: start;
-    align-content: start;
-  }
-
-  /* Every cell is the same width - the rail is a grid that happens to
-     scroll, and a grid of equal cells is what reads as designed. The width
-     is computed from the rail's own box (the shell less the card's border,
-     less the rail's two paddings and one gap, halved) so that two columns
-     fill the screen exactly and the third begins inside the fade: enough to
-     say there is more, and never a chip cut mid-word at the card's border.
-     A label that needs two lines takes them, and the row grows for the pair. */
-  .sv-symptoms {
-    display: grid;
-    grid-auto-flow: column;
-    grid-template-rows: repeat(2, auto);
-    grid-auto-columns: var(--sv-cell);
-    gap: 8px;
-  }
-
-  .sv-notice__groups {
-    --sv-rail: calc(100vw - 50px - var(--sv-pad) - var(--sv-fade));
-    /* Capped so a tablet shows three and a half columns of chips rather
-       than two bloated ones. */
-    --sv-cell: min(200px, calc((var(--sv-rail) - 8px) / 2));
-  }
-
-  /* The check sits at the right end over reserved padding rather than
-     pushing the text 14px along as it does on a wide screen: in a fixed
-     cell that push re-wrapped a two-line label to three when chosen. */
-  .sv-notice .sv-chip--symptom {
-    min-height: 46px;
-    padding: 6px 30px 6px 14px;
-    font-size: 0.84rem;
-    line-height: 1.25;
-    white-space: normal;
-  }
-
-  .sv-notice .sv-chip--symptom[data-on] {
-    padding-left: 14px;
-  }
-
-  .sv-notice .sv-chip--symptom::before {
-    left: auto;
-    right: 13px;
-  }
-
-  .sv-chip__label--full {
-    display: none;
-  }
-
-  .sv-chip__label--short {
-    display: inline;
-  }
 }
 
 @media (max-width: 720px) {
-  /* The shell's side padding drops to 16px here, and the rail's cell is
-     computed from the shell. */
-  .sv-notice__groups {
-    --sv-rail: calc(100vw - 34px - var(--sv-pad) - var(--sv-fade));
-  }
-
   /* Three full labels stacked one per row cost most of the first screen before
      a single chip is visible. The short labels fit three across in one row. */
   .sv-modes {
@@ -2827,42 +3246,33 @@
     justify-self: end;
   }
 
-  /* The five kind-of-care cards are a rail, one card and the edge of the
-     next in view. Stacked they were 650px of card before the list; railed
-     the route is one card tall, and the members each card lists are still
-     what tells a reader what "Specialty clinics" holds before the tap. */
+  /* A long description wraps inside the chip on the narrowest phones, and a
+     full pill round two lines reads as a lozenge. */
+  .sv-status__crit {
+    border-radius: 12px;
+    padding: 5px 12px;
+    line-height: 1.3;
+  }
+
+  /* The five kinds of care are one short picker, all five in view: two
+     columns, the urgent one across both, each a name and a count. They were
+     a swipe rail of cards listing their services, which hid four of the five
+     behind a swipe and then printed the same services a second time as the
+     answers under it. The answer cards are where a kind's services are read
+     now, one tap away and on the same screen. */
   .sv-kinds {
-    --sv-fade: 40px;
-    grid-template-columns: none;
-    grid-auto-flow: column;
-    grid-auto-columns: min(72vw, 300px);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    margin-inline: calc(var(--sv-pad) * -1);
-    padding-inline: var(--sv-pad) var(--sv-fade);
-    scroll-padding-inline: var(--sv-pad) var(--sv-fade);
-    overscroll-behavior-x: contain;
-    -webkit-overflow-scrolling: touch;
-    mask-image: linear-gradient(
-      90deg,
-      transparent 0,
-      #000 calc(var(--sv-pad) * 0.6),
-      #000 calc(100% - var(--sv-fade)),
-      transparent 100%
-    );
   }
 
-  .sv-kinds::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* The card carries the edge colour its services carry in the grid below,
-     so the colour is a legend the reader can read back. */
+  /* The card carries the edge colour its services carry in the grid and on
+     the answer cards, so the colour is a legend the reader can read back. */
   .sv-kind {
     position: relative;
-    scroll-snap-align: start;
+    align-content: center;
+    min-height: 60px;
+    border-radius: 12px;
+    padding: 10px 12px 10px 16px;
     overflow: clip;
   }
 
@@ -2873,6 +3283,46 @@
     width: 4px;
     background: var(--sv-tone);
   }
+
+  .sv-kind[data-tone="urgent"] {
+    grid-column: 1 / -1;
+  }
+
+  .sv-kind__head {
+    align-items: center;
+  }
+
+  .sv-kind__label {
+    font-size: 0.98rem;
+  }
+
+  .sv-kind__members {
+    display: none;
+  }
+}
+
+/* Below 360px a column of the picker is 124-134px, and "Children and squint"
+   broke across three lines beside its count. One column of rows keeps every
+   name on one line. */
+@media (max-width: 359px) {
+  .sv-kinds {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .sv-kind {
+    min-height: 50px;
+  }
+}
+
+/* A touch leaves :hover on the card it tapped, and a lifted card with a dark
+   border read as a second choice beside the filled one. */
+@media (hover: none) {
+  .sv-kind:not([data-on]):hover {
+    border-color: var(--sv-edge);
+    transform: none;
+    box-shadow: none;
+  }
 }
 
 @media (max-width: 460px) {
@@ -2881,12 +3331,642 @@
   }
 }
 
-/* Below 381px two cells cannot both hold a label at a readable size, so the
-   rail shows one column and most of the next - the cell is 70% of the rail,
-   which keeps every label to two lines down to 320px. */
-@media (max-width: 380px) {
+/* ---------- the phone finder ---------- */
+
+/* The phone gets its own finder rather than the tablet one made narrower. The
+   route asks its question in words, the symptom groups are whole pages under
+   a row of tabs, every option in every route is the same card with a ring
+   that fills when it is chosen, and the medical note is a quiet line rather
+   than a band. The first phone build was the tablet's rail at 390px: a third
+   column cut in half at the card's edge, a heading cut to "YO", and oval
+   chips wrapping onto two lines - it read as broken rather than scrollable.
+   These elements are rendered at every width and only shown here. */
+.sv-ask,
+.sv-groupnav,
+.sv-kind__sub,
+.sv-note__icon {
+  display: none;
+}
+
+/* The symptom groups below 901px: whole pages under a row of tabs, on a
+   phone, a tablet and a phone held sideways alike. A tablet used to get a
+   two-row rail whose third column was cut mid-word at the card's edge
+   ("Eyelid droop or lum") with the next group's heading cut beside it - the
+   fault the phone had already been rebuilt to remove. A page is never cut,
+   and the tabs say how many groups there are. The phone restyles the options
+   themselves (below); here they stay the console's pills. */
+@media (max-width: 900px) {
+  /* The group tabs: equal columns, so the indicator is one column wide and
+     travels by exactly one column per page of the scroller under it. */
+  .sv-groupnav {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--sv-groups, 4), minmax(0, 1fr));
+    border-bottom: 1px solid var(--e-rule);
+    margin-bottom: -4px;
+  }
+
+  .sv-groupnav__tab {
+    min-height: 44px;
+    border: 0;
+    background: none;
+    padding: 0 2px;
+    color: var(--e-ink-2);
+    font-family: var(--e-sans);
+    font-size: 0.88rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 200ms var(--e-ease);
+  }
+
+  .sv-groupnav__tab[data-on] {
+    color: var(--e-ink);
+  }
+
+  .sv-groupnav__tab:focus-visible {
+    outline: 2px solid var(--e-accent);
+    outline-offset: -2px;
+    border-radius: 8px;
+  }
+
+  .sv-groupnav__bar {
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: calc(100% / var(--sv-groups, 4));
+    height: 3px;
+    transform: translateX(calc(var(--sv-gp, 0) * 100%));
+    pointer-events: none;
+  }
+
+  .sv-groupnav__bar::after {
+    content: "";
+    position: absolute;
+    inset: 0 22%;
+    border-radius: 3px 3px 0 0;
+    background: var(--e-navy);
+  }
+
+  /* The pager: one group a page, each page the full width of the card, so a
+     swipe moves a whole group and a page is never cut at the edge. It bleeds
+     to the card's sides and pads its pages back to the content edge. */
   .sv-notice__groups {
-    --sv-cell: calc((var(--sv-rail) - 8px) * 0.7);
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    margin-inline: calc(var(--sv-pad) * -1);
+    padding: 4px 0 2px;
+  }
+
+  .sv-notice__groups::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sv-notice__group {
+    flex: 0 0 100%;
+    min-width: 0;
+    padding-inline: var(--sv-pad);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  /* The tab above names the page, so the heading inside it stays for a
+     screen reader and leaves the screen. */
+  .sv-notice__group-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .sv-symptoms {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .sv-symptoms > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+
+  /* The chosen pill's check sits at its right end over reserved padding,
+     rather than pushing the words along as it does on a wide screen, so a
+     choice never re-wraps its label. */
+  .sv-notice .sv-chip--symptom {
+    min-height: 50px;
+    padding: 8px 36px 8px 16px;
+    white-space: normal;
+  }
+
+  .sv-notice .sv-chip--symptom[data-on] {
+    padding-left: 16px;
+  }
+
+  .sv-notice .sv-chip--symptom::before {
+    left: auto;
+    right: 16px;
+  }
+
+  /* Both labels are rendered and CSS picks one: the short form here, where a
+     sentence is a chip wider than half the card. */
+  .sv-chip__label--full {
+    display: none;
+  }
+
+  .sv-chip__label--short {
+    display: inline;
+  }
+}
+
+@media (max-width: 640px) {
+  .sv-console {
+    border-radius: 20px;
+  }
+
+  .sv-console__head {
+    border-bottom: 0;
+    padding: 16px var(--sv-head-pad, 18px) 0;
+  }
+
+  .sv-ask {
+    display: block;
+    margin: 2px 0 16px;
+    color: var(--e-ink);
+    font-family: var(--e-serif);
+    font-size: 1.42rem;
+    font-weight: 400;
+    letter-spacing: -0.012em;
+    line-height: 1.2;
+  }
+
+  .sv-notice {
+    gap: 16px;
+  }
+
+  /* One option card for all three routes: a rounded card that holds a label
+     of one or two lines, and a ring at its right edge that fills and ticks
+     when chosen. The ring is what says "choose one"; a pill that only turned
+     navy said nothing until it had been pressed. */
+  .sv-notice .sv-chip--symptom,
+  .sv-parts .sv-chip--part,
+  .sv-kind {
+    position: relative;
+    width: 100%;
+    min-height: 58px;
+    border-radius: 14px;
+    padding: 9px 42px 9px 14px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.25;
+    text-align: left;
+    white-space: normal;
+    box-shadow: 0 1px 2px rgba(16, 22, 28, 0.05);
+  }
+
+  .sv-notice .sv-chip--symptom[data-on],
+  .sv-parts .sv-chip--part[data-on] {
+    padding-left: 14px;
+    box-shadow: 0 8px 18px rgba(12, 44, 73, 0.18);
+  }
+
+  .sv-notice .sv-chip--symptom::before,
+  .sv-parts .sv-chip--part::before {
+    display: none;
+  }
+
+  .sv-notice .sv-chip--symptom::after,
+  .sv-parts .sv-chip--part::after,
+  .sv-kind::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+    border: 1.5px solid var(--sv-edge);
+    border-radius: 50%;
+    background: var(--e-paper)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.4 6.3l2.3 2.3 4.9-5' fill='none' stroke='%230c2c49' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      center / 0 0 no-repeat;
+    transition:
+      background-size 260ms var(--e-ease) 60ms,
+      border-color 200ms var(--e-ease);
+  }
+
+  .sv-notice .sv-chip--symptom[data-on]::after,
+  .sv-parts .sv-chip--part[data-on]::after,
+  .sv-kind[data-on]::after {
+    border-color: #fff;
+    background-size: 12px 12px;
+  }
+
+  /* The eye route's seven parts: the same cards, two to a row. */
+  .sv-parts {
+    gap: 12px;
+  }
+
+  .sv-parts__list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .sv-parts__list > li {
+    display: flex;
+  }
+
+  .sv-parts__list > li:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  .sv-parts__caption {
+    min-height: 44px;
+    font-size: 0.92rem;
+    line-height: 1.4;
+  }
+
+  /* nearly square on a phone: the eye turns and opens in a box it fills */
+  .sv-parts__frame {
+    --sv-model-ratio: 10 / 9;
+  }
+
+  /* The care-type cards: the same card with its colour edge, the name and a
+     count in words under it. */
+  .sv-kind {
+    display: grid;
+    align-content: center;
+    gap: 3px;
+    min-height: 64px;
+    padding-left: 18px;
+  }
+
+  .sv-kind__head {
+    display: block;
+  }
+
+  .sv-kind__label {
+    font-size: 0.94rem;
+  }
+
+  .sv-kind__count {
+    display: none;
+  }
+
+  .sv-kind__sub {
+    display: block;
+    color: var(--e-ink-2);
+    font-family: var(--e-sans);
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .sv-kind[data-on] .sv-kind__sub {
+    color: rgba(255, 255, 255, 0.84);
+  }
+
+  .sv-kind[data-on] {
+    box-shadow: 0 8px 18px rgba(12, 44, 73, 0.18);
+  }
+
+  /* The note is a starting-point caution, not an alert: one quiet line with
+     a mark, under a hairline, instead of a tinted band that was the loudest
+     thing in the card and sat between the choice and its answer. */
+  .sv-console__note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    border-top: 1px solid var(--e-rule);
+    background: none;
+    padding: 14px 18px 16px;
+    color: var(--e-ink-2);
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  .sv-note__icon {
+    display: block;
+    flex: none;
+    margin-top: 1px;
+    color: var(--color-teal);
+  }
+
+  .sv-index__note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  /* The grid's numbers take their kind of care's colour, so the edge and the
+     number say the same thing and the grid is a legend at a glance. */
+  .sv-tile__num {
+    color: var(--sv-tone);
+  }
+}
+
+/* Below 371px a half-width symptom card has 77-97px for its words and eight
+   of the thirteen descriptions broke across three lines, so the options
+   become full-width rows of one line each. The seven parts are shorter and
+   keep two columns with a tighter ring; the tab labels ease a step so
+   "Everyday" fits a quarter of a 320px card. */
+@media (max-width: 370px) {
+  .sv-symptoms {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sv-notice .sv-chip--symptom {
+    min-height: 50px;
+  }
+
+  .sv-parts .sv-chip--part {
+    padding-right: 34px;
+    padding-left: 12px;
+    font-size: 0.86rem;
+  }
+
+  .sv-parts .sv-chip--part[data-on] {
+    padding-left: 12px;
+  }
+
+  .sv-parts .sv-chip--part::after {
+    right: 9px;
+    width: 18px;
+    height: 18px;
+    margin-top: -9px;
+  }
+
+  .sv-groupnav__tab {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .sv-console__head {
+    --sv-head-pad: 14px;
+  }
+
+  .sv-console__note {
+    padding-inline: 14px;
+  }
+}
+
+/* A touch leaves :hover on the option it tapped, and a lifted option with a
+   dark border read as a second choice beside the chosen one. */
+@media (hover: none) {
+  .sv-chip:not([data-on]):hover {
+    border-color: var(--sv-edge);
+    transform: none;
+    box-shadow: 0 1px 2px rgba(16, 22, 28, 0.05);
+  }
+}
+
+/* ---------- the phone results header ---------- */
+
+/* Only rendered on a phone (see the component). What the list is, why it is
+   showing these, and one way back to all eleven: the title and its button
+   share a row, and the reason runs the full width under them. */
+.sv-sum {
+  margin: 32px 0 16px;
+}
+
+.sv-sum__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+}
+
+.sv-sum__title {
+  margin: 0;
+  color: var(--e-ink);
+  font-family: var(--e-serif);
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: -0.012em;
+  line-height: 1.15;
+}
+
+.sv-sum__line {
+  margin: 6px 0 0;
+  color: var(--e-ink-2);
+  font-family: var(--e-sans);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.sv-sum__line strong {
+  color: var(--e-ink);
+  font-weight: 600;
+}
+
+.sv-sum__count {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.sv-sum__clear {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex: none;
+  min-height: 44px;
+  border: 1px solid var(--sv-edge);
+  border-radius: 999px;
+  background: var(--e-paper);
+  padding: 0 15px;
+  color: var(--e-ink);
+  font-family: var(--e-sans);
+  font-size: 0.86rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(16, 22, 28, 0.05);
+  transition: transform 160ms var(--e-ease);
+}
+
+.sv-sum__clear:active {
+  transform: scale(0.96);
+}
+
+/* Two labels, CSS picks one (the cookie sheet's device): beside the title on
+   a 320px phone "Show all 11" left "Suggested for you" two lines. */
+.sv-sum__clear-short {
+  display: none;
+}
+
+@media (max-width: 370px) {
+  .sv-sum__clear-full {
+    display: none;
+  }
+
+  .sv-sum__clear-short {
+    display: inline;
+  }
+
+  .sv-sum__title {
+    font-size: 1.36rem;
+  }
+}
+
+.sv-sum__clear:focus-visible {
+  outline: 2px solid var(--e-accent);
+  outline-offset: 2px;
+}
+
+/* ---------- a phone held sideways ---------- */
+
+/* Stacked, the eye was 453px tall on a 390px screen and only its top showed
+   under the tabs. Sideways it sits beside its parts, as on a laptop, capped
+   to the screen's height (see .sv-parts__frame), and the parts go two to a
+   row so the column beside the eye is no taller than the eye. Below 660px of
+   width the half-column cannot hold a part's name, so the eye stays stacked
+   and only its height is capped. */
+@media (max-height: 520px) and (min-width: 660px) and (orientation: landscape) {
+  .sv-parts {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "frame caption"
+      "frame list";
+    align-items: start;
+    column-gap: 18px;
+    row-gap: 10px;
+  }
+
+  .sv-parts__frame {
+    grid-area: frame;
+    padding: 10px;
+  }
+
+  .sv-parts__caption {
+    grid-area: caption;
+    justify-content: flex-start;
+    min-height: 0;
+    font-size: 0.9rem;
+    text-align: left;
+  }
+
+  .sv-parts__list {
+    grid-area: list;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-content: stretch;
+    gap: 8px;
+  }
+
+  .sv-parts__list > li {
+    display: flex;
+  }
+
+  .sv-parts__list > li:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  .sv-parts__list .sv-chip--part {
+    width: 100%;
+    min-height: 44px;
+    border-radius: 12px;
+    padding-block: 6px;
+    font-size: 0.86rem;
+  }
+}
+
+/* ---------- arrivals as the reader scrolls ---------- */
+
+/* The home page's model (the end of landing.css): each value is a function of
+   the scroll position, so a head or a row comes up under the thumb as it
+   enters, stops when the reader stops, and plays backwards on the way up.
+   CSS on the compositor, nothing on the main thread, and it never holds or
+   re-times the scroll. The heads cascade and their rules draw across, the
+   console rises into place, and the ledger's headings and rows arrive one by
+   one. The phone grid, the answer cards, the pathway and the urgent band keep
+   their own entrances. Every move ends on the element's resting style, so a
+   page loaded half-way down renders settled; where the browser cannot drive
+   an animation from scroll (Firefox today), nothing here runs. */
+@keyframes sv-rise {
+  from {
+    opacity: 0;
+    translate: 0 var(--sv-rise, 36px);
+  }
+}
+
+@keyframes sv-draw {
+  from {
+    scale: 0 1;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .sv-explorer .e-head > *,
+    .sv-path .e-head > * {
+      animation: sv-rise cubic-bezier(0.2, 0.7, 0.3, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+
+    .sv-explorer .e-head > :nth-child(2),
+    .sv-path .e-head > :nth-child(2) {
+      --sv-rise: 60px;
+    }
+
+    .sv-explorer .e-head,
+    .sv-path .e-head {
+      position: relative;
+      border-top-color: transparent;
+    }
+
+    .sv-explorer .e-head::before,
+    .sv-path .e-head::before {
+      content: "";
+      position: absolute;
+      top: -1px;
+      right: 0;
+      left: 0;
+      height: 1px;
+      background: var(--e-rule);
+      transform-origin: 0 50%;
+      animation: sv-draw cubic-bezier(0.3, 0.6, 0.2, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 35%;
+    }
+
+    .sv-path .e-head::before {
+      background: var(--e-rule-dark);
+    }
+
+    /* The console is taller than most of the screen, so it is done rising
+       once half of it is in, not when it is a third of the way up. */
+    .sv-console {
+      --sv-rise: 56px;
+      animation: sv-rise cubic-bezier(0.2, 0.7, 0.3, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 50%;
+    }
+
+    .sv-group__head,
+    .sv-row__link {
+      animation: sv-rise cubic-bezier(0.2, 0.7, 0.3, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 28%;
+    }
+
+    .sv-row__link {
+      --sv-rise: 28px;
+    }
   }
 }
 
@@ -2909,13 +3989,26 @@
   }
 
   .sv-tile__link:active,
-  .sv-tile__link:hover {
+  .sv-tile__link:hover,
+  .sv-answer__link:active,
+  .sv-answer__link:hover {
     transform: none;
   }
 
-  .sv-tile__num,
-  .sv-tile__more svg {
+  .sv-answer__link,
+  .sv-answer__link::before,
+  .sv-tile__more svg,
+  .sv-answer__more svg,
+  .sv-kind,
+  .sv-chip::after,
+  .sv-kind::after,
+  .sv-groupnav__tab,
+  .sv-sum__clear {
     transition: none;
+  }
+
+  .sv-sum__clear:active {
+    transform: none;
   }
 
   .sv-row__link,
@@ -2931,7 +4024,19 @@
     transition: none;
   }
 
+  .sv-model__tag,
+  .sv-stage,
+  .sv-scene {
+    transition: none;
+  }
+
+  .sv-console::before {
+    scale: none;
+    transition: none;
+  }
+
   .sv-parts__frame[data-idle] .sv-eye__globe,
+  .sv-model__pin::after,
   .sv-urgent__beacon,
   .sv-path__steps[data-drawn]::after {
     animation: none;

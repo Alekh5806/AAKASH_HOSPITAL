@@ -62,7 +62,15 @@ function buildRoute(points) {
   return path;
 }
 
-export default function HospitalMap({ items, activeSlug, played, onPreview, onChoose, ghost }) {
+export default function HospitalMap({
+  items,
+  activeSlug,
+  played,
+  lead = 0,
+  onPreview,
+  onChoose,
+  ghost,
+}) {
   const shouldReduceMotion = useReducedMotion();
   const routeRef = useRef(null);
   const travellerRef = useRef(null);
@@ -138,22 +146,28 @@ export default function HospitalMap({ items, activeSlug, played, onPreview, onCh
     return () => controls.stop();
   }, [activeSlug, done, progress, shouldReduceMotion]);
 
+  /* `lead` holds the whole drawing back behind the page's head, so the head
+     is read first and the state draws itself in under it. */
   const draw = (delay, duration) => ({
     initial: shouldReduceMotion ? false : { pathLength: 0, opacity: 0 },
     animate: done ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 },
-    transition: shouldReduceMotion ? { duration: 0 } : { duration, ease: EASE, delay },
+    transition: shouldReduceMotion
+      ? { duration: 0 }
+      : { duration, ease: EASE, delay: lead + delay },
   });
   const pop = (delay) => ({
     initial: shouldReduceMotion ? false : { opacity: 0, scale: 0.4 },
     animate: done ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.4 },
     transition: shouldReduceMotion
       ? { duration: 0 }
-      : { type: "spring", stiffness: 300, damping: 18, delay },
+      : { type: "spring", stiffness: 300, damping: 18, delay: lead + delay },
   });
   const rise = (delay) => ({
     initial: shouldReduceMotion ? false : { opacity: 0, y: 6 },
     animate: done ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 },
-    transition: shouldReduceMotion ? { duration: 0 } : { duration: 0.45, ease: EASE, delay },
+    transition: shouldReduceMotion
+      ? { duration: 0 }
+      : { duration: 0.45, ease: EASE, delay: lead + delay },
   });
   const landAt = (slug) => 1.15 + ordered.findIndex((pin) => pin.slug === slug) * 0.13;
 
@@ -194,7 +208,9 @@ export default function HospitalMap({ items, activeSlug, played, onPreview, onCh
           stroke="none"
           initial={shouldReduceMotion ? false : { opacity: 0 }}
           animate={done ? { opacity: 1 } : { opacity: 0 }}
-          transition={shouldReduceMotion ? { duration: 0 } : { duration: 1.2, ease: EASE }}
+          transition={
+            shouldReduceMotion ? { duration: 0 } : { duration: 1.2, ease: EASE, delay: lead }
+          }
         />
         <motion.path
           d={OUTLINE}
@@ -267,15 +283,18 @@ export default function HospitalMap({ items, activeSlug, played, onPreview, onCh
                 />
               ) : null}
               <circle className="hs-map__dot" cx={x} cy={y} r="6" />
-              {/* A hit area far larger than the dot, for a fine pointer. */}
+              {/* A hit area far larger than the dot. Hover previews for a mouse
+                  only: a tap's compatibility events would pin the preview. */}
               <circle
                 className="hs-map__hit"
                 cx={x}
                 cy={y}
                 r="17"
                 fill="transparent"
-                onMouseEnter={() => onPreview?.(pin.slug)}
-                onMouseLeave={() => onPreview?.(null)}
+                onPointerEnter={(event) => {
+                  if (event.pointerType === "mouse") onPreview?.(pin.slug);
+                }}
+                onPointerLeave={() => onPreview?.(null)}
                 onClick={() => onChoose?.(pin.slug)}
               />
             </motion.g>
@@ -290,7 +309,7 @@ export default function HospitalMap({ items, activeSlug, played, onPreview, onCh
             r="4.5"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 2.1 }}
+            transition={{ duration: 0.5, delay: lead + 2.1 }}
           />
         ) : null}
       </svg>

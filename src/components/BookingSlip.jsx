@@ -31,8 +31,19 @@ const PEN_SPRING = { type: "spring", stiffness: 380, damping: 32 };
  *
  * `rows` is the same set of values the WhatsApp text is built from, already
  * described in words - the slip and the message can never say different
- * things. */
-export default function BookingSlip({ branch, rows, ready, sent, compact, activeLine }) {
+ * things. Beside the card the slip arrives with the page, so its lines hold
+ * until `printed` and start `lead` seconds in; inside the last step it
+ * prints the moment it mounts. */
+export default function BookingSlip({
+  branch,
+  rows,
+  ready,
+  sent,
+  compact,
+  activeLine,
+  printed = true,
+  lead = 0,
+}) {
   const shouldReduceMotion = useReducedMotion();
   const still = Boolean(shouldReduceMotion);
   const number = parseMobile(`+${branch.whatsappNumber}`).display;
@@ -60,8 +71,10 @@ export default function BookingSlip({ branch, rows, ready, sent, compact, active
 
   const line = (index) => ({
     initial: still ? false : { opacity: 0, y: 8 },
-    animate: { opacity: 1, y: 0 },
-    transition: still ? { duration: 0 } : { duration: 0.42, ease: EASE, delay: 0.16 + index * 0.07 },
+    animate: printed || still ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 },
+    transition: still
+      ? { duration: 0 }
+      : { duration: 0.42, ease: EASE, delay: lead + 0.16 + index * 0.07 },
   });
 
   return (
