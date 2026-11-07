@@ -140,6 +140,14 @@ The last four are optional and the page adapts to what is there:
 
 A `gallery` entry is landscape unless it carries `"portrait": true`; a portrait photograph is shown whole over a blurred copy of itself rather than cropped to the landscape stage. Keep to five entries at most - the thumbnails hold a 44px floor, and a sixth would squeeze them to 42px wide on a 320px phone. A camera watermark in a supplied photograph is cropped out before encoding, never left in.
 
+**Sharper, lighter photographs (Visnagar has all three; the other hospitals use the plain fields above until they are added):**
+
+- **`imageSets`** - the hero frame changes shape with the screen (21:9 on a laptop and a phone held sideways, 3:2 on a tablet, 5:6 on a phone), so give each shape its own crop, framed for that box, at two widths: `"imageSets": { "wide": [{ "src": ".../facade-wide-800.webp", "width": 800 }, ...], "landscape": [...], "portrait": [...] }`. Set `image` to the largest `wide` file. With `imageSets`, the hero ignores `imageSmall`, which stays the full 4:3 photograph the home page's phone card shows for the head office. Frame the `portrait` crop so the signboard sits about halfway down - the bottom third of a phone's frame is under the chips.
+- **`galleryAspect`** - `{ "width": 4, "height": 3 }` when every gallery photograph has that shape. The stage takes it, so each photograph is seen whole at every width instead of cropped to the stage. Leave it out when the shapes are mixed.
+- **A gallery entry's `set` and `thumb`** - `"set": [{ "src": ".../waiting-hall-800.webp", "width": 800 }, { "src": ".../waiting-hall.webp", "width": 1448 }]` lets a phone take the width it needs, and `"thumb"` is a 320px encode for the thumbnail row. `src` stays the full photograph the viewer shows.
+
+`seo.image` is the share preview (WhatsApp, Facebook): a 1200x630 JPEG crop, because not every preview reads webp and the build can only state a JPEG's or a PNG's pixel size. File names carry no spaces - a space breaks a `srcset`.
+
 `landmarks` wants one `road` and two `landmark` entries; the drawn map puts the hospital on that road between those two. An address that names no road still works - the map draws the road unlabelled.
 
 **The doctors section comes from `doctors.json`, not from here.** A hospital appears on a doctor's `branches` list and its page grows a team section; a hospital nobody is listed at renders no team section at all. Add the consultants and the section appears.

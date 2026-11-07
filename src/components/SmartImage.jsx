@@ -1,5 +1,6 @@
 export default function SmartImage({
   src,
+  srcSet,
   alt,
   className = "",
   loading = "lazy",
@@ -9,6 +10,7 @@ export default function SmartImage({
     <img
       className={className}
       src={src}
+      srcSet={srcSet}
       alt={alt}
       loading={loading}
       decoding={loading === "eager" ? "sync" : "async"}

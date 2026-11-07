@@ -84,12 +84,26 @@
         "seo": {
           "title": "Eye Hospital in Visnagar, Mehsana | Aakash Eye Hospital",
           "description": "Aakash Eye Hospital's head office since 1993, near New Court on M.N. College Road, Visnagar. Cataract, LASIK, retina and glaucoma care. Book on WhatsApp.",
-          "image": "/assets/media/branches/visnagar/facade-1000.jpg"
+          "image": "/assets/media/branches/visnagar/facade-share.jpg"
         },
         "establishedYear": 1993,
         "lede": "The hospital where Aakash began in 1993, on M.N. College Road in Visnagar. Cataract, LASIK, retina and glaucoma care under one roof, with an in-house optometry team.",
-        "image": "/assets/media/branches/visnagar/facade-2000.jpg",
-        "imageSmall": "/assets/media/branches/visnagar/facade-1000.jpg",
+        "image": "/assets/media/branches/visnagar/facade-wide-1448.webp",
+        "imageSmall": "/assets/media/branches/visnagar/facade.webp",
+        "imageSets": {
+          "wide": [
+            { "src": "/assets/media/branches/visnagar/facade-wide-800.webp", "width": 800 },
+            { "src": "/assets/media/branches/visnagar/facade-wide-1448.webp", "width": 1448 }
+          ],
+          "landscape": [
+            { "src": "/assets/media/branches/visnagar/facade-landscape-960.webp", "width": 960 },
+            { "src": "/assets/media/branches/visnagar/facade-landscape-1448.webp", "width": 1448 }
+          ],
+          "portrait": [
+            { "src": "/assets/media/branches/visnagar/facade-portrait-600.webp", "width": 600 },
+            { "src": "/assets/media/branches/visnagar/facade-portrait-833.webp", "width": 833 }
+          ]
+        },
         "imageAlt": "The Aakash Eye Hospital building in Visnagar, with the Gujarati signboard over the entrance",
         "facts": [
           "Head office of the network since 1993",
@@ -112,24 +126,45 @@
           }
         ],
         "postcode": "384315",
+        "galleryAspect": { "width": 4, "height": 3 },
         "gallery": [
           {
-            "src": "/assets/media/branches/visnagar/waiting-hall-1000.jpg",
+            "src": "/assets/media/branches/visnagar/waiting-hall.webp",
+            "set": [
+              { "src": "/assets/media/branches/visnagar/waiting-hall-800.webp", "width": 800 },
+              { "src": "/assets/media/branches/visnagar/waiting-hall.webp", "width": 1448 }
+            ],
+            "thumb": "/assets/media/branches/visnagar/waiting-hall-thumb.webp",
             "caption": "Waiting hall",
             "alt": "Patients waiting in the double-height hall at Aakash Eye Hospital Visnagar"
           },
           {
-            "src": "/assets/media/branches/visnagar/atrium.jpg",
+            "src": "/assets/media/branches/visnagar/atrium.webp",
+            "set": [
+              { "src": "/assets/media/branches/visnagar/atrium-800.webp", "width": 800 },
+              { "src": "/assets/media/branches/visnagar/atrium.webp", "width": 1448 }
+            ],
+            "thumb": "/assets/media/branches/visnagar/atrium-thumb.webp",
             "caption": "The atrium",
             "alt": "The atrium at Aakash Eye Hospital Visnagar, seen from the first floor"
           },
           {
-            "src": "/assets/media/branches/visnagar/first-floor.jpg",
+            "src": "/assets/media/branches/visnagar/first-floor.webp",
+            "set": [
+              { "src": "/assets/media/branches/visnagar/first-floor-800.webp", "width": 800 },
+              { "src": "/assets/media/branches/visnagar/first-floor.webp", "width": 1448 }
+            ],
+            "thumb": "/assets/media/branches/visnagar/first-floor-thumb.webp",
             "caption": "The first floor",
             "alt": "The first-floor walkway over the atrium at Aakash Eye Hospital Visnagar"
           },
           {
-            "src": "/assets/media/branches/visnagar/entrance.jpg",
+            "src": "/assets/media/branches/visnagar/entrance.webp",
+            "set": [
+              { "src": "/assets/media/branches/visnagar/entrance-800.webp", "width": 800 },
+              { "src": "/assets/media/branches/visnagar/entrance.webp", "width": 1448 }
+            ],
+            "thumb": "/assets/media/branches/visnagar/entrance-thumb.webp",
             "caption": "From the road",
             "alt": "The entrance to Aakash Eye Hospital Visnagar from M.N. College Road"
           }
@@ -559,38 +594,38 @@
           }
         ],
         "postcode": "383001",
-        "image": "/assets/media/branches/himmatnagar/facade-1600.jpg",
-        "imageSmall": "/assets/media/branches/himmatnagar/facade-1000.jpg",
+        "image": "/assets/media/branches/himmatnagar/Himmatnagar_hero.webp",
+        "imageSmall": "/assets/media/branches/himmatnagar/Himmatnagar_hero.webp",
         "imageAlt": "The Aakash Eye Hospital signboard across the glass front of Upadhyay M.A. Corporate House, Himmatnagar",
         "insideLede": "The reception and waiting hall, a consulting room, the operation theatre, the recovery room and the optical counter, so nothing about the first visit is unfamiliar.",
         "gallery": [
           {
-            "src": "/assets/media/branches/himmatnagar/reception.jpg",
+            "src": "/assets/media/branches/himmatnagar/reception_himmatnagar.webp",
             "caption": "Reception and waiting",
             "alt": "The reception desk under backlit wood panels and rows of waiting chairs at Aakash Eye Hospital Himmatnagar"
           },
           {
-            "src": "/assets/media/branches/himmatnagar/consulting-room.jpg",
-            "caption": "Consulting room",
-            "alt": "A consulting room at Aakash Eye Hospital Himmatnagar, with the slit lamp and autorefractor beside the doctor's desk",
+            "src": "/assets/media/branches/himmatnagar/Ophthalmology_Room.webp",
+            "caption": "Opthalmology Exam Room",
+            "alt": "Opthalmology Exam Room at an Aakash Eye Hospital Himmatnagar",
             "portrait": true
           },
           {
-            "src": "/assets/media/branches/himmatnagar/operation-theatre.jpg",
+            "src": "/assets/media/branches/himmatnagar/Operation_theatre.webp",
             "caption": "Operation theatre",
             "alt": "The operation theatre at Aakash Eye Hospital Himmatnagar, with two operating tables under the surgical microscope"
           },
+          
           {
-            "src": "/assets/media/branches/himmatnagar/recovery-room.jpg",
-            "caption": "Recovery room",
-            "alt": "Beds in the recovery room at Aakash Eye Hospital Himmatnagar, beside a wall of blue curtains",
-            "portrait": true
-          },
-          {
-            "src": "/assets/media/branches/himmatnagar/optical.jpg",
+            "src": "/assets/media/branches/himmatnagar/Eyewear_Showroom.webp",
             "caption": "Optical counter",
             "alt": "The optical counter at Aakash Eye Hospital Himmatnagar, with spectacle frames on lit shelves",
             "portrait": true
+          },
+          {
+            "src": "/assets/media/branches/himmatnagar/Dormitory.webp",
+            "caption": "Dormitory",
+            "alt": "Dormitory at Aakash Eye Hospital Himmatnagar"
           }
         ]
       }
@@ -646,7 +681,7 @@
         "seo": {
           "title": "Eye Hospital in Juhapura, Sarkhej | Aakash Eye Hospital",
           "description": "Aakash Eye Hospital at Amber Tower, Blue Water Complex, Vasna Road, Juhapura-Sarkhej, Ahmedabad. Cataract, LASIK and everyday eye care. Book on WhatsApp.",
-          "image": "/assets/media/branches/juhapura/facade-1000.jpg"
+          "image": "/assets/media/branches/juhapura/ Juhapura_hero.webp"
         },
         "lede": "Aakash Eye Hospital at Amber Tower in the Blue Water Complex on Vasna Road, Sarkhej, with its own OPD, operation and LASIK desks.",
         "ledeShort": "At Blue Water Complex on Vasna Road, Sarkhej, with its own OPD, operation and LASIK desks.",
@@ -671,37 +706,37 @@
           }
         ],
         "postcode": "380055",
-        "image": "/assets/media/branches/juhapura/facade-1600.jpg",
-        "imageSmall": "/assets/media/branches/juhapura/facade-1000.jpg",
+        "image": "/assets/media/branches/juhapura/ Juhapura_hero.webp",
+        "imageSmall": "/assets/media/branches/juhapura/ Juhapura_hero.webp",
         "imageAlt": "The Aakash Eye Hospital signboard on the corner of Amber Tower at Blue Water Complex, Sarkhej",
         "insideLede": "The door you come in by, the optical counter, the reception you check in at, the hall you wait in and the corridor to the consulting rooms, so nothing about the first visit is unfamiliar.",
         "gallery": [
           {
-            "src": "/assets/media/branches/juhapura/entrance.jpg",
+            "src": "/assets/media/branches/juhapura/Entrance_JUH.webp",
             "caption": "The entrance",
             "alt": "The entrance door of Aakash Eye Hospital Juhapura, with the signboard over it",
             "portrait": true
           },
           {
-            "src": "/assets/media/branches/juhapura/optical.jpg",
+            "src": "/assets/media/branches/juhapura/OPTICAL_EYE.webp",
             "caption": "Optical counter",
             "alt": "The optical counter at Aakash Eye Hospital Juhapura, with spectacle frames on lit shelves",
             "portrait": true
           },
           {
-            "src": "/assets/media/branches/juhapura/reception.jpg",
+            "src": "/assets/media/branches/juhapura/Reception.webp",
             "caption": "Reception",
             "alt": "The reception counter at Aakash Eye Hospital Juhapura, under the lit Aakash Eye Hospital emblem",
             "portrait": true
           },
           {
-            "src": "/assets/media/branches/juhapura/waiting-hall.jpg",
+            "src": "/assets/media/branches/juhapura/Waiting Room.webp",
             "caption": "Waiting hall",
             "alt": "Rows of chairs in the waiting hall at Aakash Eye Hospital Juhapura"
           },
           {
-            "src": "/assets/media/branches/juhapura/consulting-rooms.jpg",
-            "caption": "Consulting rooms",
+            "src": "/assets/media/branches/juhapura/Corridor.webp",
+            "caption": "Corridor of the Clinic",
             "alt": "The corridor of glass-fronted consulting rooms at Aakash Eye Hospital Juhapura",
             "portrait": true
           }

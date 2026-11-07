@@ -183,24 +183,38 @@ function preloadsFor(page, html) {
   const before = html.slice(0, image.index);
   const pictureStart = before.lastIndexOf("<picture");
   const insidePicture = pictureStart > before.lastIndexOf("</picture>");
+  const sizes = attribute(image[0], "sizes");
   const sources = insidePicture
     ? [...before.slice(pictureStart).matchAll(/<source\b[^>]*>/gi)].map((match) => ({
         srcset: attribute(match[0], "srcset"),
+        sizes: attribute(match[0], "sizes") ?? sizes,
         media: attribute(match[0], "media"),
       }))
     : [];
+  /* A <picture> takes the first source that matches, so with more than one,
+     each preload has to rule out the sources before it - or a phone held
+     sideways, which matches two, would fetch both. */
+  const media = sources.map((source) => source.media).filter(Boolean);
+  const excluding = (earlier) => earlier.map((query) => `(not (${query}))`).join(" and ");
   const links = sources
     .filter((source) => source.srcset)
-    .map((source) => preloadLink({ srcset: source.srcset, media: source.media }));
-  const others = sources
-    .filter((source) => source.media)
-    .map((source) => `not all and ${source.media}`);
+    .map((source, position) =>
+      preloadLink({
+        srcset: source.srcset,
+        sizes: source.sizes,
+        media:
+          position && source.media
+            ? `(${source.media}) and ${excluding(media.slice(0, position))}`
+            : source.media,
+      }),
+    );
+  const others = media.map((query) => `not all and ${query}`);
   links.push(
     preloadLink({
       href: attribute(image[0], "src"),
       srcset: attribute(image[0], "srcset"),
-      sizes: attribute(image[0], "sizes"),
-      media: others.length === 1 ? others[0] : undefined,
+      sizes,
+      media: others.length === 1 ? others[0] : media.length ? excluding(media) : undefined,
     }),
   );
   return links;

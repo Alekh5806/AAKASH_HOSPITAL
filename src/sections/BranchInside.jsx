@@ -2,9 +2,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
 import SmartImage from "../components/SmartImage";
-import { branchPage } from "../lib/branchData";
+import { branchPage, toSrcSet } from "../lib/branchData";
 
 const { inside } = branchPage;
+
+/* The stage is about 920px beside the thumbnails on a laptop, half a sideways
+   phone, and the shell's width when stacked. */
+const STAGE_SIZES =
+  "(min-width: 1024px) 920px, (max-height: 520px) 50vw, (min-width: 721px) calc(100vw - 48px), calc(100vw - 32px)";
 
 /* The hospital's own photographs of itself: the hall a visitor waits in, the
  * room they are examined in, the street they arrive on. For a first visit -
@@ -47,7 +52,7 @@ export default function BranchInside({ branch }) {
   const closeRef = useRef(null);
   const dialogRef = useRef(null);
   const openerRef = useRef(null);
-  const { gallery } = branch.page;
+  const { gallery, galleryAspect: aspect } = branch.page;
 
   /* Opening at the tapped photograph is a scroll write, not an animation: the
      rail must be there before the reader sees it. */
@@ -141,7 +146,19 @@ export default function BranchInside({ branch }) {
           </div>
         </div>
 
-        <div className="br-gallery">
+        {/* A hospital whose photographs share one shape names it
+            (`galleryAspect`), and the stage takes that shape, so every
+            photograph is seen whole rather than cropped to whatever shape the
+            stage happens to be at this width. */}
+        <div
+          className="br-gallery"
+          data-fit={aspect ? "true" : undefined}
+          style={
+            aspect
+              ? { "--br-gallery-w": aspect.width, "--br-gallery-h": aspect.height }
+              : undefined
+          }
+        >
           <div
             className="br-gallery__stage"
             ref={stageRef}
@@ -169,9 +186,10 @@ export default function BranchInside({ branch }) {
                 <SmartImage
                   className="br-gallery__img"
                   src={photo.src}
+                  srcSet={toSrcSet(photo.set)}
                   alt={photo.alt}
                   loading="lazy"
-                  sizes="(min-width: 1024px) 60vw, 100vw"
+                  sizes={STAGE_SIZES}
                 />
                 <span className="br-gallery__zoom" aria-hidden="true">
                   <Maximize2 size={15} />
@@ -200,7 +218,7 @@ export default function BranchInside({ branch }) {
                   onClick={() => showPhoto(position)}
                   aria-label={`${inside.showLabel}: ${photo.caption}`}
                 >
-                  <img src={photo.src} alt="" loading="lazy" />
+                  <img src={photo.thumb ?? photo.src} alt="" loading="lazy" />
                 </button>
               </li>
             ))}

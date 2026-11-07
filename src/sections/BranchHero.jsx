@@ -4,12 +4,16 @@ import { ArrowLeft, Check } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import BranchActions from "../components/BranchActions";
 import { site } from "../lib/coreData";
-import { branchPage } from "../lib/branchData";
+import { branchPage, toSrcSet } from "../lib/branchData";
 import { useAfterIntro, useIntroDone } from "../lib/intro";
 import { cascade, WRITE } from "../lib/motion";
 import { fillTemplate } from "../lib/servicesData";
 
 const EASE = [0.22, 1, 0.36, 1];
+
+/* A phone held sideways, where the frame is 21:9 again. */
+const WIDE_SHORT = "(max-width: 1179px) and (max-height: 520px)";
+const FRAME_SIZES = "(min-width: 1288px) 1240px, (min-width: 721px) calc(100vw - 48px), calc(100vw - 32px)";
 
 const RISE = {
   hidden: { opacity: 0, y: 18 },
@@ -50,6 +54,7 @@ export default function BranchHero({ branch, actionsRef }) {
   const afterIntro = useAfterIntro();
   const chipsRef = useRef(null);
   const { page } = branch;
+  const { imageSets } = page;
 
   const initial = reduceMotion ? false : "hidden";
   const state = introDone || reduceMotion ? "shown" : "hidden";
@@ -133,18 +138,32 @@ export default function BranchHero({ branch, actionsRef }) {
         custom={delay + 0.34}
       >
         <div className="br-frame__media">
-          {/* The phone frame is nearly square and the desktop one a letterbox,
-              so the phone gets the 1000px encode rather than the 2000px one. */}
+          {/* The frame changes shape with the screen - 21:9, 3:2, 5:6, and
+              21:9 again on a phone held sideways - so a hospital with
+              `imageSets` gives each shape its own crop, framed for that box,
+              at widths a phone does not overpay for. The media queries are
+              the frame's own (branch.css), in the order the CSS resolves
+              them. Without sets: one photograph, the phone getting the
+              smaller encode. */}
           <picture>
-            <source media="(max-width: 900px)" srcSet={page.imageSmall} />
+            {imageSets ? (
+              <>
+                <source media={WIDE_SHORT} srcSet={toSrcSet(imageSets.wide)} sizes={FRAME_SIZES} />
+                <source media="(max-width: 640px)" srcSet={toSrcSet(imageSets.portrait)} sizes={FRAME_SIZES} />
+                <source media="(max-width: 900px)" srcSet={toSrcSet(imageSets.landscape)} sizes={FRAME_SIZES} />
+              </>
+            ) : (
+              <source media="(max-width: 900px)" srcSet={page.imageSmall} />
+            )}
             <img
               className="br-frame__img"
               src={page.image}
+              srcSet={toSrcSet(imageSets?.wide)}
               alt={page.imageAlt}
               loading="eager"
               decoding="sync"
               fetchPriority="high"
-              sizes="(min-width: 1280px) 1240px, 100vw"
+              sizes={FRAME_SIZES}
             />
           </picture>
           <span className="br-frame__scrim" aria-hidden="true" />
