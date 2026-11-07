@@ -193,7 +193,7 @@
         "seo": {
           "title": "Eye Hospital in Ahmedabad (Odhav) | Aakash Eye Hospital",
           "description": "Aakash Eye Hospital at Odhav Circle on S.P. Ring Road, Ahmedabad, since 2014: cataract, retina and LASIK care with its own OPD. Call or book on WhatsApp.",
-          "image": "/assets/media/branches/ahmedabad/facade-1000.jpg"
+          "image": "/assets/media/branches/ahmedabad/odhav_hero.webp"
         },
         "establishedYear": 2014,
         "lede": "Aakash's Ahmedabad hospital, open since 2014 at Odhav Circle on the 200 ft S.P. Ring Road. Retina, cataract and general eye surgery, with its own OPD, operation and LASIK desks.",
@@ -219,30 +219,47 @@
           }
         ],
         "postcode": "382410",
-        "image": "/assets/media/branches/ahmedabad/facade-1280.jpg",
-        "imageSmall": "/assets/media/branches/ahmedabad/facade-1000.jpg",
+        "image": "/assets/media/branches/ahmedabad/odhav_hero.webp",
+        "imageSmall": "/assets/media/branches/ahmedabad/odhav-1600.webp",
         "imageAlt": "The Aakash Eye Hospital signboard on Siddhi Vinayak Arcade at Odhav Circle, above the HDFC Bank branch",
         "insideLede": "The reception you check in at, the waiting area, a consulting room and the retina imaging suite, so nothing about the first visit is unfamiliar.",
         "gallery": [
           {
-            "src": "/assets/media/branches/ahmedabad/reception.jpg",
+            "src": "/assets/media/branches/ahmedabad/reception.webp",
             "caption": "Reception",
             "alt": "Patients at the reception counter of Aakash Eye Hospital Ahmedabad"
           },
           {
-            "src": "/assets/media/branches/ahmedabad/waiting-area.jpg",
+            "src": "/assets/media/branches/ahmedabad/waiting_area.webp",
             "caption": "Waiting area",
             "alt": "Rows of chairs in the waiting area at Aakash Eye Hospital Ahmedabad"
           },
           {
-            "src": "/assets/media/branches/ahmedabad/consulting-room.jpg",
-            "caption": "Consulting room",
-            "alt": "A consulting room at Aakash Eye Hospital Ahmedabad, with the slit lamp and the doctor's desk"
+            "src": "/assets/media/branches/ahmedabad/waiting_area_2.webp",
+            "caption": "Waiting area_2",
+            "alt": "Rows of chairs in the waiting area at Aakash Eye Hospital Ahmedabad"
+          },
+
+          {
+            "src": "/assets/media/branches/ahmedabad/reception_waiting_area.webp",
+            "caption": "Waiting area_reception",
+            "alt": "Rows of chairs in the waiting area at Aakash Eye Hospital Ahmedabad"
+          },
+
+          {
+            "src": "/assets/media/branches/ahmedabad/Seamless Modern Clinic Corridor.webp",
+            "caption": "Corridor of the Clinic",
+            "alt": "Corridor of the clinic at Aakash Eye Hospital Ahmedabad"
           },
           {
-            "src": "/assets/media/branches/ahmedabad/retina-imaging.jpg",
-            "caption": "Retina imaging",
-            "alt": "The retina imaging equipment at Aakash Eye Hospital Ahmedabad, with a scan on the screen"
+            "src": "/assets/media/branches/ahmedabad/Modern Optical Clinic Reception and Hallway.webp",
+            "caption": "Modern Optical Clinic Reception",
+            "alt": "Modern Optical Clinic Reception "
+          },
+          {
+            "src": "/assets/media/branches/ahmedabad/Modern Clinic Corridor with Waiting Area.webp",
+            "caption": "Modern Clinic Corridor with Waiting Area",
+            "alt": "Modern Clinic Corridor with Waiting Area at Aakash Eye Hospital Ahmedabad"
           }
         ]
       }
@@ -296,7 +313,7 @@
         "seo": {
           "title": "Eye Hospital in Bharuch | Aakash Eye Hospital",
           "description": "Aakash Eye Hospital in Bharuch at R K Casta, opposite Navi Vasahat, near Healing Touch Hospital. Cataract, retina and everyday eye care. Book on WhatsApp.",
-          "image": "/assets/media/branches/visnagar/waiting-hall-1000.jpg"
+          "image": "/assets/media/branches/bharuch/bharuch.webp"
         },
         "lede": "Aakash Eye Hospital in Bharuch, at R K Casta opposite Navi Vasahat and beside Healing Touch Hospital. One desk books both OPD and operation appointments.",
         "ledeShort": "At R K Casta, opposite Navi Vasahat. One desk books OPD and operation appointments.",
@@ -316,24 +333,44 @@
             "kind": "landmark"
           }
         ],
-        "image": "/assets/media/branches/visnagar/waiting-hall-2000.jpg",
-        "imageSmall": "/assets/media/branches/visnagar/waiting-hall-1000.jpg",
+        "image": "/assets/media/branches/bharuch/bharuch.webp",
+        "imageSmall": "/assets/media/branches/bharuch/bharuch_1000.webp",
         "imageAlt": "The double-height waiting hall at an Aakash Eye Hospital",
         "gallery": [
           {
-            "src": "/assets/media/branches/visnagar/atrium.jpg",
-            "caption": "The atrium",
-            "alt": "The atrium at an Aakash Eye Hospital, seen from the first floor"
+            "src": "/assets/media/branches/bharuch/reception.webp",
+            "caption": "Reception",
+            "alt": "Reception at an Aakash Eye Hospital Bharuch"
           },
           {
-            "src": "/assets/media/branches/visnagar/first-floor.jpg",
-            "caption": "The first floor",
-            "alt": "The first-floor walkway over the atrium at an Aakash Eye Hospital"
+            "src": "/assets/media/branches/bharuch/Directory_Board.webp",
+            "caption": "The Directory Board",
+            "alt": "The Directory Board at an Aakash Eye Hospital Bharuch"
           },
           {
-            "src": "/assets/media/branches/visnagar/reception.jpg",
-            "caption": "OPD entrance",
-            "alt": "The OPD doors and the patient notice board at an Aakash Eye Hospital"
+            "src": "/assets/media/branches/bharuch/Modern Clinic Waiting Lounge.webp",
+            "caption": "Waiting area",
+            "alt": "Waiting area at an Aakash Eye Hospital Bharuch"
+          },
+          {
+            "src": "/assets/media/branches/bharuch/Modern Ophthalmology Clinic Examination Room.webp",
+            "caption": "Opthalmology Examination Room",
+            "alt": "Opthalmology Examination Room at an Aakash Eye Hospital Bharuch"
+          },
+          {
+            "src": "/assets/media/branches/bharuch/Modern Ophthalmology Exam Room.webp",
+            "caption": "Opthalmology Exam Room",
+            "alt": "Opthalmology Exam Room at an Aakash Eye Hospital Bharuch"
+          },
+          {
+            "src": "/assets/media/branches/bharuch/Modern Wood-Accented Glass Corridor.webp",
+            "caption": "Corridor of the Clinic",
+            "alt": "Corridor of the Clinic at an Aakash Eye Hospital Bharuch"
+          },
+          {
+            "src": "/assets/media/branches/bharuch/Symmetrical Modern Wood-Paneled Corridor.webp",
+            "caption": "Symmetrical Corridor",
+            "alt": "Symmetrical Corridor at an Aakash Eye Hospital Bharuch"
           }
         ]
       }
@@ -389,7 +426,7 @@
         "seo": {
           "title": "Eye Hospital in Gota, Ahmedabad | Aakash Eye Hospital",
           "description": "Aakash Eye Hospital at Ananta Space in Gota, Ahmedabad: cataract, LASIK, retina and everyday eye care, with its own OPD. Call or book on WhatsApp.",
-          "image": "/assets/media/branches/visnagar/waiting-hall-1000.jpg"
+          "image": "/assets/media/branches/Gota/Gota_hero_1000.webp"
         },
         "lede": "Aakash Eye Hospital at Ananta Space in Gota, west Ahmedabad, with its own OPD, operation and LASIK desks.",
         "ledeShort": "At Ananta Space in Gota, with its own OPD, operation and LASIK desks.",
@@ -410,24 +447,39 @@
           }
         ],
         "postcode": "382470",
-        "image": "/assets/media/branches/visnagar/waiting-hall-2000.jpg",
-        "imageSmall": "/assets/media/branches/visnagar/waiting-hall-1000.jpg",
+        "image": "/assets/media/branches/Gota/Gota_hero_1000.webp",
+        "imageSmall": "/assets/media/branches/Gota/Gota_hero.webp",
         "imageAlt": "The double-height waiting hall at an Aakash Eye Hospital",
         "gallery": [
           {
-            "src": "/assets/media/branches/visnagar/atrium.jpg",
-            "caption": "The atrium",
-            "alt": "The atrium at an Aakash Eye Hospital, seen from the first floor"
+            "src": "/assets/media/branches/Gota/Gota_building.webp",
+            "caption": "The Building",
+            "alt": "The building of an Aakash Eye Hospital in Gota"
           },
           {
-            "src": "/assets/media/branches/visnagar/first-floor.jpg",
-            "caption": "The first floor",
-            "alt": "The first-floor walkway over the atrium at an Aakash Eye Hospital"
+            "src": "/assets/media/branches/Gota/Hospital_Entrance.webp",
+            "caption": "Hospital Entrance",
+            "alt": "The entrance of an Aakash Eye Hospital in Gota"
           },
           {
-            "src": "/assets/media/branches/visnagar/reception.jpg",
-            "caption": "OPD entrance",
-            "alt": "The OPD doors and the patient notice board at an Aakash Eye Hospital"
+            "src": "/assets/media/branches/Gota/Waiting_Room .webp",
+            "caption": "Waiting area",
+            "alt": "The waiting area at an Aakash Eye Hospital in Gota"
+          },
+          {
+            "src": "/assets/media/branches/Gota/Ophthalmic Room.webp",
+            "caption": "Opthalmic Room",
+            "alt": "The ophthalmic room at an Aakash Eye Hospital in Gota"
+          },
+          {
+            "src": "/assets/media/branches/Gota/ Ophthalmology Exam .webp",
+            "caption": "Opthalmic Room_2",
+            "alt": "The ophthalmic room 2 at an Aakash Eye Hospital in Gota"
+          },
+          {
+            "src": "/assets/media/branches/Gota/Ophthalmology Exam Room 3.webp",
+            "caption": "Opthalmic Room_3",
+            "alt": "The ophthalmic room 3 at an Aakash Eye Hospital in Gota"
           }
         ]
       }
