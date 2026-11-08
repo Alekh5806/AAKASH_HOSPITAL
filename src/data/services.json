@@ -372,7 +372,7 @@
         "Cataract is the clouding of the natural crystalline lens, commonly associated with ageing. Surgery is the only known effective treatment for cataract removal.",
         "At Aakash Eye Hospital, cataract surgery is focused on removing the cloudy natural lens and replacing it with an intraocular lens. Phacoemulsification with IOL implantation is the core technique used at the center."
       ],
-      "image": "/assets/media/conditions/cataract-slit-lamp-pexels-6749706.jpg",
+      "image": "/assets/media/conditions/cataract-surgery.webp",
       "thumb": "/assets/media/services/cataract-surgery-thumb.jpg",
       "imageAlt": "Slit lamp examination for cataract assessment",
       "featureBullets": [
@@ -451,7 +451,7 @@
         "LASIK is a laser procedure that can remove or reduce dependence on glasses and contact lenses for suitable patients.",
         "Before any laser treatment the eye is mapped in detail - the shape of the cornea (topography), its thickness (pachymetry) and the eye's focusing errors (wavefront aberrometry) - to judge whether LASIK, or another option, is safe for you."
       ],
-      "image": "/assets/media/services/lasik-refractive-surgery.jpg",
+      "image": "/assets/media/conditions/lasik.webp",
       "thumb": "/assets/media/services/lasik-refractive-surgery-thumb.jpg",
       "imageAlt": "Laser surgery suite at Aakash Eye Hospital",
       "featureBullets": [
@@ -526,7 +526,7 @@
         "Aakash Eye Hospital expanded medical retina capabilities in 2011 with OCT, Green Laser and FFA.",
         "The service supports diagnosis and care planning for retina conditions requiring imaging and laser-based treatment pathways."
       ],
-      "image": "/assets/media/conditions/retina-imaging-pexels-5765827.jpg",
+      "image": "/assets/media/conditions/Retina_f.webp",
       "thumb": "/assets/media/services/retina-services-thumb.jpg",
       "imageAlt": "Retinal imaging during an eye examination",
       "featureBullets": [
@@ -601,7 +601,7 @@
         "Glaucoma is a disease where pressure inside the eye can damage the nerve fibers forming the optic nerve.",
         "Assessment can include eye pressure measurement (applanation tonometry), visual field testing (perimetry), OCT scans of the nerve fibre layer and ganglion cells, and photographs of the optic disc and retina."
       ],
-      "image": "/assets/media/conditions/glaucoma-screening-pexels-5766215.jpg",
+      "image": "/assets/media/conditions/glucoma.webp",
       "thumb": "/assets/media/services/glaucoma-care-thumb.jpg",
       "imageAlt": "Eye pressure screening for glaucoma",
       "featureBullets": [
@@ -682,7 +682,7 @@
         "Oculoplasty covers the eyelids, the tear drainage passages, the orbit and the tissues surrounding the eye. Problems here can affect comfort, vision and appearance.",
         "The team assesses the cause first and then discusses which medical or surgical options are appropriate for you."
       ],
-      "image": "/assets/media/stock/closeup-eye-pexels-andrea-bova-2953811.jpg",
+      "image": "/assets/media/conditions/oculoplasty.webp",
       "thumb": "/assets/media/services/oculoplasty-thumb.jpg",
       "imageAlt": "Close-up of the eye and eyelid",
       "featureBullets": [
@@ -753,7 +753,7 @@
         "Children rarely say that their vision is blurred, so many eye problems are first noticed by a parent or a teacher rather than by the child.",
         "Examinations are adapted to a child's age and attention span, and findings are explained to the parent along with what happens next."
       ],
-      "image": "/assets/media/conditions/child-vision-test-pexels-5996608.jpg",
+      "image": "/assets/media/conditions/PD_EYE.webp",
       "thumb": "/assets/media/services/pediatric-eye-care-thumb.jpg",
       "imageAlt": "Child having a vision test",
       "featureBullets": [
@@ -828,7 +828,7 @@
         "Short sight often begins in childhood and can change over several years. Tracking that change is what tells the team whether a plan is working.",
         "The clinic records the measurements over time and discusses the options with the family at each review."
       ],
-      "image": "/assets/media/conditions/refraction-trial-frame-pexels-6749734.jpg",
+      "image": "/assets/media/conditions/myopia_f.webp",
       "thumb": "/assets/media/services/myopia-clinic-thumb.jpg",
       "imageAlt": "Trial frame refraction to measure spectacle power",
       "featureBullets": [
@@ -899,7 +899,7 @@
         "A squint is an eye that turns inward, outward, up or down instead of aligning with the other eye. It can appear in childhood or later in life.",
         "Assessment establishes the type and the cause, and the doctor then discusses whether glasses, exercises or surgery are appropriate."
       ],
-      "image": "/assets/media/services/squint-services.jpg",
+      "image": "/assets/media/conditions/squint.webp",
       "thumb": "/assets/media/services/squint-services-thumb.jpg",
       "imageAlt": "Consulting room at Aakash Eye Hospital",
       "featureBullets": [
@@ -1110,7 +1110,7 @@
         "Sudden loss of vision, injury, chemical exposure and severe pain are reasons to seek care immediately rather than waiting for a routine appointment.",
         "Contact the hospital directly so the team can advise you on where to go and what to do on the way."
       ],
-      "image": "/assets/media/services/emergency-eye-care.jpg",
+      "image": "/assets/media/conditions/emergency_eye_care.webp",
       "thumb": "/assets/media/services/emergency-eye-care-thumb.jpg",
       "imageAlt": "Aakash Eye Hospital facility",
       "featureBullets": [
