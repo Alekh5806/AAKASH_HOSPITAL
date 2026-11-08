@@ -29,13 +29,14 @@ const STAGE_SIZES =
  * on the stage's inline axis, in branch.css), so a swipe reads as looking
  * through a window rather than pushing a strip of pictures along.
  *
- * **The stage fills with a landscape photograph and contains a portrait one.**
- * Every landscape frame - 4:3 from the Visnagar shoot, 20:9 from the Odhav
- * phone - is cropped to the stage by `cover`, which loses an edge and never a
- * subject. A portrait frame cannot be: cropped to a landscape stage it keeps a
- * third of itself, so a photo marked `portrait` in the JSON is contained over
- * a blurred copy of itself instead (`.br-gallery__fill`). Juhapura's decorated
- * entrance, its reception and its consulting-room corridor are those frames.
+ * **The stage takes the shape the hospital's photographs share
+ * (`galleryAspect`) and shows a photograph of another shape whole.** Each
+ * photograph's `set` is already cut to the stage around its subject, so
+ * `cover` crops nothing; one far from that shape - a tall corridor, a
+ * directory board - carries `whole` in the JSON and is contained over a
+ * blurred copy of itself instead (`.br-gallery__fill`, drawn from the 320px
+ * thumbnail, since it is blurred anyway). The viewer always shows the full
+ * photograph (`src`), whatever the stage showed.
  *
  * The stage is a native scroll-snap rail, so a phone swipes it with the
  * browser's own momentum and direction lock. Scroll position is the single
@@ -178,10 +179,10 @@ export default function BranchInside({ branch }) {
                 tabIndex={position === index ? 0 : -1}
                 onClick={(event) => open(position, event)}
                 aria-label={`${inside.openLabel}: ${photo.caption}`}
-                data-portrait={photo.portrait ? "true" : undefined}
+                data-whole={photo.whole ? "true" : undefined}
               >
-                {photo.portrait ? (
-                  <img className="br-gallery__fill" src={photo.src} alt="" loading="lazy" />
+                {photo.whole ? (
+                  <img className="br-gallery__fill" src={photo.thumb ?? photo.src} alt="" loading="lazy" />
                 ) : null}
                 <SmartImage
                   className="br-gallery__img"
@@ -207,7 +208,13 @@ export default function BranchInside({ branch }) {
             </em>
           </p>
 
-          <ul className="br-gallery__thumbs">
+          {/* More than four photographs take a third column beside a wide
+              stage, and more than five a second row of these columns on a
+              phone (branch.css), so no thumbnail falls under a 44px target. */}
+          <ul
+            className="br-gallery__thumbs"
+            style={{ "--br-thumb-cols": Math.ceil(gallery.length / 2) }}
+          >
             {gallery.map((photo, position) => (
               <li key={photo.src}>
                 <button

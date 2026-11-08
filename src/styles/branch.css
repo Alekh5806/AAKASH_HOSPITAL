@@ -1344,12 +1344,11 @@
   scroll-snap-align: start;
 }
 
-/* A landscape photograph fills the stage: every frame is the hospital's own and
-   `cover` loses an edge, never a subject, whether the frame is Visnagar's 4:3 or
-   Odhav's 20:9. A portrait one is contained over a blurred copy of itself
-   (`[data-portrait]`, from the JSON) rather than cropped - cropped to a
-   landscape stage it would keep a third of itself. The fill is the same file
-   the slide shows, so it costs no bytes. */
+/* A photograph fills the stage: its `set` is cut to the stage's shape around
+   its subject, so `cover` loses an edge at most, never a subject. One far from
+   that shape - a tall corridor, a directory board - is contained over a blurred
+   copy of itself (`[data-whole]`, from the JSON) rather than cropped. The fill
+   is the 320px thumbnail: it is blurred, so it needs no more. */
 .br-gallery__img {
   display: block;
   width: 100%;
@@ -1367,7 +1366,7 @@
   filter: blur(22px) saturate(1.15) brightness(0.72);
 }
 
-.br-gallery__slide[data-portrait] .br-gallery__img {
+.br-gallery__slide[data-whole] .br-gallery__img {
   position: relative;
   object-fit: contain;
 }
@@ -2380,15 +2379,31 @@ body.br-locked {
    gallery as --br-gallery-w / --br-gallery-h) gets a stage of that shape, so a
    photograph is seen whole: the fixed heights above cut a 4:3 frame to 1.2:1 on
    a phone and to 2:1 on a tablet. Stacked, the stage is the shell's width and
-   as tall as the shape makes it. Side by side, its column is the shape at the
+   as tall as the shape makes it - narrower only where that would be taller
+   than the screen, which a portrait shape (Juhapura's 4:5) is on a tablet; the
+   width gives, never the shape. Side by side, its column is the shape at the
    height the screen can show, and never wider than the room the thumbnails
    leave - on a short laptop the stage narrows and the thumbnails take the
    width, rather than the photograph being cropped to fit the screen. */
 .br-gallery[data-fit] .br-gallery__stage {
+  width: min(100%, calc((100vh - var(--hd-height) - 40px) * var(--br-gallery-w) / var(--br-gallery-h)));
+  width: min(100%, calc((100svh - var(--hd-height) - 40px) * var(--br-gallery-w) / var(--br-gallery-h)));
   height: auto;
-  max-height: calc(100vh - var(--hd-height) - 40px);
-  max-height: calc(100svh - var(--hd-height) - 40px);
   aspect-ratio: var(--br-gallery-w) / var(--br-gallery-h);
+}
+
+/* Six photographs or more on a phone: two rows of thumbnails rather than one
+   row of targets 34px wide. */
+@media (max-width: 640px) and (min-height: 521px) {
+  .br-gallery__thumbs:has(> li:nth-child(6)) {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .br-gallery__thumbs:has(> li:nth-child(6)) > li {
+    flex: 0 0 calc((100% - (var(--br-thumb-cols) - 1) * 8px) / var(--br-thumb-cols));
+    max-width: none;
+  }
 }
 
 @media (min-width: 1024px), (min-width: 560px) and (max-height: 520px) {
@@ -2405,7 +2420,21 @@ body.br-locked {
   }
 
   .br-gallery[data-fit] .br-gallery__stage {
-    max-height: none;
+    width: auto;
+  }
+
+  /* The thumbnail column is as wide as the stage leaves it: 300px beside a
+     wide stage, 600px beside a portrait one. Wide enough, five photographs or
+     more go three to a row, or seven would stack four rows taller than a short
+     laptop's stage. */
+  .br-gallery__thumbs {
+    container: br-thumbs / inline-size;
+  }
+
+  @container br-thumbs (min-width: 420px) {
+    .br-gallery__thumbs:has(> li:nth-child(5)) > li {
+      flex-basis: calc((100% - 24px) / 3);
+    }
   }
 }
 
@@ -2583,7 +2612,7 @@ body.br-locked {
       --br-rise: 26px;
     }
 
-    .br-gallery__slide:not([data-portrait]) .br-gallery__img {
+    .br-gallery__slide:not([data-whole]) .br-gallery__img {
       scale: 1.18;
       animation: br-drift linear both;
       animation-timeline: view(inline);
@@ -2598,7 +2627,7 @@ body.br-locked {
     /* A stage cut to its photographs' own shape shows each one whole at rest:
        the zoom the drift needs to stay covered builds only as a photograph
        leaves the centre, and is gone again when it arrives. */
-    .br-gallery[data-fit] .br-gallery__slide:not([data-portrait]) .br-gallery__img {
+    .br-gallery[data-fit] .br-gallery__slide:not([data-whole]) .br-gallery__img {
       scale: 1;
       animation-name: br-drift-fit;
     }
