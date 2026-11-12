@@ -51,6 +51,10 @@ function pad(value) {
   return String(value).padStart(2, "0");
 }
 
+function toSrcSet(set) {
+  return set?.map((entry) => `${entry.src} ${entry.width}w`).join(", ");
+}
+
 function subscribeShortViewport(onChange) {
   const query = window.matchMedia(SHORT_VIEWPORT);
   query.addEventListener("change", onChange);
@@ -113,8 +117,8 @@ function YearRoll({ value, from, active, className }) {
    mapping exact, and costs six property writes per stop per frame.
 
    Memoised: every prop but `isActive` is stable, so a change of year re-renders
-   the two stops it concerns rather than all six and their twelve odometers -
-   at 4x CPU throttle each change was a 67ms frame. */
+   the two stops it concerns rather than every stop and its two odometers -
+   at 4x CPU throttle each change was a 67ms frame with six stops. */
 const Stop = memo(function Stop({
   stop,
   index,
@@ -210,11 +214,20 @@ const Stop = memo(function Stop({
         />
       </span>
 
-      <figure className="ab-stage__media" ref={mediaRef}>
+      {/* A photograph fills its frame from its own focus point, so a signboard
+          survives the square crop a phone gives it; a machine photographed on
+          white is shown whole on a white plate instead (`fit: "contain"`). */}
+      <figure
+        className="ab-stage__media"
+        ref={mediaRef}
+        data-fit={stop.fit}
+        style={stop.focus ? { "--ab-focus": stop.focus } : undefined}
+      >
         <span className="ab-stage__frame" ref={frameRef}>
           <span className="ab-stage__zoom" ref={zoomRef}>
             <SmartImage
               src={stop.image}
+              srcSet={toSrcSet(stop.set)}
               alt={stop.alt}
               sizes={MEDIA_SIZES}
               loading="lazy"
@@ -263,6 +276,7 @@ export default function JourneyTimeline() {
   const stageRef = useRef(null);
   const fillRef = useRef(null);
   const headRef = useRef(null);
+  const railRef = useRef(null);
   const chipNodes = useRef([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const year = useCurrentYear();
@@ -274,9 +288,10 @@ export default function JourneyTimeline() {
       specialists: specialists.length,
     };
     return [
+      // Keyed by id, not year: two stops can share a year (2016).
       ...journey.milestones.map((milestone) => ({
         ...milestone,
-        key: milestone.year,
+        key: milestone.id,
         kind: "milestone",
       })),
       {
@@ -357,6 +372,41 @@ export default function JourneyTimeline() {
     return () => cancelAnimationFrame(frame);
   }, [scrollYProgress, toIndex, paintRail, staticMode]);
 
+  // Thirteen years do not fit a phone's rail at a 44px target each, so there it
+  // scrolls sideways. Its ends fade only where there is more past them, and the
+  // year being played is kept in the middle - written to the rail's own
+  // scrollLeft, never with scrollIntoView, which would move the page too.
+  useEffect(() => {
+    const rail = railRef.current;
+    if (!rail) return undefined;
+    const mark = () => {
+      const max = rail.scrollWidth - rail.clientWidth;
+      rail.toggleAttribute("data-start", rail.scrollLeft > 2);
+      rail.toggleAttribute("data-end", rail.scrollLeft < max - 2);
+    };
+    mark();
+    rail.addEventListener("scroll", mark, { passive: true });
+    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(mark);
+    observer?.observe(rail);
+    return () => {
+      rail.removeEventListener("scroll", mark);
+      observer?.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    const rail = railRef.current;
+    const chip = chipNodes.current[activeIndex];
+    if (!rail || !chip || rail.scrollWidth <= rail.clientWidth + 1) return;
+    const railBox = rail.getBoundingClientRect();
+    const chipBox = chip.getBoundingClientRect();
+    const offset = chipBox.left + chipBox.width / 2 - (railBox.left + railBox.width / 2);
+    rail.scrollTo({
+      left: rail.scrollLeft + offset,
+      behavior: shouldReduceMotion ? "auto" : "smooth",
+    });
+  }, [activeIndex, shouldReduceMotion]);
+
   // Unpinned, the stops are ordinary blocks and each has an id; pinned, there is
   // only one box on screen, so a jump is a scroll to the offset that plays it.
   const goToStop = useCallback(
@@ -415,6 +465,7 @@ export default function JourneyTimeline() {
         className="ab-stage"
         ref={stageRef}
         data-mode={staticMode ? "static" : "scroll"}
+        data-header-hold={staticMode ? undefined : ""}
         style={{ "--stops": count }}
       >
         <div className="ab-stage__pin">
@@ -437,33 +488,38 @@ export default function JourneyTimeline() {
 
           <nav className="ab-rail" aria-label={journey.railLabel}>
             <div className="ab-rail__shell">
-              <div className="ab-rail__track" aria-hidden="true">
-                <span className="ab-rail__fill" ref={fillRef} />
-                <span className="ab-rail__head" ref={headRef} />
+              <div className="ab-rail__scroll" ref={railRef}>
+                <div className="ab-rail__strip">
+                  <div className="ab-rail__track" aria-hidden="true">
+                    <span className="ab-rail__fill" ref={fillRef} />
+                    <span className="ab-rail__head" ref={headRef} />
+                  </div>
+                  <ol className="ab-rail__list">
+                    {stops.map((stop, index) => (
+                      <li key={stop.key}>
+                        <button
+                          type="button"
+                          className="ab-rail__btn"
+                          data-state={
+                            index === activeIndex ? "on" : index < activeIndex ? "past" : "ahead"
+                          }
+                          aria-label={`${stop.year}: ${stop.title}`}
+                          aria-current={index === activeIndex ? "true" : undefined}
+                          tabIndex={index === activeIndex ? 0 : -1}
+                          ref={(node) => {
+                            chipNodes.current[index] = node;
+                          }}
+                          onClick={() => goToStop(index)}
+                          onKeyDown={(event) => handleRailKeyDown(event, index)}
+                        >
+                          <span className="ab-rail__dot" aria-hidden="true" />
+                          <span className="ab-rail__year">{stop.year}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
               </div>
-              <ol className="ab-rail__list">
-                {stops.map((stop, index) => (
-                  <li key={stop.key}>
-                    <button
-                      type="button"
-                      className="ab-rail__btn"
-                      data-state={
-                        index === activeIndex ? "on" : index < activeIndex ? "past" : "ahead"
-                      }
-                      aria-current={index === activeIndex ? "true" : undefined}
-                      tabIndex={index === activeIndex ? 0 : -1}
-                      ref={(node) => {
-                        chipNodes.current[index] = node;
-                      }}
-                      onClick={() => goToStop(index)}
-                      onKeyDown={(event) => handleRailKeyDown(event, index)}
-                    >
-                      <span className="ab-rail__dot" aria-hidden="true" />
-                      <span className="ab-rail__year">{stop.year}</span>
-                    </button>
-                  </li>
-                ))}
-              </ol>
             </div>
           </nav>
         </div>

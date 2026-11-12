@@ -14,7 +14,6 @@
     "directionsLabel": "Directions",
     "directionsAria": "Directions to {branch}",
     "openLabel": "View hospital",
-    "headOfficeTag": "Head office",
     "mapGhost": "Gujarat",
     "note": "Old case files have no due date - bring yours on any future visit."
   },
@@ -83,7 +82,7 @@
       "page": {
         "seo": {
           "title": "Eye Hospital in Visnagar, Mehsana | Aakash Eye Hospital",
-          "description": "Aakash Eye Hospital's head office since 1993, near New Court on M.N. College Road, Visnagar. Cataract, LASIK, retina and glaucoma care. Book on WhatsApp.",
+          "description": "Aakash Eye Hospital in Visnagar since 1993, near New Court on M.N. College Road. Cataract, LASIK, retina and glaucoma care. Book on WhatsApp.",
           "image": "/assets/media/branches/visnagar/facade-share.jpg"
         },
         "establishedYear": 1993,
@@ -106,7 +105,7 @@
         },
         "imageAlt": "The Aakash Eye Hospital building in Visnagar, with the Gujarati signboard over the entrance",
         "facts": [
-          "Head office of the network since 1993",
+          "Serving Visnagar since 1993",
           "Separate OPD, operation and LASIK desks",
           "Cataract, LASIK, retina and glaucoma care",
           "In-house optometry and vision testing"
@@ -1018,7 +1017,6 @@
     "whatsappLabel": "WhatsApp",
     "directionsLabel": "Directions",
     "barLabel": "Hospital actions",
-    "headOfficeTag": "Head office",
     "branchTag": "Branch",
     "sinceTag": "Since {year}",
     "factsLabel": "At this hospital",
@@ -1089,8 +1087,7 @@
       "label": "Our other hospitals",
       "title": "Closer to you?",
       "lede": "Aakash Eye Hospital has {count} hospitals across Gujarat. Each one books its own appointments.",
-      "ctaLabel": "View all hospitals",
-      "tag": "Head office"
+      "ctaLabel": "View all hospitals"
     },
     "bookShortLabel": "Book"
   }

@@ -907,17 +907,6 @@
   transform: none;
 }
 
-.hd__tag {
-  border-radius: var(--radius-pill);
-  background: var(--color-accent-magenta-soft);
-  padding: 2px 8px;
-  color: var(--color-accent-magenta);
-  font-size: 0.64rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
 /* ---------- the menu glyph ----------
 
    Three bars drawn in CSS. The menu button in the capsule and the close
@@ -1906,19 +1895,6 @@
   color: var(--e-ink-2);
   font-size: 0.84rem;
   line-height: 1.35;
-}
-
-.hd__pick-tag {
-  border-radius: 999px;
-  background: var(--color-accent-magenta-soft);
-  padding: 3px 8px;
-  color: var(--e-accent);
-  font-family: var(--e-sans);
-  font-size: 0.64rem;
-  font-style: normal;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 
 .hd__pick-ring {

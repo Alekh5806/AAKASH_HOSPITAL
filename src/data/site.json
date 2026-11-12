@@ -26,7 +26,7 @@
   "pageSeo": {
     "aboutJourney": {
       "title": "Our Journey Since 1993 | Aakash Eye Hospital",
-      "description": "How Aakash Eye Hospital grew from one Visnagar clinic in 1993: phaco cataract surgery from 1995, laser vision correction from 2009, Ahmedabad from 2014."
+      "description": "How Aakash Eye Hospital grew from one Visnagar hospital in 1993: cataract surgery pioneers, LASIK from 2002, femto laser from 2016, six hospitals today."
     },
     "aboutVision": {
       "title": "Vision, Mission and Core Values | Aakash Eye Hospital",
@@ -191,7 +191,6 @@
       "callLabel": "Call OPD",
       "whatsappLabel": "WhatsApp",
       "directionsLabel": "Directions",
-      "headOfficeLabel": "Head office",
       "openUntil": "OPD open until {time}",
       "opensAt": "OPD opens {time}",
       "closedTodayLabel": "OPD closed today"

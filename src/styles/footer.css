@@ -328,15 +328,6 @@
   transition: color 200ms var(--e-ease);
 }
 
-.ft__col a em {
-  color: var(--e-ink-2);
-  font-size: 0.66rem;
-  font-style: normal;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
 /* ---- utility row ---- */
 
 .ft__utility {
@@ -566,15 +557,6 @@
     flex: 1 1 0;
     min-width: max-content;
     justify-content: center;
-  }
-}
-
-/* Two branches to a row, or a ~210px column, leave no room for the label
-   beside the name, and wrapping it made the Visnagar row two lines taller than
-   the other five. The branches page carries the same fact. */
-@media (max-width: 900px) {
-  .ft__col a em {
-    display: none;
   }
 }
 

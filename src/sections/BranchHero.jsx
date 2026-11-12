@@ -40,8 +40,8 @@ const CHIP = {
  * The headline is the network's name with the city in italic accent - that is
  * how the hospital is spoken of ("Aakash, Visnagar"), and it is the one word
  * on the page that changes from hospital to hospital, so it is the word that
- * writes itself in. The two glass tags are derived: head office or branch, and
- * the founding year. The four facts are the hospital's own `facts`, and they
+ * writes itself in. The two glass tags are the same `Branch` tag on every
+ * hospital, and the founding year. The four facts are the hospital's own `facts`, and they
  * are the only list on the page that says what this building offers.
  *
  * It arrives in reading order - the way back, the headline, the sentence, the
@@ -172,7 +172,7 @@ export default function BranchHero({ branch, actionsRef }) {
         <div className="br-frame__tags">
           <span>
             <i aria-hidden="true" />
-            {branch.isHeadquarters ? branchPage.headOfficeTag : branchPage.branchTag}
+            {branchPage.branchTag}
           </span>
           {page.establishedYear ? (
             <span>{fillTemplate(branchPage.sinceTag, { year: page.establishedYear })}</span>

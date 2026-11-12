@@ -65,7 +65,6 @@ function RowName({ branch, chosen }) {
       <span className="ct-row__city">
         {branch.name}
         {chosen ? <em className="ct-row__yours">{directory.chosenTag}</em> : null}
-        {branch.isHeadquarters ? <em>{directory.headOfficeTag}</em> : null}
       </span>
       <span className="ct-row__where">{branch.locality}</span>
     </>

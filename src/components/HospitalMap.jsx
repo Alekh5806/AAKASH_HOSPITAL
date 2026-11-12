@@ -271,17 +271,6 @@ export default function HospitalMap({
                     />
                   ))
                 : null}
-              {pin.isHeadquarters ? (
-                <circle
-                  cx={x}
-                  cy={y}
-                  r="12"
-                  fill="none"
-                  stroke="rgba(255,255,255,0.55)"
-                  strokeWidth="1.2"
-                  strokeDasharray="2.5 3"
-                />
-              ) : null}
               <circle className="hs-map__dot" cx={x} cy={y} r="6" />
               {/* A hit area far larger than the dot. Hover previews for a mouse
                   only: a tap's compatibility events would pin the preview. */}

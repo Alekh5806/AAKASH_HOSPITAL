@@ -7,66 +7,244 @@
     "establishedLabel": "8 August 1993",
     "title": "From one Visnagar clinic to",
     "titleAccent": "an eye care network",
-    "lede": "Aakash Eye Hospital opened in Visnagar in 1993 as a single ophthalmic care setup. Every step since has been about bringing better diagnostics and surgical care closer to the patients who need them.",
+    "lede": "Aakash Eye Hospital opened in Visnagar in 1993 as a single-doctor hospital. Every step since has been about bringing better diagnostics and surgical care closer to the patients who need them.",
     "scrollCue": "Scroll to travel the years",
     "milestonesLabel": "Milestones",
     "milestonesTitle": "How the hospital kept moving forward",
-    "milestonesLede": "The moments that shaped our clinical capability and our reach across Gujarat. Pick a year to jump straight to it.",
+    "milestonesLede": "The technology, the team and the hospitals that shaped Aakash Eye Hospital. Pick a year to jump straight to it.",
     "railLabel": "Timeline years",
     "milestones": [
       {
+        "id": "1993",
         "year": "1993",
         "tag": "Founded",
-        "title": "Founded at Visnagar",
-        "description": "Aakash Eye Hospital started on 8 August 1993 in a town of nearly 100,000 people, with an initial 1,500 sq ft setup.",
-        "metric": "1,500 sq ft",
-        "image": "/assets/media/journey/1993-visnagar-clinic.jpg",
-        "alt": "Consulting room at Aakash Eye Hospital with an examination chair and slit lamp"
+        "title": "The beginning",
+        "description": "Dr. Vishnu S. Patel founded Aakash Eye Hospital in Visnagar, to give affordable, ethical, quality eye care to all.",
+        "metric": "Visnagar",
+        "image": "/assets/media/journey/1993-visnagar.webp",
+        "set": [
+          {
+            "src": "/assets/media/journey/1993-visnagar-720.webp",
+            "width": 720
+          },
+          {
+            "src": "/assets/media/journey/1993-visnagar.webp",
+            "width": 1200
+          }
+        ],
+        "focus": "20% 60%",
+        "alt": "The Aakash Eye Hospital building in Visnagar, with the Gujarati signboard over the entrance"
       },
       {
-        "year": "1995",
-        "tag": "Surgery",
-        "title": "Phaco cataract surgery begins",
-        "description": "The hospital became one of the pioneers in phaco cataract surgery in the region.",
-        "metric": "Phaco",
-        "image": "/assets/media/journey/1995-phaco-surgery.jpg",
-        "alt": "Surgical microscope positioned over a patient in the operating theatre"
-      },
-      {
-        "year": "2009",
+        "id": "1996",
+        "year": "1996",
         "tag": "Technology",
-        "title": "Excimer laser added",
-        "description": "Excimer laser technology was introduced for glass removal and refractive procedures.",
-        "metric": "Excimer",
-        "image": "/assets/media/journey/2009-excimer-laser.jpg",
-        "alt": "Patient under a laser during a refractive eye procedure"
+        "title": "Pioneering cataract surgery",
+        "description": "One of the early pioneers of small incision cataract surgery (SICS). The first phaco machine followed in 1998, and the Sovereign phaco system in 2000.",
+        "metric": "SICS to phaco",
+        "image": "/assets/media/journey/1996-phaco.webp",
+        "fit": "contain",
+        "alt": "A phacoemulsification machine for cataract surgery, with its foot pedal"
       },
       {
-        "year": "2011",
-        "tag": "Diagnostics",
-        "title": "Retina diagnostics expanded",
-        "description": "OCT, Green Laser and FFA capabilities were added for medical retina care.",
-        "metric": "OCT, FFA",
-        "image": "/assets/media/journey/2011-retina-diagnostics.jpg",
-        "alt": "Optometrist examining a patient's eyes through a slit lamp"
+        "id": "2002",
+        "year": "2002",
+        "tag": "Technology",
+        "title": "Laser vision correction",
+        "description": "LASIK began at iVue Laser Vision, Surat, on VISX excimer laser technology, and came to Visnagar as iLook Vision in 2008.",
+        "metric": "LASIK",
+        "image": "/assets/media/journey/2002-excimer-laser.webp",
+        "fit": "contain",
+        "alt": "An excimer laser workstation for laser vision correction, with its patient bed"
       },
       {
+        "id": "2007",
+        "year": "2007",
+        "tag": "Team",
+        "title": "From one doctor to a team",
+        "description": "Dr. Sanjay B. Patel joined, turning a single-doctor practice into a multi-doctor hospital. Dr. Ashesh Patel (2012) and Dr. Saurabh Kapoor (2013) followed.",
+        "metric": "Medical team",
+        "image": "/assets/media/journey/2007-visnagar-opd.webp",
+        "set": [
+          {
+            "src": "/assets/media/journey/2007-visnagar-opd-720.webp",
+            "width": 720
+          },
+          {
+            "src": "/assets/media/journey/2007-visnagar-opd.webp",
+            "width": 1200
+          }
+        ],
+        "focus": "85% 70%",
+        "alt": "Patients and families outside the consulting rooms in the atrium at Aakash Eye Hospital Visnagar"
+      },
+      {
+        "id": "2014",
         "year": "2014",
         "tag": "New hospital",
-        "title": "Ahmedabad branch opens",
-        "description": "The Odhav, Ahmedabad branch opened in a facility of approximately 5,500 sq ft.",
-        "metric": "5,500 sq ft",
-        "image": "/assets/media/journey/2014-ahmedabad-branch.jpg",
-        "alt": "Daylit corridor inside the Ahmedabad hospital building"
+        "title": "Odhav, Ahmedabad",
+        "description": "The first hospital beyond Visnagar opened at Odhav under Dr. Sanjay B. Patel and Dr. Saurabh Kapoor, as Visnagar moved into its new building.",
+        "metric": "Odhav",
+        "image": "/assets/media/journey/2014-odhav.webp",
+        "set": [
+          {
+            "src": "/assets/media/journey/2014-odhav-720.webp",
+            "width": 720
+          },
+          {
+            "src": "/assets/media/journey/2014-odhav.webp",
+            "width": 1200
+          }
+        ],
+        "focus": "50% 50%",
+        "alt": "The Aakash Eye Hospital signboard on Siddhi Vinayak Arcade at Odhav Circle, above the HDFC Bank branch"
+      },
+      {
+        "id": "2016-femto",
+        "year": "2016",
+        "tag": "Technology",
+        "title": "Femtosecond laser and retina care",
+        "description": "The Ziemer Z8 femtosecond laser brought laser-assisted cataract surgery and Femto LASIK, and retina services began at Visnagar and Odhav under Dr. Dhaivat Vasavada.",
+        "metric": "Femto laser",
+        "image": "/assets/media/journey/2016-ziemer-z8.webp",
+        "fit": "contain",
+        "alt": "The Ziemer Femto LDV Z8 femtosecond laser"
+      },
+      {
+        "id": "2016-bharuch",
+        "year": "2016",
+        "tag": "New hospital",
+        "title": "Bharuch",
+        "description": "Aakash Eye Hospital Bharuch opened under Dr. Ashesh Patel, who joined at Visnagar in 2012, with Dr. Gaurang Amin.",
+        "metric": "Bharuch",
+        "image": "/assets/media/journey/2016-bharuch.webp",
+        "set": [
+          {
+            "src": "/assets/media/journey/2016-bharuch-720.webp",
+            "width": 720
+          },
+          {
+            "src": "/assets/media/journey/2016-bharuch.webp",
+            "width": 1200
+          }
+        ],
+        "focus": "0% 50%",
+        "alt": "The Aakash Eye Hospital signboard, in Gujarati and English, on the corner building in Bharuch above the Lifeline Diagnostic laboratory"
+      },
+      {
+        "id": "2019",
+        "year": "2019",
+        "tag": "Team",
+        "title": "The next generation",
+        "description": "Dr. Aakash V. Patel and Dr. Toral A. Patel joined, and in 2020 Dr. Nirav Zala strengthened the retina team.",
+        "metric": "Next generation",
+        "image": "/assets/media/journey/2019-visnagar.webp",
+        "set": [
+          {
+            "src": "/assets/media/journey/2019-visnagar-720.webp",
+            "width": 720
+          },
+          {
+            "src": "/assets/media/journey/2019-visnagar.webp",
+            "width": 1200
+          }
+        ],
+        "focus": "50% 50%",
+        "alt": "The first-floor walkway over the atrium at Aakash Eye Hospital Visnagar"
+      },
+      {
+        "id": "2022",
+        "year": "2022",
+        "tag": "Technology",
+        "title": "Precision cataract care",
+        "description": "The ZEISS IOLMaster 700 arrived in 2022. In 2024 came the Veritas phaco system, the IOLMaster 700 TK and a dedicated oculoplasty department.",
+        "metric": "IOLMaster 700 TK",
+        "image": "/assets/media/journey/2022-iolmaster-700.webp",
+        "fit": "contain",
+        "alt": "ZEISS optical biometry instruments that measure the eye before cataract surgery"
+      },
+      {
+        "id": "2024",
+        "year": "2024",
+        "tag": "New hospital",
+        "title": "Himmatnagar",
+        "description": "Opened under Dr. Ronak Patel, who joined at Visnagar in 2022.",
+        "metric": "Himmatnagar",
+        "image": "/assets/media/journey/2024-himmatnagar.webp",
+        "set": [
+          {
+            "src": "/assets/media/journey/2024-himmatnagar-720.webp",
+            "width": 720
+          },
+          {
+            "src": "/assets/media/journey/2024-himmatnagar.webp",
+            "width": 1122
+          }
+        ],
+        "focus": "50% 36%",
+        "alt": "The Aakash Eye Hospital signboard across the glass front of Upadhyay M.A. Corporate House, Himmatnagar"
+      },
+      {
+        "id": "2025",
+        "year": "2025",
+        "tag": "New hospital",
+        "title": "Gota, Ahmedabad",
+        "description": "A second hospital in Ahmedabad, opened with Dr. Kshitij Gandhi.",
+        "metric": "Gota",
+        "image": "/assets/media/journey/2025-gota.webp",
+        "set": [
+          {
+            "src": "/assets/media/journey/2025-gota-720.webp",
+            "width": 720
+          },
+          {
+            "src": "/assets/media/journey/2025-gota.webp",
+            "width": 1200
+          }
+        ],
+        "focus": "0% 30%",
+        "alt": "The Aakash Eye Hospital signboard among the signs on the building in Gota, above the Bank of Baroda branch"
+      },
+      {
+        "id": "2026",
+        "year": "2026",
+        "tag": "New hospital",
+        "title": "Juhapura, Ahmedabad",
+        "description": "Opened under Dr. Faizurraheman Chauhan, who joined at Visnagar in 2019.",
+        "metric": "Juhapura",
+        "image": "/assets/media/journey/2026-juhapura.webp",
+        "set": [
+          {
+            "src": "/assets/media/journey/2026-juhapura-720.webp",
+            "width": 720
+          },
+          {
+            "src": "/assets/media/journey/2026-juhapura.webp",
+            "width": 1200
+          }
+        ],
+        "focus": "38% 55%",
+        "alt": "The Aakash Eye Hospital signboard on the corner of Amber Tower at Blue Water Complex, Sarkhej"
       }
     ],
     "now": {
       "tag": "Where we are",
       "label": "Today",
-      "title": "One hospital, many doorsteps",
-      "description": "Patients are seen across our hospitals by a consultant team covering cataract, refractive, retina, glaucoma and paediatric eye care, and an old case file is welcome at any of them.",
-      "image": "/assets/media/journey/today-network.jpg",
-      "alt": "Patients and staff at an Aakash Eye Hospital reception desk",
+      "title": "One vision, growing together",
+      "description": "From one doctor in Visnagar to a network of eye hospitals, with primary eye care centres at Mansa and Khedbrahma and surgical outreach at Vijapur.",
+      "image": "/assets/media/journey/today-visnagar.webp",
+      "set": [
+        {
+          "src": "/assets/media/journey/today-visnagar-720.webp",
+          "width": 720
+        },
+        {
+          "src": "/assets/media/journey/today-visnagar.webp",
+          "width": 1200
+        }
+      ],
+      "focus": "50% 60%",
+      "alt": "Patients waiting in the double-height hall at Aakash Eye Hospital Visnagar",
       "figures": [
         {
           "key": "years",
@@ -144,7 +322,7 @@
         "title": "The same standard everywhere",
         "sourceKind": "Mission",
         "source": "consistent quality across every Aakash Eye Hospital",
-        "description": "One set of clinical protocols across every Aakash Eye Hospital, so the care at a branch matches the care at the head office."
+        "description": "One set of clinical protocols across every Aakash Eye Hospital, so the care is the same at whichever hospital you visit."
       },
       {
         "title": "Always learning",

@@ -11,7 +11,6 @@
   "desk": {
     "pickLabel": "Choose your hospital",
     "pickHint": "Your choice also sets the number at the top of every page.",
-    "headOfficeTag": "Head office",
     "readoutLabel": "OPD line",
     "connectedLabel": "Connected to {branch}",
     "callLabel": "Call OPD",
@@ -28,7 +27,6 @@
     "emergencyLabel": "Eye emergency",
     "emergencyNote": "Sudden loss of sight, an injury or a chemical splash: call this line first, from any hospital's area.",
     "openLabel": "View hospital",
-    "headOfficeTag": "Head office",
     "chosenTag": "Your hospital",
     "emailLabel": "Write to us",
     "emailNote": "One address reaches every hospital.",

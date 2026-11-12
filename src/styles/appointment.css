@@ -580,19 +580,6 @@ body:has(.hd--hidden) .ap-aside {
   flex: none;
 }
 
-.ap-chip__title em {
-  border: 1px solid currentColor;
-  border-radius: 999px;
-  padding: 2px 7px;
-  color: var(--e-accent);
-  font-size: 0.62rem;
-  font-style: normal;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
 .ap-chip__sub {
   color: var(--e-ink-2);
   font-family: var(--e-sans);
@@ -662,10 +649,6 @@ body:has(.hd--hidden) .ap-aside {
 
 .ap-chip[data-on] .ap-chip__sub {
   color: rgba(255, 255, 255, 0.74);
-}
-
-.ap-chip[data-on] .ap-chip__title em {
-  color: rgba(255, 255, 255, 0.86);
 }
 
 .ap-chip[data-on] .ap-chip__mark {

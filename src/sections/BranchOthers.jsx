@@ -20,8 +20,8 @@ const { others } = branchPage;
  * the hospitals menu made with six `MapPin` tiles and the drawer made with a
  * chevron on every row, both removed for this reason. What differs between
  * these five is the city and the street it is on, so those carry the card: the
- * city in the serif the rest of this page uses for the things it names, the
- * locality under it, and `Head office` where it is true. */
+ * city in the serif the rest of this page uses for the things it names and
+ * the locality under it. Every hospital is shown the same way. */
 export default function BranchOthers({ branches: items }) {
   if (!items?.length) return null;
 
@@ -52,10 +52,7 @@ export default function BranchOthers({ branches: items }) {
             <li key={branch.slug}>
               <Link className="br-others__row" to={buildBranchHref(branch)}>
                 <span className="br-others__copy">
-                  <span className="br-others__name">
-                    {branch.name}
-                    {branch.isHeadquarters ? <em>{others.tag}</em> : null}
-                  </span>
+                  <span className="br-others__name">{branch.name}</span>
                   <span className="br-others__where">{branch.locality}</span>
                 </span>
                 <span className="br-others__arrow" aria-hidden="true">

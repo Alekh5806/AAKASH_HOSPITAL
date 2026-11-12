@@ -225,10 +225,7 @@ export default function Footer() {
               <ul>
                 {branches.items.map((branch) => (
                   <li key={branch.slug}>
-                    <Link to={buildBranchHref(branch)}>
-                      {branch.name}
-                      {branch.isHeadquarters ? <em>Head office</em> : null}
-                    </Link>
+                    <Link to={buildBranchHref(branch)}>{branch.name}</Link>
                   </li>
                 ))}
               </ul>

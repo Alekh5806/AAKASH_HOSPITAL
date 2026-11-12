@@ -93,6 +93,8 @@ Open `branches.json`, find the branch in `items`, and edit contact details:
 
 For WhatsApp, use digits only with the country code, without `+`, spaces or hyphens.
 
+`isHeadquarters` only marks the default hospital (the one the site falls back to before a reader chooses theirs). Every hospital is presented the same way, so nothing on the site shows a "Head office" label from it.
+
 ### A Branch's Hours
 
 Every hospital keeps its own OPD hours in its `hours` block, and everything that shows or uses hours reads that block: the printed `Monday to Saturday, 9:00 AM - 6:00 PM` lines, the live `OPD open now` pill, the days the appointment flow offers, the note under its day rail, and the hours search engines are told. Edit the block and all of them change together - nothing is written twice.
@@ -142,7 +144,7 @@ A camera watermark in a supplied photograph is cropped out before encoding, neve
 
 **Every hospital's photographs (all six carry these):**
 
-- **`imageSets`** - the hero frame changes shape with the screen (21:9 on a laptop and a phone held sideways, 3:2 on a tablet, 5:6 on a phone), so give each shape its own crop, framed for that box, at two widths: `"imageSets": { "wide": [{ "src": ".../facade-wide-800.webp", "width": 800 }, ...], "landscape": [...], "portrait": [...] }`. Set `image` to the largest `wide` file. With `imageSets`, the hero ignores `imageSmall`, which stays the full master photograph (`facade.webp`, the home page's phone card for the head office). Frame each crop so the hospital's own signboard sits above the bottom third of the frame - the chips cover that third.
+- **`imageSets`** - the hero frame changes shape with the screen (21:9 on a laptop and a phone held sideways, 3:2 on a tablet, 5:6 on a phone), so give each shape its own crop, framed for that box, at two widths: `"imageSets": { "wide": [{ "src": ".../facade-wide-800.webp", "width": 800 }, ...], "landscape": [...], "portrait": [...] }`. Set `image` to the largest `wide` file. With `imageSets`, the hero ignores `imageSmall`, which stays the full master photograph (`facade.webp`, the home page's phone card for the default hospital). Frame each crop so the hospital's own signboard sits above the bottom third of the frame - the chips cover that third.
 - **`galleryAspect`** - the stage's shape, e.g. `{ "width": 4, "height": 3 }`: the shape most of the hospital's photographs share (Ahmedabad and Bharuch 3:2, Juhapura's portraits 4:5). The stage takes it at every width, so nothing is cropped to whatever shape the stage happens to be.
 - **A gallery entry** - `src` is the full photograph the viewer shows. `set` is the stage's image at two widths (`[{ "src": ".../waiting-hall-800.webp", "width": 800 }, { "src": ".../waiting-hall-stage.webp", "width": 1448 }]`): for a photograph near the stage's shape it is cut to that shape around its subject (`-stage`), so the stage crops nothing. A photograph far from it - a tall corridor, a directory board - carries `"whole": true` instead and its `set` is the photograph itself, shown whole over a blurred copy. `thumb` is a 320x240 encode for the thumbnail row and the blurred fill. Five to seven entries: from six, a phone sets the thumbnails in two rows.
 

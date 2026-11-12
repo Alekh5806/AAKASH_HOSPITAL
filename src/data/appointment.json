@@ -48,8 +48,7 @@
       "error": "Enter a 10-digit mobile number."
     },
     "branch": {
-      "error": "Choose a hospital.",
-      "headOfficeTag": "Head office"
+      "error": "Choose a hospital."
     },
     "service": {
       "error": "Choose a reason for your visit.",

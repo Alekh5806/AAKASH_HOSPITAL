@@ -185,10 +185,7 @@ function BranchPicker({ branch, isOpen, onSelect, onToggle }) {
                 onClick={() => onSelect(item.slug)}
               >
                 <span className="hd__branch-text">
-                  <strong>
-                    {item.name}
-                    {item.isHeadquarters ? <span className="hd__tag">Head Office</span> : null}
-                  </strong>
+                  <strong>{item.name}</strong>
                   <small>{item.locality}</small>
                 </span>
                 {item.slug === branch.slug ? (
@@ -324,10 +321,7 @@ function NavDropdown({
                 to={item.to}
               >
                 <span className="hd__mega-text">
-                  <strong>
-                    {item.title}
-                    {item.tag ? <span className="hd__tag">{item.tag}</span> : null}
-                  </strong>
+                  <strong>{item.title}</strong>
                   <small>{item.subtitle}</small>
                 </span>
                 {item.current ? (
@@ -491,7 +485,15 @@ export default function Header() {
      paper band its hairline and shadow, and the film/paper change of shape
      happens inside a box whose size never moves, so no scroll position can
      make the document reflow under the reader - which is what the old
-     compacting header needed a pair of thresholds and a settle window for. */
+     compacting header needed a pair of thresholds and a settle window for.
+
+     A pinned film - the About journey's stage - owns the whole screen while
+     it plays, and scrolling back through it is how the reader rewinds the
+     years. Returning the header there laid it over the photograph on every
+     scroll up, so any element marked `data-header-hold` keeps the header away
+     for as long as it covers the header's band. The header comes back on the
+     first scroll up once the film has left that band, and an open menu or a
+     visible keyboard focus still brings it back as before. */
   useEffect(() => {
     const HIDE_AFTER = 160;
     const TRAVEL = 12;
@@ -504,6 +506,15 @@ export default function Header() {
       return !menusOpenRef.current && y > HIDE_AFTER && !atBottom;
     }
 
+    function isHeld() {
+      const band = headerRef.current?.offsetHeight ?? 0;
+      for (const node of document.querySelectorAll("[data-header-hold]")) {
+        const box = node.getBoundingClientRect();
+        if (box.top <= 0 && box.bottom > band) return true;
+      }
+      return false;
+    }
+
     function update() {
       frame = 0;
       const y = Math.max(window.scrollY, 0);
@@ -514,6 +525,12 @@ export default function Header() {
       if (!canHide(y)) {
         travelled = 0;
         setIsHidden(false);
+        return;
+      }
+
+      if (isHeld()) {
+        travelled = 0;
+        setIsHidden(true);
         return;
       }
 
@@ -785,7 +802,6 @@ export default function Header() {
         key: item.slug,
         to: buildBranchHref(item),
         title: item.name,
-        tag: item.isHeadquarters ? "Head Office" : undefined,
         subtitle: item.locality,
         current: item.slug === (urlBranchSlug ?? selectedSlug),
         isPage: item.slug === urlBranchSlug,
@@ -1165,12 +1181,7 @@ export default function Header() {
                       }}
                     >
                       <span className="hd__pick-text">
-                        <strong>
-                          {branch.name}
-                          {branch.isHeadquarters ? (
-                            <span className="hd__pick-tag">{drawerCopy.headOfficeLabel}</span>
-                          ) : null}
-                        </strong>
+                        <strong>{branch.name}</strong>
                         <small>{branch.locality}</small>
                       </span>
                       <span className="hd__pick-ring" aria-hidden="true">

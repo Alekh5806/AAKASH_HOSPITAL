@@ -212,20 +212,6 @@
   line-height: 1.1;
 }
 
-.ct-jack__name em {
-  border: 1px solid var(--ct-edge-light);
-  border-radius: 999px;
-  padding: 3px 8px;
-  color: rgba(255, 255, 255, 0.88);
-  font-family: var(--e-sans);
-  font-size: 0.62rem;
-  font-style: normal;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
 .ct-jack__where {
   grid-area: where;
   color: rgba(255, 255, 255, 0.72);
@@ -1135,18 +1121,14 @@
     border-radius: 999px;
   }
 
-  /* One line per chip, always: the fold in the directory below carries the
-     `Head office` tag, so the chip does not have to. */
+  /* One line per chip, always: the locality is in the directory's fold
+     below, so the chip does not have to carry it. */
   .ct-jack__name {
     display: block;
     overflow: hidden;
     font-size: 0.98rem;
     text-overflow: clip;
     white-space: nowrap;
-  }
-
-  .ct-jack__name em {
-    display: none;
   }
 
   .ct-jack__ring {
@@ -1348,7 +1330,6 @@
   }
 
   .ct-jack__where,
-  .ct-jack__name em,
   .ct-pick__hint {
     display: none;
   }

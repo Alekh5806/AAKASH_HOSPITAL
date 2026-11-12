@@ -421,10 +421,7 @@ export default function ContactDesk({ ready = true, delay = 0 }) {
                     }
                   />
                 ) : null}
-                <span className="ct-jack__name">
-                  {item.name}
-                  {item.isHeadquarters ? <em>{desk.headOfficeTag}</em> : null}
-                </span>
+                <span className="ct-jack__name">{item.name}</span>
                 <span className="ct-jack__where">{item.locality}</span>
                 <span className="ct-jack__ring" aria-hidden="true" />
               </motion.button>

@@ -148,7 +148,6 @@ export function WhereStep({ items, value, onChange, stepOf, still }) {
                 id: branch.slug,
                 name: branch.name,
                 locality: branch.locality,
-                headOffice: branch.isHeadquarters,
               })),
             },
           ]}
@@ -156,10 +155,7 @@ export function WhereStep({ items, value, onChange, stepOf, still }) {
           onChange={onChange}
           renderOption={(option) => (
             <>
-              <span className="ap-chip__title">
-                {option.name}
-                {option.headOffice ? <em>{fields.branch.headOfficeTag}</em> : null}
-              </span>
+              <span className="ap-chip__title">{option.name}</span>
               <span className="ap-chip__sub">{option.locality}</span>
             </>
           )}

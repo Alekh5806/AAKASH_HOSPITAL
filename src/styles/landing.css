@@ -89,6 +89,14 @@
   inset: 0;
 }
 
+/* The film and its scrim, in a box of their own that is never animated and
+   never given a z-index - for the reason above. On a phone it clips the film
+   to its window (see the portrait block below). */
+.e-hero__film {
+  position: absolute;
+  inset: 0;
+}
+
 .e-hero__video {
   display: block;
   width: 100%;
@@ -415,20 +423,13 @@
   }
 }
 
-/* Phones. The film stays full-bleed - unlike the still it replaced, the 900x1200
-   portrait encode is cut for this box and renders about 1:1 on a 3x screen, so
-   there is nothing to gain by demoting it to a band.
-
-   The section is a two-row grid: the film and the copy share the first row, the
-   stat row gets a solid navy band of its own underneath. That is the reference
-   layout, and it is also what keeps the promise this hero has to keep - Book
-   appointment and Call OPD are the only way to act from the first screen, so
-   they sit above the fold and the stats are what is allowed to fall below it.
-   ImpactStats owns the numbers two sections later. */
+/* Phones. Everything the two phone shapes share: the grid, the type, the
+   button and the figures band. How the film and the copy are arranged is
+   decided by the two blocks after this one - a phone held upright sets the
+   film in a window over the copy, a phone held sideways lays the copy on it. */
 @media (max-width: 760px) {
   .e-hero {
     display: grid;
-    grid-template-rows: minmax(0, 1fr) auto;
     justify-content: stretch;
   }
 
@@ -441,13 +442,14 @@
   }
 
   .e-hero__media,
-  .e-hero__copy {
-    grid-row: 1;
+  .e-hero__copy,
+  .e-hero__stats {
     grid-column: 1;
   }
 
   .e-hero__media {
     position: relative;
+    grid-row: 1;
     min-height: 0;
   }
 
@@ -460,32 +462,6 @@
   .e-hero__video {
     position: absolute;
     inset: 0;
-    object-position: 50% 46%;
-  }
-
-  /* Only the headline sits on the film here, and a display line needs 3:1
-     rather than the 4.5:1 a sentence needs, so the scrim can be far lighter
-     than it was when the lede was still in the stack. The heavy version held
-     the type but flattened the lower half of every scene into solid navy, and
-     a film you cannot see is not worth shipping. This one grounds the last
-     third and leaves the rest of the frame open.
-
-     The ground is the figures band's own navy, fully opaque at the foot, so
-     the film dissolves into the band. In the near-black it used to be, the
-     film ended on a darker navy than the band under it and the join read as
-     a seam. The stops are a shade deeper than before to hold the same
-     contrast on the lighter colour. */
-  .e-hero__scrim {
-    background: linear-gradient(
-      0deg,
-      rgba(12, 44, 73, 1) 0%,
-      rgba(12, 44, 73, 0.86) 18%,
-      rgba(12, 44, 73, 0.7) 34%,
-      rgba(12, 44, 73, 0.45) 50%,
-      rgba(12, 44, 73, 0.2) 68%,
-      rgba(12, 44, 73, 0.07) 86%,
-      rgba(12, 44, 73, 0.04) 100%
-    );
   }
 
   .e-hero__shade {
@@ -500,26 +476,27 @@
 
   .e-hero__copy {
     z-index: 1;
-    align-self: end;
     width: var(--e-shell);
     margin-inline: auto;
-    /* Leaves the corner under the CTA free for the pause control, which is
-       where the reference puts it. */
-    padding-bottom: 62px;
   }
 
-  /* No measure cap, and a size the first line fits: the serif's optical-size
-     axis draws it wider at phone sizes, so "Advanced eye care," is 345px at
-     390 in a 358px column. The phone gets the laptop's two lines from 360px up
-     instead of a stack of three; the 320px SE balances onto three. */
+  /* No measure cap, and a size the line fits at every width: the serif's
+     optical-size axis draws it wider at phone sizes, so "Advanced eye care."
+     is 345px at 390 in a 358px column, and 276px of the 288 a 320px phone
+     has. One line on every phone - the floor used to be 2.5rem, which broke
+     the 320px SE onto two. */
   .e-hero h1 {
     max-width: none;
-    font-size: clamp(2.5rem, 11.3vw, 3.5rem);
+    font-size: clamp(2.2rem, 11.3vw, 3.5rem);
     line-height: 0.96;
   }
 
+  /* A fixed height, so the pause control can be centred on it from the
+     film's box (see the portrait block). */
   .e-hero__eyebrow {
-    margin-bottom: 16px;
+    min-height: 34px;
+    margin-bottom: 14px;
+    padding-block: 0;
     font-size: 0.84rem;
   }
 
@@ -554,19 +531,13 @@
     font-size: 1rem;
   }
 
-  /* Back to the bottom-right corner of the film, which on a phone is the
-     corner just above the stat band - where the reference puts it. The shell
-     edge still sets its right side. */
   .e-hero__toggle {
     top: auto;
-    bottom: 12px;
   }
 
-  /* Its own band under the film, on solid navy. Flat, not a card: a bordered
+  /* Its own band under the copy, on solid navy. Flat, not a card: a bordered
      panel here sat inside the navy panel and read as a box in a box. */
   .e-hero__stats {
-    grid-row: 2;
-    grid-column: 1;
     display: grid;
     /* The middle label is the longest word pair, so its column is a little
        wider: at equal thirds "across Gujarat" broke onto a third line on the
@@ -605,21 +576,25 @@
 
   /* Every label on two balanced lines. Left to fill its column, "Founded in
      Visnagar" fitted on one line from 412px while the other two broke, and a
-     ragged row of 1, 2 and 2 lines is what a 412px Android shows first. */
+     ragged row of 1, 2 and 2 lines is what a 412px Android shows first.
+     0.8rem from 360px - these are read by older patients, and at 0.76rem
+     they were the smallest words on the first screen; the 320px SE keeps
+     0.76rem, where the wider type put "across Gujarat" on a third line. */
   .e-hero__stat dd {
     max-width: 8.4em;
-    margin-top: 3px;
-    font-size: 0.76rem;
+    margin-top: 4px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.8rem;
     text-wrap: balance;
   }
 }
 
-/* The 320px SE is the one phone where the headline wraps onto a second line,
-   which lifts the copy into a brighter band of the film: there it measured
-   2.79:1 against the 3:1 a display line needs. The scrim deepens only here,
-   so every wider phone keeps its lighter film. The figures' columns tighten
-   their gutters here too, so the middle label keeps two lines. */
+/* The figures' columns tighten their gutters on the 320px SE, so the middle
+   label keeps two lines. */
 @media (max-width: 359px) {
+  .e-hero__stat dd {
+    font-size: 0.76rem;
+  }
   .e-hero__stat,
   .e-hero__stat:first-child,
   .e-hero__stat:last-child {
@@ -633,30 +608,137 @@
   .e-hero__stat:last-child {
     padding-right: 0;
   }
+}
 
+/* A phone held upright: the film is a window at the top of the screen and
+   the copy stands on the navy under it.
+
+   The portrait cut keeps its people low in the frame - the reception desk,
+   the patients on the sofas, the doctor at the slit lamp are all in its
+   lower half. Laid full-bleed under the copy, as this used to be, that half
+   sat behind the headline and the button under a navy wash, and what a phone
+   actually showed was the skylight: a grey ceiling over a murky panel. Now
+   the film ends where the copy starts, anchored on its foot, so the part of
+   the frame worth seeing is the part in the clear, and the words sit on
+   solid navy where nothing has to be traded against the picture. Three
+   rows: the window takes whatever the screen has left, then the copy, then
+   the figures band. */
+@media (max-width: 760px) and (min-height: 521px) {
+  .e-hero {
+    grid-template-rows: minmax(0, 1fr) auto auto;
+    /* How far the film runs on under the top of the copy, so the chip sits
+       on the picture's foot rather than under a hard edge. */
+    --hero-bleed: 46px;
+  }
+
+  .e-hero__media {
+    min-height: 150px;
+    margin-bottom: calc(var(--hero-bleed) * -1);
+  }
+
+  /* Clips the film to its window, so the scroll can move the picture inside
+     it (see the choreography at the end of this file). `clip`, not `hidden`:
+     hidden would make this the film's scroll container and freeze that
+     move. */
+  .e-hero__film {
+    overflow: clip;
+  }
+
+  /* Anchored on the frame's foot, where the people are: a short phone crops
+     the skylight away, a tall one shows the whole frame. */
+  .e-hero__video {
+    object-position: 50% 100%;
+  }
+
+  /* The film's foot dissolves into the hero's own navy. Solid under the
+     chip's lower half and everything after it, and short: the people in the
+     frame stand just above it, and a deep dissolve dims them. The picture is
+     in the clear from about 120px above the copy. Lengths, not shares, so
+     the dissolve is the same depth on a 553px screen and a 932px one. */
   .e-hero__scrim {
     background: linear-gradient(
       0deg,
-      rgba(12, 44, 73, 1) 0%,
-      rgba(12, 44, 73, 0.9) 18%,
-      rgba(12, 44, 73, 0.8) 34%,
-      rgba(12, 44, 73, 0.63) 50%,
-      rgba(12, 44, 73, 0.38) 68%,
-      rgba(12, 44, 73, 0.12) 86%,
-      rgba(12, 44, 73, 0.04) 100%
+      rgb(12, 44, 73) 0,
+      rgb(12, 44, 73) calc(var(--hero-bleed) - 22px),
+      rgba(12, 44, 73, 0.86) var(--hero-bleed),
+      rgba(12, 44, 73, 0.56) calc(var(--hero-bleed) + 26px),
+      rgba(12, 44, 73, 0.27) calc(var(--hero-bleed) + 58px),
+      rgba(12, 44, 73, 0.09) calc(var(--hero-bleed) + 92px),
+      rgba(12, 44, 73, 0) calc(var(--hero-bleed) + 126px)
     );
-  }
-}
-
-/* Short handsets and landscape phones. Height comes out of the frame and the
-   spacing, never out of the type - older patients read this site. */
-@media (max-width: 760px) and (max-height: 700px) {
-  .e-hero__actions {
-    margin-top: 16px;
   }
 
   .e-hero__copy {
-    padding-bottom: 56px;
+    grid-row: 2;
+    padding-bottom: 26px;
+  }
+
+  /* The film is framed at both ends by the hero's navy: the dissolve at its
+     foot, and this at its head, under the header's capsule. In the near-black
+     the wider screens use, the capsule's glass came out a flat grey over the
+     white wall this framing puts behind it. */
+  .e-hero__shade {
+    height: calc(var(--hd-height) + 84px);
+    background: linear-gradient(
+      180deg,
+      rgba(10, 36, 60, 0.74) 0,
+      rgba(10, 36, 60, 0.46) calc(var(--hd-height) - 6px),
+      rgba(10, 36, 60, 0.16) calc(var(--hd-height) + 36px),
+      rgba(10, 36, 60, 0) 100%
+    );
+  }
+
+  /* On solid navy the type needs no shadow to hold its edge, and is crisper
+     without one. */
+  .e-hero h1,
+  .e-hero__lede {
+    text-shadow: none;
+  }
+
+  .e-hero__lede {
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  /* On the chip's row, at the shell's right edge and centred on the chip:
+     the two glass objects on the film's foot share one line. The chip is
+     34px tall and starts where the copy does, --hero-bleed above the film's
+     own foot. Drawn at 36px beside a 34px chip - at 44 it outweighed the
+     chip it sits with - and still a 44px target through the halo. */
+  .e-hero__toggle {
+    bottom: calc(var(--hero-bleed) - 17px - 18px);
+    width: 36px;
+    height: 36px;
+    /* On navy now rather than on film, where 0.34 is 2.6:1 against the
+       ground; a control's boundary needs 3:1, and this is 4:1. */
+    border-color: rgba(255, 255, 255, 0.45);
+  }
+
+  /* -5px: the halo is measured from inside the 1px border, so this is 44px. */
+  .e-hero__toggle::after {
+    position: absolute;
+    inset: -5px;
+    content: "";
+  }
+
+  .e-hero__toggle svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .e-hero__stats {
+    grid-row: 3;
+  }
+}
+
+/* Short handsets. Height comes out of the spacing, never out of the type -
+   older patients read this site. */
+@media (max-width: 760px) and (min-height: 521px) and (max-height: 700px) {
+  .e-hero__actions {
+    margin-top: 18px;
+  }
+
+  .e-hero__copy {
+    padding-bottom: 22px;
   }
 
   .e-hero__stats {
@@ -678,26 +760,62 @@
   }
 }
 
-/* The film row is at least the copy's height and takes any height left over;
-   as `auto auto` the spare 20-odd pixels went to the figures band and sat as
-   an empty strip of navy under its labels. The columns are wide enough here
-   for each label on one line. */
+/* There is no height for a window here, so the copy lies on the film: the
+   two share the first row and the figures band takes the second. The film
+   row is at least the copy's height and takes any height left over; as
+   `auto auto` the spare 20-odd pixels went to the figures band and sat as an
+   empty strip of navy under its labels. The columns are wide enough here for
+   each label on one line. */
 @media (max-width: 760px) and (max-height: 520px) {
   .e-hero {
     grid-template-rows: 1fr auto;
   }
 
-  .e-hero__stat dd {
-    max-width: none;
+  .e-hero__video {
+    object-position: 50% 46%;
+  }
+
+  /* Only the headline sits on the film, and a display line needs 3:1, so
+     the scrim grounds the last third and leaves the rest of the frame open.
+     Its ground is the figures band's own navy, opaque at the foot, so the
+     film dissolves into the band rather than ending on a seam. */
+  .e-hero__scrim {
+    background: linear-gradient(
+      0deg,
+      rgba(12, 44, 73, 1) 0%,
+      rgba(12, 44, 73, 0.86) 18%,
+      rgba(12, 44, 73, 0.7) 34%,
+      rgba(12, 44, 73, 0.45) 50%,
+      rgba(12, 44, 73, 0.2) 68%,
+      rgba(12, 44, 73, 0.07) 86%,
+      rgba(12, 44, 73, 0.04) 100%
+    );
   }
 
   .e-hero__copy {
+    grid-row: 1;
+    align-self: end;
     padding-top: calc(var(--hd-height) + 14px);
     padding-bottom: 22px;
   }
 
   .e-hero__actions {
     margin-top: 16px;
+  }
+
+  /* The film's bottom right corner, just above the figures band, on the
+     button's row. */
+  .e-hero__toggle {
+    bottom: 12px;
+  }
+
+  .e-hero__stats {
+    grid-row: 2;
+    padding-block: 14px 16px;
+  }
+
+  .e-hero__stat dd {
+    max-width: none;
   }
 }
 
@@ -3432,6 +3550,14 @@ body:has(.hd--hidden) .e-cond__dock {
   }
 }
 
+@keyframes e-hero-window {
+  to {
+    translate: 0 24svh;
+    scale: 1.08;
+    opacity: 0.5;
+  }
+}
+
 @keyframes e-hero-copy {
   25% {
     opacity: 1;
@@ -3601,6 +3727,26 @@ body:has(.hd--hidden) .e-cond__dock {
 
       .e-hero__stats {
         animation-name: e-hero-band;
+      }
+    }
+
+    /* A phone held upright: the film is a window (see HERO), and the scroll
+       moves the picture inside it rather than the window itself - the film
+       drifts down a quarter as fast as the page goes up, so the window is
+       seen to look deeper than the page it sits in. The dissolve at its foot
+       stays where it is, and the pause control leaves with the chip beside
+       it. */
+    @media (max-width: 760px) and (min-height: 521px) {
+      .e-hero__video {
+        animation-name: e-hero-window;
+      }
+
+      .e-hero__scrim {
+        animation-name: none;
+      }
+
+      .e-hero__toggle {
+        animation-name: e-hero-copy;
       }
     }
 

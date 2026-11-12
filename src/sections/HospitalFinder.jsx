@@ -273,10 +273,7 @@ export default function HospitalFinder({ items, copy, ready = true, delay = 0 })
                 {/* The whole row opens the hospital's page: the link's halo
                     covers the row, and the two actions sit above it. */}
                 <Link className="hs-row__main" to={buildBranchHref(branch)}>
-                  <span className="hs-row__name">
-                    {branch.name}
-                    {branch.isHeadquarters ? <em>{copy.headOfficeTag}</em> : null}
-                  </span>
+                  <span className="hs-row__name">{branch.name}</span>
                   <span className="hs-row__where">{branch.locality}</span>
                 </Link>
 

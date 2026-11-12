@@ -1767,19 +1767,6 @@ body.br-locked {
   line-height: 1.15;
 }
 
-.br-others__name em {
-  border-radius: 999px;
-  background: var(--color-clinical);
-  padding: 3px 9px;
-  color: var(--e-navy-2);
-  font-family: var(--e-sans);
-  font-size: 0.62rem;
-  font-style: normal;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
 .br-others__where {
   color: var(--e-ink-2);
   font-family: var(--e-sans);

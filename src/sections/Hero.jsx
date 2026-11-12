@@ -167,28 +167,43 @@ function HeroFilm({ video, reduceMotion }) {
 
   return (
     <>
-      <video
-        key={source.mp4}
-        ref={attachVideo}
-        className="e-hero__video"
-        poster={poster}
-        autoPlay={!reduceMotion && !heldAtMount}
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        tabIndex={-1}
-        disablePictureInPicture
-        disableRemotePlayback
-        controlsList="nodownload noplaybackrate noremoteplayback"
-        aria-label={video.description}
-      >
-        <source src={source.webm} type="video/webm" />
-        <source src={source.mp4} type="video/mp4" />
-      </video>
+      <FilmFrame>
+        <video
+          key={source.mp4}
+          ref={attachVideo}
+          className="e-hero__video"
+          poster={poster}
+          autoPlay={!reduceMotion && !heldAtMount}
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          tabIndex={-1}
+          disablePictureInPicture
+          disableRemotePlayback
+          controlsList="nodownload noplaybackrate noremoteplayback"
+          aria-label={video.description}
+        >
+          <source src={source.webm} type="video/webm" />
+          <source src={source.mp4} type="video/mp4" />
+        </video>
+      </FilmFrame>
 
       <FilmToggle isPlaying={isPlaying} onClick={toggle} />
     </>
+  );
+}
+
+/* The film's own box, and the scrim over it. On a phone the film is a window
+   at the top of the hero and this is what clips it there, so the picture can
+   drift inside the window as the page scrolls while the pause control - a
+   sibling, not a child - is free to travel with the copy. */
+function FilmFrame({ children }) {
+  return (
+    <div className="e-hero__film">
+      {children}
+      <span className="e-hero__scrim" aria-hidden="true" />
+    </div>
   );
 }
 
@@ -231,13 +246,14 @@ export default function Hero({ hero, counts }) {
           <HeroFilm video={hero.video} reduceMotion={reduceMotion} />
         ) : (
           <>
-            <HeroPoster video={hero.video} />
+            <FilmFrame>
+              <HeroPoster video={hero.video} />
+            </FilmFrame>
             {/* The build is made as if the curtain were up, when the film is
                 held at its first frame and the control offers to play it. */}
             <FilmToggle isPlaying={false} />
           </>
         )}
-        <span className="e-hero__scrim" aria-hidden="true" />
       </div>
       <span className="e-hero__shade" aria-hidden="true" />
 
