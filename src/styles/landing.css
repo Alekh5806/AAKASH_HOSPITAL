@@ -2169,192 +2169,362 @@
   }
 }
 
-/* ---- the phone's proof card ----
+/* ---- the phone's rail ----
 
-   On a phone the four cards are one card (ProofCard): the head office's own
-   photograph dissolving into a navy band, and the four figures on the band
-   in the hero's figure style - cream serif, labels at 0.78 white, ruled two
-   by two with the hero band's hairlines. It is the hero film's composition
-   at card size, so the page arrives at the numbers without changing
-   language. The charts stay on the laptop's cards. The query must match
-   PHONE_QUERY in ImpactStats.jsx. */
+   On a phone the four cards are the same four cards, in a rail the reader
+   swipes: one whole card across the width, the next one showing its edge,
+   and a pager under them. It is the laptop's section turned on its side
+   rather than a second design - the same list, laid out here - so a phone
+   gets the sentence under each figure and the four small drawings that a
+   laptop gets. The query must match RAIL_QUERY in ImpactStats.jsx. */
+.e-impact__pager,
+.e-impact__nearest {
+  display: none;
+}
+
 @media (max-width: 620px), (max-width: 1023px) and (max-height: 520px) {
   .e-impact {
-    padding-block: 48px 44px;
-  }
-
-  .e-impact__proof {
-    border-radius: 22px;
-    background: var(--e-navy);
-    box-shadow: 0 24px 50px -30px rgba(12, 44, 73, 0.6);
-    overflow: clip;
-    isolation: isolate;
-  }
-
-  /* clip, not hidden: the photograph drifts on the page's scroll inside it
-     (the scroll choreography), which a scroll container would freeze. */
-  .e-impact__photo {
-    position: relative;
-    aspect-ratio: 4 / 3;
-    overflow: clip;
-  }
-
-  .e-impact__photo img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 50% 42%;
-  }
-
-  /* A light shade under the tag at the top, and the foot dissolving into
-     the band's own navy - the hero film's phone scrim, so the photograph
-     and the band read as one surface with no seam between them. */
-  .e-impact__photo::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      180deg,
-      rgba(7, 20, 33, 0.34) 0%,
-      rgba(7, 20, 33, 0) 24%,
-      rgba(12, 44, 73, 0) 50%,
-      rgba(12, 44, 73, 0.72) 82%,
-      rgb(12, 44, 73) 100%
+    /* What the shell leaves at each side of the screen; the rail bleeds
+       across it and pads itself back, so the first card starts on the
+       heading's edge and the last runs off the screen. */
+    --impact-inset: 16px;
+    /* The card waiting at the edge shows its shoulder and nothing else:
+       what is left of the screen beside a card is exactly a card's own
+       padding, so no half letter - and no figure that has not counted
+       yet - is cut by the screen's edge. */
+    --impact-pad: 22px;
+    --impact-gap: 12px;
+    --impact-card: min(
+      calc(100vw - var(--impact-inset) - var(--impact-gap) - var(--impact-pad)),
+      380px
     );
-    pointer-events: none;
+    /* A control's boundary needs 3:1; the band rules are 1.2:1. */
+    --impact-edge: #7f8b96;
+    padding-block: 48px 44px;
+    /* The rail is dealt in from the side as the section arrives (the scroll
+       choreography) and reaches past the screen's edge on the way. clip,
+       not hidden: a scroll container here would freeze every scroll-driven
+       move inside the section. */
+    overflow-x: clip;
   }
 
-  /* The hero chip's dark glass: a white tint would lighten the sky under
-     white type. */
-  .e-impact__tag {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    z-index: 1;
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    max-width: calc(100% - 28px);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 999px;
-    background: rgba(7, 20, 33, 0.6);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
-    padding: 7px 13px 7px 10px;
-    color: #fbf7ef;
-    font-size: 0.8rem;
-    font-weight: 600;
-    line-height: 1.25;
+  .e-impact .e-head {
+    margin-bottom: 22px;
   }
 
-  .e-impact__tag svg {
-    flex: none;
+  .e-impact__grid {
+    position: relative;
+    display: flex;
+    gap: var(--impact-gap);
+    margin-inline: calc(var(--impact-inset) * -1);
+    /* The scroller clips whatever leaves its box, so the cards' shadow
+       gets its room inside it. */
+    padding: 8px var(--impact-inset) 36px;
+    /* Must match the padding: a card snaps to the scrollport's edge, which
+       sits inside it. */
+    scroll-padding-inline: var(--impact-inset);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
   }
 
-  .e-impact__band {
+  .e-impact__grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* always: a quick flick moves one card, never past one unread. A phone
+     never hovers, so the card carries its shadow at rest.
+
+     A column of its own here, not rows shared with its neighbours as on a
+     laptop: the rail shows one card at a time, and on shared rows a card
+     with a two-line sentence kept a blank line under it for the one card
+     that has three. Each card's drawing starts under its own sentence and
+     takes what is left, so the four end on one foot. */
+  .e-impact__card {
+    display: flex;
+    flex: 0 0 var(--impact-card);
+    flex-direction: column;
+    min-width: 0;
+    border-radius: 20px;
+    box-shadow:
+      0 1px 2px rgba(16, 22, 28, 0.04),
+      0 22px 36px -28px rgba(12, 44, 73, 0.42);
+    padding: var(--impact-pad) var(--impact-pad) 20px;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  .e-impact__label {
+    align-self: auto;
+  }
+
+  .e-impact__desc {
+    font-size: 0.92rem;
+  }
+
+  /* The figure at the size a laptop's card gives it: the card is as wide
+     here as it is there. */
+  .e-impact__card .e-count {
+    font-size: 2.4rem;
+  }
+
+  /* The four cards are one height - the tallest one's - so a drawing is
+     given more room than it asked for, and it uses it: the bars spread down
+     the panel, the plot grows, the hospitals sit in its middle. Left at
+     their laptop sizes they floated in a panel half empty. */
+  .e-impact__visual {
+    align-items: stretch;
+    margin-top: 16px;
+    border-radius: 12px;
+    padding: 18px 16px;
+  }
+
+  .e-impact__mix,
+  .e-impact__people {
+    align-content: space-between;
+  }
+
+  .e-impact__mixName,
+  .e-impact__mixShare {
+    font-size: 0.84rem;
+  }
+
+  .e-impact__track {
+    height: 8px;
+  }
+
+  .e-impact__plot {
+    flex: 1 1 auto;
+    aspect-ratio: auto;
+    min-height: 74px;
+  }
+
+  .e-impact__caption,
+  .e-impact__axis {
+    font-size: 0.72rem;
+  }
+
+  .e-impact__personBody strong {
+    font-size: 0.88rem;
+  }
+
+  .e-impact__personBody em {
+    font-size: 0.78rem;
+  }
+
+  .e-impact__more {
+    font-size: 0.78rem;
+  }
+
+  /* The line under the three names is not a row and takes the list's own
+     edge, so it holds one line on the narrowest phone. */
+  .e-impact__people .e-impact__more {
+    padding-inline: 2px;
+  }
+
+  /* The six hospitals are a keypad: two columns of equal 48px pills across
+     the panel, the six names level and each a full finger wide. Wrapped at
+     their own widths, as on a laptop, they left a ragged third of the
+     panel empty and broke differently on every phone. No pin here either:
+     six of one glyph said nothing the heading had not. */
+  .e-impact__branches {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    margin: -1px 0 0;
-    padding: 4px 20px 8px;
+    align-content: center;
+    gap: 10px;
   }
 
-  .e-impact__fact {
-    min-width: 0;
-    padding: 16px 14px 18px 0;
+  /* A pill here is a way into a hospital and its edge is what says so, so
+     it takes a control's 3:1 boundary rather than the laptop's hairline. */
+  .e-impact__chip {
+    display: flex;
+    justify-content: center;
+    min-height: 48px;
+    border-color: var(--impact-edge);
+    padding: 0 8px;
+    color: var(--e-ink);
+    font-size: 0.86rem;
   }
 
-  .e-impact__fact:nth-child(even) {
-    border-left: 1px solid rgba(255, 255, 255, 0.18);
-    padding-left: 18px;
-    padding-right: 0;
+  .e-impact__chip svg {
+    display: none;
   }
 
-  .e-impact__fact:nth-child(n + 3) {
-    border-top: 1px solid rgba(255, 255, 255, 0.18);
+  /* A finger gets the press a pointer's hover would have been. */
+  .e-impact__chip:active {
+    border-color: var(--e-navy);
+    background: var(--e-navy);
+    color: #fff;
   }
 
-  .e-impact__band dt {
-    margin: 0;
+  .e-impact__pager {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: -14px;
   }
 
-  /* The hero band's figure, a step smaller for two to a row: "1,00,000+"
-     holds one line in a 108px column at 320px. */
-  .e-impact__band .e-count {
-    color: #fbf7ef;
-    font-size: clamp(1.4rem, 6.9vw, 1.85rem);
-  }
-
-  /* The accent's soft step, as on every navy surface: the magenta itself is
-     2.6:1 on the band. */
-  .e-impact__band .e-count__suffix {
-    color: #f4a6c4;
-  }
-
-  .e-impact__band dd {
-    max-width: 11em;
-    margin: 5px 0 0;
-    color: rgba(255, 255, 255, 0.78);
+  .e-impact__count {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    color: var(--e-ink-2);
     font-family: var(--e-sans);
     font-size: 0.8rem;
-    line-height: 1.4;
-    text-wrap: balance;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.1em;
+    line-height: 1;
+  }
+
+  .e-impact__count b {
+    color: var(--e-ink);
+    font-weight: 600;
+  }
+
+  /* The thumb is one card's share of the track, and travels it as the rail
+     is scrolled - written on every frame of the scroll, so it carries no
+     transition of its own and never trails a finger. */
+  .e-impact__bar {
+    position: relative;
+    flex: 1 1 auto;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--e-rule-2);
+    overflow: hidden;
+  }
+
+  .e-impact__bar span {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: calc(100% / var(--impact-n, 4));
+    border-radius: inherit;
+    background: var(--e-navy);
+    translate: calc(var(--impact-at, 0) * (var(--impact-n, 4) - 1) * 100%) 0;
+  }
+
+  .e-impact__steps {
+    display: inline-flex;
+    gap: 8px;
+  }
+
+  .e-impact__step {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--impact-edge);
+    border-radius: 999px;
+    background: var(--e-paper);
+    padding: 0;
+    color: var(--e-navy);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      background-color 200ms var(--e-ease),
+      border-color 200ms var(--e-ease),
+      color 200ms var(--e-ease),
+      opacity 200ms var(--e-ease),
+      scale 200ms var(--e-ease);
+  }
+
+  .e-impact__step:active {
+    border-color: var(--e-navy);
+    background: var(--e-navy);
+    color: #fff;
+    scale: 0.94;
+  }
+
+  .e-impact__step[aria-disabled="true"] {
+    border-color: var(--e-rule-2);
+    background: transparent;
+    color: var(--e-ink-3);
+    cursor: default;
+    scale: none;
   }
 
   .e-impact__nearest {
-    margin: 16px 0 0;
+    display: block;
+    margin: 18px 0 0;
+  }
+
+  .e-impact__actions {
+    display: none;
   }
 }
 
-/* The 320px SE: the band's sides give up 4px each so the widest figure keeps
-   its line. */
+/* The 320px SE: the panel gives up a little padding and the pills a little
+   type, so Himmatnagar keeps its line in a half-panel pill and the cards
+   stay short enough for a card and its pager to share the screen. */
 @media (max-width: 359px) {
-  .e-impact__band {
-    padding-inline: 16px;
+  .e-impact__visual {
+    padding: 16px 10px;
+  }
+
+  .e-impact__branches {
+    gap: 8px;
+  }
+
+  .e-impact__chip {
+    padding: 0 4px;
+    font-size: 0.8rem;
   }
 }
 
-/* A phone held sideways: the photograph beside the band rather than over it,
-   dissolving into it from the left, so the card is one short row. */
+/* A phone held sideways has the width for a card's words and its drawing
+   side by side and no height for one over the other: stacked, a card was
+   taller than the screen it was on. The card is still one whole card with
+   the next one's shoulder beside it, at whatever width the phone has. */
 @media (max-width: 1023px) and (max-height: 520px) {
-  .e-impact__proof {
+  .e-impact {
+    --impact-card: min(
+      calc(100vw - var(--impact-inset) - var(--impact-gap) - var(--impact-pad)),
+      880px
+    );
+  }
+
+  .e-impact__card {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+    grid-template-rows: auto auto auto 1fr;
+    gap: 6px 22px;
+    padding: var(--impact-pad);
   }
 
-  .e-impact__tag {
-    font-size: 0.74rem;
-    white-space: nowrap;
+  .e-impact__card > * {
+    grid-column: 1;
   }
 
-  .e-impact__photo {
-    aspect-ratio: auto;
-    min-height: 100%;
+  .e-impact__label {
+    align-self: start;
   }
 
-  .e-impact__photo::after {
-    background:
-      linear-gradient(180deg, rgba(7, 20, 33, 0.34) 0%, rgba(7, 20, 33, 0) 30%),
-      linear-gradient(90deg, rgba(12, 44, 73, 0) 45%, rgba(12, 44, 73, 0.7) 80%, rgb(12, 44, 73) 100%);
+  /* The sentence has half a wide card here, and two even lines of it read
+     better than a full line and two words. */
+  .e-impact__desc {
+    text-wrap: balance;
   }
 
-  .e-impact__band {
-    align-content: center;
-    margin: 0 0 0 -1px;
-    padding: 12px 20px 12px 4px;
+  .e-impact__card > .e-impact__visual {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    margin-top: 0;
   }
+}
 
-  /* Half the card is the band here, so the figure follows the screen's
-     width: "1,00,000+" holds its line in a 109px column at 568px. */
-  .e-impact__band .e-count {
-    font-size: clamp(1.2rem, 3.5vw, 1.85rem);
+/* Wider than 720px the shell's own inset is 24px, and the rail follows. */
+@media (min-width: 721px) and (max-width: 1023px) and (max-height: 520px) {
+  .e-impact {
+    --impact-inset: 24px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .e-impact__card,
   .e-impact__chip,
-  .e-impact__chip svg {
+  .e-impact__chip svg,
+  .e-impact__step {
     transition: none;
   }
   .e-impact__card:hover {
@@ -3602,6 +3772,20 @@ body:has(.hd--hidden) .e-cond__dock {
   }
 }
 
+/* A card in the numbers rail across the rail's own width: full size for the
+   middle of its crossing - wherever it comes to rest, at any phone's width -
+   and a step back at either edge. */
+@keyframes e-impact-focus {
+  from,
+  to {
+    scale: 0.94;
+  }
+  36%,
+  64% {
+    scale: 1;
+  }
+}
+
 @keyframes e-settle {
   from {
     opacity: 0;
@@ -3853,7 +4037,6 @@ body:has(.hd--hidden) .e-cond__dock {
        fans out of the page rather than lifting as one slab. Columns are
        counted per breakpoint because the grids change shape. */
     .e-impact__card,
-    .e-impact__proof,
     .e-impact__nearest,
     .e-impact__actions,
     .e-why__tile {
@@ -3863,7 +4046,6 @@ body:has(.hd--hidden) .e-cond__dock {
     }
 
     .e-impact__card,
-    .e-impact__proof,
     .e-why__tile {
       --rise: 56px;
     }
@@ -3872,14 +4054,33 @@ body:has(.hd--hidden) .e-cond__dock {
       --rise: 40px;
     }
 
-    /* The proof card's photograph drifts inside its frame for as long as
-       the card is on screen - the services stage's move - over-scaled so
-       its edges never show. */
-    .e-impact__photo img {
-      scale: 1.12;
-      animation: e-drift linear both;
-      animation-timeline: view();
-      animation-range: cover 0% cover 100%;
+    /* ---- on a phone the numbers are a rail, and the rail is dealt in ----
+
+       The cards sit in a scroller there, and view() binds to the nearest
+       one: a card asked to rise on the page's scroll would watch the rail
+       instead, which never scrolls that way, and sit at its first frame for
+       good. So the rail itself arrives - dealt in from the side, the move
+       that says it runs sideways - and each card answers the rail's own
+       scroll: full size where the reader holds it, a step back while it
+       waits at the edge, so the one being read stands in front. The scale
+       turns about the card's leading edge, the edge it snaps to, so the
+       rail's resting places never move under it. The pager under the rail
+       does not arrive at all: it is a control, and on a short screen it
+       sits at the foot of the screen, where a rise would leave it half
+       faded under the thumb. */
+    @media (max-width: 620px), (max-width: 1023px) and (max-height: 520px) {
+      .e-impact__grid {
+        animation: e-deal cubic-bezier(0.2, 0.7, 0.3, 1) both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 40%;
+      }
+
+      .e-impact__card {
+        transform-origin: 0 50%;
+        animation: e-impact-focus linear both;
+        animation-timeline: view(inline);
+        animation-range: cover 0% cover 100%;
+      }
     }
 
     @media (min-width: 1081px) {

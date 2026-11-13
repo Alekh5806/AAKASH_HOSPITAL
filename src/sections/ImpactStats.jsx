@@ -1,24 +1,92 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, MapPin } from "lucide-react";
+import { ArrowLeft, ArrowRight, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import CountUp from "../components/CountUp";
-import { buildBranchHref, getPrimaryBranch } from "../lib/contact";
+import { buildBranchHref } from "../lib/contact";
 import { getInitials } from "../lib/doctorsData";
 import { SCROLL_DRIVEN, cardEntrance, useInViewReplay } from "../lib/motion";
 
 const EASE = [0.32, 0.72, 0, 1];
 
-/* Where the four cards become the phone's proof card - a phone, or a phone
-   held sideways. Must match the card's media query in landing.css. Decided
-   in JS because the card is different markup, not a restyle: one
-   photograph and one band of figures in place of four cards of charts. */
-const PHONE_QUERY = "(max-width: 620px), (max-width: 1023px) and (max-height: 520px)";
+/* Where the four cards are a rail - a phone, or a phone held sideways. Must
+   match the rail's media query in landing.css. The rail is the same four
+   cards in the same list, laid out by CSS; all this decides is that a card
+   in the rail takes no framer entrance (see StatCard) and that a tap on a
+   card waiting at the edge brings it in. */
+const RAIL_QUERY = "(max-width: 620px), (max-width: 1023px) and (max-height: 520px)";
 
-function subscribeToPhone(callback) {
-  const query = window.matchMedia(PHONE_QUERY);
+function subscribeToRail(callback) {
+  const query = window.matchMedia(RAIL_QUERY);
   query.addEventListener("change", callback);
   return () => query.removeEventListener("change", callback);
+}
+
+const twoDigits = (value) => String(value).padStart(2, "0");
+
+/* Where the rail rests on each card: the card's own start, or the end of the
+   rail for a card that cannot reach its start. Layout offsets, so a card
+   that is scaled or mid-arrival reads the same. */
+function railStops(rail) {
+  const cards = Array.from(rail.children);
+  const inset = cards[0]?.offsetLeft ?? 0;
+  const end = rail.scrollWidth - rail.clientWidth;
+  return cards.map((card) => Math.min(card.offsetLeft - inset, end));
+}
+
+/* The rail is the single source of truth for which card is on screen: the
+   arrows only scroll it, and it reports back, so a swipe and a press can
+   never disagree. How far along it is goes straight to the pager's track as
+   a custom property on every frame - it is a measurement of the scroller,
+   not render state - and only a change of card re-renders. On a wide screen
+   the list is a grid with nothing to scroll, and none of this runs. */
+function useRail(reduced) {
+  const railRef = useRef(null);
+  const pagerRef = useRef(null);
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const rail = railRef.current;
+    if (!rail) return undefined;
+    let frame = 0;
+
+    const read = () => {
+      frame = 0;
+      const end = rail.scrollWidth - rail.clientWidth;
+      if (end <= 1) return;
+      const left = rail.scrollLeft;
+      const share = Math.min(Math.max(left / end, 0), 1);
+      pagerRef.current?.style.setProperty("--impact-at", share.toFixed(4));
+      const stops = railStops(rail);
+      let nearest = 0;
+      stops.forEach((stop, position) => {
+        if (Math.abs(stop - left) <= Math.abs(stops[nearest] - left)) nearest = position;
+      });
+      setIndex(nearest);
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(read);
+    };
+
+    rail.addEventListener("scroll", schedule, { passive: true });
+    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(schedule);
+    observer?.observe(rail);
+    return () => {
+      rail.removeEventListener("scroll", schedule);
+      observer?.disconnect();
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  const go = (next) => {
+    const rail = railRef.current;
+    if (!rail) return;
+    const stops = railStops(rail);
+    const target = stops[Math.min(Math.max(next, 0), stops.length - 1)];
+    rail.scrollTo({ left: target, behavior: reduced ? "auto" : "smooth" });
+  };
+
+  return { railRef, pagerRef, index, go };
 }
 
 function MixVisual({ mix, active, reduced }) {
@@ -163,15 +231,18 @@ function BranchVisual({ branches, active, reduced }) {
    card was actually readable. The count and the visual play again every time
    the reader comes back to the card: each return is a new `round`, and the
    two are keyed on it so they start again from zero, off screen. */
-function StatCard({ card, index, renderVisual, reduced }) {
+function StatCard({ card, index, renderVisual, reduced, inRail, onReach }) {
   const cardRef = useRef(null);
   const { inView, round } = useInViewReplay(cardRef, 0.45);
   const arrival = useInViewReplay(cardRef, 0.2);
   const active = inView || reduced;
   /* Where the scroll drives the card's arrival (landing.css), framer's
-     entrance stands down so the two never move the card at once. */
+     entrance stands down so the two never move the card at once. In the
+     rail it stands down as well: a card waiting a swipe away shows a sliver
+     of itself, and an entrance that waits for a fifth of the card would
+     leave that sliver - the one thing saying there is more - blank. */
   const entrance =
-    reduced || SCROLL_DRIVEN
+    reduced || SCROLL_DRIVEN || inRail
       ? {}
       : cardEntrance(arrival.inView, {
           index,
@@ -182,7 +253,13 @@ function StatCard({ card, index, renderVisual, reduced }) {
         });
 
   return (
-    <motion.li className="e-impact__card" data-visual={card.visual} ref={cardRef} {...entrance}>
+    <motion.li
+      className="e-impact__card"
+      data-visual={card.visual}
+      ref={cardRef}
+      onClick={onReach}
+      {...entrance}
+    >
       <span className="e-impact__kicker">{card.kicker}</span>
       <p className="e-impact__figure">
         <CountUp key={round} value={card.value} suffix={card.suffix} start={active} />
@@ -196,89 +273,61 @@ function StatCard({ card, index, renderVisual, reduced }) {
   );
 }
 
-/* The phone's numbers band: one card, the hospital where the figures began
- * over the figures themselves.
- *
- * The head office's own photograph (its hospital page's, read from
- * branches.json) dissolves into a navy band, and the four figures sit on
- * that band in the hero's own figure style - cream serif, labels at 0.78
- * white, ruled two by two - so the band reads as the hero's figures row
- * carried onto a real building rather than as a second design. It is the
- * hero film's composition at card size, which is what makes it belong to
- * the page it follows.
- *
- * It replaced two phone builds that each read as a dashboard: a console of
- * four tiles over a tabbed chart panel, then a ledger of 58px figures over
- * gradient bar charts. The charts are a laptop's: on a phone the figures say
- * enough, and they say it at the hero's size rather than a headline's. */
-function ProofCard({ cards, photo, tag, reduced }) {
-  const cardRef = useRef(null);
-  const bandRef = useRef(null);
-  const arrival = useInViewReplay(cardRef, 0.2);
-  const { inView, round } = useInViewReplay(bandRef, 0.6);
-  const active = inView || reduced;
-  const entrance =
-    reduced || SCROLL_DRIVEN
-      ? {}
-      : cardEntrance(arrival.inView, { distance: 26, duration: 0.7, stagger: 0, ease: EASE });
+/* The rail's foot on a phone: where the reader is, how far the rail runs,
+   and a press for anyone who would rather not swipe. Rendered at every
+   width and shown by CSS only where the cards are a rail, so the page is
+   one markup on every device. An arrow at its end is dimmed rather than
+   disabled, because a disabled button drops the focus it was holding. */
+function RailPager({ pagerRef, index, total, onStep, labels, controls }) {
+  const atStart = index === 0;
+  const atEnd = index === total - 1;
 
   return (
-    <motion.div className="e-impact__proof" ref={cardRef} {...entrance}>
-      {photo ? (
-        <div className="e-impact__photo">
-          <img
-            src={photo.src}
-            alt={photo.alt}
-            width="1000"
-            height="750"
-            loading="lazy"
-            decoding="async"
-          />
-          {tag ? (
-            <span className="e-impact__tag">
-              <MapPin size={14} aria-hidden="true" />
-              {tag}
-            </span>
-          ) : null}
-        </div>
-      ) : null}
-      <dl className="e-impact__band" ref={bandRef}>
-        {cards.map((card) => (
-          <div className="e-impact__fact" key={card.id}>
-            <dt>
-              <CountUp key={round} value={card.value} suffix={card.suffix} start={active} />
-            </dt>
-            <dd>{card.label}</dd>
-          </div>
-        ))}
-      </dl>
-    </motion.div>
+    <div className="e-impact__pager" ref={pagerRef} style={{ "--impact-n": total }}>
+      <span className="e-impact__count" aria-hidden="true">
+        <b>{twoDigits(index + 1)}</b>
+        <span>/ {twoDigits(total)}</span>
+      </span>
+      <span className="e-impact__bar" aria-hidden="true">
+        <span />
+      </span>
+      <span className="e-impact__steps">
+        <button
+          type="button"
+          className="e-impact__step"
+          aria-label={labels.previous}
+          aria-controls={controls}
+          aria-disabled={atStart}
+          onClick={() => (atStart ? undefined : onStep(index - 1))}
+        >
+          <ArrowLeft size={18} aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          className="e-impact__step"
+          aria-label={labels.next}
+          aria-controls={controls}
+          aria-disabled={atEnd}
+          onClick={() => (atEnd ? undefined : onStep(index + 1))}
+        >
+          <ArrowRight size={18} aria-hidden="true" />
+        </button>
+      </span>
+    </div>
   );
 }
 
 export default function ImpactStats({ impact, counts, branches, doctors }) {
   const shouldReduceMotion = useReducedMotion();
-  const phone = useSyncExternalStore(
-    subscribeToPhone,
-    () => window.matchMedia(PHONE_QUERY).matches,
+  const inRail = useSyncExternalStore(
+    subscribeToRail,
+    () => window.matchMedia(RAIL_QUERY).matches,
     () => false,
   );
+  const { railRef, pagerRef, index, go } = useRail(shouldReduceMotion);
   const cards = impact.cards.map((card) =>
     card.count ? { ...card, value: counts[card.count] } : card,
   );
-  /* The phone card's photograph is the head office's own, from its hospital
-     page, and the tag says which building it is and since when - or only
-     which, for a head office with no confirmed year. */
-  const headOffice = getPrimaryBranch(branches);
-  const headPage = headOffice?.page;
-  const photo = headPage?.image
-    ? { src: headPage.imageSmall ?? headPage.image, alt: headPage.imageAlt ?? "" }
-    : null;
-  const photoTag = headOffice
-    ? (headPage?.establishedYear ? impact.photoTag : impact.photoTagNoYear)
-        .replace("{city}", headOffice.name)
-        .replace("{year}", headPage?.establishedYear)
-    : "";
   const visuals = {
     mix: (card, active) => (
       <MixVisual mix={card.mix} active={active} reduced={shouldReduceMotion} />
@@ -318,43 +367,55 @@ export default function ImpactStats({ impact, counts, branches, doctors }) {
           </div>
         </div>
 
-        {phone ? (
-          <ProofCard cards={cards} photo={photo} tag={photoTag} reduced={shouldReduceMotion} />
-        ) : (
-          <ul className="e-impact__grid">
-            {cards.map((card, index) => (
-              <StatCard
-                key={card.id}
-                card={card}
-                index={index}
-                renderVisual={renderVisual}
-                reduced={shouldReduceMotion}
-              />
-            ))}
-          </ul>
-        )}
+        {/* One list at every width: a grid of four on a laptop, two by two on
+            a tablet, and on a phone a rail the reader swipes - the same
+            cards, laid out by CSS (landing.css), so nothing is rebuilt when
+            the page is adopted and no device gets a lesser section. */}
+        <ul className="e-impact__grid" id="e-impact-cards" ref={railRef}>
+          {cards.map((card, position) => (
+            <StatCard
+              key={card.id}
+              card={card}
+              index={position}
+              renderVisual={renderVisual}
+              reduced={shouldReduceMotion}
+              inRail={inRail}
+              /* A tap on the card waiting at the edge brings it in: its
+                 shoulder is what the thumb is nearest. The arrows are the
+                 control a keyboard and a screen reader use. */
+              onReach={inRail && position !== index ? () => go(position) : undefined}
+            />
+          ))}
+        </ul>
 
-        {/* On a phone the band's one way on is to the hospitals: the hero's
-            booking button is a screen above and the header carries its own,
-            and the services index under this band answers "how we treat". */}
-        {phone ? (
-          <p className="e-impact__nearest">
-            <Link className="e-link" to="/branches">
-              {impact.nearestLabel}
-              <ArrowRight size={16} aria-hidden="true" />
-            </Link>
-          </p>
-        ) : (
-          <div className="e-impact__actions">
-            <Link className="e-btn" to={impact.actions.primary.href}>
-              {impact.actions.primary.label}
-              <ArrowRight size={17} aria-hidden="true" />
-            </Link>
-            <Link className="e-btn e-btn--outline" to={impact.actions.secondary.href}>
-              {impact.actions.secondary.label}
-            </Link>
-          </div>
-        )}
+        <RailPager
+          pagerRef={pagerRef}
+          index={index}
+          total={cards.length}
+          onStep={go}
+          labels={{ previous: impact.previousLabel, next: impact.nextLabel }}
+          controls="e-impact-cards"
+        />
+
+        {/* Both ways on are in the page and CSS shows one. Under the rail it
+            is the hospitals: the hero's booking button is a screen above,
+            the header carries its own, and the services index under this
+            band answers "how we treat". */}
+        <p className="e-impact__nearest">
+          <Link className="e-link" to="/branches">
+            {impact.nearestLabel}
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+        </p>
+        <div className="e-impact__actions">
+          <Link className="e-btn" to={impact.actions.primary.href}>
+            {impact.actions.primary.label}
+            <ArrowRight size={17} aria-hidden="true" />
+          </Link>
+          <Link className="e-btn e-btn--outline" to={impact.actions.secondary.href}>
+            {impact.actions.secondary.label}
+          </Link>
+        </div>
       </div>
     </section>
   );

@@ -373,7 +373,7 @@
         "At Aakash Eye Hospital, cataract surgery is focused on removing the cloudy natural lens and replacing it with an intraocular lens. Phacoemulsification with IOL implantation is the core technique used at the center."
       ],
       "image": "/assets/media/conditions/cataract-surgery.webp",
-      "thumb": "/assets/media/services/cataract-surgery-thumb.jpg",
+      "thumb": "/assets/media/conditions/cataract-surgery.webp",
       "imageAlt": "Slit lamp examination for cataract assessment",
       "featureBullets": [
         "Phacoemulsification with intraocular lens implantation",
@@ -452,7 +452,7 @@
         "Before any laser treatment the eye is mapped in detail - the shape of the cornea (topography), its thickness (pachymetry) and the eye's focusing errors (wavefront aberrometry) - to judge whether LASIK, or another option, is safe for you."
       ],
       "image": "/assets/media/conditions/lasik.webp",
-      "thumb": "/assets/media/services/lasik-refractive-surgery-thumb.jpg",
+      "thumb": "/assets/media/conditions/lasik.webp",
       "imageAlt": "Laser surgery suite at Aakash Eye Hospital",
       "featureBullets": [
         "Excimer laser vision correction, available since 2002",
@@ -527,7 +527,7 @@
         "The service supports diagnosis and care planning for retina conditions requiring imaging and laser-based treatment pathways."
       ],
       "image": "/assets/media/conditions/Retina_f.webp",
-      "thumb": "/assets/media/services/retina-services-thumb.jpg",
+      "thumb": "/assets/media/conditions/Retina_f.webp",
       "imageAlt": "Retinal imaging during an eye examination",
       "featureBullets": [
         "OCT imaging support",
@@ -602,7 +602,7 @@
         "Assessment can include eye pressure measurement (applanation tonometry), visual field testing (perimetry), OCT scans of the nerve fibre layer and ganglion cells, and photographs of the optic disc and retina."
       ],
       "image": "/assets/media/conditions/glucoma.webp",
-      "thumb": "/assets/media/services/glaucoma-care-thumb.jpg",
+      "thumb": "/assets/media/conditions/glucoma.webp",
       "imageAlt": "Eye pressure screening for glaucoma",
       "featureBullets": [
         "Pressure and optic nerve evaluation",
@@ -683,7 +683,7 @@
         "The team assesses the cause first and then discusses which medical or surgical options are appropriate for you."
       ],
       "image": "/assets/media/conditions/oculoplasty.webp",
-      "thumb": "/assets/media/services/oculoplasty-thumb.jpg",
+      "thumb": "/assets/media/conditions/oculoplasty.webp",
       "imageAlt": "Close-up of the eye and eyelid",
       "featureBullets": [
         "Assessment of eyelid position, lumps and swellings",
@@ -754,7 +754,7 @@
         "Examinations are adapted to a child's age and attention span, and findings are explained to the parent along with what happens next."
       ],
       "image": "/assets/media/conditions/PD_EYE.webp",
-      "thumb": "/assets/media/services/pediatric-eye-care-thumb.jpg",
+      "thumb": "/assets/media/conditions/PD_EYE.webp",
       "imageAlt": "Child having a vision test",
       "featureBullets": [
         "Age-appropriate vision assessment and refraction",
@@ -829,7 +829,7 @@
         "The clinic records the measurements over time and discusses the options with the family at each review."
       ],
       "image": "/assets/media/conditions/myopia_f.webp",
-      "thumb": "/assets/media/services/myopia-clinic-thumb.jpg",
+      "thumb": "/assets/media/conditions/myopia_f.webp",
       "imageAlt": "Trial frame refraction to measure spectacle power",
       "featureBullets": [
         "Repeat refraction recorded over time",
@@ -900,7 +900,7 @@
         "Assessment establishes the type and the cause, and the doctor then discusses whether glasses, exercises or surgery are appropriate."
       ],
       "image": "/assets/media/conditions/squint.webp",
-      "thumb": "/assets/media/services/squint-services-thumb.jpg",
+      "thumb": "/assets/media/conditions/squint.webp",
       "imageAlt": "Consulting room at Aakash Eye Hospital",
       "featureBullets": [
         "Alignment and eye movement assessment",
@@ -972,8 +972,8 @@
         "The OPD pathway helps patients start with a complete eye evaluation and move into the right service when more specialized care is needed.",
         "Aakash Eye Hospital also supports pediatric eye problems including pediatric cataract, pediatric squint, amblyopia management, allergic conjunctivitis and refraction in young children."
       ],
-      "image": "/assets/media/stock/eye-exam-pexels-ai25studio-6749757.jpg",
-      "thumb": "/assets/media/services/comprehensive-eye-examination-thumb.jpg",
+      "image": "/assets/media/conditions/com_eye_checkup.webp",
+      "thumb": "/assets/media/conditions/com_eye_checkup.webp",
       "imageAlt": "Comprehensive eye examination in progress",
       "featureBullets": [
         "Vision testing and refraction",
@@ -1044,8 +1044,8 @@
         "A spectacle prescription is the result of an examination, not a separate purchase. The optical team works from the doctor's findings.",
         "Frames and lens options are discussed once the prescription is confirmed."
       ],
-      "image": "/assets/media/stock/vision-consult-pexels-ai25studio-6749756.jpg",
-      "thumb": "/assets/media/services/optical-services-thumb.jpg",
+      "image": "/assets/media/conditions/optical_serices.webp",
+      "thumb": "/assets/media/conditions/optical_serices.webp",
       "imageAlt": "Discussing spectacles after an eye examination",
       "featureBullets": [
         "Dispensing based on the doctor's prescription",

@@ -44,8 +44,8 @@
     "titleGujarati": "અંધકારથી અજવાળા તરફ",
     "tagline": "Affordable, Ethical & Quality Eye Care",
     "taglineAccent": "Since 1993",
-    "photoTag": "{city} hospital, since {year}",
-    "photoTagNoYear": "{city} hospital",
+    "previousLabel": "Previous figure",
+    "nextLabel": "Next figure",
     "nearestLabel": "Find the hospital nearest you",
     "cards": [
       {

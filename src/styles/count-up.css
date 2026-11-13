@@ -6,9 +6,9 @@
    in any one page's stylesheet. main.jsx imports this sheet into the shared
    bundle: at 0.3KB it costs every page less than the extra render-blocking
    request it was as a sheet of its own. Each of those pages sizes the figure
-   for its own place with a more specific rule (.e-impact__band .e-count,
-   .ab-stage__figures .e-count, .sv-top__stamp .e-count), so the order the
-   sheets arrive in never matters.
+   for its own place with a more specific rule (.e-impact__card .e-count on
+   a phone, .ab-stage__figures .e-count, .sv-top__stamp .e-count), so the
+   order the sheets arrive in never matters.
    ========================================================================= */
 
 .e-count {
