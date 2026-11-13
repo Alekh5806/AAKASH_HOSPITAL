@@ -101,7 +101,7 @@ function paintStory(bar, clock, live) {
    freezes the clock where it is rather than starting it again, and the bar
    stops with it. Everything is written to the DOM, never to state: it moves
    every frame. */
-function useStoryRail(rowsRef, barRef, total, { enabled, live, running }) {
+function useStoryRail(rowsRef, barRef, countRef, total, { enabled, live, running }) {
   const clockRef = useRef({ current: -1, elapsed: 0, waiting: 0 });
 
   useEffect(() => {
@@ -121,6 +121,13 @@ function useStoryRail(rowsRef, barRef, total, { enabled, live, running }) {
         clock.elapsed = 0;
         clock.waiting = 0;
       }
+      /* The counter beside the bar: twelve thin segments say the shape of
+         the set, the figure says where the reader is in it. */
+      if (countRef.current) {
+        countRef.current.textContent = `${String(clock.current + 1).padStart(2, "0")} / ${String(
+          total,
+        ).padStart(2, "0")}`;
+      }
       paintStory(bar, clock, live);
     };
     const schedule = () => {
@@ -135,7 +142,7 @@ function useStoryRail(rowsRef, barRef, total, { enabled, live, running }) {
       row.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
     };
-  }, [rowsRef, barRef, total, enabled, live]);
+  }, [rowsRef, barRef, countRef, total, enabled, live]);
 
   useEffect(() => {
     const row = rowsRef.current?.firstElementChild;
@@ -243,6 +250,7 @@ export default function PatientStories({ testimonials, voices }) {
   const [held, setHeld] = useState(false);
   const rowsRef = useRef(null);
   const barRef = useRef(null);
+  const countRef = useRef(null);
 
   /* Three behaviours, one per device and preference, because a phone cannot
      read a wall that never stops. `drift` is the continuous marquee, and it
@@ -275,7 +283,7 @@ export default function PatientStories({ testimonials, voices }) {
 
   const stopped = paused || held;
 
-  useStoryRail(rowsRef, barRef, testimonials.length, {
+  useStoryRail(rowsRef, barRef, countRef, testimonials.length, {
     enabled: isPhone,
     live: mode === "step",
     running: mode === "step" && !stopped,
@@ -341,11 +349,16 @@ export default function PatientStories({ testimonials, voices }) {
               so a reader sees the next quote coming rather than having the
               card move out from under them. */}
           {isPhone ? (
-            <div className="e-voices__story" ref={barRef} aria-hidden="true">
-              {testimonials.map((item) => (
-                <span key={keyOf(item)} />
-              ))}
-            </div>
+            <>
+              <span className="e-voices__count" ref={countRef} aria-hidden="true">
+                {`01 / ${String(testimonials.length).padStart(2, "0")}`}
+              </span>
+              <div className="e-voices__story" ref={barRef} aria-hidden="true">
+                {testimonials.map((item) => (
+                  <span key={keyOf(item)} />
+                ))}
+              </div>
+            </>
           ) : null}
           {mode === "static" ? null : (
             <button

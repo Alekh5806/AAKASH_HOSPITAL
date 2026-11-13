@@ -31,6 +31,7 @@ function useDeck(listRef, enabled) {
     let frame = 0;
     let width = 0;
     const depths = cards.map(() => -1);
+    const covers = cards.map(() => -1);
 
     const paint = () => {
       frame = 0;
@@ -49,6 +50,14 @@ function useDeck(listRef, enabled) {
         if (rounded !== depths[index]) {
           depths[index] = rounded;
           card.style.setProperty("--why-depth", rounded);
+        }
+        /* How far the next card has ridden over this one: the CSS dissolves
+           the body behind the incoming sheet, so a sentence is never shown
+           sliced mid-line at the covering card's edge. */
+        const cover = Math.round((covered[index + 1] ?? 0) * 1000) / 1000;
+        if (cover !== covers[index]) {
+          covers[index] = cover;
+          card.style.setProperty("--why-cover", cover);
         }
       });
     };
@@ -92,7 +101,10 @@ function useDeck(listRef, enabled) {
       visible.disconnect();
       window.removeEventListener("scroll", schedule);
       list.style.removeProperty("--why-card-h");
-      cards.forEach((card) => card.style.removeProperty("--why-depth"));
+      cards.forEach((card) => {
+        card.style.removeProperty("--why-depth");
+        card.style.removeProperty("--why-cover");
+      });
     };
   }, [listRef, enabled]);
 }

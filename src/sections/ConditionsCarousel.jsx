@@ -353,16 +353,22 @@ function Index({ items, labels, active, onChoose, reduceMotion }) {
     if (!dock || !list) return undefined;
     let frame = 0;
     let near = false;
+    let lastFoot = Infinity;
 
     /* Every box is read before anything is written. Each row is placed by
        its layout offset against the dock's foot, never by its box: a row
        still rising into place (landing.css) is drawn up to 36px below where
        it sits. --d is a row's distance below the foot and --up how far it
        has slid under the dock, both in rows - measurements, written straight
-       to the DOM, never render state. The foot moves with the header. */
+       to the DOM, never render state. The foot moves with the header, and
+       on the header's own 300ms slide: the last scroll event of a flick
+       lands mid-slide, so a read that stopped there left rows faded under
+       where the dock used to be - keep reading until the foot holds still. */
     const read = () => {
       frame = 0;
       const foot = dock.getBoundingClientRect().bottom - list.getBoundingClientRect().top;
+      if (Math.abs(foot - lastFoot) > 0.1) schedule();
+      lastFoot = foot;
       const rows = [...list.children];
       let clear = -1;
       rows.forEach((row, index) => {
@@ -449,6 +455,10 @@ function Index({ items, labels, active, onChoose, reduceMotion }) {
               )}
             </span>
             <span className="e-cond__floor" />
+            <span className="e-cond__tally">
+              {pad(active)}
+              <span>/ {pad(count - 1)}</span>
+            </span>
             <span className="e-cond__caption" key={current.service.slug}>
               <span className="e-cond__kind">{getCategoryLabel(current.service.category)}</span>
               <span className="e-cond__headline">{current.headline}</span>
@@ -463,7 +473,7 @@ function Index({ items, labels, active, onChoose, reduceMotion }) {
               <li
                 key={item.service.slug}
                 data-on={on ? "true" : undefined}
-                data-tone={item.service.category === "urgent" ? "urgent" : undefined}
+                data-tone={item.service.category}
               >
                 {on ? (
                   <motion.span

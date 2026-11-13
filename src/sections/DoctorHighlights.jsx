@@ -9,6 +9,8 @@ import { SCROLL_DRIVEN, revealVariants, staggerContainer, useInViewReplay } from
 export default function DoctorHighlights({ doctorHighlights, doctors }) {
   const shouldReduceMotion = useReducedMotion();
   const trackRef = useRef(null);
+  const countRef = useRef(null);
+  const fillRef = useRef(null);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
   const arrival = useInViewReplay(trackRef, 0.2);
@@ -45,6 +47,26 @@ export default function DoctorHighlights({ doctorHighlights, doctors }) {
     if (!track) return;
     setAtStart(track.scrollLeft <= 2);
     setAtEnd(track.scrollLeft + track.clientWidth >= track.scrollWidth - 2);
+
+    /* The phone pager under the rail: which portrait is nearest and how much
+       of the rail has been seen. On a phone the arrows and the fades are
+       gone, so without this nothing says there are eight doctors or where
+       the reader is among them. Written straight to the DOM - it moves on
+       every scroll frame - and aria-hidden: the list itself is the content.
+       Desktop hides it (landing.css) and keeps the reference exactly. */
+    const count = countRef.current;
+    const fill = fillRef.current;
+    const card = track.firstElementChild;
+    if (!count || !fill || !card) return;
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+    const stride = card.getBoundingClientRect().width + gap;
+    const total = track.children.length;
+    const nearest = stride
+      ? Math.min(total - 1, Math.max(0, Math.round(track.scrollLeft / stride)))
+      : 0;
+    count.textContent = `${String(nearest + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
+    const seen = Math.min(1, (track.scrollLeft + track.clientWidth) / track.scrollWidth);
+    fill.style.transform = `scaleX(${seen.toFixed(4)})`;
   }, []);
 
   useEffect(() => {
@@ -116,6 +138,15 @@ export default function DoctorHighlights({ doctorHighlights, doctors }) {
                   hospitals: describeHospitals(doctor),
                 })}
               </p>
+              {/* The roster's rule: a finger gets no hover to find out a card
+                  opens something, so the phone card ends on a View profile
+                  line. Desktop hides it - the reference's card is bare. */}
+              {hasProfile(doctor) ? (
+                <span className="e-docs__view" aria-hidden="true">
+                  {doctorHighlights.viewLabel}
+                  <ArrowRight size={14} />
+                </span>
+              ) : null}
             </motion.li>
           ))}
         </motion.ul>
@@ -150,6 +181,14 @@ export default function DoctorHighlights({ doctorHighlights, doctors }) {
       </div>
 
       <div className="e-shell e-docs__foot">
+        <div className="e-docs__pager" aria-hidden="true">
+          <span className="e-docs__pager-count" ref={countRef}>
+            {`01 / ${String(featured.length).padStart(2, "0")}`}
+          </span>
+          <span className="e-docs__pager-track">
+            <span className="e-docs__pager-fill" ref={fillRef} />
+          </span>
+        </div>
         <Link className="e-link" to="/doctors">
           {doctorHighlights.ctaLabel}
           <ArrowRight size={15} aria-hidden="true" />

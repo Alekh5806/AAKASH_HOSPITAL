@@ -262,6 +262,7 @@
     "titleAccent": "senior doctors",
     "lede": "Aakash Eye Hospital's medical and surgical team",
     "ctaLabel": "Meet the full team",
+    "viewLabel": "View profile",
     "cardText": "{specialty} at {hospitals}.",
     "featured": [
       "Dr. Vishnu S. Patel",
