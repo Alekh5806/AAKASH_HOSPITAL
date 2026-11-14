@@ -172,8 +172,8 @@
       }
     },
     {
-      "name": "Ahmedabad",
-      "slug": "ahmedabad",
+      "name": "Odhav",
+      "slug": "odhav",
       "isHeadquarters": false,
       "locality": "Odhav Circle, S.P. Ring Road",
       "address": "Siddhi Vinayak Arcade, 2nd Wing, 1st Floor, 200' S.P. Ring Road, Odhav Circle, Near Gujarat Vepari Maha Mandal, Odhav, Ahmedabad - 382410",
@@ -225,15 +225,15 @@
       },
       "page": {
         "seo": {
-          "title": "Eye Hospital in Ahmedabad (Odhav) | Aakash Eye Hospital",
+          "title": "Eye Hospital in Odhav, Ahmedabad | Aakash Eye Hospital",
           "description": "Aakash Eye Hospital at Odhav Circle on S.P. Ring Road, Ahmedabad, since 2014: cataract, retina and LASIK care with its own OPD. Call or book on WhatsApp.",
-          "image": "/assets/media/branches/ahmedabad/facade-share.jpg"
+          "image": "/assets/media/branches/odhav/facade-share.jpg"
         },
         "establishedYear": 2014,
-        "lede": "Aakash's Ahmedabad hospital, open since 2014 at Odhav Circle on the 200 ft S.P. Ring Road. Retina, cataract and general eye surgery, with its own OPD, operation and LASIK desks.",
+        "lede": "Aakash's first Ahmedabad hospital, open since 2014 at Odhav Circle on the 200 ft S.P. Ring Road. Retina, cataract and general eye surgery, with its own OPD, operation and LASIK desks.",
         "ledeShort": "Open since 2014 at Odhav Circle, with its own OPD, operation and LASIK desks.",
         "facts": [
-          "Aakash in Ahmedabad since 2014",
+          "Aakash in Odhav since 2014",
           "Separate OPD, operation and LASIK desks",
           "Retina, cataract and general eye surgery",
           "On the 200 ft S.P. Ring Road at Odhav"
@@ -253,20 +253,20 @@
           }
         ],
         "postcode": "382410",
-        "image": "/assets/media/branches/ahmedabad/facade-wide-1672.webp",
-        "imageSmall": "/assets/media/branches/ahmedabad/facade.webp",
+        "image": "/assets/media/branches/odhav/facade-wide-1672.webp",
+        "imageSmall": "/assets/media/branches/odhav/facade.webp",
         "imageSets": {
           "wide": [
-            { "src": "/assets/media/branches/ahmedabad/facade-wide-800.webp", "width": 800 },
-            { "src": "/assets/media/branches/ahmedabad/facade-wide-1672.webp", "width": 1672 }
+            { "src": "/assets/media/branches/odhav/facade-wide-800.webp", "width": 800 },
+            { "src": "/assets/media/branches/odhav/facade-wide-1672.webp", "width": 1672 }
           ],
           "landscape": [
-            { "src": "/assets/media/branches/ahmedabad/facade-landscape-960.webp", "width": 960 },
-            { "src": "/assets/media/branches/ahmedabad/facade-landscape-1411.webp", "width": 1411 }
+            { "src": "/assets/media/branches/odhav/facade-landscape-960.webp", "width": 960 },
+            { "src": "/assets/media/branches/odhav/facade-landscape-1411.webp", "width": 1411 }
           ],
           "portrait": [
-            { "src": "/assets/media/branches/ahmedabad/facade-portrait-600.webp", "width": 600 },
-            { "src": "/assets/media/branches/ahmedabad/facade-portrait-784.webp", "width": 784 }
+            { "src": "/assets/media/branches/odhav/facade-portrait-600.webp", "width": 600 },
+            { "src": "/assets/media/branches/odhav/facade-portrait-784.webp", "width": 784 }
           ]
         },
         "imageAlt": "The Aakash Eye Hospital signboard on Siddhi Vinayak Arcade at Odhav Circle, above the HDFC Bank branch",
@@ -274,89 +274,89 @@
         "galleryAspect": { "width": 3, "height": 2 },
         "gallery": [
           {
-            "src": "/assets/media/branches/ahmedabad/reception.webp",
+            "src": "/assets/media/branches/odhav/reception.webp",
             "set": [
-              { "src": "/assets/media/branches/ahmedabad/reception-800.webp", "width": 800 },
-              { "src": "/assets/media/branches/ahmedabad/reception-stage.webp", "width": 1260 }
+              { "src": "/assets/media/branches/odhav/reception-800.webp", "width": 800 },
+              { "src": "/assets/media/branches/odhav/reception-stage.webp", "width": 1260 }
             ],
-            "thumb": "/assets/media/branches/ahmedabad/reception-thumb.webp",
+            "thumb": "/assets/media/branches/odhav/reception-thumb.webp",
             "caption": "Reception",
-            "alt": "Patients waiting beside the reception counter at Aakash Eye Hospital Ahmedabad"
+            "alt": "Patients waiting beside the reception counter at Aakash Eye Hospital Odhav"
           },
           {
-            "src": "/assets/media/branches/ahmedabad/waiting-area.webp",
+            "src": "/assets/media/branches/odhav/waiting-area.webp",
             "set": [
-              { "src": "/assets/media/branches/ahmedabad/waiting-area-800.webp", "width": 800 },
-              { "src": "/assets/media/branches/ahmedabad/waiting-area-stage.webp", "width": 1448 }
+              { "src": "/assets/media/branches/odhav/waiting-area-800.webp", "width": 800 },
+              { "src": "/assets/media/branches/odhav/waiting-area-stage.webp", "width": 1448 }
             ],
-            "thumb": "/assets/media/branches/ahmedabad/waiting-area-thumb.webp",
+            "thumb": "/assets/media/branches/odhav/waiting-area-thumb.webp",
             "caption": "Waiting area",
-            "alt": "Patients seated in the waiting area at Aakash Eye Hospital Ahmedabad, with the optical counter behind them"
+            "alt": "Patients seated in the waiting area at Aakash Eye Hospital Odhav, with the optical counter behind them"
           },
           {
-            "src": "/assets/media/branches/ahmedabad/waiting-area-windows.webp",
+            "src": "/assets/media/branches/odhav/waiting-area-windows.webp",
             "set": [
               {
-                "src": "/assets/media/branches/ahmedabad/waiting-area-windows-800.webp",
+                "src": "/assets/media/branches/odhav/waiting-area-windows-800.webp",
                 "width": 800
               },
               {
-                "src": "/assets/media/branches/ahmedabad/waiting-area-windows-stage.webp",
+                "src": "/assets/media/branches/odhav/waiting-area-windows-stage.webp",
                 "width": 1448
               }
             ],
-            "thumb": "/assets/media/branches/ahmedabad/waiting-area-windows-thumb.webp",
+            "thumb": "/assets/media/branches/odhav/waiting-area-windows-thumb.webp",
             "caption": "Waiting area by the windows",
-            "alt": "Families waiting on the sofas beside the windows at Aakash Eye Hospital Ahmedabad"
+            "alt": "Families waiting on the sofas beside the windows at Aakash Eye Hospital Odhav"
           },
           {
-            "src": "/assets/media/branches/ahmedabad/waiting-area-counter.webp",
+            "src": "/assets/media/branches/odhav/waiting-area-counter.webp",
             "set": [
               {
-                "src": "/assets/media/branches/ahmedabad/waiting-area-counter-800.webp",
+                "src": "/assets/media/branches/odhav/waiting-area-counter-800.webp",
                 "width": 800
               },
               {
-                "src": "/assets/media/branches/ahmedabad/waiting-area-counter-stage.webp",
+                "src": "/assets/media/branches/odhav/waiting-area-counter-stage.webp",
                 "width": 1262
               }
             ],
-            "thumb": "/assets/media/branches/ahmedabad/waiting-area-counter-thumb.webp",
+            "thumb": "/assets/media/branches/odhav/waiting-area-counter-thumb.webp",
             "caption": "Seating by the counter",
-            "alt": "Rows of chairs seen across the counter at Aakash Eye Hospital Ahmedabad, with the corridor beyond"
+            "alt": "Rows of chairs seen across the counter at Aakash Eye Hospital Odhav, with the corridor beyond"
           },
           {
-            "src": "/assets/media/branches/ahmedabad/corridor.webp",
+            "src": "/assets/media/branches/odhav/corridor.webp",
             "set": [
-              { "src": "/assets/media/branches/ahmedabad/corridor-800.webp", "width": 800 },
-              { "src": "/assets/media/branches/ahmedabad/corridor-stage.webp", "width": 1268 }
+              { "src": "/assets/media/branches/odhav/corridor-800.webp", "width": 800 },
+              { "src": "/assets/media/branches/odhav/corridor-stage.webp", "width": 1268 }
             ],
-            "thumb": "/assets/media/branches/ahmedabad/corridor-thumb.webp",
+            "thumb": "/assets/media/branches/odhav/corridor-thumb.webp",
             "caption": "Corridor to the consulting rooms",
-            "alt": "The corridor to the consulting rooms at Aakash Eye Hospital Ahmedabad, hung with paintings"
+            "alt": "The corridor to the consulting rooms at Aakash Eye Hospital Odhav, hung with paintings"
           },
           {
-            "src": "/assets/media/branches/ahmedabad/optical.webp",
+            "src": "/assets/media/branches/odhav/optical.webp",
             "set": [
-              { "src": "/assets/media/branches/ahmedabad/optical-800.webp", "width": 800 },
-              { "src": "/assets/media/branches/ahmedabad/optical-stage.webp", "width": 1260 }
+              { "src": "/assets/media/branches/odhav/optical-800.webp", "width": 800 },
+              { "src": "/assets/media/branches/odhav/optical-stage.webp", "width": 1260 }
             ],
-            "thumb": "/assets/media/branches/ahmedabad/optical-thumb.webp",
+            "thumb": "/assets/media/branches/odhav/optical-thumb.webp",
             "caption": "Optical counter",
-            "alt": "The optical counter, with spectacle frames on the wall, at Aakash Eye Hospital Ahmedabad"
+            "alt": "The optical counter, with spectacle frames on the wall, at Aakash Eye Hospital Odhav"
           },
           {
-            "src": "/assets/media/branches/ahmedabad/corridor-seating.webp",
+            "src": "/assets/media/branches/odhav/corridor-seating.webp",
             "set": [
-              { "src": "/assets/media/branches/ahmedabad/corridor-seating-800.webp", "width": 800 },
+              { "src": "/assets/media/branches/odhav/corridor-seating-800.webp", "width": 800 },
               {
-                "src": "/assets/media/branches/ahmedabad/corridor-seating-stage.webp",
+                "src": "/assets/media/branches/odhav/corridor-seating-stage.webp",
                 "width": 1260
               }
             ],
-            "thumb": "/assets/media/branches/ahmedabad/corridor-seating-thumb.webp",
+            "thumb": "/assets/media/branches/odhav/corridor-seating-thumb.webp",
             "caption": "Corridor and seating",
-            "alt": "A corridor of glass-fronted rooms with seating at the far end, at Aakash Eye Hospital Ahmedabad"
+            "alt": "A corridor of glass-fronted rooms with seating at the far end, at Aakash Eye Hospital Odhav"
           }
         ]
       }
@@ -1000,12 +1000,12 @@
     }
   ],
   "notes": [
-    "Ahmedabad OPD mobile differs between the brief (+91-937-415-1616) and legacy site (+91-937-413-1616). The brief value is used here; verify before launch.",
+    "Odhav OPD mobile differs between the brief (+91-937-415-1616) and legacy site (+91-937-413-1616). The brief value is used here; verify before launch.",
     "Map coordinates are approximate and should be verified before production release.",
     "Business hours should be confirmed by the hospital team.",
     "Gota, Himmatnagar and Juhapura contact numbers are temporary placeholders and must be replaced with real branch numbers before launch.",
     "Every hospital page's lede, four facts and SEO text are drafted from the address and the network's own data, not confirmed by the hospital.",
-    "Visnagar, Ahmedabad (Odhav) and Juhapura (Sarkhej) carry their own photographs; Bharuch, Gota and Himmatnagar still borrow Visnagar's - their hero is deliberately the waiting hall rather than the Visnagar facade, so no page claims a building it cannot show. Replace per hospital as photography arrives.",
+    "Visnagar, Odhav and Juhapura (Sarkhej) carry their own photographs; Bharuch, Gota and Himmatnagar still borrow Visnagar's - their hero is deliberately the waiting hall rather than the Visnagar facade, so no page claims a building it cannot show. Replace per hospital as photography arrives.",
     "The Odhav and Sarkhej photographs arrived as WhatsApp forwards (1280-1600px), so their heroes have no 2000px encode; ask for the camera originals to re-encode them. Juhapura has no interior photographs yet - its gallery is the building and the entrance.",
     "No hospital names the services it actually offers yet, so every page lists all eleven. Add a `page.services` array of slugs to a branch to narrow it.",
     "Bharuch and Gota addresses name no road, so their drawn maps carry an unlabelled road. Ask the hospital for the road name."

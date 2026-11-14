@@ -6,9 +6,9 @@
       "quote": "Patients repeatedly mention cooperative doctors, supportive staff and a clean, well-managed hospital environment for eye treatment."
     },
     {
-      "branch": "ahmedabad",
+      "branch": "odhav",
       "theme": "Doctor communication",
-      "quote": "Ahmedabad patient stories call out doctor friendliness, treatment satisfaction and clear explanations during LASIK and cataract visits."
+      "quote": "Odhav patient stories call out doctor friendliness, treatment satisfaction and clear explanations during LASIK and cataract visits."
     },
     {
       "branch": "bharuch",
@@ -36,7 +36,7 @@
       "quote": "Surgery patients highlight smooth processes, guidance before and after treatment, and care-team follow-up after returning home."
     },
     {
-      "branch": "ahmedabad",
+      "branch": "odhav",
       "theme": "Clear costs",
       "quote": "Families note that charges are explained before treatment begins, so the amount discussed at counselling is the amount they settle."
     },
@@ -65,7 +65,7 @@
     "Every quote is a summarised review theme, never a verbatim patient quote. Legacy testimonial spam was intentionally excluded.",
     "`branch` is a slug from branches.json; the card prints that hospital's name, and an item whose slug matches no hospital is dropped.",
     "Order is reading order: the phone rail plays the list top to bottom, and wider screens split it into two rows at the halfway point - so keep one theme per hospital in each half, in the site's hospital order, and no hospital's two themes ever sit side by side.",
-    "Sourced from public reviews: Visnagar 'Staff support' and 'Surgery guidance', Ahmedabad 'Doctor communication', Bharuch 'Safe care'.",
-    "Drafted, not sourced, and needing the hospital's sign-off before launch: Ahmedabad 'Clear costs', Bharuch 'Follow-up care', and both themes for Gota, Himmatnagar and Juhapura. No public review text for Himmatnagar or Juhapura could be found (Gota shows a Justdial rating but no readable reviews); replace these with themes from each hospital's own Google reviews."
+    "Sourced from public reviews: Visnagar 'Staff support' and 'Surgery guidance', Odhav 'Doctor communication', Bharuch 'Safe care'.",
+    "Drafted, not sourced, and needing the hospital's sign-off before launch: Odhav 'Clear costs', Bharuch 'Follow-up care', and both themes for Gota, Himmatnagar and Juhapura. No public review text for Himmatnagar or Juhapura could be found (Gota shows a Justdial rating but no readable reviews); replace these with themes from each hospital's own Google reviews."
   ]
 }

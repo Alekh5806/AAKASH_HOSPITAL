@@ -94,7 +94,7 @@ const LINE = {
  * doctor and who is an optometrist is not a detail, and a specialist who only
  * holds clinics on set days is not someone a patient can walk in and see. A
  * doctor's run is decided from the hospital chosen: one who is resident at
- * Ahmedabad and visits Visnagar is a consultant under Ahmedabad and a visiting
+ * Odhav and visits Visnagar is a consultant under Odhav and a visiting
  * specialist under Visnagar. A run with nobody in it is not rendered. */
 export default function DoctorRoster({ items, ready, delay = 0 }) {
   const shouldReduceMotion = useReducedMotion();

@@ -1758,14 +1758,51 @@
   }
 }
 
-/* Taller again below 640px, so the photograph keeps its share once the foot has
-   taken its own: at 3:2 a 390px screen left only 103px of picture, and a 320px
-   one just 36px. */
-@media (max-width: 640px) {
+/* On a phone held upright the photograph and the foot stop sharing one box. The
+   frame was a 5:6 portrait with the foot laid over its lower third, and every
+   photograph is landscape (3:2 to 16:9): `cover` threw away over half of each
+   one's width and the chips covered most of what was left - the squint page
+   lost both eyes, the emergency page half of the one it shows. Now the
+   photograph has its own 3:2 window, the shape the photographs are, and the
+   label and the chip rail sit on a navy foot under it in the same card. */
+@media (max-width: 640px) and (min-height: 521px) {
   .sd-frame {
-    aspect-ratio: 5 / 6;
+    display: flex;
+    flex-direction: column;
+    aspect-ratio: auto;
+    background: #091521;
   }
 
+  .sd-frame__media {
+    position: relative;
+    inset: auto;
+    overflow: clip;
+    aspect-ratio: 3 / 2;
+    /* Without it the photograph's own height props the box open past 3:2 -
+       a 4:3 photograph made one card 30px taller than the rest. */
+    min-height: 0;
+  }
+
+  /* Nothing is set on the photograph here, so it needs no wash. */
+  .sd-frame__scrim {
+    display: none;
+  }
+
+  .sd-frame__foot {
+    position: relative;
+    background: #091521;
+    padding-top: 16px;
+  }
+
+  /* Solid navy under them now, not a photograph to blur: the chip takes a
+     faint light fill so it still reads as a chip. */
+  .sd-chip {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: none;
+  }
+}
+
+@media (max-width: 640px) {
   /* A phone hero carried twenty-one separate pieces of text before the reader
      reached anything. These are the four that earn their place least on a small
      screen: the two tags are how the reader got here and what the first tab

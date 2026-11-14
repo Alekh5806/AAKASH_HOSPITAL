@@ -64,7 +64,7 @@ function hospitalsOf(doctor) {
 }
 
 /* Every hospital a doctor sees patients at, in the site's own order, as one
-   line: `Visnagar, Ahmedabad and Gota`. */
+   line: `Visnagar, Odhav and Gota`. */
 export function describeHospitals(doctor) {
   return listFormat.format(hospitalsOf(doctor));
 }

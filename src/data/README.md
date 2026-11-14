@@ -13,7 +13,7 @@ Open `doctors.json`, find the person in `items`, and edit the fields:
   "specialty": "Senior Vitreoretina Consultant",
   "interests": ["cataract surgery", "FLACS"],
   "photo": "/assets/media/doctors/dhaivat-vasavada.jpg",
-  "branches": ["Ahmedabad", "Gota"],
+  "branches": ["Odhav", "Gota"],
   "visiting": [
     {
       "branch": "Visnagar",
@@ -23,7 +23,7 @@ Open `doctors.json`, find the person in `items`, and edit the fields:
 }
 ```
 
-- `branches` are the hospitals the person is based at, and `visiting` the ones they visit. Name a hospital exactly as `branches.json` does (`Visnagar`, `Ahmedabad`, `Bharuch`, `Gota`, `Himmatnagar`, `Juhapura`), never by its slug. Someone who only visits has `"branches": []`.
+- `branches` are the hospitals the person is based at, and `visiting` the ones they visit. Name a hospital exactly as `branches.json` does (`Visnagar`, `Odhav`, `Bharuch`, `Gota`, `Himmatnagar`, `Juhapura`), never by its slug. Someone who only visits has `"branches": []`.
 - A `visiting` entry without a `schedule` reads `Visits Visnagar`; with one it reads `Visits Visnagar on Tuesday and Saturday, 10:00 AM - 5:00 PM`. Times are 24-hour.
 - `interests` is optional. Write each one as it reads in the middle of a sentence (`cataract surgery`, `LASIK`); the site capitalises the first.
 - `photo` is optional. Without one the site shows the person's initials. Add the image to `public/assets/media/doctors`, then reference it as `/assets/media/doctors/file-name.jpg`.
@@ -145,7 +145,7 @@ A camera watermark in a supplied photograph is cropped out before encoding, neve
 **Every hospital's photographs (all six carry these):**
 
 - **`imageSets`** - the hero frame changes shape with the screen (21:9 on a laptop and a phone held sideways, 3:2 on a tablet, 5:6 on a phone), so give each shape its own crop, framed for that box, at two widths: `"imageSets": { "wide": [{ "src": ".../facade-wide-800.webp", "width": 800 }, ...], "landscape": [...], "portrait": [...] }`. Set `image` to the largest `wide` file. With `imageSets`, the hero ignores `imageSmall`, which stays the full master photograph (`facade.webp`, the home page's phone card for the default hospital). Frame each crop so the hospital's own signboard sits above the bottom third of the frame - the chips cover that third.
-- **`galleryAspect`** - the stage's shape, e.g. `{ "width": 4, "height": 3 }`: the shape most of the hospital's photographs share (Ahmedabad and Bharuch 3:2, Juhapura's portraits 4:5). The stage takes it at every width, so nothing is cropped to whatever shape the stage happens to be.
+- **`galleryAspect`** - the stage's shape, e.g. `{ "width": 4, "height": 3 }`: the shape most of the hospital's photographs share (Odhav and Bharuch 3:2, Juhapura's portraits 4:5). The stage takes it at every width, so nothing is cropped to whatever shape the stage happens to be.
 - **A gallery entry** - `src` is the full photograph the viewer shows. `set` is the stage's image at two widths (`[{ "src": ".../waiting-hall-800.webp", "width": 800 }, { "src": ".../waiting-hall-stage.webp", "width": 1448 }]`): for a photograph near the stage's shape it is cut to that shape around its subject (`-stage`), so the stage crops nothing. A photograph far from it - a tall corridor, a directory board - carries `"whole": true` instead and its `set` is the photograph itself, shown whole over a blurred copy. `thumb` is a 320x240 encode for the thumbnail row and the blurred fill. Five to seven entries: from six, a phone sets the thumbnails in two rows.
 
 `seo.image` is the share preview (WhatsApp, Facebook): a 1200x630 JPEG crop, because not every preview reads webp and the build can only state a JPEG's or a PNG's pixel size. File names are lowercase with hyphens and no spaces - a space breaks a `srcset`.

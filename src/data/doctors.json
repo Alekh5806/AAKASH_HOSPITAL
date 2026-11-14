@@ -205,7 +205,7 @@
       ],
       "photo": "/assets/media/doctors/saurabh-kapoor.jpg",
       "branches": [
-        "Ahmedabad",
+        "Odhav",
         "Gota"
       ],
       "services": [
@@ -220,7 +220,7 @@
       "specialty": "Senior Vitreoretina Consultant",
       "photo": "/assets/media/doctors/dhaivat-vasavada.jpg",
       "branches": [
-        "Ahmedabad",
+        "Odhav",
         "Gota"
       ],
       "visiting": [
@@ -248,7 +248,7 @@
       "qualifications": "DNB (Ophth), FAECS",
       "specialty": "Vitreoretina Consultant",
       "branches": [
-        "Ahmedabad",
+        "Odhav",
         "Gota"
       ],
       "visiting": [
@@ -271,7 +271,7 @@
         "comprehensive ophthalmology"
       ],
       "branches": [
-        "Ahmedabad"
+        "Odhav"
       ],
       "services": [
         "cataract-surgery",
@@ -368,7 +368,7 @@
       "branches": [],
       "visiting": [
         {
-          "branch": "Ahmedabad"
+          "branch": "Odhav"
         }
       ],
       "services": [
@@ -383,7 +383,7 @@
       "branches": [],
       "visiting": [
         {
-          "branch": "Ahmedabad"
+          "branch": "Odhav"
         }
       ],
       "services": [
@@ -398,7 +398,7 @@
       "branches": [],
       "visiting": [
         {
-          "branch": "Ahmedabad"
+          "branch": "Odhav"
         }
       ],
       "services": [
@@ -457,13 +457,13 @@
       "branches": [],
       "visiting": [
         {
-          "branch": "Ahmedabad"
+          "branch": "Odhav"
         }
       ]
     }
   ],
   "notes": [
     "The team is the hospital's own list (October 2026). Names, qualifications, specialties and areas of interest are as supplied; only their spelling and punctuation were made consistent.",
-    "A record without a `photo` shows a monogram until a portrait is added. A hospital is named by its display name in branches.json: Sarkhej is Juhapura and Odhav is Ahmedabad."
+    "A record without a `photo` shows a monogram until a portrait is added. A hospital is named by its display name in branches.json: Sarkhej is Juhapura."
   ]
 }

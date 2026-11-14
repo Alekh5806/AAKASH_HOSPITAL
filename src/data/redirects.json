@@ -2,6 +2,7 @@
   "notes": "Permanent (301) redirects, read by scripts/prerender.mjs, which writes them into _redirects (Cloudflare Pages / Workers, Netlify) and .htaccess (Apache / LiteSpeed). Matched on the path only: a query string is ignored and dropped, so /team_details.php?team_id=3 lands on /doctors. The first block is every URL of the 2018 PHP site this one replaced (its sitemap, its internal links and the .aspx links it still carried); keep them for as long as the domain exists - search engines and old bookmarks keep asking for them for years. Add a line here whenever a live page moves, never delete one.",
   "permanent": [
     { "from": "/about", "to": "/about/journey", "reason": "About us is two pages; the section opens on the journey" },
+    { "from": "/branches/ahmedabad", "to": "/branches/odhav", "reason": "The Odhav hospital is named for its locality; Gota and Juhapura are in Ahmedabad too" },
 
     { "from": "/index.php", "to": "/", "reason": "Legacy home page" },
     { "from": "/index.html", "to": "/", "reason": "One URL for the home page" },
