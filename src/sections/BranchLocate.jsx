@@ -348,6 +348,25 @@ export default function BranchLocate({ branch }) {
                   </AnimatePresence>
                 </div>
 
+                {/* The two panels that are not open are still in the page,
+                    closed: the open one above is mounted alone so it can
+                    glide, and a crawler reading the phone's page presses no
+                    tab - it would find this hospital's address and neither
+                    its desk numbers nor its hours. */}
+                {locate.tabs
+                  .filter((item) => item.id !== tab)
+                  .map((item) => (
+                    <div
+                      key={item.id}
+                      id={`br-panel-${item.id}`}
+                      role="tabpanel"
+                      aria-labelledby={`br-tab-${item.id}`}
+                      hidden
+                    >
+                      {panels[item.id]}
+                    </div>
+                  ))}
+
                 {actions}
               </>
             ) : (

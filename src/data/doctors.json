@@ -63,7 +63,7 @@
       "seoDescription": "{name}, {qualifications}, {specialty} at Aakash Eye Hospital in {hospitals}.{interests} Book on WhatsApp.",
       "seoDescriptionShort": "{name}, {specialty} at Aakash Eye Hospital in {hospitals}.{interests} Book on WhatsApp.",
       "seoInterests": " Interests include {interests}.",
-      "imageAlt": "{name}, {specialty} at Aakash Eye Hospital"
+      "seoCare": " Care includes {care}."
     }
   },
   "items": [

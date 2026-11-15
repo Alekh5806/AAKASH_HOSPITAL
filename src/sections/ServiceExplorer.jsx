@@ -7,6 +7,7 @@ import { prewarmEyeModel } from "../lib/eyeRenderer";
 import { useHydrated } from "../lib/hydration";
 import SymptomScene from "../components/SymptomScene";
 import SmartImage from "../components/SmartImage";
+import { toSrcSet } from "../lib/images";
 import {
   getCategoryFilters,
   getCategoryLabel,
@@ -824,6 +825,7 @@ export default function ServiceExplorer() {
                     <div className="sv-stage__media">
                       <SmartImage
                         src={active.image}
+                        srcSet={toSrcSet(active.set)}
                         alt=""
                         className="sv-stage__img"
                         sizes="(min-width: 1024px) 40vw, 100vw"

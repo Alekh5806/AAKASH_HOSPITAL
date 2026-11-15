@@ -9,8 +9,16 @@ import {
 } from "framer-motion";
 import { ArrowRight, ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from "lucide-react";
 import { Link } from "react-router-dom";
+import { toSrcSet } from "../lib/images";
 import { useInViewReplay } from "../lib/motion";
 import { getCategoryLabel } from "../lib/servicesData";
+
+/* The stage is about three fifths of a wide screen and the whole width of a
+   phone's dock; a rail slide is min(62vw, 520px), a phone's the screen less
+   its inset. Each service's `set` then gives a phone the 960px encode rather
+   than a photograph up to 2560px wide. */
+const STAGE_SIZES = "(min-width: 1024px) 62vw, 100vw";
+const SLIDE_SIZES = "(min-width: 761px) min(62vw, 520px), 100vw";
 
 /* Three shapes, decided in JS rather than CSS because they carry different
    roles - tabs beside a tab panel, a rail of cards, a list of links - and a
@@ -309,6 +317,8 @@ function StagePhoto({ service, role }) {
     <img
       className="e-cond__photo"
       src={service.image}
+      srcSet={toSrcSet(service.set)}
+      sizes={service.set ? STAGE_SIZES : undefined}
       alt=""
       loading="lazy"
       decoding="async"
@@ -587,6 +597,8 @@ function Rail({ items, labels, active, onChoose, reduceMotion }) {
             <img
               className="e-cond__photo"
               src={item.service.image}
+              srcSet={toSrcSet(item.service.set)}
+              sizes={item.service.set ? SLIDE_SIZES : undefined}
               alt={item.service.imageAlt}
               loading="lazy"
               decoding="async"

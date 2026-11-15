@@ -98,7 +98,9 @@ export function DoctorsJsonLd({ meta, doctors, isOptometrist }) {
 }
 
 /* One doctor's page: a ProfilePage about the doctor, with the treatments the
-   page lists and the hospitals they practise at (referenced by @id). */
+   page lists and the hospitals they practise at (referenced by @id). The
+   page's own image is the portrait where there is one - never the hospital
+   photograph its social card borrows, which the page does not show. */
 export function DoctorJsonLd({ doctor, meta, services }) {
   const path = `/doctors/${doctor.slug}`;
   const person = doctorNode(doctor, { services });
@@ -106,7 +108,7 @@ export function DoctorJsonLd({ doctor, meta, services }) {
     <JsonLd
       data={pageGraph({
         path,
-        meta,
+        meta: { ...meta, image: doctor.photo },
         types: ["ProfilePage"],
         about: ref(person["@id"]),
         mainEntity: ref(person["@id"]),

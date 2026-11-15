@@ -247,32 +247,50 @@ export function getColleagues(doctor, limit = 6) {
 
 /* The page's head, written from the data: `Dr. Name, Specialty` with the
    brand where it fits, and the richest description that fits 160 characters:
-   every area of interest, then the first three, then none - each with the
-   qualifications and then without them. */
-export function getProfileSeo(doctor) {
+   as many of the areas of interest as fit, in the order the doctor lists
+   them - each with the qualifications and then without them - and, for a
+   doctor who has listed none (or whose first does not fit), the treatments
+   their page lists instead (`services`, the service records), so no
+   description is only a name and a place.
+
+   The social card is the hospital the page offers to book at (`home`): its
+   1200x630 photograph, which every preview shows whole. The portraits are
+   270x260 - under the size a large preview needs - and most doctors have
+   none; the portrait stays the page's own image in the structured data. */
+export function getProfileSeo(doctor, { home, services = [] } = {}) {
   const copy = doctorsPage.profile;
   const brand = " | Aakash Eye Hospital";
   const base = fillTemplate(copy.seoTitle, { name: doctor.name, specialty: doctor.specialty });
   const interestsLine = (terms) =>
     terms.length ? fillTemplate(copy.seoInterests, { interests: listFormat.format(terms) }) : "";
-  const all = interestsLine(doctor.interests ?? []);
-  const firstThree = interestsLine((doctor.interests ?? []).slice(0, 3));
+  const careLine = (titles) =>
+    titles.length ? fillTemplate(copy.seoCare, { care: listFormat.format(titles) }) : "";
+  const interests = doctor.interests ?? [];
+  const lines = [
+    ...interests.map((_, dropped) => interestsLine(interests.slice(0, interests.length - dropped))),
+    careLine(services.map((service) => midSentence(service.title))),
+    "",
+  ];
   const values = {
     name: doctor.name,
     qualifications: doctor.qualifications,
     specialty: doctor.specialty,
     hospitals: describeHospitals(doctor),
   };
-  const candidates = [all, firstThree, ""].flatMap((interests) => [
-    fillTemplate(copy.seoDescription, { ...values, interests }),
-    fillTemplate(copy.seoDescriptionShort, { ...values, interests }),
+  const candidates = lines.flatMap((line) => [
+    fillTemplate(copy.seoDescription, { ...values, interests: line }),
+    fillTemplate(copy.seoDescriptionShort, { ...values, interests: line }),
   ]);
   return {
     title: base.length + brand.length <= 65 ? `${base}${brand}` : base,
     description: candidates.find((text) => text.length <= 160) ?? candidates[candidates.length - 1],
-    image: doctor.photo,
-    imageAlt: doctor.photo
-      ? fillTemplate(copy.imageAlt, { name: doctor.name, specialty: doctor.specialty })
-      : undefined,
+    image: home?.page?.seo?.image,
+    imageAlt: home?.page?.imageAlt,
   };
+}
+
+/* A title set inside a sentence: `Comprehensive Eye Examination` reads as
+   `comprehensive eye examination`, and `LASIK` stays `LASIK`. */
+function midSentence(title) {
+  return title.replace(/\b[A-Z](?=[a-z])/g, (letter) => letter.toLowerCase());
 }

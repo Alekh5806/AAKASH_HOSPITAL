@@ -91,6 +91,23 @@ function imageSize(publicPath) {
   const file = join(dist, publicPath);
   if (!existsSync(file)) return null;
   const buffer = readFileSync(file);
+  if (
+    buffer.length > 30 &&
+    buffer.toString("ascii", 0, 4) === "RIFF" &&
+    buffer.toString("ascii", 8, 12) === "WEBP"
+  ) {
+    const chunk = buffer.toString("ascii", 12, 16);
+    if (chunk === "VP8 ") {
+      return { width: buffer.readUInt16LE(26) & 0x3fff, height: buffer.readUInt16LE(28) & 0x3fff };
+    }
+    if (chunk === "VP8L") {
+      const bits = buffer.readUInt32LE(21);
+      return { width: (bits & 0x3fff) + 1, height: ((bits >> 14) & 0x3fff) + 1 };
+    }
+    if (chunk === "VP8X") {
+      return { width: buffer.readUIntLE(24, 3) + 1, height: buffer.readUIntLE(27, 3) + 1 };
+    }
+  }
   if (buffer.length > 24 && buffer.readUInt32BE(0) === 0x89504e47) {
     return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20) };
   }
@@ -426,9 +443,77 @@ function checkPage(page, result) {
   if (head.title.length > 65) warnings.push(`${where}: title is ${head.title.length} characters`);
   const length = head.description?.length ?? 0;
   if (length < 70 || length > 165) warnings.push(`${where}: description is ${length} characters`);
+  checkSocialImage(where, head);
+  checkReferences(where, html);
+}
+
+/* A link shared on WhatsApp, Facebook or X is the page's title over its social
+   image, so a page without one - or naming a file that is not there - is
+   caught here rather than in somebody's chat. Large previews want 1200x630,
+   and JPEG or PNG is what every preview crawler reads. */
+function checkSocialImage(where, head) {
+  if (!head.imagePath) return errors.push(`${where}: no social image (og:image)`);
+  const size = imageSize(head.imagePath);
+  if (!size)
+    return errors.push(`${where}: social image ${head.imagePath} is missing or unreadable`);
+  if (size.width < 1200 || size.height < 630)
+    warnings.push(`${where}: social image is ${size.width}x${size.height} (wants 1200x630)`);
+  if (!/\.(jpe?g|png)$/i.test(head.imagePath))
+    warnings.push(`${where}: social image ${head.imagePath} is not a JPEG or PNG`);
+}
+
+/* Everything a page points at has to be there: the pictures and films it
+   shows (src, srcset, poster), the files its structured data names, and the
+   pages it links to - which must be pages, not addresses that redirect. A
+   photograph renamed in public/ without its JSON, or a link to a slug that has
+   moved, fails the build instead of shipping a broken image or a 404. */
+const reported = new Set();
+function checkReferences(where, html) {
+  const report = (message) => {
+    if (reported.has(message)) return;
+    reported.add(message);
+    errors.push(`${where}: ${message}`);
+  };
+  const fileExists = (url) => existsSync(join(dist, decodeURIComponent(url.split(/[?#]/)[0])));
+
+  const files = new Set();
+  for (const [tag] of html.matchAll(/<(?:img|source|video|link)\b[^>]*>/gi)) {
+    for (const name of ["src", "poster", "href"]) {
+      const value = attribute(tag, name);
+      if (value?.startsWith("/assets/")) files.add(value);
+    }
+    for (const name of ["srcset", "imagesrcset"]) {
+      for (const candidate of (attribute(tag, name) ?? "").split(",")) {
+        const url = candidate.trim().split(/\s+/)[0];
+        if (url?.startsWith("/assets/")) files.add(url);
+      }
+    }
+  }
+  for (const [, json] of html.matchAll(
+    /<script type="application\/ld\+json">([\s\S]*?)<\/script>/g,
+  )) {
+    for (const [, url] of json.matchAll(
+      new RegExp(`"${escapeRegExp(SITE_URL)}(/assets/[^"]+)"`, "g"),
+    )) {
+      files.add(url);
+    }
+  }
+  for (const file of files) if (!fileExists(file)) report(`${file} does not exist`);
+
+  for (const [tag] of html.matchAll(/<a\b[^>]*>/gi)) {
+    const href = attribute(tag, "href");
+    if (!href?.startsWith("/") || href.startsWith("//")) continue;
+    const path = href.split(/[?#]/)[0].replace(/(.)\/+$/, "$1");
+    if (redirectedPaths.has(path)) report(`links to ${path}, which redirects`);
+    else if (!pagePaths.has(path) && !fileExists(path))
+      report(`links to ${path}, which is not a page`);
+  }
 }
 
 const pages = getPages();
+const pagePaths = new Set(pages.map((page) => page.path));
+const redirects = readJson("src/data/redirects.json").permanent;
+const redirectedPaths = new Set(redirects.map((redirect) => redirect.from));
 const rendered = [];
 for (const page of pages) {
   const result = await render(page.path);
@@ -507,8 +592,6 @@ writeFileSync(
 
 /* ---------- redirects, headers and clean URLs, per host ---------- */
 
-const redirects = readJson("src/data/redirects.json").permanent;
-const pagePaths = new Set(pages.map((page) => page.path));
 for (const { from, to } of redirects) {
   if (pagePaths.has(from))
     errors.push(`redirects.json: ${from} is a live page and cannot redirect`);

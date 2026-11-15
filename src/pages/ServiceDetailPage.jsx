@@ -62,7 +62,13 @@ export default function ServiceDetailPage() {
 
   return (
     <>
-      <SEO meta={{ image: service.image, imageAlt: service.imageAlt, ...service.seo }} />
+      <SEO
+        meta={{
+          image: service.share ?? service.image,
+          imageAlt: service.imageAlt,
+          ...service.seo,
+        }}
+      />
       <ServiceJsonLd service={service} part={part} />
 
       <ServiceHero

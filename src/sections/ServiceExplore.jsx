@@ -301,6 +301,47 @@ export default function ServiceExplore({ service }) {
             </AnimatePresence>
           </div>
 
+          {/* Every tab's words are in the page, not only the open one's. The
+              open panel above is mounted alone so it can slide and assemble;
+              a tab nobody has pressed would otherwise not exist, and a search
+              engine presses nothing - "Why it happens" and "Signs to notice"
+              were on no service page as far as a crawler could tell. These are
+              the same sentences, set plainly and `hidden`: a closed tab panel,
+              which is also what each tab's aria-controls names. */}
+          {panels
+            .filter((panel) => panel.id !== active)
+            .map((panel) => (
+              <div
+                key={panel.id}
+                id={`sd-panel-${panel.id}`}
+                role="tabpanel"
+                aria-labelledby={`sd-tab-${panel.id}`}
+                hidden
+              >
+                <h2>{panel.label}</h2>
+                {panel.id === "overview"
+                  ? service.longDescription.map((paragraph) => <p key={paragraph}>{paragraph}</p>)
+                  : null}
+                {panel.id === "causes" ? (
+                  <ol>
+                    {service.causes.map((cause) => (
+                      <li key={cause}>{cause}</li>
+                    ))}
+                  </ol>
+                ) : null}
+                {panel.id === "symptoms" ? (
+                  <>
+                    <ul>
+                      {service.symptoms.map((symptom) => (
+                        <li key={symptom.text}>{symptom.text}</li>
+                      ))}
+                    </ul>
+                    <p>{serviceDetail.symptomsNote}</p>
+                  </>
+                ) : null}
+              </div>
+            ))}
+
           {active === "symptoms" ? (
             <p className="sd-card__note">{serviceDetail.symptomsNote}</p>
           ) : null}

@@ -14,6 +14,7 @@ import SmartImage from "../components/SmartImage";
 import { about } from "../lib/aboutData";
 import { branches } from "../lib/coreData";
 import { useCurrentYear } from "../lib/hydration";
+import { toSrcSet } from "../lib/images";
 import { specialists } from "../lib/doctorsData";
 
 const { journey } = about;
@@ -49,10 +50,6 @@ function clamp01(value) {
 
 function pad(value) {
   return String(value).padStart(2, "0");
-}
-
-function toSrcSet(set) {
-  return set?.map((entry) => `${entry.src} ${entry.width}w`).join(", ");
 }
 
 function subscribeShortViewport(onChange) {

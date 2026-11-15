@@ -24,9 +24,20 @@ const DEFAULT_ROBOTS = "index, follow, max-image-preview:large, max-snippet:-1, 
 /* Resolves a page's `seo` block against the site defaults into the full head
    the page should carry. Pure, so the prerender and the browser agree. */
 export function buildHead(meta = {}, pathname = "/") {
-  const resolved = { ...site.defaultSeo, ...meta };
+  /* Only what the page actually sets overrides a default: a page that passes
+     no image of its own (`image: undefined`) keeps the site's social image
+     rather than shipping with none. */
+  const own = Object.fromEntries(
+    Object.entries(meta).filter(
+      ([, value]) => value !== undefined && value !== null && value !== "",
+    ),
+  );
+  const resolved = { ...site.defaultSeo, ...own };
   const canonical = absoluteUrl(resolved.path ?? canonicalPath(pathname));
   const image = resolved.image ? absoluteUrl(resolved.image) : "";
+  /* The default alt describes the default image; a page with its own image
+     and no alt for it is described by its title instead. */
+  const imageAlt = own.image && !own.imageAlt ? "" : resolved.imageAlt;
 
   return {
     title: resolved.title,
@@ -38,7 +49,7 @@ export function buildHead(meta = {}, pathname = "/") {
     ogType: resolved.ogType || "website",
     image,
     imagePath: resolved.image || "",
-    imageAlt: resolved.imageAlt || resolved.ogTitle || resolved.title,
+    imageAlt: imageAlt || resolved.ogTitle || resolved.title,
     noindex: /noindex/i.test(resolved.robots || ""),
   };
 }

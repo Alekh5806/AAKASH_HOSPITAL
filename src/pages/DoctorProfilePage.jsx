@@ -33,7 +33,7 @@ export default function DoctorProfilePage() {
   const hospitals = getDoctorHospitals(doctor);
   const home = hospitals.find((entry) => entry.based) ?? hospitals[0];
   const services = (doctor.services ?? []).map(getServiceBySlug).filter(Boolean);
-  const seo = getProfileSeo(doctor);
+  const seo = getProfileSeo(doctor, { home: home?.branch, services });
 
   return (
     <>

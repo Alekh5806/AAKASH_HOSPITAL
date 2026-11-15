@@ -4,6 +4,7 @@ import { ArrowLeft, Check } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import ServiceActions from "../components/ServiceActions";
 import SmartImage from "../components/SmartImage";
+import { toSrcSet } from "../lib/images";
 import { useAfterIntro, useIntroDone } from "../lib/intro";
 import { cascade, WRITE } from "../lib/motion";
 import { getCategoryLabel, serviceDetail, splitServiceTitle } from "../lib/servicesData";
@@ -154,6 +155,7 @@ export default function ServiceHero({ service, part, branch, urgent, actionsRef 
           <SmartImage
             className="sd-frame__img"
             src={service.image}
+            srcSet={toSrcSet(service.set)}
             alt={service.imageAlt}
             loading="eager"
             sizes="(min-width: 1280px) 1240px, 100vw"

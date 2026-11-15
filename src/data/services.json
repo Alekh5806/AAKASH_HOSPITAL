@@ -372,9 +372,15 @@
         "Cataract is the clouding of the natural crystalline lens, commonly associated with ageing. Surgery is the only known effective treatment for cataract removal.",
         "At Aakash Eye Hospital, cataract surgery is focused on removing the cloudy natural lens and replacing it with an intraocular lens. Phacoemulsification with IOL implantation is the core technique used at the center."
       ],
-      "image": "/assets/media/conditions/cataract-surgery.webp",
-      "thumb": "/assets/media/conditions/cataract-surgery.webp",
-      "imageAlt": "Slit lamp examination for cataract assessment",
+      "image": "/assets/media/services/cataract-surgery.webp",
+      "set": [
+        { "src": "/assets/media/services/cataract-surgery-960.webp", "width": 960 },
+        { "src": "/assets/media/services/cataract-surgery-1440.webp", "width": 1440 },
+        { "src": "/assets/media/services/cataract-surgery.webp", "width": 2000 }
+      ],
+      "thumb": "/assets/media/services/cataract-surgery-thumb.webp",
+      "share": "/assets/media/services/cataract-surgery-share.jpg",
+      "imageAlt": "Eye surgeons operating through a surgical microscope during cataract surgery",
       "featureBullets": [
         "Phacoemulsification with intraocular lens implantation",
         "Bladeless femtosecond-assisted steps where suitable",
@@ -451,9 +457,14 @@
         "LASIK is a laser procedure that can remove or reduce dependence on glasses and contact lenses for suitable patients.",
         "Before any laser treatment the eye is mapped in detail - the shape of the cornea (topography), its thickness (pachymetry) and the eye's focusing errors (wavefront aberrometry) - to judge whether LASIK, or another option, is safe for you."
       ],
-      "image": "/assets/media/conditions/lasik.webp",
-      "thumb": "/assets/media/conditions/lasik.webp",
-      "imageAlt": "Laser surgery suite at Aakash Eye Hospital",
+      "image": "/assets/media/services/lasik-refractive-surgery.webp",
+      "set": [
+        { "src": "/assets/media/services/lasik-refractive-surgery-960.webp", "width": 960 },
+        { "src": "/assets/media/services/lasik-refractive-surgery.webp", "width": 1440 }
+      ],
+      "thumb": "/assets/media/services/lasik-refractive-surgery-thumb.webp",
+      "share": "/assets/media/services/lasik-refractive-surgery-share.jpg",
+      "imageAlt": "A patient lying under the laser during LASIK vision correction",
       "featureBullets": [
         "Excimer laser vision correction, available since 2002",
         "Bladeless robotic laser flap creation where suitable",
@@ -526,9 +537,14 @@
         "Aakash Eye Hospital has run dedicated retina services since 2016, at Visnagar and Odhav, with OCT imaging, green laser and FFA.",
         "The service supports diagnosis and care planning for retina conditions requiring imaging and laser-based treatment pathways."
       ],
-      "image": "/assets/media/conditions/Retina_f.webp",
-      "thumb": "/assets/media/conditions/Retina_f.webp",
-      "imageAlt": "Retinal imaging during an eye examination",
+      "image": "/assets/media/services/retina-services.webp",
+      "set": [
+        { "src": "/assets/media/services/retina-services-960.webp", "width": 960 },
+        { "src": "/assets/media/services/retina-services.webp", "width": 1678 }
+      ],
+      "thumb": "/assets/media/services/retina-services-thumb.webp",
+      "share": "/assets/media/services/retina-services-share.jpg",
+      "imageAlt": "An eye specialist pointing to a photograph of the retina on a screen",
       "featureBullets": [
         "OCT imaging support",
         "Green Laser availability",
@@ -601,9 +617,15 @@
         "Glaucoma is a disease where pressure inside the eye can damage the nerve fibers forming the optic nerve.",
         "Assessment can include eye pressure measurement (applanation tonometry), visual field testing (perimetry), OCT scans of the nerve fibre layer and ganglion cells, and photographs of the optic disc and retina."
       ],
-      "image": "/assets/media/conditions/glucoma.webp",
-      "thumb": "/assets/media/conditions/glucoma.webp",
-      "imageAlt": "Eye pressure screening for glaucoma",
+      "image": "/assets/media/services/glaucoma-care.webp",
+      "set": [
+        { "src": "/assets/media/services/glaucoma-care-960.webp", "width": 960 },
+        { "src": "/assets/media/services/glaucoma-care-1440.webp", "width": 1440 },
+        { "src": "/assets/media/services/glaucoma-care.webp", "width": 2560 }
+      ],
+      "thumb": "/assets/media/services/glaucoma-care-thumb.webp",
+      "share": "/assets/media/services/glaucoma-care-share.jpg",
+      "imageAlt": "Close-up of an older person's eye with a clouded pupil",
       "featureBullets": [
         "Pressure and optic nerve evaluation",
         "Perimetry and OCT-supported analysis",
@@ -682,9 +704,10 @@
         "Oculoplasty covers the eyelids, the tear drainage passages, the orbit and the tissues surrounding the eye. Problems here can affect comfort, vision and appearance.",
         "The team assesses the cause first and then discusses which medical or surgical options are appropriate for you."
       ],
-      "image": "/assets/media/conditions/oculoplasty.webp",
-      "thumb": "/assets/media/conditions/oculoplasty.webp",
-      "imageAlt": "Close-up of the eye and eyelid",
+      "image": "/assets/media/services/oculoplasty.webp",
+      "thumb": "/assets/media/services/oculoplasty-thumb.webp",
+      "share": "/assets/media/services/oculoplasty-share.jpg",
+      "imageAlt": "Surgeons marking a patient's eyelid before oculoplastic surgery",
       "featureBullets": [
         "Assessment of eyelid position, lumps and swellings",
         "Watering eye and tear duct evaluation",
@@ -753,9 +776,14 @@
         "Children rarely say that their vision is blurred, so many eye problems are first noticed by a parent or a teacher rather than by the child.",
         "Examinations are adapted to a child's age and attention span, and findings are explained to the parent along with what happens next."
       ],
-      "image": "/assets/media/conditions/PD_EYE.webp",
-      "thumb": "/assets/media/conditions/PD_EYE.webp",
-      "imageAlt": "Child having a vision test",
+      "image": "/assets/media/services/pediatric-eye-care.webp",
+      "set": [
+        { "src": "/assets/media/services/pediatric-eye-care-960.webp", "width": 960 },
+        { "src": "/assets/media/services/pediatric-eye-care.webp", "width": 1448 }
+      ],
+      "thumb": "/assets/media/services/pediatric-eye-care-thumb.webp",
+      "share": "/assets/media/services/pediatric-eye-care-share.jpg",
+      "imageAlt": "A boy covering one eye in front of an eye chart during a vision test",
       "featureBullets": [
         "Age-appropriate vision assessment and refraction",
         "Lazy eye (amblyopia) evaluation and follow-up",
@@ -828,9 +856,14 @@
         "Short sight often begins in childhood and can change over several years. Tracking that change is what tells the team whether a plan is working.",
         "The clinic records the measurements over time and discusses the options with the family at each review."
       ],
-      "image": "/assets/media/conditions/myopia_f.webp",
-      "thumb": "/assets/media/conditions/myopia_f.webp",
-      "imageAlt": "Trial frame refraction to measure spectacle power",
+      "image": "/assets/media/services/myopia-clinic.webp",
+      "set": [
+        { "src": "/assets/media/services/myopia-clinic-960.webp", "width": 960 },
+        { "src": "/assets/media/services/myopia-clinic.webp", "width": 1536 }
+      ],
+      "thumb": "/assets/media/services/myopia-clinic-thumb.webp",
+      "share": "/assets/media/services/myopia-clinic-share.jpg",
+      "imageAlt": "A young woman wearing a trial frame while her spectacle number is measured",
       "featureBullets": [
         "Repeat refraction recorded over time",
         "Review appointments scheduled by the doctor",
@@ -899,9 +932,15 @@
         "A squint is an eye that turns inward, outward, up or down instead of aligning with the other eye. It can appear in childhood or later in life.",
         "Assessment establishes the type and the cause, and the doctor then discusses whether glasses, exercises or surgery are appropriate."
       ],
-      "image": "/assets/media/conditions/squint.webp",
-      "thumb": "/assets/media/conditions/squint.webp",
-      "imageAlt": "Consulting room at Aakash Eye Hospital",
+      "image": "/assets/media/services/squint-services.webp",
+      "set": [
+        { "src": "/assets/media/services/squint-services-960.webp", "width": 960 },
+        { "src": "/assets/media/services/squint-services-1440.webp", "width": 1440 },
+        { "src": "/assets/media/services/squint-services.webp", "width": 2560 }
+      ],
+      "thumb": "/assets/media/services/squint-services-thumb.webp",
+      "share": "/assets/media/services/squint-services-share.jpg",
+      "imageAlt": "Close-up of a person's eyes, with one eye turned inward",
       "featureBullets": [
         "Alignment and eye movement assessment",
         "Refraction, because glasses correct some squints",
@@ -972,9 +1011,14 @@
         "The OPD pathway helps patients start with a complete eye evaluation and move into the right service when more specialized care is needed.",
         "Aakash Eye Hospital also supports pediatric eye problems including pediatric cataract, pediatric squint, amblyopia management, allergic conjunctivitis and refraction in young children."
       ],
-      "image": "/assets/media/conditions/com_eye_checkup.webp",
-      "thumb": "/assets/media/conditions/com_eye_checkup.webp",
-      "imageAlt": "Comprehensive eye examination in progress",
+      "image": "/assets/media/services/comprehensive-eye-examination.webp",
+      "set": [
+        { "src": "/assets/media/services/comprehensive-eye-examination-960.webp", "width": 960 },
+        { "src": "/assets/media/services/comprehensive-eye-examination.webp", "width": 1551 }
+      ],
+      "thumb": "/assets/media/services/comprehensive-eye-examination-thumb.webp",
+      "share": "/assets/media/services/comprehensive-eye-examination-share.jpg",
+      "imageAlt": "A man wearing a trial frame during an eye examination, with an eye chart behind him",
       "featureBullets": [
         "Vision testing and refraction",
         "Detailed examination of the front and back of the eye",
@@ -1044,9 +1088,14 @@
         "A spectacle prescription is the result of an examination, not a separate purchase. The optical team works from the doctor's findings.",
         "Frames and lens options are discussed once the prescription is confirmed."
       ],
-      "image": "/assets/media/conditions/optical_serices.webp",
-      "thumb": "/assets/media/conditions/optical_serices.webp",
-      "imageAlt": "Discussing spectacles after an eye examination",
+      "image": "/assets/media/services/optical-services.webp",
+      "set": [
+        { "src": "/assets/media/services/optical-services-960.webp", "width": 960 },
+        { "src": "/assets/media/services/optical-services.webp", "width": 1536 }
+      ],
+      "thumb": "/assets/media/services/optical-services-thumb.webp",
+      "share": "/assets/media/services/optical-services-share.jpg",
+      "imageAlt": "An optician standing beside a wall of spectacle frames",
       "featureBullets": [
         "Dispensing based on the doctor's prescription",
         "Frame and lens guidance",
@@ -1110,9 +1159,14 @@
         "Sudden loss of vision, injury, chemical exposure and severe pain are reasons to seek care immediately rather than waiting for a routine appointment.",
         "Contact the hospital directly so the team can advise you on where to go and what to do on the way."
       ],
-      "image": "/assets/media/conditions/emergency_eye_care.webp",
-      "thumb": "/assets/media/services/emergency-eye-care-thumb.jpg",
-      "imageAlt": "Aakash Eye Hospital facility",
+      "image": "/assets/media/services/emergency-eye-care.webp",
+      "set": [
+        { "src": "/assets/media/services/emergency-eye-care-960.webp", "width": 960 },
+        { "src": "/assets/media/services/emergency-eye-care.webp", "width": 1561 }
+      ],
+      "thumb": "/assets/media/services/emergency-eye-care-thumb.webp",
+      "share": "/assets/media/services/emergency-eye-care-share.jpg",
+      "imageAlt": "A man holding open a red, irritated eye",
       "featureBullets": [
         "Urgent assessment for sudden vision loss or injury",
         "Guidance by phone before you travel",
