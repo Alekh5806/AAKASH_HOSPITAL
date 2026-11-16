@@ -81,7 +81,7 @@
         "Femto LASIK",
         "ICL"
       ],
-      "photo": "/assets/media/doctors/vishnu-patel.jpg",
+      "photo": "/assets/media/doctors/Dr Vishnu-Patel.webp",
       "branches": [
         "Visnagar",
         "Gota"
@@ -107,7 +107,7 @@
         "Femto LASIK",
         "ICL"
       ],
-      "photo": "/assets/media/doctors/sanjay-patel.jpg",
+      
       "branches": [
         "Visnagar",
         "Gota"
@@ -203,7 +203,7 @@
         "comprehensive ophthalmology",
         "pterygium"
       ],
-      "photo": "/assets/media/doctors/saurabh-kapoor.jpg",
+      "photo": "/assets/media/doctors/Dr Saurabh Kapoor.webp",
       "branches": [
         "Odhav",
         "Gota"
@@ -218,7 +218,7 @@
       "name": "Dr. Dhaivat Vasavada",
       "qualifications": "MS (Ophth), FAECS, FAICO (VR)",
       "specialty": "Senior Vitreoretina Consultant",
-      "photo": "/assets/media/doctors/dhaivat-vasavada.jpg",
+      "photo": "/assets/media/doctors/Dr dhaivat vasavada.webp",
       "branches": [
         "Odhav",
         "Gota"
@@ -251,6 +251,8 @@
         "Odhav",
         "Gota"
       ],
+      "photo": "/assets/media/doctors/Dr Nirav.webp",
+
       "visiting": [
         {
           "branch": "Visnagar"
@@ -270,6 +272,7 @@
         "pterygium",
         "comprehensive ophthalmology"
       ],
+      "photo": "/assets/media/doctors/Dr kushal shah.webp",
       "branches": [
         "Odhav"
       ],
@@ -295,7 +298,7 @@
       "name": "Dr. Ashesh Patel",
       "qualifications": "DO, MS (Ophth)",
       "specialty": "Ophthalmologist",
-      "photo": "/assets/media/doctors/ashesh-patel.jpg",
+      "photo": "/assets/media/doctors/Dr Ashesh.webp",
       "branches": [
         "Bharuch"
       ],
