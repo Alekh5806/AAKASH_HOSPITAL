@@ -545,7 +545,7 @@
       "phoneGroups": [
         {
           "label": "OPD",
-          "numbers": ["+91-900-000-0001"],
+          "numbers": ["+91-932-819-1329"],
           "unconfirmed": true
         },
         {
@@ -554,7 +554,7 @@
           "unconfirmed": true
         }
       ],
-      "whatsappNumber": "919000000001",
+      "whatsappNumber": "919328191329",
       "coords": {
         "lat": 23.0757,
         "lng": 72.5495
